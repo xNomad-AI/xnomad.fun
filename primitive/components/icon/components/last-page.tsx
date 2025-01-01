@@ -1,0 +1,7 @@
+import { createSingleColorIcon } from "../helper";
+
+export const IconLastPage = createSingleColorIcon(
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path d="M5.59003 7.41L10.18 12L5.59003 16.59L7.00003 18L13 12L7.00003 6L5.59003 7.41ZM16 6H18V18H16V6Z" fill="#868C9F" />
+	</svg>
+);

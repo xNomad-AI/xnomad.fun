@@ -22,7 +22,7 @@ export const style: Style = {
     xs: clsx("rounded-2"),
   },
   variant: {
-    primary: clsx("text-background bg-default-gradient"),
+    primary: clsx("text-text1 bg-brand"),
     secondary: clsx("text-text1 bg-surface"),
     warning: clsx("text-red bg-red-10"),
     plain: clsx("text-text1 bg-surface"),

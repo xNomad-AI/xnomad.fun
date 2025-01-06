@@ -1,5 +1,5 @@
-import { Button } from "@/primitive/components";
 import Image from "next/image";
+import { ConnectButton } from "./home/connect-button";
 
 export default function Home() {
   return (
@@ -15,9 +15,7 @@ export default function Home() {
       </h1>
       <h2 className='font-medium text-size-24 text-white'>Demo</h2>
       <div className='h-40'></div>
-      <Button className='!w-[400px] !bg-white text-black' size='l'>
-        Connect Wallet
-      </Button>
+      <ConnectButton />
     </main>
   );
 }

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
+import "@solana/wallet-adapter-react-ui/styles.css";
 import "./globals.css";
+import { WalletProvider } from "./layout/wallet-provider";
 
 const ibm = IBM_Plex_Mono({
   variable: "--ibm-plex-mono",
@@ -35,7 +37,7 @@ export default function RootLayout({
       <body
         className={`${ibm.variable} antialiased bg-[url('/background.png')]`}
       >
-        {children}
+        <WalletProvider>{children}</WalletProvider>
       </body>
     </html>
   );

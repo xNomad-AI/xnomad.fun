@@ -3,6 +3,8 @@ import { IBM_Plex_Mono } from "next/font/google";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import "./globals.css";
 import { WalletProvider } from "./layout/wallet-provider";
+import { FloatLayerProvider } from "@/primitive/components";
+import { ThemeProvider } from "./layout/theme";
 
 const ibm = IBM_Plex_Mono({
   variable: "--ibm-plex-mono",
@@ -21,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html data-theme={"dark"} className='text-size-16 max:text-[0.625vw]'>
       <meta name='author' content='Byterum' />
       <meta name='og:site_name' content='xNomad.ai' />
       <meta name='og:image:type' content='image/png' />
@@ -34,11 +36,18 @@ export default function RootLayout({
         content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'
       />
       <link rel='icon' href='/logo.svg' type='image/x-icon' />
-      <body
-        className={`${ibm.variable} antialiased bg-[url('/background.png')]`}
-      >
-        <WalletProvider>{children}</WalletProvider>
-      </body>
+      <ThemeProvider defaultTheme={"dark"}>
+        <body
+          className={`${ibm.variable} antialiased bg-[url('/background.png')]`}
+        >
+          <FloatLayerProvider>
+            <WalletProvider>
+              {/* <PageLoadingProgressBar /> */}
+              {children}
+            </WalletProvider>
+          </FloatLayerProvider>
+        </body>
+      </ThemeProvider>
     </html>
   );
 }

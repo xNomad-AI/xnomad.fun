@@ -34,7 +34,6 @@ export function ConnectButton() {
   });
   const onClose = useMemoizedFn(() => {
     setVisible(false);
-    select(null);
   });
   useEffect(() => {
     if (wallet) {

@@ -15,7 +15,7 @@ export default function Home() {
       </h1>
       <h2 className='font-medium text-size-24 text-white'>Demo</h2>
       <div className='h-40'></div>
-      <ConnectButton />
+      <ConnectButton size='l' />
     </main>
   );
 }

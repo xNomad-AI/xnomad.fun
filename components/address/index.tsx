@@ -6,13 +6,16 @@ export function Address({
   address,
   enableCopy,
   className,
+  disableTooltip,
 }: {
   address: string;
   enableCopy?: boolean;
   className?: string;
+  disableTooltip?: boolean;
 }) {
   return (
     <Tooltip
+      disabled={disableTooltip}
       content={address}
       className={clsx("flex items-center gap-8", className)}
     >

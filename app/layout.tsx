@@ -46,6 +46,7 @@ export default function RootLayout({
             <WalletProvider>
               <Header />
               <Portal />
+              
               {/* <PageLoadingProgressBar /> */}
               {children}
             </WalletProvider>

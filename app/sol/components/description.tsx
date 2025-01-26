@@ -33,7 +33,7 @@ export function Description(props: Props) {
   }, []);
 
   return (
-    <>
+    <div className='flex flex-col gap-4'>
       <div
         className='portrait-tablet:hidden flex items-center gap-0 relative box-border z-2 text-text2 min-h-20'
         data-role='fill'
@@ -41,7 +41,7 @@ export function Description(props: Props) {
         <div
           ref={ref}
           className={clsx(
-            "leading max-w-[min(24.5rem,_80vw)] min-w-0",
+            "leading max-w-full min-w-0",
             "[&>*]:inline",
             "[&_a]:underline [&_a]:cursor-pointer ",
             manualFull ? "" : "truncate max-h-20  [&_*]:inline"
@@ -53,6 +53,7 @@ export function Description(props: Props) {
         ></div>
         {!manualFull && overflow ? (
           <TextButton
+            className='text-text1'
             withDecoration
             onClick={() => {
               manualSetFull(true);
@@ -72,6 +73,6 @@ export function Description(props: Props) {
           Less
         </TextButton>
       ) : null}
-    </>
+    </div>
   );
 }

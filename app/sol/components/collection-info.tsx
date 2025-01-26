@@ -24,7 +24,7 @@ export function CollectionInfo({ collection }: { collection: Collection }) {
           <h1 style={bungee.style} className='text-[40px]'>
             {collection.name}
           </h1>
-          <span className=''>5,000 NFTs</span>
+          <span className=''>{collection.total.toLocaleString()} NFTs</span>
         </div>
       </div>
       <div className='flex items-center gap-16'>

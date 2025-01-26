@@ -7,6 +7,7 @@ import { FloatLayerProvider } from "@/primitive/components";
 import { ThemeProvider } from "./layout/theme";
 import { Header } from "./layout/header";
 import { Portal } from "./layout/portal";
+import { PAGE_VIEW_ID } from "@/lib/page-view";
 
 const ibm = IBM_Plex_Mono({
   variable: "--ibm-plex-mono",
@@ -40,13 +41,14 @@ export default function RootLayout({
       <link rel='icon' href='/logo.svg' type='image/x-icon' />
       <ThemeProvider defaultTheme={"dark"}>
         <body
+          id={PAGE_VIEW_ID}
           className={`${ibm.variable} antialiased bg-[url('/background.png')]`}
         >
           <FloatLayerProvider>
             <WalletProvider>
               <Header />
               <Portal />
-              
+
               {/* <PageLoadingProgressBar /> */}
               {children}
             </WalletProvider>

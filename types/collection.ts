@@ -1,3 +1,15 @@
+export const nftSearchSortBys = [
+  "rarityDesc",
+  "numberAsc",
+  "numberDesc",
+] as const;
+export type NftSearchSortBy = (typeof nftSearchSortBys)[number];
+export const nftSearchSortByLabels = {
+  rarityDesc: "Rarity",
+  numberAsc: "No. Asc",
+  numberDesc: "No. Desc",
+} as Record<NftSearchSortBy, string>;
+
 export interface Collection {
   _id: string;
   id: string;
@@ -9,6 +21,7 @@ export interface Collection {
   logo: string;
   name: string;
   updatedAt: string;
+  total: number;
 }
 export interface Price {
   value: number;

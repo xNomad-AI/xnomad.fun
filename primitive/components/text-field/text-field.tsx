@@ -73,7 +73,7 @@ export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
       as='label'
       static
       className={clsx(
-        "flex items-center h-40 px-12 text-size-14 rounded-4 gap-8 text-text1 bg-surface border-1 min-w-0",
+        "flex items-center h-40 px-12 border-white-20 text-size-14 rounded-4 gap-8 text-text1 bg-surface border-1 min-w-0",
         style[variant],
         className,
         { "!opacity-40 !cursor-not-allowed": disabled }

@@ -1,7 +1,11 @@
 "use client";
+import { bungee } from "@/app/layout/font";
+import { Address } from "@/components/address";
+import { Card, IconDocs } from "@/primitive/components";
+import { NFT } from "@/types";
 import clsx from "clsx";
 import Image from "next/image";
-export function InfoSection({ address }: { address: string }) {
+export function InfoSection({ nft }: { nft: NFT }) {
   return (
     <div className='flex flex-col w-[280px] gap-16'>
       <Image
@@ -9,15 +13,48 @@ export function InfoSection({ address }: { address: string }) {
         width={280}
         height={280}
         alt=''
-        src={"/brand.png"}
+        src={nft.image}
       />
       <div className='flex flex-col gap-8'>
-        <h1 className='text-size-24'>Nova</h1>
+        <h1 style={bungee.style} className='text-size-24'>
+          {nft.name}
+        </h1>
         <div className='flex items-center gap-4'>
           <CollectionLogo logo={"/brand.png"} size={24} />
-          XNomad
+          {nft.collectionName}
         </div>
-        {address}
+        <Card className='flex flex-col gap-16 p-16 w-full'>
+          <div className='flex items-center justify-between'>
+            <span className='font-bold'>Asset ID</span>
+            <Address address={nft.id} />
+          </div>
+          <div className='flex items-center justify-between'>
+            <span className='font-bold'>Owner</span>
+            {/* TODO: wait for nft owner support */}
+            <Address address={nft.id} />
+          </div>
+          <div className='flex items-center justify-between'>
+            <span className='font-bold'>Character Files</span>
+            <IconDocs />
+          </div>
+        </Card>
+        <Card className='flex flex-col gap-16 p-16 w-full'>
+          <div className='flex items-center justify-between'>
+            <span className='font-bold'>Rarity</span>
+            <span>#{nft.rarity.rank}</span>
+          </div>
+        </Card>
+        <Card className='flex flex-col gap-16 p-16 w-full'>
+          {nft.traits.map((trait) => (
+            <div
+              key={trait.value}
+              className='flex items-center justify-between'
+            >
+              <span>{trait.type}</span>
+              <span>{trait.value}</span>
+            </div>
+          ))}
+        </Card>
       </div>
     </div>
   );

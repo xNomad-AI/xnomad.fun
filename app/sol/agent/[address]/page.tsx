@@ -2,6 +2,7 @@ import { Container } from "@/app/layout/contianer";
 import { InfoSection } from "./info";
 import { NFT } from "@/types";
 import { ModelProviderName } from "@elizaos/core";
+import { ChatPage } from "./chat/components/chat";
 
 export default function Page({
   params,
@@ -61,6 +62,7 @@ export default function Page({
   return (
     <Container className='flex gap-48 w-full'>
       <InfoSection nft={nft} />
+      <ChatPage agentId={nft.aiAgent.character.id} />
     </Container>
   );
 }

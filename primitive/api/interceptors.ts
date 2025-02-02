@@ -1,8 +1,4 @@
-import {
-  ApiCancelError,
-  ApiInvalidResponseError,
-  ApiResponseError,
-} from "./error";
+import { ApiCancelError, ApiInvalidResponseError } from "./error";
 import {
   ApiResponse,
   ApiServiceRequestInterceptor,
@@ -89,10 +85,11 @@ export const response: ApiServiceResponseInterceptor = async (
 
     const body = await (res as Response).json();
     if (isApiResponse(body)) {
-      if (body.code === "SUCCESS") {
+      if (body.data) {
         return body.data;
+      } else {
+        return body;
       }
-      throw new ApiResponseError(body, config);
     } else {
       throw new ApiInvalidResponseError();
     }
@@ -108,5 +105,5 @@ export const response: ApiServiceResponseInterceptor = async (
 };
 
 function isApiResponse(body: unknown): body is ApiResponse<unknown> {
-  return typeof body === "object" && body !== null && Reflect.has(body, "code");
+  return typeof body === "object" && body !== null;
 }

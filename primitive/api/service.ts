@@ -1,4 +1,10 @@
-import { ApiServiceRequestInterceptor, ApiServiceResponseInterceptor, FetchInit, Payload, RequestConfig } from './type';
+import {
+  ApiServiceRequestInterceptor,
+  ApiServiceResponseInterceptor,
+  FetchInit,
+  Payload,
+  RequestConfig,
+} from "./type";
 
 type ApiInterceptors = {
   requests: ApiServiceRequestInterceptor[];
@@ -14,26 +20,33 @@ export class ApiService {
     responses: null,
   };
 
-  constructor(requests: ApiServiceRequestInterceptor[] = [], responses: ApiServiceResponseInterceptor | null = null) {
+  constructor(
+    requests: ApiServiceRequestInterceptor[] = [],
+    responses: ApiServiceResponseInterceptor | null = null
+  ) {
     this.interceptors.requests = requests;
     this.interceptors.responses = responses;
   }
 
   get = async <R>(source: string, payload?: Payload, init: FetchInit = {}) => {
     const pathname = this.parsePathname(source);
-    init.method = 'GET';
+    init.method = "GET";
     return this.fetch(pathname, payload, init) as R;
   };
 
   post = async <R>(source: string, payload?: Payload, init: FetchInit = {}) => {
     this.ensureValidPathname(source);
-    init.method = 'POST';
+    init.method = "POST";
     return this.fetch(source, payload, init) as R;
   };
 
-  delete = async <R>(source: string, payload?: Payload, init: FetchInit = {}) => {
+  delete = async <R>(
+    source: string,
+    payload?: Payload,
+    init: FetchInit = {}
+  ) => {
     this.ensureValidPathname(source);
-    init.method = 'delete';
+    init.method = "delete";
     return this.fetch(source, payload, init) as R;
   };
 
@@ -42,11 +55,14 @@ export class ApiService {
       ...init,
       payload,
       url,
-      baseURL: '',
+      baseURL: "",
       indices: init.indices ?? true,
       headers: new Headers(init.headers),
     };
-    const config = this.interceptors.requests.reduce((config, fn) => fn(config), rc);
+    const config = this.interceptors.requests.reduce(
+      (config, fn) => fn(config),
+      rc
+    );
     const promise = fetch(...this.parseRequestConfig(config));
     if (this.interceptors.responses) {
       return this.interceptors.responses(promise, config);
@@ -55,13 +71,14 @@ export class ApiService {
   }
 
   private ensureValidPathname(source: string) {
-    if (!source.startsWith('/')) {
-      throw new Error('Request Pathname should startsWith slash');
+    if (!source.startsWith("/")) {
+      throw new Error("Request Pathname should startsWith slash");
     }
     return true;
   }
 
   private parseRequestConfig(rc: RequestConfig) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { baseURL, url, payload, ...init } = rc;
     return [`${baseURL}${url}`, init] as [string, FetchInit];
   }

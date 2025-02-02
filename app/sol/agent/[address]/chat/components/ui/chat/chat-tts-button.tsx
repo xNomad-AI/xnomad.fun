@@ -62,7 +62,7 @@ export default function ChatTtsButton({
     }
   };
 
-  const iconClass = "text-muted-foreground size-4";
+  const iconClass = "text-muted-foreground size-16";
 
   return (
     <div>

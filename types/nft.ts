@@ -1,8 +1,10 @@
-import { Character } from "@elizaos/core";
+import { Character, UUID } from "@elizaos/core";
 
 export interface NFT {
   _id: string;
-  id: string;
+  id: UUID;
+  agentId: UUID;
+  owner: string;
   aiAgent: {
     engine: string;
     character: Character;

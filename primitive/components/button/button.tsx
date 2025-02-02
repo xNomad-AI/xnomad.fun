@@ -64,7 +64,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           style.size[group.inGroup ? group.size : size],
           style.rounded[group.inGroup ? group.size : size],
           style.variant[variant],
-          stretch ? "w-full" : "w-fit",
+          stretch ? "w-full" : size === "icon" ? "" : "w-fit",
           { "!cursor-not-allowed": disabled || loading },
           "data-[square=square]:!aspect-square data-[square=square]:!px-0 data-[square=square]:!shrink-0 data-[square=square]:!grow-0",
           className

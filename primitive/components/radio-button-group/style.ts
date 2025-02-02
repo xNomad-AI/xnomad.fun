@@ -7,8 +7,8 @@ const container: Record<RadioButtonVariant, string> = {
 };
 
 const item: Record<RadioButtonVariant, string> = {
-  normal: clsx("bg-background shadow-base"),
-  reverse: clsx("bg-background shadow-base"),
+  normal: clsx("bg-white shadow-base"),
+  reverse: clsx("bg-white shadow-base"),
 };
 
 export const style = {

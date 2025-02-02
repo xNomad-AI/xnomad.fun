@@ -20,7 +20,7 @@ const CopyButton = ({ text }: { text: string }) => {
         size='icon'
         className='flex items-center space-x-2 text-muted-foreground'
       >
-        {copied ? <Check className='size-4' /> : <Copy className='size-4' />}
+        {copied ? <Check className='size-16' /> : <Copy className='size-16' />}
       </Button>
     </Tooltip>
   );

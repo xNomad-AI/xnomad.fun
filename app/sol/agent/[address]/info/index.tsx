@@ -4,11 +4,10 @@ import { Address } from "@/components/address";
 import { Card, IconDocs } from "@/primitive/components";
 import { NFT } from "@/types";
 import clsx from "clsx";
-import Image from "next/image";
 export function InfoSection({ nft }: { nft: NFT }) {
   return (
     <div className='flex flex-col w-[280px] gap-16'>
-      <Image
+      <img
         className='w-full aspect-square rounded-12'
         width={280}
         height={280}
@@ -30,8 +29,7 @@ export function InfoSection({ nft }: { nft: NFT }) {
           </div>
           <div className='flex items-center justify-between'>
             <span className='font-bold'>Owner</span>
-            {/* TODO: wait for nft owner support */}
-            <Address address={nft.id} />
+            <Address address={nft.owner} />
           </div>
           <div className='flex items-center justify-between'>
             <span className='font-bold'>Character Files</span>
@@ -77,7 +75,7 @@ function CollectionLogo({
       }}
       className={clsx(className, "rounded-4 border overflow-hidden")}
     >
-      <Image
+      <img
         width={size}
         height={size}
         alt=''

@@ -47,8 +47,8 @@ export function RadioButton<T extends string>(
         (disableAnimation && selected) || (selected && !initialized)
           ? style.item[variant]
           : "bg-transparent",
-        selected ? "text-text1" : "text-text2",
-        isIconButton ? "px-0" : "px-8",
+        selected ? "text-black font-medium" : "text-text2",
+        isIconButton ? "px-0" : "px-24",
         disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer ",
         className
       )}

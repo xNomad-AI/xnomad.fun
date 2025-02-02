@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { Ellipsis, Mic, Send, Trash } from "lucide-react";
@@ -6,7 +7,7 @@ import clsx from "clsx";
 import { useMutation } from "@tanstack/react-query";
 import { UUID } from "@elizaos/core";
 import { apiClient } from "../lib/api";
-import { Button, message, Tooltip } from "@/primitive/components";
+import { message, Tooltip } from "@/primitive/components";
 
 type Props = {
   agentId: UUID;
@@ -197,9 +198,9 @@ export const AudioRecorder = ({
 
   if (mutation?.isPending) {
     return (
-      <Button variant='ghost' disabled size='icon'>
-        <Ellipsis className='size-4' />
-      </Button>
+      <button className='cursor-not-allowed'>
+        <Ellipsis className='size-16' />
+      </button>
     );
   }
 
@@ -230,27 +231,26 @@ export const AudioRecorder = ({
         {/* ========== Delete recording button ========== */}
         {isRecording ? (
           <Tooltip content={<span> Reset recording</span>}>
-            <Button onClick={resetRecording} size={"icon"} variant='ghost'>
-              <Trash className='size-4' />
-            </Button>
+            <button onClick={resetRecording}>
+              <Trash className='size-16' />
+            </button>
           </Tooltip>
         ) : null}
 
         {/* ========== Start and send recording button ========== */}
         <Tooltip content={<span>{!isRecording ? "Start" : "Send"} </span>}>
           {!isRecording ? (
-            <Button
-              variant='ghost'
-              size='icon'
+            <button
+              className='flex items-center gap-8'
               onClick={() => startRecording()}
             >
-              <Mic className='size-4' />
+              <Mic className='size-16' />
               <span className='sr-only'>Use Microphone</span>
-            </Button>
+            </button>
           ) : (
-            <Button onClick={handleSubmit} variant='ghost' size='icon'>
-              <Send className='size-4' />
-            </Button>
+            <button onClick={handleSubmit}>
+              <Send className='size-16' />
+            </button>
           )}
         </Tooltip>
       </div>

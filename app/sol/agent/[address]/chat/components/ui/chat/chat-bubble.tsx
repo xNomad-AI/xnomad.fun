@@ -3,7 +3,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 import clsx from "clsx";
 import MessageLoading from "./message-loading";
 import { Button, ButtonProps } from "@/primitive/components";
-import Image from "next/image";
 
 // ChatBubble
 const chatBubbleVariant = cva(
@@ -66,7 +65,7 @@ const ChatBubbleAvatar: React.FC<ChatBubbleAvatarProps> = ({
   className,
 }) => (
   <div className={clsx("rounded-full h-32 w-32", className)}>
-    <Image src={src ?? fallback ?? ""} height={32} width={32} alt='Avatar' />
+    <img src={src ?? fallback ?? ""} height={32} width={32} alt='Avatar' />
   </div>
 );
 

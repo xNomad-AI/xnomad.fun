@@ -1,3 +1,4 @@
+"use client";
 import { useTransition, animated } from "@react-spring/web";
 import { Paperclip, Send, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -20,7 +21,6 @@ import {
 import clsx from "clsx";
 import { moment } from "../lib/utils";
 import { ChatInput } from "./ui/chat/chat-input";
-import Image from "next/image";
 
 interface ExtraContentFields {
   user: string;
@@ -159,7 +159,7 @@ export function ChatPage({ agentId }: { agentId: UUID }) {
   });
 
   return (
-    <div className='flex flex-col w-full h-[calc(100dvh)] p-4'>
+    <div className='flex flex-col w-[720px] h-[calc(100vh-64px-64px-72px)] p-4'>
       <div className='flex-1 overflow-y-auto'>
         <ChatMessageList ref={messagesContainerRef}>
           {transitions((styles, message) => {
@@ -174,7 +174,7 @@ export function ChatPage({ agentId }: { agentId: UUID }) {
                 >
                   {message?.user !== "user" ? (
                     <div className='h-32 w-32 p-1 border rounded-full select-none'>
-                      <Image
+                      <img
                         height={32}
                         width={32}
                         alt=''
@@ -243,79 +243,74 @@ export function ChatPage({ agentId }: { agentId: UUID }) {
           })}
         </ChatMessageList>
       </div>
-      <div className='px-4 pb-4'>
-        <form
-          ref={formRef}
-          onSubmit={handleSendMessage}
-          className='relative rounded-md border bg-card'
-        >
-          {selectedFile ? (
-            <div className='p-3 flex'>
-              <div className='relative rounded-md border p-2'>
-                <Button
-                  onClick={() => setSelectedFile(null)}
-                  className='absolute -right-2 -top-2 size-[22px] ring-2 ring-background'
-                  variant='solid'
-                >
-                  <X />
-                </Button>
-                <img
-                  src={URL.createObjectURL(selectedFile)}
-                  height='100%'
-                  width='100%'
-                  className='aspect-square object-contain w-16'
-                />
-              </div>
-            </div>
-          ) : null}
-          <ChatInput
-            ref={inputRef}
-            onKeyDown={handleKeyDown}
-            value={input}
-            onChange={({ target }) => setInput(target.value)}
-            placeholder='Type your message here...'
-            className='min-h-12 resize-none rounded-md bg-card border-0 p-3 shadow-none focus-visible:ring-0'
+
+      <form
+        ref={formRef}
+        onSubmit={handleSendMessage}
+        className='rounded-12 p-16 bg-surface flex items-center gap-8 border border-white-20'
+      >
+        <Tooltip content={<p>Attach file</p>} className='flex items-center'>
+          <button
+            onClick={() => {
+              if (fileInputRef.current) {
+                fileInputRef.current.click();
+              }
+            }}
+          >
+            <Paperclip className='size-16' />
+            <span className='sr-only'>Attach file</span>
+          </button>
+          <input
+            type='file'
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept='image/*'
+            className='hidden'
           />
-          <div className='flex items-center p-3 pt-0'>
-            <Tooltip content={<p>Attach file</p>}>
-              <div>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => {
-                    if (fileInputRef.current) {
-                      fileInputRef.current.click();
-                    }
-                  }}
-                >
-                  <Paperclip className='size-4' />
-                  <span className='sr-only'>Attach file</span>
-                </Button>
-                <input
-                  type='file'
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept='image/*'
-                  className='hidden'
-                />
-              </div>
-            </Tooltip>
-            <AudioRecorder
-              agentId={agentId}
-              onChange={(newInput: string) => setInput(newInput)}
-            />
-            <Button
-              disabled={!input || sendMessageMutation?.isPending}
-              type='submit'
-              size='xs'
-              className='ml-auto gap-1.5 h-[30px]'
-            >
-              {sendMessageMutation?.isPending ? "..." : "Send Message"}
-              <Send className='size-3.5' />
-            </Button>
+        </Tooltip>
+        <AudioRecorder
+          agentId={agentId}
+          onChange={(newInput: string) => setInput(newInput)}
+        />
+
+        <ChatInput
+          ref={inputRef}
+          onKeyDown={handleKeyDown}
+          value={input}
+          onChange={({ target }) => setInput(target.value)}
+          placeholder='Type message'
+          className='min-h-12 resize-none border-0 shadow-none focus-visible:ring-0'
+        />
+        {selectedFile ? (
+          <div className='p-3 flex'>
+            <div className='relative rounded-md border p-2'>
+              <Button
+                onClick={() => setSelectedFile(null)}
+                className='absolute -right-2 -top-2 size-[22px] ring-2 ring-background'
+                variant='solid'
+              >
+                <X />
+              </Button>
+              <img
+                src={URL.createObjectURL(selectedFile)}
+                height='100%'
+                width='100%'
+                className='aspect-square object-contain w-16'
+              />
+            </div>
           </div>
-        </form>
-      </div>
+        ) : null}
+        <button
+          disabled={!input || sendMessageMutation?.isPending}
+          type='submit'
+          className={clsx({
+            "cursor-not-allowed": !input || sendMessageMutation?.isPending,
+          })}
+        >
+          {sendMessageMutation?.isPending ? "..." : ""}
+          <Send className='size-20 rotate-45' />
+        </button>
+      </form>
     </div>
   );
 }

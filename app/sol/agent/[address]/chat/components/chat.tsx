@@ -21,6 +21,7 @@ import {
 import clsx from "clsx";
 import { moment } from "../lib/utils";
 import { ChatInput } from "./ui/chat/chat-input";
+import { NFT } from "@/types";
 
 interface ExtraContentFields {
   user: string;
@@ -30,7 +31,7 @@ interface ExtraContentFields {
 
 type ContentWithUser = Content & ExtraContentFields;
 
-export function ChatPage({ agentId }: { agentId: UUID }) {
+export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [input, setInput] = useState("");
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -173,14 +174,13 @@ export function ChatPage({ agentId }: { agentId: UUID }) {
                   className='flex flex-row items-center gap-2'
                 >
                   {message?.user !== "user" ? (
-                    <div className='h-32 w-32 p-1 border rounded-full select-none'>
-                      <img
-                        height={32}
-                        width={32}
-                        alt=''
-                        src='/elizaos-icon.png'
-                      />
-                    </div>
+                    <img
+                      className='h-32 w-32 flex-shrink-0 p-1 border rounded-full select-none'
+                      height={32}
+                      width={32}
+                      alt=''
+                      src={nft.image}
+                    />
                   ) : null}
                   <div className='flex flex-col'>
                     <ChatBubbleMessage isLoading={message?.isLoading}>

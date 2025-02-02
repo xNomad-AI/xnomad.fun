@@ -18,7 +18,9 @@ export function Content({ nft }: { nft: NFT }) {
           </RadioButton>
         ))}
       </RadioButtonGroup>
-      {nft.agentId && tab === "chat" && <ChatPage agentId={nft.agentId} />}
+      {nft.agentId && tab === "chat" && (
+        <ChatPage agentId={nft.agentId} nft={nft} />
+      )}
     </div>
   );
 }

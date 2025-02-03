@@ -1,0 +1,128 @@
+import { Card, IconSol } from "@/primitive/components";
+import { NFT } from "@/types";
+import BigNumber from "bignumber.js";
+import { toIntl } from "@/lib/utils/number/bignumber";
+import { DepositContainer } from "../container";
+import { useEffect, useState } from "react";
+import { Activity, getActivities } from "./network";
+import { upperFirstLetter } from "@/lib/utils/string";
+import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
+import { InfiniteScrollList } from "@/components/infinit-scroll";
+import { useRequest } from "ahooks";
+
+export function Analytics({ nft }: { nft: NFT }) {
+  const [activity, setActivity] = useState<Activity[]>([]);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const { loading, run } = useRequest(
+    async () => {
+      getActivities({
+        address: "GaG71n3mdhbCDzb8KWrevEazH6Z7MKWZBtnPT87hRYR4",
+        offset: activity.length,
+        limit: 20,
+      }).then((res) => {
+        setActivity([...activity, ...res.items]);
+        setHasNextPage(res.has_next);
+      });
+    },
+    {
+      manual: true,
+    }
+  );
+  useEffect(() => {
+    if (!nft.agentAccount.solana) return;
+    getActivities({
+      address: "GaG71n3mdhbCDzb8KWrevEazH6Z7MKWZBtnPT87hRYR4",
+      offset: 0,
+      limit: 20,
+    }).then((res) => {
+      setActivity(res.items);
+      setHasNextPage(res.has_next);
+    });
+  }, [nft.agentAccount.solana]);
+  return (
+    <DepositContainer address={nft.agentAccount.solana}>
+      <div className='flex mt-16 flex-col w-full'>
+        {activity.length > 0 ? (
+          <InfiniteScrollList
+            items={activity}
+            renderItem={(item) => (
+              <Card key={item.tx_hash} className='p-16 flex items-center gap-8'>
+                <ActionTag data={item} />
+                <span>{toIntl(BigNumber(item.quote.ui_amount))}</span>
+                <div className='flex items-center gap-4'>
+                  <span className='text-green'>{item.quote.symbol}</span>
+                  <span className='text-text2'>
+                    ($
+                    {toIntl(
+                      BigNumber(item.quote.amount)
+                        .div(10 ** item.quote.decimals)
+                        .multipliedBy(item.quote.price)
+                    )}
+                    )
+                  </span>
+                </div>
+                <span className='text-size-12 text-text2'>with</span>
+
+                <div className='flex items-center gap-4'>
+                  <IconSol className='text-size-16' />
+                  <span className='text-text2'>
+                    {toIntl(
+                      BigNumber(item.base.amount).div(10 ** item.base.decimals)
+                    )}
+                    ($
+                    {toIntl(
+                      BigNumber(item.base.amount).multipliedBy(item.base.price)
+                    )}
+                    )
+                  </span>
+                </div>
+                <div className='flex-1'></div>
+                <a
+                  href={`https://explorer.solana.com/tx/${item.tx_hash}`}
+                  target='_blank'
+                  rel='noreferrer'
+                  className='underline'
+                >
+                  {beautifyTimeV2(item.block_unix_time * 1000)}
+                </a>
+              </Card>
+            )}
+            hasNextPage={hasNextPage}
+            isNextPageLoading={loading}
+            loadNextPage={run}
+          />
+        ) : (
+          <div className='flex justify-center w-full p-16 h-[200px] items-center'>
+            No Activity
+          </div>
+        )}
+      </div>
+    </DepositContainer>
+  );
+}
+
+function ActionTag({ data }: { data: Activity }) {
+  switch (data.tx_type) {
+    case "swap":
+      if (data.base.amount > 0) {
+        return (
+          <div className='px-8 py-4 h-26 flex items-center bg-red-10 text-red rounded-4'>
+            Sell
+          </div>
+        );
+      } else {
+        return (
+          <div className='px-8 py-4 h-26 flex items-center bg-green-10 text-green rounded-4'>
+            Buy
+          </div>
+        );
+      }
+
+    default:
+      return (
+        <div className='px-8 py-4 h-26 flex items-center bg-brand-10 text-brand rounded-4'>
+          {upperFirstLetter(data.tx_type)}
+        </div>
+      );
+  }
+}

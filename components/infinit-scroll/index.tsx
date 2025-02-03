@@ -4,8 +4,6 @@ import React, { useEffect, useState } from "react";
 import { FixedSizeList } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 
-const itemSize = 60;
-const gutterSize = 16;
 export function InfiniteScrollList({
   // Are there more items to load?
   // (This information comes from the most recent API request.)
@@ -22,6 +20,9 @@ export function InfiniteScrollList({
   loadNextPage,
   props,
   renderItem,
+  itemSize = 60,
+  gutterSize = 16,
+  height: _height,
 }: {
   hasNextPage: boolean;
   isNextPageLoading: boolean;
@@ -29,6 +30,9 @@ export function InfiniteScrollList({
   loadNextPage: () => void;
   props?: any;
   renderItem: (item: any) => React.ReactNode;
+  itemSize?: number;
+  gutterSize?: number;
+  height?: number;
 }) {
   // If there are more items to be loaded then add an extra row to hold a loading indicator.
   const itemCount = hasNextPage ? items.length + 1 : items.length;
@@ -39,8 +43,9 @@ export function InfiniteScrollList({
 
   // Every row is loaded except for our loading indicator row.
   const isItemLoaded = (index: number) => !hasNextPage || index < items.length;
-  const [height, setHeight] = useState(396);
+  const [height, setHeight] = useState(_height ?? 396);
   useEffect(() => {
+    if (_height) return;
     const bodyHeight = document.body.clientHeight;
     const headerHeight = 64;
     const liveBarHeight = 40;
@@ -48,7 +53,7 @@ export function InfiniteScrollList({
     setHeight(
       bodyHeight - (headerHeight ?? 0) - overviewHeight - liveBarHeight - 32 * 3
     );
-  }, []);
+  }, [_height]);
   return (
     <InfiniteLoader
       isItemLoaded={isItemLoaded}

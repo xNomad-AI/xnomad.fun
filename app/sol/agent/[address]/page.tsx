@@ -4,13 +4,8 @@ import { NFT } from "@/types";
 import { api } from "@/primitive/api";
 import { Content } from "./content";
 
-export default async function Page({
-  params,
-}: {
-  params: {
-    address: string;
-  };
-}) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function Page({ params }: { params: any }) {
   const address = params.address;
   const nft = await api.v1.get<NFT>(`/nft/solana/nfts/${address}`);
   return (

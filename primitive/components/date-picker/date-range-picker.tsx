@@ -11,7 +11,6 @@ import { Dropdown, DropdownController } from "../dropdown";
 import { IconArrowForwardright, IconClose, IconDateRange } from "../icon";
 import { formatDate } from "./utils";
 import { Hour, Minute, TimeSelectPanel } from "../calendar/time-select-panel";
-import { UTC_TIMEZONE_OFFSET } from "@/lib/utils/date";
 
 export type DateRangePickerProps = Pick<
   CalendarProps,

@@ -8,7 +8,7 @@ export const usePageProgressStore = create(
     triggerProgress: (destination: string) => void;
     endProgress: () => void;
   }>((set, get) => {
-    let intervalRef: NodeJS.Timer;
+    let intervalRef: ReturnType<typeof setInterval>;
     return {
       progress: 0,
       setProgress: (progress: number) => {
@@ -25,7 +25,7 @@ export const usePageProgressStore = create(
           state.progress = 20;
         });
         if (intervalRef) {
-          clearInterval(intervalRef as any);
+          clearInterval(intervalRef);
         }
         intervalRef = setInterval(() => {
           set((state) => {
@@ -39,7 +39,7 @@ export const usePageProgressStore = create(
             if (prev < 99) {
               prev += 1;
             } else {
-              clearInterval(intervalRef as any);
+              clearInterval(intervalRef);
             }
             state.progress = prev;
           });
@@ -53,7 +53,7 @@ export const usePageProgressStore = create(
           state.progress = 100;
         });
         if (intervalRef) {
-          clearInterval(intervalRef as any);
+          clearInterval(intervalRef);
         }
         setTimeout(() => {
           set((state) => {

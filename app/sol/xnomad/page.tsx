@@ -6,6 +6,7 @@ import { Description } from "../components/description";
 import { CollectionFilter } from "../components/collection-filter";
 import { CollectionNFTs } from "../components/collection-nfts";
 import { api } from "@/primitive/api";
+import { SideBar } from "../components/side-bar";
 const XNOMAD_ID = "d767895962f658681f490b3b7f9ff9de";
 export default async function Page() {
   const { collection } = await api.v1.get<{
@@ -18,9 +19,8 @@ export default async function Page() {
       <CollectionInfo collection={collection} />
       <Description __html={collection.description} />
       <CollectionFilter />
-      <div className='w-full flex'>
-        {/* TODO: wait for traits filter support */}
-        {/* <CollectionSidebar /> */}
+      <div className='w-full flex gap-24'>
+        <SideBar />
         <CollectionNFTs collection={collection} />
       </div>
     </main>

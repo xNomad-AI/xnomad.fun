@@ -4,6 +4,10 @@ import { immer } from "zustand/middleware/immer";
 interface NftSearchParams {
   keyword?: string;
   sortBy?: NftSearchSortBy;
+  traitsQuery: {
+    traitValue: string;
+    traitType: string;
+  }[];
 }
 export const useCollectionStore = create(
   immer<{
@@ -23,6 +27,7 @@ export const useCollectionStore = create(
     nftSearchParams: {
       keyword: undefined,
       sortBy: "rarityDesc",
+      traitsQuery: [],
     },
     setNftSearchParams: (params) =>
       set((state) => {
@@ -41,6 +46,7 @@ export const useCollectionStore = create(
         state.nftSearchParams = {
           keyword: undefined,
           sortBy: "rarityDesc",
+          traitsQuery: [],
         };
         state.traitsFilterOpen = false;
       });

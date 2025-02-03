@@ -24,6 +24,17 @@ export function CollectionNFTs({ collection }: { collection: Collection }) {
           offset: currentData?.list.length ?? 0,
           limit: currentData ? 10 : 60,
           ...nftSearchParams,
+          traitsQuery:
+            nftSearchParams.traitsQuery.length > 0
+              ? JSON.stringify(
+                  nftSearchParams.traitsQuery.map((t) => {
+                    return {
+                      traitType: encodeURIComponent(t.traitType),
+                      traitValue: encodeURIComponent(t.traitValue),
+                    };
+                  })
+                )
+              : undefined,
         }
       );
       return {

@@ -5,6 +5,7 @@ import { ChatPage } from "../chat/components/chat";
 import { NFT } from "@/types";
 import { RadioButton, RadioButtonGroup } from "@/primitive/components";
 import { upperFirstLetter } from "@/lib/utils/string";
+import { Portfolio } from "./portfolio";
 const tabs = ["chat", "portfolio", "analytics", "features"] as const;
 type Tab = (typeof tabs)[number];
 export function Content({ nft }: { nft: NFT }) {
@@ -21,6 +22,7 @@ export function Content({ nft }: { nft: NFT }) {
       {nft.agentId && tab === "chat" && (
         <ChatPage agentId={nft.agentId} nft={nft} />
       )}
+      {tab === "portfolio" && <Portfolio nft={nft} />}
     </div>
   );
 }

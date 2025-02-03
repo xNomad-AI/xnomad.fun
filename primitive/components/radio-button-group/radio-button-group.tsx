@@ -52,7 +52,7 @@ export function RadioButtonGroup<T>(
         )}
       >
         <div
-          className='flex h-full items-center rounded-4 bg-transparent border border-white-40 overflow-hidden flex-nowrap relative'
+          className='flex h-full items-center rounded-6 bg-transparent border border-white-40 flex-nowrap relative'
           ref={container}
         >
           {children}

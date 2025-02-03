@@ -38,9 +38,12 @@ export function SideBar() {
   }, [filterTemplate]);
   return (
     <div
-      className={clsx("flex flex-col gap-8 w-[240px]", {
-        hidden: !traitsFilterOpen,
-      })}
+      className={clsx(
+        "flex flex-col gap-8 w-[240px] h-[calc(100vh-372px)] overflow-auto flex-shrink-0",
+        {
+          hidden: !traitsFilterOpen,
+        }
+      )}
     >
       <Collapse
         title={

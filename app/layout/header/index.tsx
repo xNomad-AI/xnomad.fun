@@ -17,11 +17,11 @@ import { usePathname } from "next/navigation";
 import { PropsWithChildren } from "react";
 const navs = [
   {
-    href: "/xNomad",
+    href: "/sol/xnomad",
     label: "xNomad Gallery",
   },
   {
-    href: "/profile",
+    href: "",
     label: "My AI-NFTs",
   },
   {

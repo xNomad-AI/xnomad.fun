@@ -7,8 +7,8 @@ import { useInfiniteScroll } from "ahooks";
 import { api, ApiListData } from "@/primitive/api";
 import { getPageViewElement } from "@/lib/page-view";
 import { CardViewGallery } from "./card-view-gallery";
-import Image from "next/image";
 import { bungee, bungeeInline } from "@/app/layout/font";
+import Link from "next/link";
 
 export function CollectionNFTs({ collection }: { collection: Collection }) {
   const { setCollection, nftSearchParams } = useCollectionStore();
@@ -19,7 +19,7 @@ export function CollectionNFTs({ collection }: { collection: Collection }) {
   const { data, loading, loadingMore } = useInfiniteScroll(
     async (currentData?: ApiListData<NFT>) => {
       const response = await api.v1.get<NFT[]>(
-        `/nft/solana/collection/${collection.contracts[0]}/nfts`,
+        `/nft/solana/collection/${collection.id}/nfts`,
         {
           offset: currentData?.list.length ?? 0,
           limit: currentData ? 10 : 60,
@@ -36,7 +36,10 @@ export function CollectionNFTs({ collection }: { collection: Collection }) {
       reloadDeps: [nftSearchParams, collection.id],
       isNoMore(data) {
         if (data) {
-          return data.list.length >= data.total;
+          return (
+            (!nftSearchParams.keyword && data.list.length >= 5000) ||
+            Boolean(nftSearchParams.keyword)
+          );
         }
         return false;
       },
@@ -49,27 +52,29 @@ export function CollectionNFTs({ collection }: { collection: Collection }) {
       count={data?.list.length ?? 0}
     >
       {data?.list.map((nft) => (
-        <div
+        <Link
+          href={`/sol/agent/${nft.id}`}
           key={nft.id}
           className='flex-col flex gap-12 min-w-[180px] max-w-[240px]'
         >
-          <Image
+          <img
             src={nft.image}
             width={240}
             height={240}
             alt={nft.name}
+            loading='lazy'
             className='w-full aspect-square rounded-12'
           />
           <div className='flex flex-col w-full items-center'>
             <span style={bungeeInline.style} className='text-size-12'>
               {collection.name}
             </span>
-            <span style={bungee.style}>No.{nft.nftId}</span>
+            <span style={bungee.style}>{nft.name}</span>
             <div className='mt-4 px-4 h-18 border border-white-40 flex items-center text-white-40 text-size-12'>
               #{nft.rarity.rank}
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </CardViewGallery>
   );

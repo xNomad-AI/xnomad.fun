@@ -3,7 +3,10 @@ import { IBM_Plex_Mono } from "next/font/google";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import "./globals.css";
 import { WalletProvider } from "./layout/wallet-provider";
-import { FloatLayerProvider } from "@/primitive/components";
+import {
+  FloatLayerProvider,
+  GlobalMessageContainer,
+} from "@/primitive/components";
 import { ThemeProvider } from "./layout/theme";
 import { Header } from "./layout/header";
 import { Portal } from "./layout/portal";
@@ -52,6 +55,7 @@ export default function RootLayout({
               {/* <PageLoadingProgressBar /> */}
               {children}
             </WalletProvider>
+            <GlobalMessageContainer />
           </FloatLayerProvider>
         </body>
       </ThemeProvider>

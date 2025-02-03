@@ -28,4 +28,8 @@ export interface NFT {
     value: string;
   }[];
   updatedAt: string;
+  agentAccount: {
+    solana: string;
+    evm: string;
+  };
 }

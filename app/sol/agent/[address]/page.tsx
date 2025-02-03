@@ -4,9 +4,14 @@ import { NFT } from "@/types";
 import { api } from "@/primitive/api";
 import { Content } from "./content";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function Page({ params }: { params: any }) {
-  const address = params.address;
+export default async function Page({
+  params,
+}: {
+  params: Promise<{
+    address: string;
+  }>;
+}) {
+  const { address } = await params;
   const nft = await api.v1.get<NFT>(`/nft/solana/nfts/${address}`);
   return (
     <Container className='flex gap-48 w-full'>

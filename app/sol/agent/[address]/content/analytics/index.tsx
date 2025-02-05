@@ -16,7 +16,7 @@ export function Analytics({ nft }: { nft: NFT }) {
   const { loading, run } = useRequest(
     async () => {
       getActivities({
-        address: "GaG71n3mdhbCDzb8KWrevEazH6Z7MKWZBtnPT87hRYR4",
+        address: nft.agentAccount.solana,
         offset: activity.length,
         limit: 20,
       }).then((res) => {
@@ -31,7 +31,7 @@ export function Analytics({ nft }: { nft: NFT }) {
   useEffect(() => {
     if (!nft.agentAccount.solana) return;
     getActivities({
-      address: "GaG71n3mdhbCDzb8KWrevEazH6Z7MKWZBtnPT87hRYR4",
+      address: nft.agentAccount.solana,
       offset: 0,
       limit: 20,
     }).then((res) => {
@@ -50,7 +50,13 @@ export function Analytics({ nft }: { nft: NFT }) {
                 <ActionTag data={item} />
                 <span>{toIntl(BigNumber(item.quote.ui_amount))}</span>
                 <div className='flex items-center gap-4'>
-                  <span className='text-green'>{item.quote.symbol}</span>
+                  <span
+                    className={
+                      item.quote.amount > 0 ? "text-red" : "text-green"
+                    }
+                  >
+                    {item.quote.symbol}
+                  </span>
                   <span className='text-text2'>
                     ($
                     {toIntl(

@@ -30,6 +30,7 @@ export function DepositContainer({
           <span className='text-size-12'>Agent Wallet</span>
           <Address
             className='text-size-20 font-bold'
+            wholeAddress
             enableCopy
             address={address}
           />

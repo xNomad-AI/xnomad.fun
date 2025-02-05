@@ -1,9 +1,17 @@
 "use client";
 import { bungee } from "@/app/layout/font";
 import { Address } from "@/components/address";
-import { Card, IconDocs } from "@/primitive/components";
+import {
+  Card,
+  IconContract,
+  Modal,
+  ModalContent,
+  ModalTitleWithBorder,
+} from "@/primitive/components";
 import { NFT } from "@/types";
+import { Character } from "@elizaos/core";
 import clsx from "clsx";
+import { useState } from "react";
 export function InfoSection({ nft }: { nft: NFT }) {
   return (
     <div className='flex flex-col w-[280px] gap-16 flex-shrink-0'>
@@ -33,7 +41,7 @@ export function InfoSection({ nft }: { nft: NFT }) {
           </div>
           <div className='flex items-center justify-between'>
             <span className='font-bold'>Character Files</span>
-            <IconDocs />
+            <CharacterFileModal character={nft.aiAgent.character} />
           </div>
         </Card>
         <Card className='flex flex-col gap-16 p-16 w-full'>
@@ -83,5 +91,27 @@ function CollectionLogo({
         src={logo}
       />
     </div>
+  );
+}
+
+function CharacterFileModal({ character }: { character: Character }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <IconContract
+        className='cursor-pointer text-size-20'
+        onClick={() => {
+          setOpen(true);
+        }}
+      />
+      <Modal size='m' open={open} onMaskClick={() => setOpen(false)}>
+        <ModalTitleWithBorder closable onClose={() => setOpen(false)}>
+          Character Files
+        </ModalTitleWithBorder>
+        <ModalContent className='overflow-auto max-h-[600px]'>
+          <p>{JSON.stringify(character, null, 2)}</p>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }

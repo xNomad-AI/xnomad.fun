@@ -62,7 +62,8 @@ export default function ChatTtsButton({
     }
   };
 
-  const iconClass = "text-muted-foreground size-16";
+  const iconClass =
+    "text-muted-foreground size-16 text-text2 hover:!text-text1";
 
   return (
     <div>

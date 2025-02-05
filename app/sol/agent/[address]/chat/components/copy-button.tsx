@@ -18,7 +18,11 @@ const CopyButton = ({ text }: { text: string }) => {
         onClick={handleCopy}
         className='flex items-center space-x-2 text-muted-foreground'
       >
-        {copied ? <Check className='size-16' /> : <Copy className='size-16' />}
+        {copied ? (
+          <Check className='size-16 text-text1' />
+        ) : (
+          <Copy className='size-16 text-text2 hover:!text-text1' />
+        )}
       </button>
     </Tooltip>
   );

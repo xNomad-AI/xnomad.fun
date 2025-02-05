@@ -207,9 +207,9 @@ export const AudioRecorder = ({
   return (
     <div
       className={clsx(
-        "flex items-center justify-center gap-2 border-l border-l-transparent border-opacity-0 transition-all duration-300",
+        "flex items-center justify-center gap-8 border-l border-l-transparent border-opacity-0 transition-all duration-300",
         {
-          "border-opacity-100 border-l-border pl-2": isRecording,
+          "border-opacity-100 border-l-border pl-8": isRecording,
         },
         className
       )}
@@ -227,11 +227,14 @@ export const AudioRecorder = ({
         </div>
       ) : null}
 
-      <div className='flex items-center'>
+      <div className='flex items-center gap-8'>
         {/* ========== Delete recording button ========== */}
         {isRecording ? (
           <Tooltip content={<span> Reset recording</span>}>
-            <button onClick={resetRecording}>
+            <button
+              onClick={resetRecording}
+              className='flex items-center justify-center '
+            >
               <Trash className='size-16' />
             </button>
           </Tooltip>
@@ -241,14 +244,17 @@ export const AudioRecorder = ({
         <Tooltip content={<span>{!isRecording ? "Start" : "Send"} </span>}>
           {!isRecording ? (
             <button
-              className='flex items-center gap-8'
+              className='flex items-center justify-center gap-8'
               onClick={() => startRecording()}
             >
               <Mic className='size-16' />
               <span className='sr-only'>Use Microphone</span>
             </button>
           ) : (
-            <button onClick={handleSubmit}>
+            <button
+              onClick={handleSubmit}
+              className='flex items-center justify-center '
+            >
               <Send className='size-16' />
             </button>
           )}

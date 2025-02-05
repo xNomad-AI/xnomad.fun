@@ -7,9 +7,10 @@ import CopyButton from "./copy-button";
 import ChatTtsButton from "./ui/chat/chat-tts-button";
 import AIWriter from "react-aiwriter";
 import { AudioRecorder } from "./audio-recorder";
-import { Badge } from "./ui/badge";
+// import { Badge } from "./ui/badge";
 import { IAttachment } from "../types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+
 import { Button, message, Tooltip } from "@/primitive/components";
 import { apiClient } from "../lib/api";
 import { ChatMessageList } from "./ui/chat/chat-message-list";
@@ -39,8 +40,6 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const queryClient = useQueryClient();
-
   const getMessageVariant = (role: string) =>
     role !== "user" ? "received" : "sent";
 
@@ -50,6 +49,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
         messagesContainerRef.current.scrollHeight;
     }
   };
+  const queryClient = useQueryClient();
   useEffect(() => {
     scrollToBottom();
   }, [queryClient.getQueryData(["messages", agentId])]);
@@ -211,9 +211,9 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
                           ))}
                         </div>
                       </ChatBubbleMessage>
-                      <div className='flex items-center gap-4 justify-between w-full mt-1'>
+                      <div className='flex items-center gap-12 justify-between text-text2'>
                         {message?.text && !message?.isLoading ? (
-                          <div className='flex items-center gap-8'>
+                          <div className='flex items-center gap-12'>
                             <CopyButton text={message?.text} />
                             {message?.user !== "user" && (
                               <ChatTtsButton
@@ -226,15 +226,15 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
                         <div
                           className={clsx([
                             message?.isLoading ? "mt-2" : "",
-                            "flex items-center justify-between gap-4 select-none",
+                            "flex items-center justify-between gap-12 select-none",
                           ])}
                         >
-                          {message?.source ? (
+                          {/* {message?.source ? (
                             <Badge variant='outline'>{message.source}</Badge>
                           ) : null}
                           {message?.action ? (
                             <Badge variant='outline'>{message.action}</Badge>
-                          ) : null}
+                          ) : null} */}
                           {message?.createdAt ? (
                             <ChatBubbleTimestamp
                               timestamp={moment(message?.createdAt).format(
@@ -312,12 +312,15 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
         <button
           disabled={!input || sendMessageMutation?.isPending}
           type='submit'
-          className={clsx({
+          className={clsx("flex items-center", {
             "cursor-not-allowed": !input || sendMessageMutation?.isPending,
           })}
         >
-          {sendMessageMutation?.isPending ? "..." : ""}
-          <Send className='size-20 rotate-45' />
+          {sendMessageMutation?.isPending ? (
+            "..."
+          ) : (
+            <Send className='size-20 rotate-45' />
+          )}
         </button>
       </form>
     </div>

@@ -52,7 +52,7 @@ export function Analytics({ nft }: { nft: NFT }) {
                 <div className='flex items-center gap-4'>
                   <span
                     className={
-                      item.quote.amount > 0 ? "text-red" : "text-green"
+                      item.base.change_amount > 0 ? "text-red" : "text-green"
                     }
                   >
                     {item.quote.symbol}
@@ -60,9 +60,9 @@ export function Analytics({ nft }: { nft: NFT }) {
                   <span className='text-text2'>
                     ($
                     {toIntl(
-                      BigNumber(item.quote.amount)
-                        .div(10 ** item.quote.decimals)
-                        .multipliedBy(item.quote.price)
+                      BigNumber(item.quote.ui_amount).multipliedBy(
+                        item.quote.price || item.quote.nearest_price
+                      )
                     )}
                     )
                   </span>
@@ -71,16 +71,18 @@ export function Analytics({ nft }: { nft: NFT }) {
 
                 <div className='flex items-center gap-4'>
                   <IconSol className='text-size-16' />
-                  <span className='text-text2'>
-                    {toIntl(
-                      BigNumber(item.base.amount).div(10 ** item.base.decimals)
-                    )}
+                  <p className='text-text2'>
+                    <span className='text-text1'>
+                      {toIntl(BigNumber(item.base.ui_amount))}
+                    </span>
                     ($
                     {toIntl(
-                      BigNumber(item.base.amount).multipliedBy(item.base.price)
+                      BigNumber(item.base.ui_amount).multipliedBy(
+                        item.base.price || item.base.nearest_price
+                      )
                     )}
                     )
-                  </span>
+                  </p>
                 </div>
                 <div className='flex-1'></div>
                 <a
@@ -110,7 +112,7 @@ export function Analytics({ nft }: { nft: NFT }) {
 function ActionTag({ data }: { data: Activity }) {
   switch (data.tx_type) {
     case "swap":
-      if (data.base.amount > 0) {
+      if (data.base.change_amount > 0) {
         return (
           <div className='px-8 py-4 h-26 flex items-center bg-red-10 text-red rounded-4'>
             Sell

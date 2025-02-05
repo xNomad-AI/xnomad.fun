@@ -51,6 +51,7 @@ export function InfoSection({ nft }: { nft: NFT }) {
           </div>
         </Card>
         <Card className='flex flex-col gap-16 p-16 w-full'>
+          <span className='font-bold'>Traits</span>
           {nft.traits.map((trait) => (
             <div
               key={trait.value}

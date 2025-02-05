@@ -19,7 +19,8 @@ export function Address({
     <Tooltip
       disabled={disableTooltip || wholeAddress}
       content={address}
-      className={clsx("flex items-center gap-8", className)}
+      contentClassName='break-all'
+      className={clsx("flex items-center gap-8 ", className)}
     >
       <span>
         {wholeAddress

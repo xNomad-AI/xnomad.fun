@@ -160,7 +160,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
   });
 
   return (
-    <div className='flex flex-col w-[720px] h-[calc(100vh-64px-64px-72px)] p-4'>
+    <div className='flex flex-col w-[720px] h-[calc(100vh-64px-64px-72px)] gap-32'>
       <div className='flex-1 overflow-y-auto'>
         <ChatMessageList ref={messagesContainerRef}>
           {transitions((styles, message) => {

@@ -2,7 +2,7 @@ import { Ellipsis, StopCircle, Volume2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { apiClient } from "../../../lib/api";
-import { Button, message, Tooltip } from "@/primitive/components";
+import { message, Tooltip } from "@/primitive/components";
 
 export default function ChatTtsButton({
   agentId,
@@ -78,14 +78,11 @@ export default function ChatTtsButton({
           Your browser does not support the audio element.
         </audio>
       ) : null}
-      <Tooltip content={<p>{playing ? "Stop" : "Read aloud"}</p>}>
-        <Button
-          size='icon'
-          variant='ghost'
-          type='button'
-          onClick={() => execute()}
-          disabled={mutation?.isPending}
-        >
+      <Tooltip
+        content={<p>{playing ? "Stop" : "Read aloud"}</p>}
+        className='flex items-center justify-center'
+      >
+        <button onClick={() => execute()} disabled={mutation?.isPending}>
           {mutation?.isPending ? (
             <Ellipsis className={iconClass} />
           ) : playing ? (
@@ -93,7 +90,7 @@ export default function ChatTtsButton({
           ) : (
             <Volume2 className={iconClass} />
           )}
-        </Button>
+        </button>
       </Tooltip>
     </div>
   );

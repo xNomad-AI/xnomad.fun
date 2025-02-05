@@ -168,76 +168,85 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
             return (
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-expect-error
-              <animated.div style={styles} className='flex flex-col gap-2 p-4'>
-                <ChatBubble
-                  variant={variant}
-                  className='flex flex-row items-center gap-2'
-                >
-                  {message?.user !== "user" ? (
-                    <img
-                      className='h-32 w-32 flex-shrink-0 p-1 border rounded-full select-none'
-                      height={32}
-                      width={32}
-                      alt=''
-                      src={nft.image}
-                    />
-                  ) : null}
-                  <div className='flex flex-col'>
-                    <ChatBubbleMessage isLoading={message?.isLoading}>
-                      {message?.user !== "user" ? (
-                        <AIWriter>{message?.text}</AIWriter>
-                      ) : (
-                        message?.text
-                      )}
-                      {/* Attachments */}
-                      <div>
-                        {message?.attachments?.map((attachment, idx) => (
-                          <div className='flex flex-col gap-1 mt-2' key={idx}>
-                            <img
-                              src={attachment.url}
-                              width='100%'
-                              height='100%'
-                              className='w-64 rounded-md'
-                            />
-                            <div className='flex items-center justify-between gap-4'>
-                              <span></span>
-                              <span></span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </ChatBubbleMessage>
-                    <div className='flex items-center gap-4 justify-between w-full mt-1'>
-                      {message?.text && !message?.isLoading ? (
-                        <div className='flex items-center gap-1'>
-                          <CopyButton text={message?.text} />
-                          <ChatTtsButton
-                            agentId={agentId}
-                            text={message?.text}
-                          />
-                        </div>
-                      ) : null}
-                      <div
-                        className={clsx([
-                          message?.isLoading ? "mt-2" : "",
-                          "flex items-center justify-between gap-4 select-none",
-                        ])}
+              <animated.div style={styles} className='flex gap-16'>
+                {message?.user !== "user" ? (
+                  <img
+                    className='h-32 w-32 flex-shrink-0 p-1 border rounded-full select-none'
+                    height={32}
+                    width={32}
+                    alt=''
+                    src={nft.image}
+                  />
+                ) : null}
+                <div className='flex flex-col w-full'>
+                  <ChatBubble
+                    variant={variant}
+                    className='flex flex-row items-center gap-2'
+                  >
+                    <div className='flex flex-col gap-8'>
+                      <ChatBubbleMessage
+                        variant={variant}
+                        isLoading={message?.isLoading}
                       >
-                        {message?.source ? (
-                          <Badge variant='outline'>{message.source}</Badge>
+                        {message?.user !== "user" ? (
+                          <AIWriter>{message?.text}</AIWriter>
+                        ) : (
+                          message?.text
+                        )}
+                        {/* Attachments */}
+                        <div>
+                          {message?.attachments?.map((attachment, idx) => (
+                            <div className='flex flex-col gap-1 mt-2' key={idx}>
+                              <img
+                                src={attachment.url}
+                                width='100%'
+                                height='100%'
+                                className='w-64 rounded-md'
+                              />
+                              <div className='flex items-center justify-between gap-4'>
+                                <span></span>
+                                <span></span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </ChatBubbleMessage>
+                      <div className='flex items-center gap-4 justify-between w-full mt-1'>
+                        {message?.text && !message?.isLoading ? (
+                          <div className='flex items-center gap-8'>
+                            <CopyButton text={message?.text} />
+                            {message?.user !== "user" && (
+                              <ChatTtsButton
+                                agentId={agentId}
+                                text={message?.text}
+                              />
+                            )}
+                          </div>
                         ) : null}
-                        {message?.action ? (
-                          <Badge variant='outline'>{message.action}</Badge>
-                        ) : null}
-                        {message?.createdAt ? (
-                          <ChatBubbleTimestamp
-                            timestamp={moment(message?.createdAt).format("LT")}
-                          />
-                        ) : null}
+                        <div
+                          className={clsx([
+                            message?.isLoading ? "mt-2" : "",
+                            "flex items-center justify-between gap-4 select-none",
+                          ])}
+                        >
+                          {message?.source ? (
+                            <Badge variant='outline'>{message.source}</Badge>
+                          ) : null}
+                          {message?.action ? (
+                            <Badge variant='outline'>{message.action}</Badge>
+                          ) : null}
+                          {message?.createdAt ? (
+                            <ChatBubbleTimestamp
+                              timestamp={moment(message?.createdAt).format(
+                                "LT"
+                              )}
+                            />
+                          ) : null}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </ChatBubble>
+                  </ChatBubble>
+                </div>
               </animated.div>
             );
           })}

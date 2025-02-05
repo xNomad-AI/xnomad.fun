@@ -6,12 +6,12 @@ import { Button, ButtonProps } from "@/primitive/components";
 
 // ChatBubble
 const chatBubbleVariant = cva(
-  "flex gap-2 max-w-[60%] items-end relative group",
+  "flex gap-2 max-w-full items-end relative group py-12 px-16 border border-white-20 rounded-12",
   {
     variants: {
       variant: {
-        received: "self-start",
-        sent: "self-end flex-row-reverse",
+        received: "self-start w-full bg-black-10",
+        sent: "self-end flex-row-reverse w-fit bg-surface",
       },
       layout: {
         default: "",
@@ -70,12 +70,12 @@ const ChatBubbleAvatar: React.FC<ChatBubbleAvatarProps> = ({
 );
 
 // ChatBubbleMessage
-const chatBubbleMessageVariants = cva("p-4", {
+const chatBubbleMessageVariants = cva("", {
   variants: {
     variant: {
       received:
         "bg-secondary text-secondary-foreground rounded-r-lg rounded-tl-lg",
-      sent: "bg-primary text-primary-foreground rounded-l-lg rounded-tr-lg",
+      sent: "bg-primary text-primary-foreground rounded-l-lg rounded-tr-lg text-end",
     },
     layout: {
       default: "",

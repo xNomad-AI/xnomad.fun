@@ -14,14 +14,12 @@ const CopyButton = ({ text }: { text: string }) => {
 
   return (
     <Tooltip content={<p>Copy</p>}>
-      <Button
+      <button
         onClick={handleCopy}
-        variant='ghost'
-        size='icon'
         className='flex items-center space-x-2 text-muted-foreground'
       >
         {copied ? <Check className='size-16' /> : <Copy className='size-16' />}
-      </Button>
+      </button>
     </Tooltip>
   );
 };

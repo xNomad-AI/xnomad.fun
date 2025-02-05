@@ -41,7 +41,7 @@ export function Header() {
       <header
         id='header'
         className={clsx(
-          "fixed bg-white-20 backdrop-blur-[20px] top-0 left-0 w-full z-10 border-b h-64 flex items-center px-64 mobile:px-16 justify-between",
+          "fixed bg-white/[0.01] backdrop-blur-[20px] top-0 left-0 w-full z-10 border-b h-64 flex items-center px-64 mobile:px-16 justify-between",
           {
             hidden: pathname === "/",
           }

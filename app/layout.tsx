@@ -45,7 +45,7 @@ export default function RootLayout({
       <ThemeProvider defaultTheme={"dark"}>
         <body
           id={PAGE_VIEW_ID}
-          className={`${ibm.variable} bg-background text-text1 text-size-14 bg-[url('/background.png')]`}
+          className={`${ibm.className} bg-background text-text1 text-size-14 bg-[url('/background.webp')] bg-repeat bg-contain`}
         >
           <FloatLayerProvider>
             <WalletProvider>

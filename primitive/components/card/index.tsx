@@ -12,7 +12,7 @@ export const Card = forwardRef(function Card(
     <div
       ref={ref}
       className={clsx(
-        "border rounded-12 border-white-20 overflow-hidden",
+        "border rounded-12 border-white-20 bg-black-10 overflow-hidden",
         className
       )}
       {...originProps}

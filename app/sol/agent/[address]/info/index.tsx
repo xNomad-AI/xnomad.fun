@@ -6,7 +6,7 @@ import { NFT } from "@/types";
 import clsx from "clsx";
 export function InfoSection({ nft }: { nft: NFT }) {
   return (
-    <div className='flex flex-col w-[280px] gap-16'>
+    <div className='flex flex-col w-[280px] gap-16 flex-shrink-0'>
       <img
         className='w-full aspect-square rounded-12'
         width={280}
@@ -19,7 +19,7 @@ export function InfoSection({ nft }: { nft: NFT }) {
           {nft.name}
         </h1>
         <div className='flex items-center gap-4'>
-          <CollectionLogo logo={"/brand.png"} size={24} />
+          <CollectionLogo logo={"/xnomad-nft-logo.svg"} size={24} />
           {nft.collectionName}
         </div>
         <Card className='flex flex-col gap-16 p-16 w-full'>

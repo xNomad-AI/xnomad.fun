@@ -29,11 +29,13 @@ export function getActivities({
   address,
   offset = 0,
   limit = 10,
+  afterTime,
 }: {
   chain?: string;
   address: string;
   offset?: number;
   limit?: number;
+  afterTime?: number;
 }) {
   return api.v1.get<{
     items: Activity[];
@@ -43,5 +45,6 @@ export function getActivities({
     address,
     offset,
     limit,
+    afterTime,
   });
 }

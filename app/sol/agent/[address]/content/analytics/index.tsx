@@ -9,7 +9,9 @@ import { upperFirstLetter } from "@/lib/utils/string";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { useRequest } from "ahooks";
-const AFTER_TIME = Math.floor(Date.now() / 1000);
+const AFTER_TIME = Math.floor(
+  new Date("2025-02-06T11:00:00Z").getTime() / 1000
+);
 export function Analytics({ nft }: { nft: NFT }) {
   // FIXME: demo purpose, should be removed
   const [activity, setActivity] = useState<Activity[]>([]);

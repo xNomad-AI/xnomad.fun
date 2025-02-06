@@ -3,14 +3,15 @@ import { NFT } from "@/types";
 import BigNumber from "bignumber.js";
 import { toIntl } from "@/lib/utils/number/bignumber";
 import { DepositContainer } from "../container";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Activity, getActivities } from "./network";
 import { upperFirstLetter } from "@/lib/utils/string";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { useRequest } from "ahooks";
-const AFTER_TIME = new Date("2025-02-06T08:30:00Z").getTime() / 1000;
 export function Analytics({ nft }: { nft: NFT }) {
+  // FIXME: demo purpose, should be removed
+  const AFTER_TIME = useMemo(() => Date.now() / 1000, []);
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
   const { loading, run } = useRequest(

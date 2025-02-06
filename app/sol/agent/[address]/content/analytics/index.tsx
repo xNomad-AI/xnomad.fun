@@ -9,7 +9,7 @@ import { upperFirstLetter } from "@/lib/utils/string";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { useRequest } from "ahooks";
-
+const AFTER_TIME = new Date("2025-02-06T16:00:00Z").getTime();
 export function Analytics({ nft }: { nft: NFT }) {
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -19,6 +19,7 @@ export function Analytics({ nft }: { nft: NFT }) {
         address: nft.agentAccount.solana,
         offset: activity.length,
         limit: 20,
+        afterTime: AFTER_TIME,
       }).then((res) => {
         setActivity([...activity, ...res.items]);
         setHasNextPage(res.has_next);
@@ -34,6 +35,7 @@ export function Analytics({ nft }: { nft: NFT }) {
       address: nft.agentAccount.solana,
       offset: 0,
       limit: 20,
+      afterTime: AFTER_TIME,
     }).then((res) => {
       setActivity(res.items);
       setHasNextPage(res.has_next);
@@ -42,7 +44,7 @@ export function Analytics({ nft }: { nft: NFT }) {
   return (
     <DepositContainer address={nft.agentAccount.solana}>
       <div className='flex mt-16 flex-col w-full'>
-        {activity.length > 0 ? (
+        {activity?.length > 0 ? (
           <InfiniteScrollList
             items={activity}
             renderItem={(item) => (

@@ -11,7 +11,7 @@ import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { useRequest } from "ahooks";
 export function Analytics({ nft }: { nft: NFT }) {
   // FIXME: demo purpose, should be removed
-  const AFTER_TIME = useMemo(() => Date.now() / 1000, []);
+  const AFTER_TIME = useMemo(() => Math.ceil(Date.now() / 1000), []);
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
   const { loading, run } = useRequest(

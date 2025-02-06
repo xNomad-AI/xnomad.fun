@@ -10,26 +10,27 @@ import { PropsWithChildren, useMemo } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: Infinity,
-    },
-  },
-});
 
-persistQueryClient({
-  queryClient: queryClient,
-  persister: createSyncStoragePersister({
-    storage: window.localStorage,
-  }),
-  maxAge: Infinity,
-});
 export function WalletProvider({ children }: PropsWithChildren<object>) {
   const endpoint = clusterApiUrl(
     process.env.DEPLOY_ENV === "prod" ? "mainnet-beta" : "devnet"
   );
   const wallets = useMemo(() => [], []);
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Infinity,
+      },
+    },
+  });
+
+  persistQueryClient({
+    queryClient: queryClient,
+    persister: createSyncStoragePersister({
+      storage: globalThis.localStorage,
+    }),
+    maxAge: Infinity,
+  });
   return (
     <QueryClientProvider client={queryClient}>
       <ConnectionProvider endpoint={endpoint}>

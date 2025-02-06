@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@layer components {
+  .scale-default {
+    @apply hover:scale-110 duration-300 transition-all ease-in-out;
+  }
+}

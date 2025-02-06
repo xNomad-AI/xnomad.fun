@@ -18,14 +18,17 @@ import { PropsWithChildren } from "react";
 const navs = [
   {
     href: "/sol/xnomad",
+    key: "xnomad",
     label: "xNomad Gallery",
   },
   {
     href: "",
+    key: "my-ai-nfts",
     label: "My AI-NFTs",
   },
   {
     href: "",
+    key: "create-ai-nft",
     label: (
       <Button size='s' className='font-semibold !text-black'>
         Create AI-NFT
@@ -52,7 +55,7 @@ export function Header() {
         </Link>
         <div className='flex items-center gap-32'>
           {navs.map((nav) => (
-            <NavItem key={nav.href} href={nav.href}>
+            <NavItem key={nav.key} href={nav.href}>
               {nav.label}
             </NavItem>
           ))}

@@ -1,12 +1,12 @@
 import * as React from "react";
 import clsx from "clsx";
-import { Textarea } from "../textarea";
+import { TextField } from "@/primitive/components";
 
-type ChatInputProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+type ChatInputProps = React.TextareaHTMLAttributes<HTMLInputElement>;
 
-const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
+const ChatInput = React.forwardRef<HTMLInputElement, ChatInputProps>(
   ({ className, ...props }, ref) => (
-    <Textarea
+    <TextField
       autoComplete='off'
       ref={ref}
       name='message'

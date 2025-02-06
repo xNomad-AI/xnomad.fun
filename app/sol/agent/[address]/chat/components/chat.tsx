@@ -36,7 +36,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [input, setInput] = useState("");
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -58,7 +58,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
     scrollToBottom();
   }, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       handleSendMessage(e as unknown as React.FormEvent<HTMLFormElement>);
     }
@@ -178,7 +178,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
                     src={nft.image}
                   />
                 ) : null}
-                <div className='flex flex-col w-full'>
+                <div className='flex flex-col flex-1'>
                   <ChatBubble
                     variant={variant}
                     className='flex flex-row items-center gap-2'
@@ -288,7 +288,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
           value={input}
           onChange={({ target }) => setInput(target.value)}
           placeholder='Type message'
-          className='min-h-12 resize-none border-0 shadow-none focus-visible:ring-0'
+          className='min-h-12 resize-none !border-0 shadow-none focus-visible:ring-0'
         />
         {selectedFile ? (
           <div className='p-3 flex'>

@@ -9,7 +9,7 @@ import { upperFirstLetter } from "@/lib/utils/string";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { useRequest } from "ahooks";
-const AFTER_TIME = new Date("2025-02-06T16:00:00Z").getTime();
+const AFTER_TIME = new Date("2025-02-06T08:30:00Z").getTime() / 1000;
 export function Analytics({ nft }: { nft: NFT }) {
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);

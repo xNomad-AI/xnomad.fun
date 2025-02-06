@@ -24,7 +24,7 @@ export const style: Style = {
     icon: clsx("rounded-full"),
   },
   variant: {
-    primary: clsx("text-text1 bg-brand"),
+    primary: clsx("text-black bg-brand"),
     secondary: clsx("text-text1 bg-surface"),
     warning: clsx("text-red bg-red-10"),
     plain: clsx("text-text1 bg-surface"),

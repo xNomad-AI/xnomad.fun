@@ -70,6 +70,22 @@ export const apiEndpoint: (
     return config;
   };
 };
+export const apiAgentEndpoint: (
+  version: number
+) => ApiServiceRequestInterceptor = () => {
+  return (config) => {
+    config.baseURL = `${process.env.NEXT_AGENT_API_HOST}`;
+    return config;
+  };
+};
+export const apiAirdropEndpoint: (
+  version: number
+) => ApiServiceRequestInterceptor = () => {
+  return (config) => {
+    config.baseURL = `${process.env.NEXT_AIRDROP_API_HOST}`;
+    return config;
+  };
+};
 
 export const serverApiEndpoint: ApiServiceRequestInterceptor = (config) => {
   config.baseURL = `/api`;

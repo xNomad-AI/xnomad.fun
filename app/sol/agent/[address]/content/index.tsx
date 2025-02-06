@@ -7,6 +7,7 @@ import { RadioButton, RadioButtonGroup } from "@/primitive/components";
 import { upperFirstLetter } from "@/lib/utils/string";
 import { Portfolio } from "./portfolio";
 import { Analytics } from "./analytics";
+import { Features } from "./features";
 const tabs = ["chat", "portfolio", "analytics", "features"] as const;
 type Tab = (typeof tabs)[number];
 export function Content({ nft }: { nft: NFT }) {
@@ -25,6 +26,7 @@ export function Content({ nft }: { nft: NFT }) {
       )}
       {tab === "portfolio" && <Portfolio nft={nft} />}
       {tab === "analytics" && <Analytics nft={nft} />}
+      {tab === "features" && <Features nft={nft} />}
     </div>
   );
 }

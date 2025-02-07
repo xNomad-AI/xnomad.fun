@@ -9,6 +9,7 @@ import { upperFirstLetter } from "@/lib/utils/string";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { useRequest } from "ahooks";
+import { useTimeStore } from "@/primitive/hooks/time";
 const AFTER_TIME = Math.floor(
   new Date("2025-02-07T02:45:00Z").getTime() / 1000
 );
@@ -44,6 +45,8 @@ export function Analytics({ nft }: { nft: NFT }) {
       setHasNextPage(res.has_next);
     });
   }, [nft.agentAccount.solana]);
+  // use time tick to update time every second
+  useTimeStore();
   return (
     <DepositContainer address={nft.agentAccount.solana}>
       <div className='flex mt-16 flex-col w-full'>

@@ -181,10 +181,10 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
         <ChatMessageList ref={messagesContainerRef}>
           {transitions((styles, message) => {
             const variant = getMessageVariant(message?.user ?? "");
+            // FIXME: Fix this any
+            const Comp = animated.div as any;
             return (
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-expect-error
-              <animated.div style={styles} className='flex gap-16'>
+              <Comp style={styles} className='flex gap-16'>
                 {message?.user !== "user" ? (
                   <img
                     className='h-32 w-32 flex-shrink-0 p-1 border rounded-full select-none'
@@ -360,7 +360,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
                     </div>
                   </ChatBubble>
                 </div>
-              </animated.div>
+              </Comp>
             );
           })}
         </ChatMessageList>

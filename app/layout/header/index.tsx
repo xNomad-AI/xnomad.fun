@@ -27,7 +27,7 @@ const navs = [
     label: "My AI-NFTs",
   },
   {
-    href: "",
+    href: "/sol/launch",
     key: "create-ai-nft",
     label: (
       <Button size='s' className='font-semibold !text-black'>

@@ -11,9 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient({});
 export function WalletProvider({ children }: PropsWithChildren<object>) {
-  const endpoint = clusterApiUrl(
-    process.env.DEPLOY_ENV === "prod" ? "mainnet-beta" : "devnet"
-  );
+  const endpoint = process.env.SOLANA_RPC || clusterApiUrl("mainnet-beta");
   const wallets = useMemo(() => [], []);
 
   return (

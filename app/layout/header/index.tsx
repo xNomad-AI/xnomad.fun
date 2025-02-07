@@ -31,7 +31,7 @@ const navs = [
     href: "/sol/launch",
     key: "create-ai-nft",
     label: (
-      <Button size='s' className='font-semibold !text-black'>
+      <Button size='s' className='font-semibold'>
         Create AI-NFT
       </Button>
     ),
@@ -62,7 +62,7 @@ export function Header() {
             </NavItem>
           ))}
           {!publicKey ? (
-            <ConnectButton size='m' />
+            <ConnectButton size='s' />
           ) : (
             <Dropdown
               content={
@@ -70,12 +70,16 @@ export function Header() {
                   <Link href={`/sol/account/${publicKey.toBase58()}`}>
                     <SelectOption selected={false}>Profile</SelectOption>
                   </Link>
-                  <button onClick={logout}>
-                    <SelectOption selected={false}>
-                      <IconLogout />
-                      Logout
-                    </SelectOption>
-                  </button>
+
+                  <SelectOption
+                    handleSelect={() => {
+                      logout();
+                    }}
+                    selected={false}
+                  >
+                    <IconLogout />
+                    Logout
+                  </SelectOption>
                 </div>
               }
             >

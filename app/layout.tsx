@@ -7,7 +7,7 @@ import {
   FloatLayerProvider,
   GlobalMessageContainer,
 } from "@/primitive/components";
-import { ThemeProvider } from "./layout/theme";
+import { ThemeProvider } from "../lib/theme";
 import { Header } from "./layout/header";
 import { Portal } from "./layout/portal";
 import { PAGE_VIEW_ID } from "@/lib/page-view";

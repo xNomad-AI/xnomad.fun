@@ -1,3 +1,5 @@
+import { userStorage } from "@/src/user/storage";
+import { isBrowser } from "../utils/is-browser";
 import { ApiCancelError, ApiInvalidResponseError } from "./error";
 import {
   ApiResponse,
@@ -32,14 +34,14 @@ export const request: ApiServiceRequestInterceptor = (config) => {
     typeof config.payload === "object" && config.payload !== null;
   config.headers.set("Accept", "application/json");
 
-  const token: string | undefined | null = config.payload?.Authorization;
+  let token: string | undefined | null = config.payload?.Authorization;
   if (config.payload?.Authorization) {
     config.payload.Authorization = undefined;
   }
 
-  // if (isBrowser()) {
-  //   token = userStorage.getCurrentToken()?.jwt;
-  // }
+  if (isBrowser()) {
+    token = userStorage.getCurrentToken()?.jwt;
+  }
 
   if (token) {
     config.headers.set("Authorization", `Bearer ${token}`);

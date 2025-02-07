@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
+const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   env: {
@@ -27,3 +27,5 @@ module.exports = {
   },
   swcMinify: true,
 };
+
+module.exports = nextConfig;

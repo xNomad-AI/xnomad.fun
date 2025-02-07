@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PropsWithChildren } from "react";
+import { useLogout } from "@/src/user/use-logout";
 const navs = [
   {
     href: "/sol/xnomad",
@@ -39,6 +40,7 @@ const navs = [
 export function Header() {
   const pathname = usePathname();
   const { publicKey } = useWallet();
+  const logout = useLogout();
   return (
     <>
       <header
@@ -65,11 +67,15 @@ export function Header() {
             <Dropdown
               content={
                 <div className='flex flex-col gap-8'>
-                  <SelectOption selected={false}>Profile</SelectOption>
-                  <SelectOption selected={false}>
-                    <IconLogout />
-                    Logout
-                  </SelectOption>
+                  <Link href={`/sol/account/${publicKey.toBase58()}`}>
+                    <SelectOption selected={false}>Profile</SelectOption>
+                  </Link>
+                  <button onClick={logout}>
+                    <SelectOption selected={false}>
+                      <IconLogout />
+                      Logout
+                    </SelectOption>
+                  </button>
                 </div>
               }
             >

@@ -6,7 +6,7 @@ import { useUserInfoStore } from "./user-store";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { api } from "@/primitive/api";
 export function useLogin() {
-  const { publicKey, signMessage } = useWallet();
+  const { publicKey, signMessage, disconnect } = useWallet();
   const { setUserInfo } = useUserInfoStore();
   const login = useMemoizedFn(async (onSuccess?: (token?: string) => void) => {
     if (!publicKey || !signMessage) {
@@ -39,6 +39,7 @@ export function useLogin() {
       onSuccess?.(token.accessToken);
     } catch (e) {
       onError(e);
+      disconnect();
     }
   });
   return login;

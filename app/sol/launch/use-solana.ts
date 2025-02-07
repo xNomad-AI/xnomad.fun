@@ -4,7 +4,8 @@ import { useMemo } from "react";
 
 export function useSolana() {
   const connection = useMemo(
-    () => new Connection(clusterApiUrl("mainnet-beta")),
+    () =>
+      new Connection(process.env.SOLANA_RPC ?? clusterApiUrl("mainnet-beta")),
     []
   );
   async function inspectTransaction(signature: string) {

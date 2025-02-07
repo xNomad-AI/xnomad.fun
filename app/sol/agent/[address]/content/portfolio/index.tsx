@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import { toIntl } from "@/lib/utils/number/bignumber";
 import { DepositContainer } from "../container";
 import { useAgentStore } from "../../store";
+import { toCardNum } from "@/lib/utils/number";
 
 export function Portfolio({ nft }: { nft: NFT }) {
   const { portfolio } = useAgentStore();
@@ -48,11 +49,15 @@ export function Portfolio({ nft }: { nft: NFT }) {
                 />
                 <span className='font-bold'>{item.symbol}</span>
               </div>
-              <div className='flex w-[120px] justify-end'>${item.priceUsd}</div>
+              <div className='flex w-[120px] justify-end'>
+                {toCardNum(item.priceUsd, "$")}
+              </div>
               <div className='flex w-[120px] justify-end'>
                 {toIntl(BigNumber(item.balance).div(10 ** item.decimals))}
               </div>
-              <div className='flex w-[120px] justify-end'>${item.valueUsd}</div>
+              <div className='flex w-[120px] justify-end'>
+                {toCardNum(item.valueUsd, "$")}
+              </div>
             </div>
           ))
         ) : (

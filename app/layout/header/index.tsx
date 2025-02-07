@@ -15,7 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PropsWithChildren } from "react";
-import { useLogout } from "@/src/user/use-logout";
+import { useLogout } from "@/lib/user/use-logout";
 const navs = [
   {
     href: "/sol/xnomad",

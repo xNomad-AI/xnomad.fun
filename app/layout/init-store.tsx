@@ -2,8 +2,8 @@
 import { useTimeStore } from "@/primitive/hooks/time";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect } from "react";
-import { useUserInfoStore } from "@/src/user/user-store";
 import { useLogin } from "@/src/user/use-login";
+import { useUserInfoStore } from "@/lib/user/user-store";
 
 export function InitStore() {
   const { publicKey } = useWallet();

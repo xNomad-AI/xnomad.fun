@@ -1,4 +1,4 @@
-import { userStorage } from "@/src/user/storage";
+import { userStorage } from "@/lib/user/storage";
 import { isBrowser } from "../utils/is-browser";
 import { ApiCancelError, ApiInvalidResponseError } from "./error";
 import {

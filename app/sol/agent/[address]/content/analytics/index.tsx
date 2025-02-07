@@ -10,7 +10,7 @@ import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { useRequest } from "ahooks";
 const AFTER_TIME = Math.floor(
-  new Date("2025-02-06T10:43:00Z").getTime() / 1000
+  new Date("2025-02-07T02:45:00Z").getTime() / 1000
 );
 export function Analytics({ nft }: { nft: NFT }) {
   // FIXME: demo purpose, should be removed

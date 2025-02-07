@@ -25,6 +25,7 @@
     "@web3-storage/w3up-client": "^16.4.1",
     "ahooks": "^3.8.4",
     "bignumber.js": "^9.1.2",
+    "bs58": "^6.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

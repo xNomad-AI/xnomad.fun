@@ -5,6 +5,8 @@ import { onError } from "@/lib/utils/error";
 import { useUserInfoStore } from "./user-store";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { api } from "@/primitive/api";
+import bs58 from "bs58";
+
 export function useLogin() {
   const { publicKey, signMessage, disconnect } = useWallet();
   const { setUserInfo } = useUserInfoStore();
@@ -29,7 +31,7 @@ export function useLogin() {
       }>("/address/login", {
         address: publicKey.toBase58(),
         chain: "solana",
-        signature: Buffer.from(signature).toString("base64"),
+        signature: bs58.encode(signature),
       });
       setUserInfo({
         address: publicKey.toBase58(),

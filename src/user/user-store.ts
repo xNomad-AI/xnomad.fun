@@ -8,7 +8,7 @@ export const useUserInfoStore = create(
     setUserInfo: (userInfo: AuthorizationToken) => void;
     initUserInfo: (address: string) => boolean;
     removeUserInfo: (address: string) => void;
-  }>((set, get) => ({
+  }>((set) => ({
     userInfo: undefined,
     setUserInfo: (userInfo) => {
       set((state) => {

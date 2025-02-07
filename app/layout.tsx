@@ -53,7 +53,6 @@ export default function RootLayout({
               <Header />
               <Portal />
               <InitStore />
-              {/* <PageLoadingProgressBar /> */}
               {children}
             </WalletProvider>
             <GlobalMessageContainer />

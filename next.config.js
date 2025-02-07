@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-
+  reactStrictMode: true,
+  output:'standalone',
   env: {
     NEXT_SEVER_API_HOST: process.env.NEXT_SEVER_API_HOST,
     NEXT_CLIENT_API_HOST: process.env.NEXT_CLIENT_API_HOST,

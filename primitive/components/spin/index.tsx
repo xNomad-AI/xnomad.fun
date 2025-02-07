@@ -9,7 +9,7 @@ export function Spin(props: Props) {
   return (
     <div
       className={clsx(
-        "origin-center animate-spin w-fit h-fit leading-[0] text-size-32",
+        "origin-center animate-spin w-fit h-fit leading-[0] text-size-24",
         props.className
       )}
     >

@@ -1,17 +1,22 @@
 import { Container } from "@/app/layout/contianer";
 import { InfoSection } from "./info";
+import { NFT } from "@/types";
+import { api } from "@/primitive/api";
+import { Content } from "./content";
 
-export default function Page({
+export default async function Page({
   params,
 }: {
-  params: {
+  params: Promise<{
     address: string;
-  };
+  }>;
 }) {
-  const address = params.address;
+  const { address } = await params;
+  const nft = await api.v1.get<NFT>(`/nft/solana/nfts/${address}`);
   return (
     <Container className='flex gap-48 w-full'>
-      <InfoSection address={address} />
+      <InfoSection nft={nft} />
+      <Content nft={nft} />
     </Container>
   );
 }

@@ -8,7 +8,7 @@ import { useButtonGroup } from "./group-context";
 import { style } from "./style";
 import { ButtonSize, ButtonVariant } from "./type";
 
-type ButtonProps = {
+export type ButtonProps = {
   loading?: boolean;
   stretch?: boolean;
   size?: ButtonSize;
@@ -54,7 +54,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-roledescription={role}
         disabled={disabled || loading}
         aria-disabled={disabled}
-        onClick={(e: any) => {
+        onClick={(e) => {
           if (!disabled && !loading) {
             onClick?.(e);
           }
@@ -64,8 +64,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           style.size[group.inGroup ? group.size : size],
           style.rounded[group.inGroup ? group.size : size],
           style.variant[variant],
-          stretch ? "w-full" : "w-fit",
-          { "!cursor-not-allowed": disabled || loading },
+          stretch ? "w-full" : size === "icon" ? "" : "w-fit",
+          {
+            "!cursor-not-allowed": disabled || loading,
+            "scale-default": !disabled && !loading,
+          },
           "data-[square=square]:!aspect-square data-[square=square]:!px-0 data-[square=square]:!shrink-0 data-[square=square]:!grow-0",
           className
         )}

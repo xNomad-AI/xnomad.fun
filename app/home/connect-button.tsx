@@ -15,13 +15,9 @@ export function ConnectButton({
   size?: "m" | "s" | "l";
 }) {
   const { setVisible } = useConnectModalStore();
-  const { connected, disconnect, publicKey, connecting } = useWallet();
-  const handleClick = useMemoizedFn(() => {
-    if (connected) {
-      disconnect();
-    } else {
-      setVisible(true);
-    }
+  const { publicKey, connecting } = useWallet();
+  const handleClick = useMemoizedFn(async () => {
+    setVisible(true);
   });
   const buttonText = useMemo(() => {
     if (publicKey) {

@@ -1,25 +1,24 @@
-import {
-  ApiCancelError,
-  ApiHTTPError,
-  ApiInvalidResponseError,
-  ApiResponseError,
-  ApiTimeoutError,
-} from "./error";
+import { userStorage } from "@/src/user/storage";
+import { isBrowser } from "../utils/is-browser";
+import { ApiCancelError, ApiInvalidResponseError } from "./error";
 import {
   ApiResponse,
   ApiServiceRequestInterceptor,
   ApiServiceResponseInterceptor,
 } from "./type";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function dealGetUrl(path: string, data: any = {}) {
   let actualPath = path;
   const params: string[] = [];
   for (const key in data) {
     if (data[key] instanceof Array) {
       for (const value of data[key]) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         value !== null && value !== undefined && params.push(`${key}=${value}`);
       }
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       data[key] !== null &&
         data[key] !== undefined &&
         params.push(`${key}=${data[key]}`);
@@ -40,9 +39,9 @@ export const request: ApiServiceRequestInterceptor = (config) => {
     config.payload.Authorization = undefined;
   }
 
-  // if (isBrowser()) {
-  //   token = userStorage.getCurrentToken()?.jwt;
-  // }
+  if (isBrowser()) {
+    token = userStorage.getCurrentToken()?.jwt;
+  }
 
   if (token) {
     config.headers.set("Authorization", `Bearer ${token}`);
@@ -65,11 +64,27 @@ export const request: ApiServiceRequestInterceptor = (config) => {
   return config;
 };
 
-export const apiEndpoint: (version: number) => ApiServiceRequestInterceptor = (
-  version
-) => {
+export const apiEndpoint: (
+  version: number
+) => ApiServiceRequestInterceptor = () => {
   return (config) => {
-    config.baseURL = `${process.env.API_DATA_ENDPOINT}/api/v${version}`;
+    config.baseURL = `${process.env.NEXT_CLIENT_API_HOST}`;
+    return config;
+  };
+};
+export const apiAgentEndpoint: (
+  version: number
+) => ApiServiceRequestInterceptor = () => {
+  return (config) => {
+    config.baseURL = `${process.env.NEXT_AGENT_API_HOST}`;
+    return config;
+  };
+};
+export const apiAirdropEndpoint: (
+  version: number
+) => ApiServiceRequestInterceptor = () => {
+  return (config) => {
+    config.baseURL = `${process.env.NEXT_AIRDROP_API_HOST}`;
     return config;
   };
 };
@@ -88,10 +103,11 @@ export const response: ApiServiceResponseInterceptor = async (
 
     const body = await (res as Response).json();
     if (isApiResponse(body)) {
-      if (body.code === "SUCCESS") {
+      if (body.data) {
         return body.data;
+      } else {
+        return body;
       }
-      throw new ApiResponseError(body, config);
     } else {
       throw new ApiInvalidResponseError();
     }
@@ -107,5 +123,5 @@ export const response: ApiServiceResponseInterceptor = async (
 };
 
 function isApiResponse(body: unknown): body is ApiResponse<unknown> {
-  return typeof body === "object" && body !== null && Reflect.has(body, "code");
+  return typeof body === "object" && body !== null;
 }

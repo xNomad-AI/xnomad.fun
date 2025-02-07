@@ -3,15 +3,13 @@ import clsx from "clsx";
 import { PropsWithChildren, ReactNode, useMemo, useState } from "react";
 
 import { Dropdown } from "../dropdown";
-import { useDropdown } from "../dropdown/context";
+
 import { IconDownFilled, IconSearch } from "../icon";
 import { TextField } from "../text-field";
 import { SelectController, useSelectController } from "./controller";
 import { SelectOption } from "./select-option";
 
 import { InteractiveBox } from "../interactive-box";
-import { size } from "lodash";
-
 export type SelectProps<T> = {
   // 基础设置
   value?: T;
@@ -201,7 +199,7 @@ export function Select<T>(props: PropsWithChildren<SelectProps<T>>) {
       <InteractiveBox
         disabled={disabled}
         className={clsx(
-          "flex items-center rounded-6 relative cursor-pointer w-full",
+          "flex items-center border border-white-20 rounded-6 relative cursor-pointer w-full",
           {
             "w-full flex-grow": titleStretch,
           },

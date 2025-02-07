@@ -309,3 +309,4 @@ export * from "./components/zero";
 export * from "./components/hammer";
 export * from "./components/api";
 export * from "./components/safari";
+export * from "./components/sol";

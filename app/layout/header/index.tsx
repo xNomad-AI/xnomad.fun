@@ -15,19 +15,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PropsWithChildren } from "react";
+import { useLogout } from "@/src/user/use-logout";
 const navs = [
   {
-    href: "/xNomad",
+    href: "/sol/xnomad",
+    key: "xnomad",
     label: "xNomad Gallery",
   },
   {
-    href: "/profile",
+    href: "",
+    key: "my-ai-nfts",
     label: "My AI-NFTs",
   },
   {
-    href: "",
+    href: "/sol/launch",
+    key: "create-ai-nft",
     label: (
-      <Button size='s' className='font-semibold !text-black'>
+      <Button size='s' className='font-semibold'>
         Create AI-NFT
       </Button>
     ),
@@ -36,12 +40,13 @@ const navs = [
 export function Header() {
   const pathname = usePathname();
   const { publicKey } = useWallet();
+  const logout = useLogout();
   return (
     <>
       <header
         id='header'
         className={clsx(
-          "fixed bg-white-20 backdrop-blur-[20px] top-0 left-0 w-full z-10 border-b h-64 flex items-center px-64 mobile:px-16 justify-between",
+          "fixed bg-white/[0.01] backdrop-blur-[20px] top-0 left-0 w-full z-10 border-b h-64 flex items-center px-64 mobile:px-16 justify-between",
           {
             hidden: pathname === "/",
           }
@@ -52,18 +57,26 @@ export function Header() {
         </Link>
         <div className='flex items-center gap-32'>
           {navs.map((nav) => (
-            <NavItem key={nav.href} href={nav.href}>
+            <NavItem key={nav.key} href={nav.href}>
               {nav.label}
             </NavItem>
           ))}
           {!publicKey ? (
-            <ConnectButton size='m' />
+            <ConnectButton size='s' />
           ) : (
             <Dropdown
               content={
                 <div className='flex flex-col gap-8'>
-                  <SelectOption selected={false}>Profile</SelectOption>
-                  <SelectOption selected={false}>
+                  <Link href={`/sol/account/${publicKey.toBase58()}`}>
+                    <SelectOption selected={false}>Profile</SelectOption>
+                  </Link>
+
+                  <SelectOption
+                    handleSelect={() => {
+                      logout();
+                    }}
+                    selected={false}
+                  >
                     <IconLogout />
                     Logout
                   </SelectOption>

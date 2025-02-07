@@ -7,20 +7,25 @@ export function Address({
   enableCopy,
   className,
   disableTooltip,
+  wholeAddress,
 }: {
   address: string;
   enableCopy?: boolean;
   className?: string;
   disableTooltip?: boolean;
+  wholeAddress?: boolean;
 }) {
   return (
     <Tooltip
-      disabled={disableTooltip}
+      disabled={disableTooltip || wholeAddress}
       content={address}
-      className={clsx("flex items-center gap-8", className)}
+      contentClassName='break-all'
+      className={clsx("flex items-center gap-8 ", className)}
     >
       <span>
-        {address.slice(0, 4)}...{address.slice(-4)}
+        {wholeAddress
+          ? address
+          : `${address.slice(0, 4)}...${address.slice(-4)}`}
       </span>
       {enableCopy && (
         <IconFileCopy

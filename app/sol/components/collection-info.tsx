@@ -7,13 +7,12 @@ import {
   InteractiveBox,
 } from "@/primitive/components";
 import { Collection } from "@/types";
-import Image from "next/image";
 
 export function CollectionInfo({ collection }: { collection: Collection }) {
   return (
     <div className='flex items-center justify-between'>
       <div className='flex items-center gap-16'>
-        <Image
+        <img
           alt=''
           src={collection.logo}
           height={80}
@@ -24,7 +23,7 @@ export function CollectionInfo({ collection }: { collection: Collection }) {
           <h1 style={bungee.style} className='text-[40px]'>
             {collection.name}
           </h1>
-          <span className=''>5,000 NFTs</span>
+          <span className=''>{collection?.total?.toLocaleString()} NFTs</span>
         </div>
       </div>
       <div className='flex items-center gap-16'>

@@ -1,9 +1,9 @@
-import { useControllableValue } from 'ahooks';
-import clsx from 'clsx';
-import { PropsWithChildren, ReactNode, useCallback } from 'react';
+import { useControllableValue } from "ahooks";
+import clsx from "clsx";
+import { JSX, PropsWithChildren, ReactNode, useCallback } from "react";
 
-import { Checkbox } from '../checkbox';
-import { Select, SelectProps } from './select';
+import { Checkbox } from "../checkbox";
+import { Select, SelectProps } from "./select";
 
 export interface MultiOption<V> {
   value: V;
@@ -16,17 +16,17 @@ export type MultiSelectType<V> = (props: MultiSelectProps<V>) => JSX.Element;
 interface MultiSelectProps<V>
   extends Pick<
     SelectProps<MultiOption<V>>,
-    | 'searchConfig'
-    | 'onDropDownScroll'
-    | 'controller'
-    | 'emptyContent'
-    | 'dropdownClassName'
-    | 'titleStretch'
-    | 'dropDownStretch'
-    | 'className'
-    | 'placement'
-    | 'nest'
-    | 'disableFlipAutoHide'
+    | "searchConfig"
+    | "onDropDownScroll"
+    | "controller"
+    | "emptyContent"
+    | "dropdownClassName"
+    | "titleStretch"
+    | "dropDownStretch"
+    | "className"
+    | "placement"
+    | "nest"
+    | "disableFlipAutoHide"
   > {
   defaultValue?: V[];
   value?: V[];
@@ -77,7 +77,9 @@ export function MultiSelect<V>(props: PropsWithChildren<MultiSelectProps<V>>) {
     ...op,
     index,
   }));
-  const [selectedItems, setSelectedItems] = useControllableValue<V[]>(props, { defaultValue });
+  const [selectedItems, setSelectedItems] = useControllableValue<V[]>(props, {
+    defaultValue,
+  });
   const onItemClick = (item: MultiOption<V>) => {
     const isSelected = selectedItems.some((v) => v === item?.value);
     let newSelected: V[];
@@ -98,9 +100,9 @@ export function MultiSelect<V>(props: PropsWithChildren<MultiSelectProps<V>>) {
     (item?: MultiOption<V>) => {
       const isSelected = selectedItems.some((v) => v === item?.value);
       return (
-        <div className="flex items-center h-full w-full justify-between">
+        <div className='flex items-center h-full w-full justify-between'>
           {renderItem ? renderItem(item) : item?.label}
-          <Checkbox className="text-size-18 flex-shrink-0" value={isSelected} />
+          <Checkbox className='text-size-18 flex-shrink-0' value={isSelected} />
         </div>
       );
     },
@@ -126,11 +128,15 @@ export function MultiSelect<V>(props: PropsWithChildren<MultiSelectProps<V>>) {
         foot,
       }}
       emptyContent={props.emptyContent}
-      activeIndex={optionWithIndex.filter((op) => selectedItems?.includes?.(op.value)).map((si) => si.index)}
+      activeIndex={optionWithIndex
+        .filter((op) => selectedItems?.includes?.(op.value))
+        .map((si) => si.index)}
       stayOpenAfterSelect
       controller={controller}
     >
-      {withNumTag && selectedItems.length > 0 && <NumTag>{selectedItems.length}</NumTag>}
+      {withNumTag && selectedItems.length > 0 && (
+        <NumTag>{selectedItems.length}</NumTag>
+      )}
       {children || titleConfig?.renderer?.(selectedItems, options)}
     </Select>
   );
@@ -140,13 +146,18 @@ function NumTag({
   children,
   className,
   ...rest
-}: PropsWithChildren<React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>>) {
+}: PropsWithChildren<
+  React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLSpanElement>,
+    HTMLSpanElement
+  >
+>) {
   return (
     <span
       {...rest}
       className={clsx(
         className,
-        'absolute -top-8 -right-8 h-18 text-size-12 w-18 rounded-full leading-[1.125rem] text-center bg-primary text-white'
+        "absolute -top-8 -right-8 h-18 text-size-12 w-18 rounded-full leading-[1.125rem] text-center bg-primary text-white"
       )}
     >
       {children}

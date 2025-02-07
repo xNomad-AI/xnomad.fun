@@ -14,15 +14,17 @@ export const style: Style = {
     m: clsx("h-40 px-24 text-size-14"),
     s: clsx("h-32 px-16 text-size-12"),
     xs: clsx("h-24 px-8 text-size-12 overflow-visible"),
+    icon: clsx("h-40 w-40"),
   },
   rounded: {
     l: clsx("rounded-8"),
     m: clsx("rounded-6"),
     s: clsx("rounded-4"),
     xs: clsx("rounded-2"),
+    icon: clsx("rounded-full"),
   },
   variant: {
-    primary: clsx("text-text1 bg-brand"),
+    primary: clsx("text-black bg-brand"),
     secondary: clsx("text-text1 bg-surface"),
     warning: clsx("text-red bg-red-10"),
     plain: clsx("text-text1 bg-surface"),

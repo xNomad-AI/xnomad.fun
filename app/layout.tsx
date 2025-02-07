@@ -3,10 +3,15 @@ import { IBM_Plex_Mono } from "next/font/google";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import "./globals.css";
 import { WalletProvider } from "./layout/wallet-provider";
-import { FloatLayerProvider } from "@/primitive/components";
+import {
+  FloatLayerProvider,
+  GlobalMessageContainer,
+} from "@/primitive/components";
 import { ThemeProvider } from "./layout/theme";
 import { Header } from "./layout/header";
 import { Portal } from "./layout/portal";
+import { PAGE_VIEW_ID } from "@/lib/page-view";
+import { InitStore } from "./layout/init-store";
 
 const ibm = IBM_Plex_Mono({
   variable: "--ibm-plex-mono",
@@ -40,16 +45,17 @@ export default function RootLayout({
       <link rel='icon' href='/logo.svg' type='image/x-icon' />
       <ThemeProvider defaultTheme={"dark"}>
         <body
-          className={`${ibm.variable} antialiased bg-[url('/background.png')]`}
+          id={PAGE_VIEW_ID}
+          className={`${ibm.className} bg-background text-text1 text-size-14 bg-[url('/background.webp')] bg-repeat bg-contain`}
         >
           <FloatLayerProvider>
             <WalletProvider>
               <Header />
               <Portal />
-              
-              {/* <PageLoadingProgressBar /> */}
+              <InitStore />
               {children}
             </WalletProvider>
+            <GlobalMessageContainer />
           </FloatLayerProvider>
         </body>
       </ThemeProvider>

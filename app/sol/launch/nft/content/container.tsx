@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { PropsWithChildren } from "react";
-import { Step } from ".";
+import { Step } from "./content";
 
 export function Container({
   value,

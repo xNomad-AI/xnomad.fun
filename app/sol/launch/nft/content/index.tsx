@@ -119,7 +119,9 @@ export function Content() {
       );
       setStep("creating");
       const res = await signTransaction(versionTx);
-      const tx = await connection.sendTransaction(res);
+      const tx = await connection.sendTransaction(res, {
+        preflightCommitment: "confirmed",
+      });
       inspectTransaction(tx).then(() => {
         setStep("success");
         resetAll();
@@ -457,10 +459,10 @@ export function Content() {
             </div>
             {(preCheck?.discountPercentage ?? 0) > 0 ? (
               <div className='flex items-center gap-8'>
-                <div className='h-18 px-4 flex items-center text-size-12 bg-[url(/tag-bg.webp)] bg-no-repeat bg-center bg-cover rounded-4'>
+                <div className='h-18 px-4 flex items-center text-black text-size-12 bg-[url(/tag-bg.webp)] bg-no-repeat bg-center bg-cover rounded-4'>
                   xNomad Holder
                 </div>
-                <span>{(preCheck?.discountPercentage ?? 0) * 100}% off</span>
+                <span>{preCheck?.discountPercentage ?? 0}% off</span>
               </div>
             ) : (
               <span>0</span>

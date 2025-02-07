@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
+module.exports = {
+
   env: {
     NEXT_SEVER_API_HOST: process.env.NEXT_SEVER_API_HOST,
     NEXT_CLIENT_API_HOST: process.env.NEXT_CLIENT_API_HOST,
@@ -12,7 +12,6 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.DEPLOY_ENV === "prod",
   },
-
   images: {
     remotePatterns: [
       {
@@ -25,7 +24,4 @@ const nextConfig = {
       },
     ],
   },
-  swcMinify: true,
 };
-
-module.exports = nextConfig;

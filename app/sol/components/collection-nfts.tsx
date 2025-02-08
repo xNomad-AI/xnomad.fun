@@ -82,7 +82,7 @@ export function CollectionNFTs({ collection }: { collection: Collection }) {
               height={240}
               alt={nft.name}
               loading='lazy'
-              className='w-full aspect-square rounded-12'
+              className='w-full aspect-square object-contain bg-surface rounded-12'
             />
             <div className='flex flex-col w-full items-center'>
               <span style={bungeeInline.style} className='text-size-12'>

@@ -16,12 +16,18 @@ export default function Page({
   const { address } = params;
   return (
     <Container className='flex flex-col gap-32 w-full'>
-      <div className='flex items-center mb-32 gap-16'>
-        <Image src={"/solana.png"} height={40} width={40} alt='' />
+      <div className='flex items-center mt-32 gap-16'>
+        <Image
+          src={"/solana.png"}
+          className='mobile:h-24 mobile:w-24'
+          height={40}
+          width={40}
+          alt=''
+        />
         <Address
           address={address}
           enableCopy
-          className={clsx(bungee.className, "text-[40px]")}
+          className={clsx(bungee.className, "text-[40px] mobile:text-size-24")}
         />
       </div>
       <div></div>

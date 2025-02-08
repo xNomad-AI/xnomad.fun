@@ -22,6 +22,7 @@ export interface Collection {
   name: string;
   updatedAt: string;
   total: number;
+  nftsCount: number;
 }
 export interface Price {
   value: number;

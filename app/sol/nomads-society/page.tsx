@@ -20,10 +20,10 @@ export default async function Page() {
       <Background src='/society-bg.webp' />
       <CollectionInfo collection={collection} isSociety />
       <Description __html={collection.description} />
-      <CollectionFilter />
+      <CollectionFilter isSociety />
       <div className='w-full flex gap-24'>
         <SideBar />
-        <CollectionNFTs collection={collection} />
+        <CollectionNFTs collection={collection} isSociety />
       </div>
     </main>
   );

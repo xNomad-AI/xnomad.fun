@@ -47,7 +47,7 @@ export function Header() {
       >
         <Link href={"/"} className='flex items-center gap-8 mobile:hidden'>
           <Image src={"/brand.png"} width={145} height={40} alt='' />
-          <div className='bg-white-60 rounded-4 text-size-12 font-bold py-2 px-4'>
+          <div className='bg-white-60 text-black rounded-4 text-size-12 font-bold py-2 px-4'>
             Beta
           </div>
         </Link>
@@ -117,7 +117,7 @@ export function Header() {
               content={
                 <div className='flex flex-col gap-8'>
                   <Link href={`/sol/account/${publicKey.toBase58()}`}>
-                    <SelectOption selected={false}>Profile</SelectOption>
+                    <SelectOption selected={false}>My AI-NFTs</SelectOption>
                   </Link>
 
                   <SelectOption

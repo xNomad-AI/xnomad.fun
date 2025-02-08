@@ -1,6 +1,9 @@
 "use client";
 import { bungee } from "@/app/layout/font";
+import { XNOMAD_ID } from "@/app/sol/xnomad/constants";
 import { Address } from "@/components/address";
+import { TextWithEllipsis } from "@/components/text-with-ellipsis";
+import { useRarity } from "@/lib/utils/rarity/use-rarity";
 import {
   Card,
   IconContract,
@@ -14,6 +17,10 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useState } from "react";
 export function InfoSection({ nft }: { nft: NFT }) {
+  const style = useRarity({
+    rank: nft.rarity.rank,
+    total: nft.collectionId === XNOMAD_ID ? 5000 : Infinity,
+  });
   return (
     <div className='flex flex-col w-[280px] gap-16 flex-shrink-0'>
       <img
@@ -48,7 +55,7 @@ export function InfoSection({ nft }: { nft: NFT }) {
         <Card className='flex flex-col gap-16 p-16 w-full'>
           <div className='flex items-center justify-between'>
             <span className='font-bold'>Rarity</span>
-            <span>#{nft.rarity.rank}</span>
+            <span className={style.className}>#{nft.rarity.rank}</span>
           </div>
         </Card>
         <Card className='flex flex-col gap-16 p-16 w-full'>
@@ -56,10 +63,12 @@ export function InfoSection({ nft }: { nft: NFT }) {
           {nft.traits.map((trait) => (
             <div
               key={trait.value}
-              className='flex items-center justify-between'
+              className='flex items-center justify-between gap-16'
             >
-              <span>{trait.type}</span>
-              <span>{trait.value}</span>
+              <TextWithEllipsis className='max-w-[90px] flex-shrink-0'>
+                {trait.type}
+              </TextWithEllipsis>
+              <TextWithEllipsis>{trait.value}</TextWithEllipsis>
             </div>
           ))}
         </Card>

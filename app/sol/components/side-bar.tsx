@@ -5,6 +5,8 @@ import {
   Checkbox,
   Collapse,
   IconDownFilled,
+  Modal,
+  ModalContent,
   TextField,
 } from "@/primitive/components";
 import { useEffect, useMemo, useState } from "react";
@@ -20,7 +22,8 @@ interface Trait {
   traitType: string;
 }
 export function SideBar() {
-  const { collection, traitsFilterOpen } = useCollectionStore();
+  const { collection, traitsFilterOpen, setTraitsFilterOpen } =
+    useCollectionStore();
   const [filterTemplate, setFilterTemplate] = useState<Trait[]>([]);
   useEffect(() => {
     api.v1
@@ -36,44 +39,58 @@ export function SideBar() {
       return acc + curr.traitValues.reduce((acc, curr) => acc + curr.count, 0);
     }, 0);
   }, [filterTemplate]);
-  return (
-    <div
-      className={clsx(
-        "flex flex-col gap-8 w-[240px] h-[calc(100vh-372px)] overflow-auto flex-shrink-0",
-        {
-          hidden: !traitsFilterOpen,
-        }
-      )}
+  const content = (
+    <Collapse
+      defaultValue={true}
+      title={
+        <span className='font-bold'>Traits({toCardNum(traitsCount)})</span>
+      }
     >
-      <Collapse
-        title={
-          <span className='font-bold'>Traits({toCardNum(traitsCount)})</span>
-        }
+      {filterTemplate.map((template) => {
+        const count = template.traitValues.reduce(
+          (acc, curr) => acc + curr.count,
+          0
+        );
+        return (
+          <Collapse
+            key={template.traitType}
+            title={
+              <div className='flex justify-between items-center w-full'>
+                <span>{template.traitType}</span>
+                <span>{toCardNum(count)}</span>
+              </div>
+            }
+          >
+            <TraitFilter
+              data={template.traitValues}
+              type={template.traitType}
+            />
+          </Collapse>
+        );
+      })}
+    </Collapse>
+  );
+  return (
+    <>
+      <div
+        className={clsx(
+          "mobile:hidden flex flex-col gap-8 w-[240px] h-[calc(100vh-372px)] overflow-auto flex-shrink-0",
+          {
+            hidden: !traitsFilterOpen,
+          }
+        )}
       >
-        {filterTemplate.map((template) => {
-          const count = template.traitValues.reduce(
-            (acc, curr) => acc + curr.count,
-            0
-          );
-          return (
-            <Collapse
-              key={template.traitType}
-              title={
-                <div className='flex justify-between items-center w-full'>
-                  <span>{template.traitType}</span>
-                  <span>{toCardNum(count)}</span>
-                </div>
-              }
-            >
-              <TraitFilter
-                data={template.traitValues}
-                type={template.traitType}
-              />
-            </Collapse>
-          );
-        })}
-      </Collapse>
-    </div>
+        {content}
+      </div>
+      <Modal
+        open={traitsFilterOpen}
+        onMaskClick={() => {
+          setTraitsFilterOpen(false);
+        }}
+      >
+        <ModalContent>{content}</ModalContent>
+      </Modal>
+    </>
   );
 }
 
@@ -108,7 +125,9 @@ function TraitFilter({
         className='w-full'
       />
       <div className='w-full flex items-center gap-8 border-b border-white-20 h-32'>
-        <div className='w-[80px] flex items-center'>Value</div>
+        <div className='w-[120px] mobile:w-[unset] mobile:flex-1 flex items-center'>
+          Value
+        </div>
         <div
           onClick={() => {
             setDirection(direction === "asc" ? "desc" : "asc");
@@ -125,7 +144,7 @@ function TraitFilter({
           />{" "}
           Total
         </div>
-        <div className='w-[90px] flex items-center'></div>
+        <div className='w-[50px] flex items-center'></div>
       </div>
       {showData.length > 0 ? (
         <InfiniteScrollList
@@ -138,49 +157,44 @@ function TraitFilter({
               (param) =>
                 param.traitType === type && trait.value === param.traitValue
             );
-            console.log({
-              checkedTrait,
-              nftSearchParams,
-              type,
-              trait,
-            });
             return (
               <div
                 key={trait.value}
+                onClick={() => {
+                  if (!checkedTrait) {
+                    setNftSearchParams({
+                      traitsQuery: [
+                        ...nftSearchParams.traitsQuery,
+                        {
+                          traitType: type,
+                          traitValue: trait.value,
+                        },
+                      ],
+                    });
+                  } else {
+                    setNftSearchParams({
+                      traitsQuery: nftSearchParams.traitsQuery.filter(
+                        (param) =>
+                          type !== param.traitType ||
+                          param.traitValue !== trait.value
+                      ),
+                    });
+                  }
+                }}
                 className={clsx(
-                  "w-full flex items-center gap-8 h-48 hover:bg-white/[0.06]"
+                  "w-full cursor-pointer flex items-center gap-8 h-48 hover:bg-white/[0.06]"
                 )}
               >
-                <TextWithEllipsis className='w-[80px]'>
+                <TextWithEllipsis className='w-[120px] mobile:w-[unset] mobile:flex-1'>
                   {trait.value}
                 </TextWithEllipsis>
                 <div className='w-[48px] flex items-center justify-end'>
                   {toCardNum(trait.count)}
                 </div>
-                <div className='w-[90px] flex items-center justify-end'>
+                <div className='w-[50px] flex items-center justify-end'>
                   <Checkbox
+                    className='text-size-16'
                     value={Boolean(checkedTrait)}
-                    onClick={() => {
-                      if (!checkedTrait) {
-                        setNftSearchParams({
-                          traitsQuery: [
-                            ...nftSearchParams.traitsQuery,
-                            {
-                              traitType: type,
-                              traitValue: trait.value,
-                            },
-                          ],
-                        });
-                      } else {
-                        setNftSearchParams({
-                          traitsQuery: nftSearchParams.traitsQuery.filter(
-                            (param) =>
-                              type !== param.traitType ||
-                              param.traitValue !== trait.value
-                          ),
-                        });
-                      }
-                    }}
                   />
                 </div>
               </div>

@@ -85,7 +85,7 @@ export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
       ) : null}
       <input
         className={clsx(
-          "bg-inherit border-none outline-none placeholder-text-text2 grow shrink min-w-0",
+          "bg-inherit border-none outline-none placeholder:text-text2 grow shrink min-w-0",
           inputClassName,
           {
             "!cursor-not-allowed": disabled,

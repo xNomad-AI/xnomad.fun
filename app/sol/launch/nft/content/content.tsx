@@ -132,7 +132,7 @@ export function Content() {
     }
   });
   return (
-    <div className='w-full flex flex-col gap-16 items-center'>
+    <div className='w-full flex flex-col gap-16 items-center p-16'>
       <Container
         className='w-full my-64 mx-32 mobile:m-16'
         value='base'
@@ -239,7 +239,7 @@ export function Content() {
         </FormItem>
         <FormItem label='Description' {...form.description}>
           <Card
-            className={clsx("p-12", {
+            className={clsx("p-12 focus-within:border-white-40", {
               "border-red": form.description.isInValid,
             })}
           >
@@ -250,7 +250,7 @@ His most prized possession is a VHS tape of Hello, Dolly!.
 He longs for companionship and dreams of love.
 When he meets EVE, he follows her across space on an adventure.
 Despite his mechanical nature, he displays deep emotions and loyalty.`}
-              className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
+              className='min-h-[76px] bg-transparent w-full focus-visible:outline-none placeholder:text-text2'
               value={form.description.value}
               onChange={(e) => {
                 updateForm("description", {
@@ -266,12 +266,12 @@ Despite his mechanical nature, he displays deep emotions and loyalty.`}
           <>
             <FormItem label='Personality' {...form.personality}>
               <Card
-                className={clsx("p-12", {
+                className={clsx("p-12 focus-within:border-white-40", {
                   "border-red": form.personality.isInValid,
                 })}
               >
                 <textarea
-                  className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
+                  className='min-h-[76px] bg-transparent w-full focus-visible:outline-none placeholder:text-text2'
                   value={form.personality.value}
                   placeholder='e.g. Curious, Loyal, Gentle, Playful, Determined, Romantic'
                   onChange={(e) => {
@@ -286,12 +286,12 @@ Despite his mechanical nature, he displays deep emotions and loyalty.`}
             </FormItem>
             <FormItem label='Greeting' {...form.greeting}>
               <Card
-                className={clsx("p-12", {
+                className={clsx("p-12 focus-within:border-white-40", {
                   "border-red": form.greeting.isInValid,
                 })}
               >
                 <textarea
-                  className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
+                  className='min-h-[76px] bg-transparent w-full focus-visible:outline-none placeholder:text-text2'
                   value={form.greeting.value}
                   placeholder="e.g. Brave, Kind, Resourceful, Loving, Nostalgic, PersistentHey! I'm Wallet, and I'm here to make waves and change the game! How can I inspire you today? "
                   onChange={(e) => {
@@ -306,10 +306,12 @@ Despite his mechanical nature, he displays deep emotions and loyalty.`}
             </FormItem>
             <FormItem label='Lore' {...form.lore}>
               <Card
-                className={clsx("p-12", { "border-red": form.lore.isInValid })}
+                className={clsx("p-12 focus-within:border-white-40", {
+                  "border-red": form.lore.isInValid,
+                })}
               >
                 <textarea
-                  className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
+                  className='min-h-[76px] bg-transparent w-full focus-visible:outline-none placeholder:text-text2'
                   value={form.lore.value}
                   placeholder={`e.g. Walle was left behind on a deserted Earth covered in garbage.
 He continued working long after humanity left the planet.
@@ -329,10 +331,12 @@ He ultimately played a key role in bringing humanity back to Earth.`}
             </FormItem>
             <FormItem label='Style' {...form.style}>
               <Card
-                className={clsx("p-12", { "border-red": form.style.isInValid })}
+                className={clsx("p-12 focus-within:border-white-40", {
+                  "border-red": form.style.isInValid,
+                })}
               >
                 <textarea
-                  className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
+                  className='min-h-[76px] bg-transparent w-full focus-visible:outline-none placeholder:text-text2'
                   value={form.style.value}
                   placeholder='e.g. Innocent, Hopeful, Expressive, Nonverbal, Gestural, Emotion-driven'
                   onChange={(e) => {
@@ -347,12 +351,12 @@ He ultimately played a key role in bringing humanity back to Earth.`}
             </FormItem>
             <FormItem label='Adjectives' {...form.adjectives}>
               <Card
-                className={clsx("p-12", {
+                className={clsx("p-12 focus-within:border-white-40", {
                   "border-red": form.adjectives.isInValid,
                 })}
               >
                 <textarea
-                  className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
+                  className='min-h-[76px] bg-transparent w-full focus-visible:outline-none placeholder:text-text2'
                   value={form.adjectives.value}
                   placeholder='e.g. Brave, Kind, Resourceful, Loving, Nostalgic, Persistent'
                   onChange={(e) => {
@@ -369,10 +373,12 @@ He ultimately played a key role in bringing humanity back to Earth.`}
         )}
         <FormItem label='Knowledge' {...form.knowledge}>
           <Card
-            className={clsx("p-12", { "border-red": form.knowledge.isInValid })}
+            className={clsx("p-12 focus-within:border-white-40", {
+              "border-red": form.knowledge.isInValid,
+            })}
           >
             <textarea
-              className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
+              className='min-h-[76px] bg-transparent w-full focus-visible:outline-none placeholder:text-text2'
               value={form.knowledge.value}
               placeholder={`e.g. Walle understands waste management and recycling processes.
 He has gathered extensive knowledge from human artifacts found in the trash.

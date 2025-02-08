@@ -40,7 +40,7 @@ export function CardViewGallery(props: PropsWithChildren<Props>) {
   return (
     <div
       className={clsx(
-        "grid gap-10 justify-items-stretch w-full",
+        "grid gap-24 mobile:gap-16 justify-items-stretch w-full mobile:grid-cols-2",
         "grid-cols-[repeat(auto-fit,_minmax(12.5rem,_1fr))]",
         className
       )}

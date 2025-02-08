@@ -7,7 +7,7 @@ import clsx from "clsx";
 import { useMutation } from "@tanstack/react-query";
 import { UUID } from "@elizaos/core";
 import { apiClient } from "../lib/api";
-import { message, Tooltip } from "@/primitive/components";
+import { IconCheck, message, Tooltip } from "@/primitive/components";
 
 type Props = {
   agentId: UUID;
@@ -230,7 +230,7 @@ export const AudioRecorder = ({
       <div className='flex items-center gap-8'>
         {/* ========== Delete recording button ========== */}
         {isRecording ? (
-          <Tooltip content={<span> Reset recording</span>}>
+          <Tooltip content={<span>Reset</span>}>
             <button
               onClick={resetRecording}
               className='flex items-center justify-center '
@@ -241,7 +241,7 @@ export const AudioRecorder = ({
         ) : null}
 
         {/* ========== Start and send recording button ========== */}
-        <Tooltip content={<span>{!isRecording ? "Start" : "Send"} </span>}>
+        <Tooltip content={<span>{!isRecording ? "Start" : "Finish"} </span>}>
           {!isRecording ? (
             <button
               className='flex items-center justify-center gap-8'
@@ -255,7 +255,7 @@ export const AudioRecorder = ({
               onClick={handleSubmit}
               className='flex items-center justify-center '
             >
-              <Send className='size-16' />
+              <IconCheck className='text-size-20' />
             </button>
           )}
         </Tooltip>

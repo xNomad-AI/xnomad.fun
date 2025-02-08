@@ -8,7 +8,7 @@ import { upperFirstLetter } from "@/lib/utils/string";
 import { Portfolio } from "./portfolio";
 import { Analytics } from "./analytics";
 import { Features } from "./features";
-const tabs = ["chat", "portfolio", "analytics", "features"] as const;
+const tabs = ["chat", "portfolio", "activity", "features"] as const;
 type Tab = (typeof tabs)[number];
 export function Content({ nft }: { nft: NFT }) {
   const [tab, setTab] = useState<Tab>("chat");
@@ -25,7 +25,7 @@ export function Content({ nft }: { nft: NFT }) {
         <ChatPage agentId={nft.agentId} nft={nft} />
       )}
       {tab === "portfolio" && <Portfolio nft={nft} />}
-      {tab === "analytics" && <Analytics nft={nft} />}
+      {tab === "activity" && <Analytics nft={nft} />}
       {tab === "features" && <Features nft={nft} />}
     </div>
   );

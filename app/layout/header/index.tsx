@@ -116,7 +116,7 @@ export function Header() {
             <Dropdown
               content={
                 <div className='flex flex-col gap-8'>
-                  <Link href={`/sol/account/${publicKey.toBase58()}`}>
+                  <Link href={`/sol/profile/${publicKey.toBase58()}`}>
                     <SelectOption selected={false}>My AI-NFTs</SelectOption>
                   </Link>
 

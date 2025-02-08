@@ -1,5 +1,4 @@
 "use client";
-import { bungee, bungeeInline } from "@/app/layout/font";
 import { CardViewGallery } from "@/app/sol/components/card-view-gallery";
 import { NFTCard } from "@/app/sol/components/collection-nfts";
 import { NOMADS_SOCIETY_ID } from "@/app/sol/nomads-society/constants";
@@ -7,7 +6,6 @@ import { XNOMAD_ID } from "@/app/sol/xnomad/constants";
 import { api } from "@/primitive/api";
 import { NFT } from "@/types";
 import { useRequest } from "ahooks";
-import Link from "next/link";
 import { useState } from "react";
 
 export function Content({ address }: { address: string }) {
@@ -29,7 +27,9 @@ export function Content({ address }: { address: string }) {
         collectionId: XNOMAD_ID,
       })
       .then((res) => {
-        res && setXnomads(res[XNOMAD_ID].nfts);
+        if (res) {
+          setXnomads(res[XNOMAD_ID].nfts);
+        }
       });
   });
   const { loading: societyLoading } = useRequest(async () => {
@@ -47,7 +47,9 @@ export function Content({ address }: { address: string }) {
         collectionId: NOMADS_SOCIETY_ID,
       })
       .then((res) => {
-        res && setSociety(res[NOMADS_SOCIETY_ID].nfts);
+        if (res) {
+          setSociety(res[NOMADS_SOCIETY_ID].nfts);
+        }
       });
   });
   return (

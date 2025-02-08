@@ -536,7 +536,7 @@ He has learned about plants and their significance in restoring life to Earth.`}
             className='!w-full max-w-[400px]'
             onClick={() => {
               resetAll();
-              router.push(`/sol/account/${publicKey?.toBase58()}/nft`);
+              router.push(`/sol/profile/${publicKey?.toBase58()}/nft`);
             }}
           >
             View My AI-NFT

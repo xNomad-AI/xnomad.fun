@@ -1,6 +1,10 @@
 import { userStorage } from "@/lib/user/storage";
 import { isBrowser } from "../utils/is-browser";
-import { ApiCancelError, ApiInvalidResponseError } from "./error";
+import {
+  ApiCancelError,
+  ApiInvalidResponseError,
+  ApiUnauthorizeError,
+} from "./error";
 import {
   ApiResponse,
   ApiServiceRequestInterceptor,
@@ -103,6 +107,9 @@ export const response: ApiServiceResponseInterceptor = async (
 
     const body = await (res as Response).json();
     if (isApiResponse(body)) {
+      if (body.statusCode === 401) {
+        throw new ApiUnauthorizeError();
+      }
       if (body.data) {
         return body.data;
       } else {

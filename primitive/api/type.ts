@@ -19,19 +19,25 @@ export type RequestConfig = {
   headers: Headers;
 } & FetchInit;
 
-export type ApiServiceRequestInterceptor = (config: RequestConfig) => RequestConfig;
+export type ApiServiceRequestInterceptor = (
+  config: RequestConfig
+) => RequestConfig;
 
-export type ApiServiceResponseInterceptor = (response: Promise<Response>, config: RequestConfig) => Promise<unknown>;
+export type ApiServiceResponseInterceptor = (
+  response: Promise<Response>,
+  config: RequestConfig
+) => Promise<unknown>;
 
 export type ApiServiceConfig = {
   data?: unknown;
 } & FetchInit;
 
 export interface ApiResponse<T = unknown> {
-  code: 'SUCCESS' | string;
+  code: "SUCCESS" | string;
   msg: string; // 报错主要呈现这一部分信息
   data: T;
   success: boolean;
+  statusCode?: number;
 }
 
 export interface ApiListData<T> {

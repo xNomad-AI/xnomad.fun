@@ -2,7 +2,6 @@
 import { ConnectButton } from "@/app/home/connect-button";
 import { Address } from "@/components/address";
 import {
-  Button,
   Dropdown,
   IconArrowDown,
   IconLogout,
@@ -16,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PropsWithChildren } from "react";
 import { useLogout } from "@/lib/user/use-logout";
+import { useConnectModalStore } from "@/components/connect-modal/store";
 const navs = [
   {
     href: "/sol/xnomad",
@@ -23,7 +23,7 @@ const navs = [
     label: "xNomad Gallery",
   },
   {
-    href: "",
+    href: `/profile`,
     key: "my-ai-nfts",
     label: "My AI-NFTs",
   },
@@ -36,6 +36,7 @@ const navs = [
 export function Header() {
   const { publicKey } = useWallet();
   const logout = useLogout();
+  const { setVisible } = useConnectModalStore();
   return (
     <>
       <header
@@ -56,7 +57,23 @@ export function Header() {
         <div className='flex items-center gap-32 portrait-tablet:gap-24'>
           <div className='flex items-center gap-32 portrait-tablet:hidden'>
             {navs.map((nav) => (
-              <NavItem key={nav.key} href={nav.href}>
+              <NavItem
+                key={nav.key}
+                onClick={(e) => {
+                  if (nav.key === "my-ai-nfts") {
+                    if (!publicKey) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setVisible(true);
+                    }
+                  }
+                }}
+                href={
+                  nav.key === "my-ai-nfts"
+                    ? `/sol/profile/${publicKey?.toBase58()}`
+                    : nav.href
+                }
+              >
                 {nav.label}
               </NavItem>
             ))}
@@ -66,7 +83,23 @@ export function Header() {
             content={
               <div className='flex flex-col gap-8'>
                 {navs.map((nav) => (
-                  <Link key={nav.key} href={nav.href}>
+                  <Link
+                    key={nav.key}
+                    onClick={(e) => {
+                      if (nav.key === "create-ai-nft") {
+                        if (!publicKey) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setVisible(true);
+                        }
+                      }
+                    }}
+                    href={
+                      nav.key === "my-ai-nfts"
+                        ? `/sol/profile/${publicKey?.toBase58()}`
+                        : nav.href
+                    }
+                  >
                     <SelectOption selected={false}>{nav.label}</SelectOption>
                   </Link>
                 ))}
@@ -116,11 +149,20 @@ export function Header() {
   );
 }
 
-function NavItem({ href, children }: PropsWithChildren<{ href: string }>) {
+function NavItem({
+  href,
+  children,
+  onClick,
+}: PropsWithChildren<{ href: string; onClick?: (e: any) => void }>) {
   return (
     <Link
       href={href}
       onClick={(e) => {
+        if (onClick) {
+          onClick(e);
+          return;
+        }
+
         if (href === "") {
           e.preventDefault();
           message("Coming soon");

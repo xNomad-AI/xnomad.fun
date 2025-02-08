@@ -13,7 +13,9 @@ export default async function Page() {
   const { collection } = await api.v1.get<{
     collection: Collection;
     metrics: CollectionMetrics;
-  }>(`/nft/solana/collections/${XNOMAD_ID}`);
+  }>(`/nft/solana/collections/${XNOMAD_ID}`, undefined, {
+    cache: "no-cache",
+  });
 
   return (
     <main className='relative flex flex-col px-64 py-32 mobile:px-16 gap-32 w-full'>

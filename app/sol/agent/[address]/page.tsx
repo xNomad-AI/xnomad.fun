@@ -12,7 +12,9 @@ export default async function Page({
   }>;
 }) {
   const { address } = await params;
-  const nft = await api.v1.get<NFT>(`/nft/solana/nfts/${address}`);
+  const nft = await api.v1.get<NFT>(`/nft/solana/nfts/${address}`, undefined, {
+    cache: "no-cache",
+  });
   return (
     <Container className='flex gap-48 w-full'>
       <InfoSection nft={nft} />

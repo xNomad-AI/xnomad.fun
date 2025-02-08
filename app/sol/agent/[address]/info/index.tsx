@@ -34,7 +34,12 @@ export function InfoSection({ nft }: { nft: NFT }) {
         <h1 style={bungee.style} className='text-size-24'>
           {nft.name}
         </h1>
-        <Link href={`/sol/xnomad`} className='flex items-center gap-4'>
+        <Link
+          href={`/sol/${
+            nft.collectionId === XNOMAD_ID ? "xnomad" : "nomads-society"
+          }`}
+          className='flex items-center gap-4'
+        >
           <CollectionLogo logo={"/xnomad-nft-logo.svg"} size={24} />
           {nft.collectionName}
         </Link>

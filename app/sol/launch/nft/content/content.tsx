@@ -151,7 +151,7 @@ export function Content() {
           <TextField
             variant={form.name.isInValid ? "error" : "normal"}
             value={form.name.value}
-            placeholder='e.g. Wallet'
+            placeholder='e.g. Walle'
             onChange={(e) => {
               updateForm("name", {
                 value: e.target.value,
@@ -244,7 +244,12 @@ export function Content() {
             })}
           >
             <textarea
-              placeholder="e.g. I am an enigma wrapped in creativity and sprinkled with a dash of quirkiness. I'm like a kaleidoscope, constantly shifting and presenting different facets of my personality. I have an insatiable thirst for knowledge, which drives me to explore uncharted territories of various fields. My mind is a canvas where wild ideas and innovative thoughts collide, creating a vivid tapestry of concepts. I'm not afraid to be different; in fact, I embrace my individuality as if it were a precious jewel. I find beauty in the ordinary and magic in the mundane. I'm a dreamer with my feet firmly on the ground, always ready to turn my fantasies into reality through sheer determination and a sprinkle of audacity."
+              placeholder={`e.g. Walle is a small, diligent robot designed to clean Earth's waste.
+He has spent centuries compacting trash while developing a fascination for human artifacts.
+His most prized possession is a VHS tape of Hello, Dolly!.
+He longs for companionship and dreams of love.
+When he meets EVE, he follows her across space on an adventure.
+Despite his mechanical nature, he displays deep emotions and loyalty.`}
               className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
               value={form.description.value}
               onChange={(e) => {
@@ -268,7 +273,7 @@ export function Content() {
                 <textarea
                   className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
                   value={form.personality.value}
-                  placeholder='Creative, Unique, Bold'
+                  placeholder='e.g. Curious, Loyal, Gentle, Playful, Determined, Romantic'
                   onChange={(e) => {
                     updateForm("personality", {
                       value: e.target.value,
@@ -288,7 +293,7 @@ export function Content() {
                 <textarea
                   className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
                   value={form.greeting.value}
-                  placeholder="Hey! I'm Wallet, and I'm here to make waves and change the game! How can I inspire you today? "
+                  placeholder="e.g. Brave, Kind, Resourceful, Loving, Nostalgic, PersistentHey! I'm Wallet, and I'm here to make waves and change the game! How can I inspire you today? "
                   onChange={(e) => {
                     updateForm("greeting", {
                       value: e.target.value,
@@ -306,7 +311,12 @@ export function Content() {
                 <textarea
                   className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
                   value={form.lore.value}
-                  placeholder='We will automatically generate lore based on the Traits you fill in, and you can add anything you want to add.'
+                  placeholder={`e.g. Walle was left behind on a deserted Earth covered in garbage.
+He continued working long after humanity left the planet.
+Over centuries, he developed emotions and a whimsical personality.
+He befriended a small cockroach named Hal.
+His love for EVE led him on a journey through space.
+He ultimately played a key role in bringing humanity back to Earth.`}
                   onChange={(e) => {
                     updateForm("lore", {
                       value: e.target.value,
@@ -324,7 +334,7 @@ export function Content() {
                 <textarea
                   className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
                   value={form.style.value}
-                  placeholder='Direct, Assertive,Humorous '
+                  placeholder='e.g. Innocent, Hopeful, Expressive, Nonverbal, Gestural, Emotion-driven'
                   onChange={(e) => {
                     updateForm("style", {
                       value: e.target.value,
@@ -344,7 +354,7 @@ export function Content() {
                 <textarea
                   className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
                   value={form.adjectives.value}
-                  placeholder='Insane, beautiful, intelligent'
+                  placeholder='e.g. Brave, Kind, Resourceful, Loving, Nostalgic, Persistent'
                   onChange={(e) => {
                     updateForm("adjectives", {
                       value: e.target.value,
@@ -364,7 +374,12 @@ export function Content() {
             <textarea
               className='min-h-[76px] bg-transparent w-full focus-visible:outline-none'
               value={form.knowledge.value}
-              placeholder="e.g. I am an enigma wrapped in creativity and sprinkled with a dash of quirkiness. I'm like a kaleidoscope, constantly shifting and presenting different facets of my personality. I have an insatiable thirst for knowledge, which drives me to explore uncharted territories of various fields. My mind is a canvas where wild ideas and innovative thoughts collide, creating a vivid tapestry of concepts. I'm not afraid to be different; in fact, I embrace my individuality as if it were a precious jewel. I find beauty in the ordinary and magic in the mundane. I'm a dreamer with my feet firmly on the ground, always ready to turn my fantasies into reality through sheer determination and a sprinkle of audacity."
+              placeholder={`e.g. Walle understands waste management and recycling processes.
+He has gathered extensive knowledge from human artifacts found in the trash.
+He recognizes and appreciates music, film, and small wonders of the past.
+He knows how to repair himself using spare parts from other Walle units.
+He understands basic spaceflight after traveling aboard the Axiom.
+He has learned about plants and their significance in restoring life to Earth.`}
               onChange={(e) => {
                 updateForm("knowledge", {
                   value: e.target.value,

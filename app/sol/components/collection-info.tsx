@@ -1,5 +1,6 @@
 import { bungee } from "@/app/layout/font";
 import {
+  Button,
   createBaseIcon,
   IconDiscord,
   IconTwitterX,
@@ -7,8 +8,15 @@ import {
   InteractiveBox,
 } from "@/primitive/components";
 import { Collection } from "@/types";
+import Link from "next/link";
 
-export function CollectionInfo({ collection }: { collection: Collection }) {
+export function CollectionInfo({
+  collection,
+  isSociety,
+}: {
+  collection: Collection;
+  isSociety?: boolean;
+}) {
   return (
     <div className='flex items-center justify-between'>
       <div className='flex items-center gap-16'>
@@ -26,15 +34,21 @@ export function CollectionInfo({ collection }: { collection: Collection }) {
           <span className=''>{collection?.total?.toLocaleString()} NFTs</span>
         </div>
       </div>
-      <div className='flex items-center gap-16'>
-        <MediaIcon link='https://x.com/xNomadAI' Icon={IconTwitterX} />
+      {isSociety ? (
+        <Link href={`/sol/launch`}>
+          <Button>Create AI-NFT</Button>
+        </Link>
+      ) : (
+        <div className='flex items-center gap-16'>
+          <MediaIcon link='https://x.com/xNomadAI' Icon={IconTwitterX} />
 
-        <MediaIcon
-          link='https://discord.com/invite/xnomad'
-          Icon={IconDiscord}
-        />
-        <MediaIcon link='https://xnomad.ai' Icon={IconWebsite} />
-      </div>
+          <MediaIcon
+            link='https://discord.com/invite/xnomad'
+            Icon={IconDiscord}
+          />
+          <MediaIcon link='https://xnomad.ai' Icon={IconWebsite} />
+        </div>
+      )}
     </div>
   );
 }

@@ -18,7 +18,6 @@ export function CollectionFilter() {
   return (
     <div className='w-full flex items-center gap-12 justify-between'>
       <div className='flex items-center gap-12'>
-        {" "}
         <button
           className='w-40 h-40 rounded-4 border border-white-20 flex items-center justify-center'
           onClick={() => {

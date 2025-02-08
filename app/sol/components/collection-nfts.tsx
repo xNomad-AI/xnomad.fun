@@ -10,10 +10,14 @@ import { bungee, bungeeInline } from "@/app/layout/font";
 import Link from "next/link";
 
 export function CollectionNFTs({ collection }: { collection: Collection }) {
-  const { setCollection, nftSearchParams } = useCollectionStore();
+  const { setCollection, nftSearchParams, resetAll } = useCollectionStore();
   const elementRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     setCollection(collection);
+    // reset search params
+    return () => {
+      resetAll();
+    };
   }, [collection]);
   // fetch nfts
   const { data, loading, loadingMore } = useInfiniteScroll(

@@ -3,64 +3,40 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
 const BaseForm = {
-  name: {
+  userName: {
     value: "",
     required: true,
     isInValid: false,
     errorMsg: "",
-  } satisfies FormValue<string>,
-  image: {
-    value: null,
-    required: true,
-    isInValid: false,
-    errorMsg: "",
-  } as FormValue<File | null>,
-  description: {
+  } as FormValue<string>,
+  password: {
     value: "",
     required: true,
     isInValid: false,
     errorMsg: "",
-  } satisfies FormValue<string>,
-  personality: {
+  } as FormValue<string>,
+  twoFa: {
+    value: "",
+    required: false,
+    isInValid: false,
+    errorMsg: "",
+  } as FormValue<string>,
+  email: {
     value: "",
     required: false,
     isInValid: false,
     errorMsg: "",
   } satisfies FormValue<string>,
-  knowledge: {
-    value: "",
+  examples: {
+    value: [""],
     required: false,
     isInValid: false,
     errorMsg: "",
-  } satisfies FormValue<string>,
-  greeting: {
-    value: "",
-    required: false,
-    isInValid: false,
-    errorMsg: "",
-  } satisfies FormValue<string>,
-  lore: {
-    value: "",
-    required: false,
-    isInValid: false,
-    errorMsg: "",
-  } satisfies FormValue<string>,
-  style: {
-    value: "",
-    required: false,
-    isInValid: false,
-    errorMsg: "",
-  } satisfies FormValue<string>,
-  adjectives: {
-    value: "",
-    required: false,
-    isInValid: false,
-    errorMsg: "",
-  } satisfies FormValue<string>,
+  } as FormValue<string[]>,
 };
 export type FormKey = keyof typeof BaseForm;
-type FromValueType = string | File | null;
-export const useLaunchStore = create(
+type FromValueType = string | string[];
+export const useTwitterStore = create(
   immer<{
     form: typeof BaseForm;
     updateForm: (key: FormKey, value: FormValue<FromValueType>) => void;

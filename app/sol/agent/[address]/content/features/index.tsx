@@ -22,11 +22,11 @@ export function Features({ nft }: { nft: NFT }) {
   });
   const hasTwitterConfig = useMemo(() => {
     return Boolean(
-      config?.character.settings.secrets.TWITTER_USERNAME ||
-        config?.character.settings.secrets.TWITTER_PASSWORD ||
-        config?.character.settings.secrets.TWITTER_EMAIL ||
-        config?.character.settings.secrets.TWITTER_2FA_SECRET ||
-        (config?.character.postExamples.length ?? 0) > 0
+      config?.characterConfig.settings.secrets.TWITTER_USERNAME ||
+        config?.characterConfig.settings.secrets.TWITTER_PASSWORD ||
+        config?.characterConfig.settings.secrets.TWITTER_EMAIL ||
+        config?.characterConfig.settings.secrets.TWITTER_2FA_SECRET ||
+        (config?.characterConfig.postExamples.length ?? 0) > 0
     );
   }, [config]);
   return (

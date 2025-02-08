@@ -25,38 +25,38 @@ export function TwitterModal({
   open: boolean;
   onClose: () => void;
   config?: Config;
-  onSave: (config: Config) => void;
+  onSave: (config: Partial<Config>) => Promise<void>;
 }) {
   const { form, updateForm } = useTwitterStore();
   const [saving, setSaving] = useState(false);
   const initForm = useMemoizedFn(() => {
-    config?.character.settings.secrets.TWITTER_USERNAME &&
+    config?.characterConfig.settings.secrets.TWITTER_USERNAME &&
       updateForm("userName", {
-        value: config?.character.settings.secrets.TWITTER_USERNAME,
+        value: config?.characterConfig.settings.secrets.TWITTER_USERNAME,
         isInValid: false,
         errorMsg: "",
       });
-    config?.character.settings.secrets.TWITTER_PASSWORD &&
+    config?.characterConfig.settings.secrets.TWITTER_PASSWORD &&
       updateForm("password", {
-        value: config?.character.settings.secrets.TWITTER_PASSWORD,
+        value: config?.characterConfig.settings.secrets.TWITTER_PASSWORD,
         isInValid: false,
         errorMsg: "",
       });
-    config?.character.settings.secrets.TWITTER_2FA_SECRET &&
+    config?.characterConfig.settings.secrets.TWITTER_2FA_SECRET &&
       updateForm("twoFa", {
-        value: config?.character.settings.secrets.TWITTER_2FA_SECRET,
+        value: config?.characterConfig.settings.secrets.TWITTER_2FA_SECRET,
         isInValid: false,
         errorMsg: "",
       });
-    config?.character.settings.secrets.TWITTER_EMAIL &&
+    config?.characterConfig.settings.secrets.TWITTER_EMAIL &&
       updateForm("email", {
-        value: config?.character.settings.secrets.TWITTER_EMAIL,
+        value: config?.characterConfig.settings.secrets.TWITTER_EMAIL,
         isInValid: false,
         errorMsg: "",
       });
-    config?.character.postExamples &&
+    config?.characterConfig.postExamples &&
       updateForm("examples", {
-        value: config?.character.postExamples,
+        value: config?.characterConfig.postExamples,
         isInValid: false,
         errorMsg: "",
       });
@@ -240,7 +240,7 @@ export function TwitterModal({
               if (!allValid) return;
               setSaving(true);
               onSave({
-                character: {
+                characterConfig: {
                   postExamples: form.examples.value,
                   settings: {
                     secrets: {
@@ -251,7 +251,14 @@ export function TwitterModal({
                     },
                   },
                 },
-              });
+              })
+                .then(() => {
+                  setSaving(false);
+                  onClose();
+                })
+                .catch(() => {
+                  setSaving(false);
+                });
             }}
           >
             Save

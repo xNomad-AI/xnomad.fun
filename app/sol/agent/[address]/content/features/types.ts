@@ -1,5 +1,5 @@
 export interface Config {
-  character: {
+  characterConfig: {
     postExamples: string[];
     settings: {
       secrets: Partial<{

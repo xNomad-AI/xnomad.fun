@@ -31,6 +31,10 @@ const fetcher = async ({
     if (body instanceof FormData) {
       // @ts-expect-error - Supressing potentially undefined options header
       delete options.headers["Content-Type"];
+      body.append(
+        "Authorization",
+        `Bearer ${userStorage.getCurrentToken()?.jwt}`
+      );
       options.body = body;
     } else {
       options.body = JSON.stringify(body);

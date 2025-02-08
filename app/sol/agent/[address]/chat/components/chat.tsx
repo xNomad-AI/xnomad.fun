@@ -72,7 +72,8 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
   });
   // check if agent is setup
   useEffect(() => {
-    const interval = setInterval(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+    const checkAgentSetup = () => {
       api.agent
         .get<{
           id: string;
@@ -80,7 +81,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
         }>(`/agents/${agentId}`)
         .then((res) => {
           setIsAgentSetup(true);
-          clearInterval(interval);
+          interval && clearInterval(interval);
         })
         .catch(() => {
           setIsAgentSetup(false);
@@ -88,6 +89,10 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
             triggerAgentSetup();
           }
         });
+    };
+    checkAgentSetup();
+    interval = setInterval(() => {
+      checkAgentSetup();
     }, 5000);
     return () => clearInterval(interval);
   }, []);

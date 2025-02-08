@@ -71,7 +71,7 @@ export function Features({ nft }: { nft: NFT }) {
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>
           <div className='flex items-center gap-16'>
-            <Image src={"/twitter.svg"} height={64} width={64} alt='' />
+            <Image src={"/telegram.svg"} height={64} width={64} alt='' />
             <span>Voice Generation</span>
           </div>
           <Button

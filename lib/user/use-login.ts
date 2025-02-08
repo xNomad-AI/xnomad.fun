@@ -36,7 +36,7 @@ export function useLogin() {
       setUserInfo({
         address: publicKey.toBase58(),
         jwt: token.accessToken,
-        expires: token.expiresIn ?? Date.now() + 60 * 60 * 24,
+        expires: token.expiresIn ?? Date.now() + 60 * 60 * 24 * 1000,
       });
       onSuccess?.(token.accessToken);
     } catch (e) {

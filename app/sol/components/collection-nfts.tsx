@@ -110,7 +110,7 @@ export function NFTCard({
     <Link
       href={`/sol/agent/${nft.id}`}
       key={nft.id}
-      className='flex-col flex gap-12 min-w-[180px] mobile:min-w-[unset] max-w-[240px]'
+      className='flex-col overflow-hidden group rounded-12 flex gap-12 min-w-[180px] mobile:min-w-[unset] max-w-[240px]'
     >
       <img
         src={nft.image}
@@ -118,7 +118,7 @@ export function NFTCard({
         height={240}
         alt={nft.name}
         loading='lazy'
-        className='w-full aspect-square object-contain bg-surface rounded-12'
+        className='w-full group-hover:scale-110 transition-all duration-300 ease-in-out aspect-square object-contain bg-surface rounded-12'
       />
       <div className='flex flex-col w-full items-center'>
         <span

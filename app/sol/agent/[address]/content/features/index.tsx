@@ -6,9 +6,13 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "@/primitive/api";
 import { Config } from "./types";
 import { useMemoizedFn } from "ahooks";
+import { TelegramModal } from "./telegram";
+import { VoiceModal } from "./voice";
 
 export function Features({ nft }: { nft: NFT }) {
-  const [open, setOpen] = useState(false);
+  const [xOpen, setXOpen] = useState(false);
+  const [tgOpen, setTgOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
   const [config, setConfig] = useState<Config>();
   useEffect(() => {
     api.v1
@@ -19,15 +23,14 @@ export function Features({ nft }: { nft: NFT }) {
   }, []);
   const onSave = useMemoizedFn(async (config: Partial<Config>) => {
     await api.v1.post<Config>(`/nft/solana/${nft.id}/config`, config);
-    message("Twitter integration updated successfully", { type: "success" });
   });
   const hasTwitterConfig = useMemo(() => {
     return Boolean(
-      config?.characterConfig.settings.secrets.TWITTER_USERNAME ||
-        config?.characterConfig.settings.secrets.TWITTER_PASSWORD ||
-        config?.characterConfig.settings.secrets.TWITTER_EMAIL ||
-        config?.characterConfig.settings.secrets.TWITTER_2FA_SECRET ||
-        (config?.characterConfig.postExamples.length ?? 0) > 0
+      config?.characterConfig?.settings.secrets?.TWITTER_USERNAME ||
+        config?.characterConfig?.settings.secrets?.TWITTER_PASSWORD ||
+        config?.characterConfig?.settings.secrets?.TWITTER_EMAIL ||
+        config?.characterConfig?.settings.secrets?.TWITTER_2FA_SECRET ||
+        (config?.characterConfig?.postExamples?.length ?? 0) > 0
     );
   }, [config]);
   return (
@@ -36,11 +39,11 @@ export function Features({ nft }: { nft: NFT }) {
         <Card className='flex items-center justify-between gap-16 p-16'>
           <div className='flex items-center gap-16'>
             <Image src={"/twitter.svg"} height={64} width={64} alt='' />
-            <span>Twitter Integration</span>
+            <span>X(Twitter) Integration</span>
           </div>
           <Button
             onClick={() => {
-              setOpen(true);
+              setXOpen(true);
             }}
           >
             {hasTwitterConfig ? "Edit" : "Add"}
@@ -51,7 +54,13 @@ export function Features({ nft }: { nft: NFT }) {
             <Image src={"/telegram.svg"} height={64} width={64} alt='' />
             <span>Telegram Integration</span>
           </div>
-          <Button>Add</Button>
+          <Button
+            onClick={() => {
+              setTgOpen(true);
+            }}
+          >
+            Add
+          </Button>
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>
           <div className='flex items-center gap-16'>
@@ -65,15 +74,38 @@ export function Features({ nft }: { nft: NFT }) {
             <Image src={"/twitter.svg"} height={64} width={64} alt='' />
             <span>Voice Generation</span>
           </div>
-          <Button variant='secondary'>Edit</Button>
+          <Button
+            variant='secondary'
+            onClick={() => {
+              setVoiceOpen(true);
+            }}
+          >
+            Edit
+          </Button>
         </Card>
       </div>
       <TwitterModal
-        open={open}
+        open={xOpen}
         onSave={onSave}
         config={config}
         onClose={() => {
-          setOpen(false);
+          setXOpen(false);
+        }}
+      />
+      <TelegramModal
+        open={tgOpen}
+        onSave={onSave}
+        config={config}
+        onClose={() => {
+          setTgOpen(false);
+        }}
+      />
+      <VoiceModal
+        open={voiceOpen}
+        onSave={onSave}
+        config={config}
+        onClose={() => {
+          setVoiceOpen(false);
         }}
       />
     </>

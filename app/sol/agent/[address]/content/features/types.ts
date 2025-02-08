@@ -1,8 +1,8 @@
 export interface Config {
   characterConfig: {
-    postExamples: string[];
+    postExamples?: string[];
     settings: {
-      secrets: Partial<{
+      secrets?: Partial<{
         DISCORD_APPLICATION_ID: string;
         DISCORD_API_TOKEN: string;
         TWITTER_USERNAME: string;

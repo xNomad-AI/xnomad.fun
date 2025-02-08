@@ -223,7 +223,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
         <div className='w-full h-full flex items-center justify-center flex-col gap-32'>
           <Spin className='!text-size-32' />
           <span className='text-size-16 font-bold'>
-            Waiting for AI-Agent Creation
+            Waiting for AI-Agent to Connect
           </span>
         </div>
       ) : (

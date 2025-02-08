@@ -9,6 +9,7 @@ import {
   IconEye,
   IconEyeClosed,
   Button,
+  message,
 } from "@/primitive/components";
 import { useTwitterStore } from "./store";
 import clsx from "clsx";
@@ -31,33 +32,33 @@ export function TwitterModal({
   const { form, updateForm } = useTwitterStore();
   const [saving, setSaving] = useState(false);
   const initForm = useMemoizedFn(() => {
-    config?.characterConfig.settings.secrets.TWITTER_USERNAME &&
+    config?.characterConfig?.settings.secrets?.TWITTER_USERNAME &&
       updateForm("userName", {
-        value: config?.characterConfig.settings.secrets.TWITTER_USERNAME,
+        value: config?.characterConfig?.settings.secrets.TWITTER_USERNAME,
         isInValid: false,
         errorMsg: "",
       });
-    config?.characterConfig.settings.secrets.TWITTER_PASSWORD &&
+    config?.characterConfig?.settings.secrets?.TWITTER_PASSWORD &&
       updateForm("password", {
-        value: config?.characterConfig.settings.secrets.TWITTER_PASSWORD,
+        value: config?.characterConfig?.settings.secrets.TWITTER_PASSWORD,
         isInValid: false,
         errorMsg: "",
       });
-    config?.characterConfig.settings.secrets.TWITTER_2FA_SECRET &&
+    config?.characterConfig?.settings.secrets?.TWITTER_2FA_SECRET &&
       updateForm("twoFa", {
-        value: config?.characterConfig.settings.secrets.TWITTER_2FA_SECRET,
+        value: config?.characterConfig?.settings.secrets.TWITTER_2FA_SECRET,
         isInValid: false,
         errorMsg: "",
       });
-    config?.characterConfig.settings.secrets.TWITTER_EMAIL &&
+    config?.characterConfig?.settings.secrets?.TWITTER_EMAIL &&
       updateForm("email", {
-        value: config?.characterConfig.settings.secrets.TWITTER_EMAIL,
+        value: config?.characterConfig?.settings.secrets.TWITTER_EMAIL,
         isInValid: false,
         errorMsg: "",
       });
-    config?.characterConfig.postExamples &&
+    config?.characterConfig?.postExamples &&
       updateForm("examples", {
-        value: config?.characterConfig.postExamples,
+        value: config?.characterConfig?.postExamples,
         isInValid: false,
         errorMsg: "",
       });
@@ -254,6 +255,10 @@ export function TwitterModal({
                 },
               })
                 .then(() => {
+                  message("Twitter integration updated successfully", {
+                    type: "success",
+                  });
+
                   setSaving(false);
                   onClose();
                 })

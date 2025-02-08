@@ -6,6 +6,7 @@ import {
   Dropdown,
   IconArrowDown,
   IconLogout,
+  IconMenu,
   message,
   SelectOption,
 } from "@/primitive/components";
@@ -29,11 +30,7 @@ const navs = [
   {
     href: "/sol/launch",
     key: "create-ai-nft",
-    label: (
-      <Button size='s' className='font-semibold'>
-        Create AI-NFT
-      </Button>
-    ),
+    label: "Create AI-NFT",
   },
 ];
 export function Header() {
@@ -47,15 +44,39 @@ export function Header() {
           "fixed bg-white/[0.01] backdrop-blur-[20px] top-0 left-0 w-full z-10 border-b h-64 flex items-center px-64 mobile:px-16 justify-between"
         )}
       >
-        <Link href={"/"}>
+        <Link href={"/"} className='flex items-center gap-8 mobile:hidden'>
           <Image src={"/brand.png"} width={145} height={40} alt='' />
+          <div className='bg-white-60 rounded-4 text-size-12 font-bold py-2 px-4'>
+            Beta
+          </div>
         </Link>
-        <div className='flex items-center gap-32'>
-          {navs.map((nav) => (
-            <NavItem key={nav.key} href={nav.href}>
-              {nav.label}
-            </NavItem>
-          ))}
+        <Link href={"/"} className='hidden mobile:block'>
+          <Image src={"/logo.svg"} width={40} height={40} alt='' />
+        </Link>
+        <div className='flex items-center gap-32 portrait-tablet:gap-24'>
+          <div className='flex items-center gap-32 portrait-tablet:hidden'>
+            {navs.map((nav) => (
+              <NavItem key={nav.key} href={nav.href}>
+                {nav.label}
+              </NavItem>
+            ))}
+          </div>
+          <Dropdown
+            className='hidden portrait-tablet:flex'
+            content={
+              <div className='flex flex-col gap-8'>
+                {navs.map((nav) => (
+                  <Link key={nav.key} href={nav.href}>
+                    <SelectOption selected={false}>{nav.label}</SelectOption>
+                  </Link>
+                ))}
+              </div>
+            }
+          >
+            <button className='h-32 w-32 rounded-8 bg-surface flex items-center justify-center'>
+              <IconMenu className='text-size-16 text-white' />
+            </button>
+          </Dropdown>
           {!publicKey ? (
             <ConnectButton size='s' />
           ) : (

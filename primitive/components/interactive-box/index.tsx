@@ -43,7 +43,7 @@ export function InteractiveBox<T extends keyof React.JSX.IntrinsicElements>(
         disabled && !isStatic
           ? "aria-disabled:cursor-not-allowed aria-disabled:opacity-40"
           : "",
-        isStatic ? "" : "hover:brightness-[0.6] transition-[filter]",
+        isStatic ? "" : "hover:brightness-[0.94] transition-[filter]",
         className
       ),
     },

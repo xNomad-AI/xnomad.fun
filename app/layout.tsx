@@ -20,8 +20,10 @@ const ibm = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "xNomad",
-  description: "xNomad",
+  title:
+    "xnomad.fun | The open-source smart terminal for creating and engaging with AI agents.",
+  description:
+    "Discover xNomad.fun, the cutting-edge open-source platform designed to revolutionize AI agent interaction. Create, customize, and engage with AI-NFTs, powered by ElizaOS. Empower your journey in the world of decentralized AI assetization.",
 };
 
 export default function RootLayout({

@@ -34,6 +34,7 @@ import { ChatInput } from "./ui/chat/chat-input";
 import { NFT } from "@/types";
 import { useAirdrops } from "@/network/use-airdrops";
 import { useLocalStorageState, useMemoizedFn } from "ahooks";
+import { XNOMAD_ID } from "@/app/sol/xnomad/constants";
 
 interface ExtraContentFields {
   user: string;
@@ -57,7 +58,9 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
       defaultValue: [],
     }
   );
-  const airdrops = useAirdrops({ name: "XnomadAI" });
+  const airdrops = useAirdrops({
+    name: nft.collectionId === XNOMAD_ID ? "XnomadAI" : "NomadsSociety",
+  });
   const getMessageVariant = (role: string) =>
     role !== "user" ? "received" : "sent";
 

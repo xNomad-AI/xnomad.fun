@@ -1,4 +1,4 @@
-import { Button, Card } from "@/primitive/components";
+import { Button, Card, message } from "@/primitive/components";
 import { NFT } from "@/types";
 import Image from "next/image";
 import { TwitterModal } from "./twitter";
@@ -19,6 +19,7 @@ export function Features({ nft }: { nft: NFT }) {
   }, []);
   const onSave = useMemoizedFn(async (config: Partial<Config>) => {
     await api.v1.post<Config>(`/nft/solana/${nft.id}/config`, config);
+    message("Twitter integration updated successfully", { type: "success" });
   });
   const hasTwitterConfig = useMemo(() => {
     return Boolean(

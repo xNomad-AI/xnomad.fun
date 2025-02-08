@@ -14,6 +14,7 @@ import { api } from "@/primitive/api";
 import { toCardNum } from "@/lib/utils/number";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { TextWithEllipsis } from "@/components/text-with-ellipsis";
+import { useBreakpoint } from "@/primitive/hooks/use-screen";
 interface Trait {
   traitValues: {
     value: string;
@@ -70,6 +71,7 @@ export function SideBar() {
       })}
     </Collapse>
   );
+  const { breakpoint } = useBreakpoint();
   return (
     <>
       <div
@@ -83,7 +85,7 @@ export function SideBar() {
         {content}
       </div>
       <Modal
-        open={traitsFilterOpen}
+        open={traitsFilterOpen && breakpoint === "mobile"}
         onMaskClick={() => {
           setTraitsFilterOpen(false);
         }}

@@ -15,6 +15,7 @@ import clsx from "clsx";
 import { Config } from "../types";
 import { useEffect, useRef, useState } from "react";
 import { useMemoizedFn } from "ahooks";
+import { onError } from "@/lib/utils/error";
 
 export function TwitterModal({
   open,
@@ -256,7 +257,8 @@ export function TwitterModal({
                   setSaving(false);
                   onClose();
                 })
-                .catch(() => {
+                .catch((error) => {
+                  onError(error);
                   setSaving(false);
                 });
             }}

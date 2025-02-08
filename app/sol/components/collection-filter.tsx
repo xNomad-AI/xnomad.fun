@@ -7,6 +7,8 @@ import {
 } from "@/primitive/components";
 import { nftSearchSortByLabels, nftSearchSortBys } from "@/types/collection";
 import { useCollectionStore } from "./store";
+import { useDebounce } from "ahooks";
+import { useEffect, useState } from "react";
 
 export function CollectionFilter() {
   const {
@@ -15,6 +17,11 @@ export function CollectionFilter() {
     setTraitsFilterOpen,
     traitsFilterOpen,
   } = useCollectionStore();
+  const [_keyword, setKeyword] = useState<string | undefined>(undefined);
+  const keyword = useDebounce(_keyword, { wait: 300 });
+  useEffect(() => {
+    setNftSearchParams({ keyword });
+  }, [keyword]);
   return (
     <div className='w-full flex items-center gap-12 justify-between'>
       <div className='flex items-center gap-12'>
@@ -29,7 +36,7 @@ export function CollectionFilter() {
         <TextField
           className='w-[20rem]'
           onChange={(e) => {
-            setNftSearchParams({ keyword: e.target.value });
+            setKeyword(e.target.value);
           }}
           placeholder='Search NFTs'
           prefixNode={<IconSearch />}

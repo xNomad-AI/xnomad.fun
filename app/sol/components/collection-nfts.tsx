@@ -48,7 +48,7 @@ export function CollectionNFTs({ collection }: { collection: Collection }) {
     },
     {
       target: elementRef.current,
-      reloadDeps: [collection.id],
+      reloadDeps: [collection.id, nftSearchParams],
       isNoMore(data) {
         if (data) {
           return (

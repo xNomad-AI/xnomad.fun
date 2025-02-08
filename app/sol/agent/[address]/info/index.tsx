@@ -11,6 +11,7 @@ import {
 import { NFT } from "@/types";
 import { Character } from "@elizaos/core";
 import clsx from "clsx";
+import Link from "next/link";
 import { useState } from "react";
 export function InfoSection({ nft }: { nft: NFT }) {
   return (
@@ -26,10 +27,10 @@ export function InfoSection({ nft }: { nft: NFT }) {
         <h1 style={bungee.style} className='text-size-24'>
           {nft.name}
         </h1>
-        <div className='flex items-center gap-4'>
+        <Link href={`/sol/xnomad`} className='flex items-center gap-4'>
           <CollectionLogo logo={"/xnomad-nft-logo.svg"} size={24} />
           {nft.collectionName}
-        </div>
+        </Link>
         <Card className='flex flex-col gap-16 p-16 w-full'>
           <div className='flex items-center justify-between'>
             <span className='font-bold'>Asset ID</span>

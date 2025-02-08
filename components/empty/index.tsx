@@ -18,15 +18,15 @@ export function Empty(props: Props) {
         className
       )}
     >
-      <Image
+      {/* <Image
         src={"/logo.svg"}
         width={100}
         height={100}
         alt='empty'
         className='w-[6.25rem] aspect-square select-none'
-      />
-      <h1 className='text-size-14 leading-5 font-medium'>{title}</h1>
-      <p className='text-size-12 leading-4 text-text-secondary'>{subTitle}</p>
+      /> */}
+      <h1 className='text-size-14 leading-5 font-medium text-text2'>{title}</h1>
+      <p className='text-size-12 leading-4 text-text2'>{subTitle}</p>
       {action && <div className='flex items-center gap-16 mt-16'>{action}</div>}
     </section>
   );

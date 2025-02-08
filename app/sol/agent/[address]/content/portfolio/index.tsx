@@ -13,17 +13,21 @@ export function Portfolio({ nft }: { nft: NFT }) {
       <div className='grid grid-cols-3 gap-16'>
         <Card className='flex flex-col p-16'>
           <span className='text-size-12'>Net Worth</span>
-          <span className='text-size-24 font-bold'>
+          <span className='text-size-24 font-bold mobile:text-size-16'>
             ${toIntl(BigNumber(portfolio?.totalUsd || 0))}
           </span>
         </Card>
         <Card className='flex flex-col p-16'>
           <span className='text-size-12'>Total Pnl</span>
-          <span className='text-size-24 font-bold'>Coming soon...</span>
+          <span className='text-size-24 font-bold mobile:text-size-16'>
+            Coming soon...
+          </span>
         </Card>
         <Card className='flex flex-col p-16'>
           <span className='text-size-12'>Win Rate</span>
-          <span className='text-size-24 font-bold'>Coming soon...</span>
+          <span className='text-size-24 font-bold mobile:text-size-16'>
+            Coming soon...
+          </span>
         </Card>
       </div>
       <div className='mt-16 flex flex-col w-full'>

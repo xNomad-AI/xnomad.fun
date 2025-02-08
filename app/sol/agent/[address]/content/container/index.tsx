@@ -43,8 +43,8 @@ export function DepositContainer({
   const [depositOpen, setDepositOpen] = useState(false);
   return (
     <div className='w-full flex flex-col gap-16'>
-      <Card className='flex items-center justify-between p-16'>
-        <div className='flex flex-col gap-4'>
+      <Card className='flex items-center justify-between gap-16 p-16'>
+        <div className='flex flex-col gap-4 min-w-0'>
           <span className='text-size-12'>Agent Wallet</span>
           <Address
             className='text-size-20 font-bold'

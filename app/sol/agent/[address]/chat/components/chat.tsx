@@ -218,7 +218,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
   });
 
   return (
-    <div className='relative flex flex-col w-[720px] h-[calc(100vh-64px-64px-72px)] gap-32'>
+    <div className='relative flex flex-col w-full max-w-[720px] h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-80px-64px-72px)] gap-32'>
       {!isAgentSetup ? (
         <div className='w-full h-full flex items-center justify-center flex-col gap-32'>
           <Spin className='!text-size-32' />

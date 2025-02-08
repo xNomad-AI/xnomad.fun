@@ -16,8 +16,10 @@ export default async function Page({
     cache: "no-cache",
   });
   return (
-    <Container className='flex gap-48 w-full'>
-      <InfoSection nft={nft} />
+    <Container className='flex gap-48 w-full portrait-tablet:flex-col'>
+      <div className='portrait-tablet:hidden'>
+        <InfoSection nft={nft} />
+      </div>
       <Content nft={nft} />
     </Container>
   );

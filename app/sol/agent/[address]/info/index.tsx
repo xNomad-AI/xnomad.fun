@@ -22,7 +22,7 @@ export function InfoSection({ nft }: { nft: NFT }) {
     total: nft.collectionId === XNOMAD_ID ? 5000 : Infinity,
   });
   return (
-    <div className='flex flex-col w-[280px] gap-16 flex-shrink-0'>
+    <div className='flex flex-col w-[280px] portrait-tablet:w-full gap-16 flex-shrink-0'>
       <img
         className='w-full aspect-square rounded-12 object-contain bg-surface'
         width={280}

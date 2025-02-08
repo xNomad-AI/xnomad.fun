@@ -25,7 +25,7 @@ import { CreatePreCheck, uploadMetaData } from "../network";
 import { onError } from "@/lib/utils/error";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { VersionedTransaction } from "@solana/web3.js";
-import { useSolana } from "../../use-solana";
+import { useSolana } from "@/lib/hooks/use-solana";
 import { useConnectModalStore } from "@/components/connect-modal/store";
 import { useRouter } from "next/navigation";
 import { Container } from "./container";

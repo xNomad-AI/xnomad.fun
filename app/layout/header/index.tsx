@@ -13,7 +13,6 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { PropsWithChildren } from "react";
 import { useLogout } from "@/lib/user/use-logout";
 const navs = [
@@ -38,7 +37,6 @@ const navs = [
   },
 ];
 export function Header() {
-  const pathname = usePathname();
   const { publicKey } = useWallet();
   const logout = useLogout();
   return (
@@ -46,10 +44,7 @@ export function Header() {
       <header
         id='header'
         className={clsx(
-          "fixed bg-white/[0.01] backdrop-blur-[20px] top-0 left-0 w-full z-10 border-b h-64 flex items-center px-64 mobile:px-16 justify-between",
-          {
-            hidden: pathname === "/",
-          }
+          "fixed bg-white/[0.01] backdrop-blur-[20px] top-0 left-0 w-full z-10 border-b h-64 flex items-center px-64 mobile:px-16 justify-between"
         )}
       >
         <Link href={"/"}>
@@ -95,11 +90,7 @@ export function Header() {
           )}
         </div>
       </header>
-      <div
-        className={clsx("h-64 w-full", {
-          hidden: pathname === "/",
-        })}
-      ></div>
+      <div className={clsx("h-64 w-full")}></div>
     </>
   );
 }

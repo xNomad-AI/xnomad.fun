@@ -1,5 +1,5 @@
 export const nftSearchSortBys = [
-  "rarityDesc",
+  // "rarityDesc",
   "numberAsc",
   "numberDesc",
 ] as const;

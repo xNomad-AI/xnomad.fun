@@ -49,6 +49,7 @@ export function CollectionFilter({ isSociety }: { isSociety?: boolean }) {
         <Select
           className='self-end justify-self-end'
           value={nftSearchParams.sortBy}
+          dropDownStretch
           optionConfig={{
             data: nftSearchSortBys.map((item) => item),
             renderer: (item) => nftSearchSortByLabels[item],

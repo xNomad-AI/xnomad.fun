@@ -128,7 +128,7 @@ export function NFTCard({
           {collectionName}
         </span>
         <span style={bungee.style}>{nft.name}</span>
-        {/* {!isSociety && (
+        {!isSociety && (
           <div
             className={clsx(
               "mt-4 rounded-4 px-4 h-18 border border-white-40 flex items-center text-white-40 text-size-12",
@@ -137,7 +137,7 @@ export function NFTCard({
           >
             #{nft.rarity.rank}
           </div>
-        )} */}
+        )}
       </div>
     </Link>
   );

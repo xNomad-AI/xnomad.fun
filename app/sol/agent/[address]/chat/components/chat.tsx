@@ -106,7 +106,6 @@ export function ChatPage({
   }, []);
   const [claimedAirdrops, setClaimedAirdrops] = useState<string[]>([]);
   const { airdrops } = useAirdrops({
-    name: nft.collectionId === XNOMAD_ID ? "XnomadAI" : "NomadsSociety",
     agentAddress: nft.agentAccount.solana,
   });
   const getMessageVariant = (role: string) =>

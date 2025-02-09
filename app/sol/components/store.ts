@@ -26,7 +26,7 @@ export const useCollectionStore = create(
       }),
     nftSearchParams: {
       keyword: undefined,
-      sortBy: "numberAsc",
+      sortBy: "rarityDesc",
       traitsQuery: [],
     },
     setNftSearchParams: (params) =>
@@ -45,7 +45,7 @@ export const useCollectionStore = create(
       set((state) => {
         state.nftSearchParams = {
           keyword: undefined,
-          sortBy: "numberAsc",
+          sortBy: "rarityDesc",
           traitsQuery: [],
         };
         state.traitsFilterOpen = false;

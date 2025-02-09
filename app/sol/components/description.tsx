@@ -13,7 +13,7 @@ export function Description(props: Props) {
   const { __html } = props;
   const [manualFull, manualSetFull] = useState(false);
   const words = useMemo(() => {
-    return __html.split(" ");
+    return __html?.split(" ") ?? [];
   }, [__html]);
   const { breakpoint } = useBreakpoint();
   const wordsLimit = useMemo(

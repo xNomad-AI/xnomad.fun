@@ -32,13 +32,16 @@ export function DepositContainer({
     () => portfolio?.items.filter((item) => item.symbol === "SOL")?.[0],
     [portfolio]
   );
-  useEffect(() => {
-    if (!address) return;
+  const getPortfolioData = useMemoizedFn(async () => {
     getPortfolio({
       address,
     }).then((data) => {
       setPortfolio(data);
     });
+  });
+  useEffect(() => {
+    if (!address) return;
+    getPortfolioData();
   }, [address]);
   const [depositOpen, setDepositOpen] = useState(false);
   return (
@@ -77,6 +80,7 @@ export function DepositContainer({
         onClose={() => {
           setDepositOpen(false);
         }}
+        onSuccess={getPortfolioData}
         open={depositOpen}
       />
     </div>
@@ -87,10 +91,12 @@ function DepositModal({
   address,
   onClose,
   open,
+  onSuccess,
 }: {
   address: string;
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }) {
   const [input, setInput] = useState("");
   const { setVisible } = useConnectModalStore();
@@ -133,6 +139,7 @@ function DepositModal({
         message("Deposit success", { type: "success" });
       }
       setDepositing(false);
+      onSuccess?.();
       onClose();
     } catch (error) {
       setDepositing(false);

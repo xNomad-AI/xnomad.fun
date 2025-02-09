@@ -49,7 +49,15 @@ interface ExtraContentFields {
 
 type ContentWithUser = Content & ExtraContentFields;
 
-export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
+export function ChatPage({
+  agentId,
+  nft,
+  show,
+}: {
+  agentId: UUID;
+  nft: NFT;
+  show: boolean;
+}) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [input, setInput] = useState("");
   const { publicKey } = useWallet();
@@ -98,7 +106,6 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
   }, []);
   const [claimedAirdrops, setClaimedAirdrops] = useState<string[]>([]);
   const { airdrops } = useAirdrops({
-    name: nft.collectionId === XNOMAD_ID ? "XnomadAI" : "NomadsSociety",
     agentAddress: nft.agentAccount.solana,
   });
   const getMessageVariant = (role: string) =>
@@ -219,7 +226,14 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
   });
 
   return (
-    <div className='relative flex flex-col w-full max-w-[720px] h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-80px-64px-72px)] gap-32'>
+    <div
+      className={clsx(
+        "relative flex flex-col w-full max-w-[720px] h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-80px-64px-72px)] gap-32",
+        {
+          hidden: !show,
+        }
+      )}
+    >
       {!isAgentSetup ? (
         <div className='w-full h-full flex items-center justify-center flex-col gap-32'>
           <Spin className='!text-size-32' />
@@ -239,7 +253,7 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
                   <Comp style={styles} className='flex gap-16'>
                     {message?.user !== "user" ? (
                       <img
-                        className='h-32 w-32 flex-shrink-0 p-1 border rounded-full select-none'
+                        className='h-32 w-32 flex-shrink-0 p-1 object-contain border rounded-full select-none'
                         height={32}
                         width={32}
                         alt=''

@@ -73,9 +73,13 @@ export function Content({ nft }: { nft: NFT }) {
           );
         })}
       </RadioButtonGroup>
-      {nft.agentId && (tab === "chat" || mobileTab === "chat") && (
-        <ChatPage agentId={nft.agentId} nft={nft} />
-      )}
+
+      <ChatPage
+        agentId={nft.agentId}
+        nft={nft}
+        show={nft.agentId && (tab === "chat" || mobileTab === "chat")}
+      />
+
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
         mobileTab === "asset" && <InfoSection nft={nft} />}
       {tab === "portfolio" && <Portfolio nft={nft} />}

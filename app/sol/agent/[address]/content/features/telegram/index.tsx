@@ -16,6 +16,7 @@ export function TelegramModal({
   open,
   onClose,
   onSave,
+  config,
 }: {
   open: boolean;
   onClose: () => void;
@@ -33,6 +34,16 @@ export function TelegramModal({
     errorMsg: "",
     required: true,
   });
+  useEffect(() => {
+    if (config) {
+      setBotToken({
+        value:
+          config.characterConfig?.settings.secrets?.TELEGRAM_BOT_TOKEN || "",
+        isInValid: false,
+        errorMsg: "",
+      });
+    }
+  }, [config]);
   return (
     <Modal open={open} size='m' onMaskClick={onClose}>
       <ModalTitleWithBorder closable onClose={onClose}>

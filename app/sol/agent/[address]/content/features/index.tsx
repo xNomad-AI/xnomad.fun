@@ -33,6 +33,11 @@ export function Features({ nft }: { nft: NFT }) {
         (config?.characterConfig?.postExamples?.length ?? 0) > 0
     );
   }, [config]);
+  const hasTgConfig = useMemo(() => {
+    return Boolean(
+      config?.characterConfig?.settings.secrets?.TELEGRAM_BOT_TOKEN
+    );
+  }, [config]);
   return (
     <>
       <div className='w-full flex flex-col gap-16'>
@@ -59,7 +64,7 @@ export function Features({ nft }: { nft: NFT }) {
               setTgOpen(true);
             }}
           >
-            Add
+            {hasTgConfig ? "Add" : "Edit"}
           </Button>
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>

@@ -34,7 +34,12 @@ export function VoiceModal({
   useEffect(() => {
     setSaving(false);
   }, [open]);
-  const [voiceId, setVoiceId] = useState<string>();
+  const [voiceId, setVoiceId] = useState<string | undefined>(
+    config?.characterConfig.settings.secrets?.ELEVENLABS_VOICE_ID
+  );
+  useEffect(() => {
+    setVoiceId(config?.characterConfig.settings.secrets?.ELEVENLABS_VOICE_ID);
+  }, [config]);
   const [gender, setGender] = useState<Gender>("male");
   const [voices, setVoices] = useState<Voice[]>([]);
   const audioPlayer = useRef<HTMLAudioElement | null>(null);

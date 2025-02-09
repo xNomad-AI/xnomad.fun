@@ -83,7 +83,7 @@ export function Content() {
             description: form.description.value,
             greeting: form.greeting.value,
             image: imageUrl,
-            knowledge: form.knowledge.value.split(","),
+            knowledge: form.knowledge.value.split("."),
             lore: form.lore.value.split(","),
             name: form.name.value,
             personality: form.personality.value.split(","),

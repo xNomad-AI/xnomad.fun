@@ -87,7 +87,7 @@ export function VoiceModal({
                 className={clsx(
                   "w-full flex items-center gap-16 justify-between p-16",
                   {
-                    "border-white": voice.voice_id === voiceId,
+                    "!border-white": voice.voice_id === voiceId,
                   }
                 )}
               >

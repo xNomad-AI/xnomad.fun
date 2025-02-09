@@ -26,6 +26,7 @@ export const useUserInfoStore = create(
         set((state) => {
           state.userInfo = token;
         });
+        userStorage.cacheToken(address, token.jwt, token.expires);
         return true;
       } else {
         return false;

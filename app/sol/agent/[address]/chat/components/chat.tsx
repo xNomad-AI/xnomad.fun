@@ -14,6 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import {
   Button,
   Card,
+  IconClose,
   IconDiscordFilled,
   IconTelegramFilled,
   IconTwitterX,
@@ -510,22 +511,19 @@ export function ChatPage({
                 className='min-h-12 resize-none !border-0 shadow-none focus-visible:ring-0'
               />
               {selectedFile ? (
-                <div className='p-3 flex'>
-                  <div className='relative rounded-md border p-2'>
-                    <Button
-                      onClick={() => setSelectedFile(null)}
-                      className='absolute -right-2 -top-2 size-[22px] ring-2 ring-background'
-                      variant='solid'
-                    >
-                      <X />
-                    </Button>
-                    <img
-                      src={URL.createObjectURL(selectedFile)}
-                      height='100%'
-                      width='100%'
-                      className='aspect-square object-contain w-16'
-                    />
-                  </div>
+                <div className='relative rounded-8 overflow-hidden border p-4 flex items-center justify-center'>
+                  <button
+                    onClick={() => setSelectedFile(null)}
+                    className='absolute w-full h-full bg-black-80 flex items-center justify-center'
+                  >
+                    <IconClose className='text-size-20' />
+                  </button>
+                  <img
+                    src={URL.createObjectURL(selectedFile)}
+                    height='100%'
+                    width='100%'
+                    className='aspect-square object-contain w-32'
+                  />
                 </div>
               ) : null}
               <button

@@ -50,7 +50,7 @@ export function Features({ nft }: { nft: NFT }) {
             <span>X(Twitter) Integration</span>
           </div>
           <Button
-            className='w-[7.5rem]'
+            className='!w-[7.5rem]'
             onClick={() => {
               setXOpen(true);
             }}
@@ -64,7 +64,7 @@ export function Features({ nft }: { nft: NFT }) {
             <span>Telegram Integration</span>
           </div>
           <Button
-            className='w-[7.5rem]'
+            className='!w-[7.5rem]'
             onClick={() => {
               setTgOpen(true);
             }}
@@ -86,7 +86,7 @@ export function Features({ nft }: { nft: NFT }) {
           </div>
           <Button
             variant='secondary'
-            className='w-[7.5rem]'
+            className='!w-[7.5rem]'
             onClick={() => {
               setVoiceOpen(true);
             }}

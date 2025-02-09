@@ -1,6 +1,10 @@
 import { userStorage } from "@/lib/user/storage";
 import { isBrowser } from "../utils/is-browser";
-import { ApiCancelError, ApiInvalidResponseError } from "./error";
+import {
+  ApiCancelError,
+  ApiInvalidResponseError,
+  ApiUnauthorizeError,
+} from "./error";
 import {
   ApiResponse,
   ApiServiceRequestInterceptor,
@@ -100,25 +104,24 @@ export const response: ApiServiceResponseInterceptor = async (
 ) => {
   try {
     const res = await request;
-
-    const body = await (res as Response).json();
-    if (isApiResponse(body)) {
+    if (res.status < 200 || res.status >= 300) {
+      throw new Error(res.statusText);
+    }
+    try {
+      const body = await (res as Response).json();
       if (body.data) {
         return body.data;
       } else {
         return body;
       }
-    } else {
-      throw new ApiInvalidResponseError();
+    } catch (e) {
+      return {};
     }
   } catch (e) {
     if (e instanceof Error && e.name === "AbortError") {
-      //
       throw new ApiCancelError(config);
-    } else {
-      console.log(e);
-      throw e;
     }
+    throw e;
   }
 };
 

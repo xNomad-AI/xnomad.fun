@@ -60,21 +60,13 @@ const BaseForm = {
 };
 export type FormKey = keyof typeof BaseForm;
 type FromValueType = string | File | null;
-type Step = "form" | "success" | "upload" | "mode" | "rarity";
 export const useLaunchStore = create(
   immer<{
-    step: Step;
-    setStep: (step: Step) => void;
     form: typeof BaseForm;
     updateForm: (key: FormKey, value: FormValue<FromValueType>) => void;
     resetAll: () => void;
     setInitForm: (form: typeof BaseForm) => void;
   }>((set) => ({
-    step: "mode",
-    setStep: (step) =>
-      set((state) => {
-        state.step = step;
-      }),
     collectionId: undefined,
     metadata: undefined,
 

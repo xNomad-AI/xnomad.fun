@@ -1,4 +1,4 @@
-import { ApiResponse, RequestConfig } from './type';
+import { ApiResponse, RequestConfig } from "./type";
 
 export enum ErrorCode {}
 
@@ -10,13 +10,19 @@ export class ApiTimeoutError extends Error {
 
 export class ApiHTTPError extends Error {
   constructor() {
-    super('Api Response Error: Http Error');
+    super("Api Response Error: Http Error");
   }
 }
 
 export class ApiInvalidResponseError extends Error {
   constructor() {
-    super('Api Response Error: invalid response');
+    super("Api Response Error: invalid response");
+  }
+}
+
+export class ApiUnauthorizeError extends Error {
+  constructor() {
+    super("Api Response Error: Unauthorized");
   }
 }
 
@@ -30,6 +36,8 @@ export class ApiResponseError extends Error {
 
 export class ApiCancelError extends Error {
   constructor(config: RequestConfig) {
-    super(`AbortError: -- ${config.method} -- ${config.url} -- Api Request Aborted`);
+    super(
+      `AbortError: -- ${config.method} -- ${config.url} -- Api Request Aborted`
+    );
   }
 }

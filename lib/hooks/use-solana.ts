@@ -1,5 +1,6 @@
 import { sleep } from "@/primitive/utils/sleep";
-import { clusterApiUrl, Connection } from "@solana/web3.js";
+import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
+import { useMemoizedFn } from "ahooks";
 import { useMemo } from "react";
 
 export function useSolana() {
@@ -37,8 +38,13 @@ export function useSolana() {
       }
     }
   }
+  const getBalance = useMemoizedFn(async (publicKey: PublicKey) => {
+    const balance = await connection.getBalance(publicKey);
+    return balance;
+  });
   return {
     connection,
     inspectTransaction,
+    getBalance,
   };
 }

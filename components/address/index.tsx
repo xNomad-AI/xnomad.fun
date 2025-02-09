@@ -1,6 +1,7 @@
 import { IconFileCopy, Tooltip } from "@/primitive/components";
 import { copy } from "@/primitive/utils/copy";
 import clsx from "clsx";
+import { TextWithEllipsis } from "../text-with-ellipsis";
 
 export function Address({
   address,
@@ -20,13 +21,15 @@ export function Address({
       disabled={disableTooltip || wholeAddress}
       content={address}
       contentClassName='break-all'
-      className={clsx("flex items-center gap-8 ", className)}
+      className={clsx("flex items-center gap-8 min-w-0", className)}
     >
-      <span>
-        {wholeAddress
-          ? address
-          : `${address.slice(0, 4)}...${address.slice(-4)}`}
-      </span>
+      {wholeAddress ? (
+        <TextWithEllipsis>{address}</TextWithEllipsis>
+      ) : (
+        <span>
+          {address.slice(0, 4)}...{address.slice(-4)}
+        </span>
+      )}
       {enableCopy && (
         <IconFileCopy
           onClick={() => {

@@ -8,12 +8,23 @@ import { api, ApiListData } from "@/primitive/api";
 import { CardViewGallery } from "./card-view-gallery";
 import { bungee, bungeeInline } from "@/app/layout/font";
 import Link from "next/link";
-
-export function CollectionNFTs({ collection }: { collection: Collection }) {
-  const { setCollection, nftSearchParams } = useCollectionStore();
+import { useRarity } from "@/lib/utils/rarity/use-rarity";
+import clsx from "clsx";
+export function CollectionNFTs({
+  collection,
+  isSociety,
+}: {
+  collection: Collection;
+  isSociety?: boolean;
+}) {
+  const { setCollection, nftSearchParams, resetAll } = useCollectionStore();
   const elementRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     setCollection(collection);
+    // reset search params
+    return () => {
+      resetAll();
+    };
   }, [collection]);
   // fetch nfts
   const { data, loading, loadingMore } = useInfiniteScroll(
@@ -39,16 +50,17 @@ export function CollectionNFTs({ collection }: { collection: Collection }) {
       );
       return {
         list: response,
-        total: collection.total,
+        total: collection.nftsCount,
       };
     },
     {
       target: elementRef.current,
-      reloadDeps: [collection.id],
+      reloadDeps: [collection.id, nftSearchParams],
       isNoMore(data) {
         if (data) {
           return (
-            (!nftSearchParams.keyword && data.list.length >= 5000) ||
+            (!nftSearchParams.keyword &&
+              data.list.length >= collection.nftsCount) ||
             Boolean(nftSearchParams.keyword)
           );
         }
@@ -67,31 +79,66 @@ export function CollectionNFTs({ collection }: { collection: Collection }) {
         count={data?.list.length ?? 0}
       >
         {data?.list.map((nft) => (
-          <Link
-            href={`/sol/agent/${nft.id}`}
-            key={nft.id}
-            className='flex-col flex gap-12 min-w-[180px] max-w-[240px]'
-          >
-            <img
-              src={nft.image}
-              width={240}
-              height={240}
-              alt={nft.name}
-              loading='lazy'
-              className='w-full aspect-square rounded-12'
-            />
-            <div className='flex flex-col w-full items-center'>
-              <span style={bungeeInline.style} className='text-size-12'>
-                {collection.name}
-              </span>
-              <span style={bungee.style}>{nft.name}</span>
-              <div className='mt-4 px-4 h-18 border border-white-40 flex items-center text-white-40 text-size-12'>
-                #{nft.rarity.rank}
-              </div>
-            </div>
-          </Link>
+          <NFTCard
+            isSociety={isSociety}
+            nft={nft}
+            collectionName={collection.name}
+            total={collection.nftsCount}
+          />
         ))}
       </CardViewGallery>
     </div>
+  );
+}
+
+export function NFTCard({
+  nft,
+  collectionName,
+  total,
+  isSociety,
+}: {
+  nft: NFT;
+  collectionName: string;
+  total: number;
+  isSociety?: boolean;
+}) {
+  const style = useRarity({
+    rank: nft.rarity.rank,
+    total,
+  });
+  return (
+    <Link
+      href={`/sol/agent/${nft.id}`}
+      key={nft.id}
+      className='flex-col group rounded-12 flex gap-12 min-w-[180px] mobile:min-w-[unset] max-w-[240px]'
+    >
+      <img
+        src={nft.image}
+        width={240}
+        height={240}
+        alt={nft.name}
+        loading='lazy'
+        className='w-full group-hover:scale-110 transition-all duration-300 ease-in-out aspect-square object-contain bg-surface rounded-12'
+      />
+      <div className='flex flex-col w-full items-center'>
+        <span
+          style={bungeeInline.style}
+          className='text-size-12 text-text2 scale-90'
+        >
+          {collectionName}
+        </span>
+        <span style={bungee.style}>{nft.name}</span>
+        {/* {!isSociety && (
+          <div
+            className={clsx(
+              "mt-4 rounded-4 px-4 h-18 border border-white-40 flex items-center text-white-40 text-size-12",
+              style.className
+            )}
+          >
+            #{nft.rarity.rank}
+          </div>
+        )} */}
+      </div>
+    </Link>
   );
 }

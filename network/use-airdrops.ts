@@ -1,6 +1,8 @@
+import { userStorage } from "@/lib/user/storage";
 import { api } from "@/primitive/api";
+import { useMemoizedFn } from "ahooks";
 import { useEffect, useState } from "react";
-export interface Airdrop {
+interface _Airdrop {
   id: string;
   protocol: "AirdropProgramRegistry";
   version: string;
@@ -36,10 +38,50 @@ export interface Airdrop {
     estimateCost: string | null;
     createdAt: string;
     updatedAt: string;
+    checkEligibilityUrl: string;
   };
 }
-export function useAirdrops({ name }: { name?: string }) {
+interface ClaimStatus {
+  claimable?: boolean;
+  claimed?: boolean;
+}
+export type Airdrop = _Airdrop & ClaimStatus;
+export function useAirdrops({
+  name,
+  agentAddress,
+}: {
+  name?: string;
+  agentAddress: string;
+}) {
   const [airdrops, setAirDrops] = useState<Airdrop[]>([]);
+  const checkSingleStatus = useMemoizedFn(async (airdrop: Airdrop) => {
+    const res = await fetch(airdrop.rules.checkEligibilityUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userStorage.getCurrentToken()?.jwt}`,
+      },
+      body: JSON.stringify({
+        agentAddress: agentAddress,
+      }),
+    });
+    const { claimable, claimed }: ClaimStatus = await res.json();
+    airdrop.claimable = claimable;
+    airdrop.claimed = claimed;
+    return airdrop;
+  });
+  const checkStatus = useMemoizedFn(async (airdrops: Airdrop[]) => {
+    const processedAirdrops = [];
+    for (const airdrop of airdrops) {
+      try {
+        const newAirdrop = await checkSingleStatus(airdrop);
+        processedAirdrops.push(newAirdrop);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    setAirDrops(processedAirdrops);
+  });
   useEffect(() => {
     api.airdrop
       .get<Airdrop[]>("/registry", {
@@ -47,7 +89,17 @@ export function useAirdrops({ name }: { name?: string }) {
       })
       .then((res) => {
         setAirDrops(res);
+        checkStatus(res);
       });
   }, [name]);
-  return airdrops;
+  const updateAirdrop = useMemoizedFn((airdrop: Airdrop) => {
+    const index = airdrops.findIndex((a) => a.id === airdrop.id);
+    if (index === -1) {
+      return;
+    }
+    const newAirdrops = [...airdrops];
+    newAirdrops[index] = airdrop;
+    setAirDrops(newAirdrops);
+  });
+  return { airdrops, checkStatus, checkSingleStatus, updateAirdrop };
 }

@@ -1,5 +1,5 @@
 export const nftSearchSortBys = [
-  "rarityDesc",
+  // "rarityDesc",
   "numberAsc",
   "numberDesc",
 ] as const;
@@ -22,6 +22,7 @@ export interface Collection {
   name: string;
   updatedAt: string;
   total: number;
+  nftsCount: number;
 }
 export interface Price {
   value: number;

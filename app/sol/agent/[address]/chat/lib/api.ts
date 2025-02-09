@@ -1,3 +1,4 @@
+import { userStorage } from "@/lib/user/storage";
 import { type UUID, type Character } from "@elizaos/core";
 
 const BASE_URL = process.env.NEXT_AGENT_API_HOST;
@@ -15,18 +16,22 @@ const fetcher = async ({
 }) => {
   const options: RequestInit = {
     method: method ?? "GET",
-    headers: headers
-      ? headers
-      : {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
+    headers: {
+      ...(headers
+        ? headers
+        : {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          }),
+      Authorization: `Bearer ${userStorage.getCurrentToken()?.jwt}`,
+    },
   };
 
   if (method === "POST") {
     if (body instanceof FormData) {
       // @ts-expect-error - Supressing potentially undefined options header
       delete options.headers["Content-Type"];
+      body.append("accessToken", `${userStorage.getCurrentToken()?.jwt}`);
       options.body = body;
     } else {
       options.body = JSON.stringify(body);

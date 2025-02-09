@@ -37,8 +37,7 @@ export function TelegramModal({
   useEffect(() => {
     if (config) {
       setBotToken({
-        value:
-          config.characterConfig?.settings.secrets?.TELEGRAM_BOT_TOKEN || "",
+        value: config?.settings.secrets?.TELEGRAM_BOT_TOKEN || "",
         isInValid: false,
         errorMsg: "",
       });
@@ -53,7 +52,7 @@ export function TelegramModal({
         <FormItem label='BOT TOKEN' {...botToken}>
           <TextField
             value={botToken.value}
-            placeholder='Enter your username'
+            placeholder='Enter your telegram bot token'
             onChange={(e) => {
               setBotToken({
                 value: e.target.value,
@@ -83,11 +82,9 @@ export function TelegramModal({
               }
               setSaving(true);
               onSave({
-                characterConfig: {
-                  settings: {
-                    secrets: {
-                      TELEGRAM_BOT_TOKEN: botToken.value,
-                    },
+                settings: {
+                  secrets: {
+                    TELEGRAM_BOT_TOKEN: botToken.value,
                   },
                 },
               })

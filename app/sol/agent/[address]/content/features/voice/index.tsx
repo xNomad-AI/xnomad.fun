@@ -35,10 +35,10 @@ export function VoiceModal({
     setSaving(false);
   }, [open]);
   const [voiceId, setVoiceId] = useState<string | undefined>(
-    config?.characterConfig.settings.secrets?.ELEVENLABS_VOICE_ID
+    config?.settings.secrets?.ELEVENLABS_VOICE_ID
   );
   useEffect(() => {
-    setVoiceId(config?.characterConfig.settings.secrets?.ELEVENLABS_VOICE_ID);
+    setVoiceId(config?.settings.secrets?.ELEVENLABS_VOICE_ID);
   }, [config]);
   const [gender, setGender] = useState<Gender>("male");
   const [voices, setVoices] = useState<Voice[]>([]);
@@ -141,11 +141,9 @@ export function VoiceModal({
               if (!voiceId) return;
               setSaving(true);
               onSave({
-                characterConfig: {
-                  settings: {
-                    secrets: {
-                      ELEVENLABS_VOICE_ID: voiceId,
-                    },
+                settings: {
+                  secrets: {
+                    ELEVENLABS_VOICE_ID: voiceId,
                   },
                 },
               })

@@ -5,13 +5,13 @@ import { immer } from "zustand/middleware/immer";
 const BaseForm = {
   userName: {
     value: "",
-    required: true,
+    required: false,
     isInValid: false,
     errorMsg: "",
   } as FormValue<string>,
   password: {
     value: "",
-    required: true,
+    required: false,
     isInValid: false,
     errorMsg: "",
   } as FormValue<string>,

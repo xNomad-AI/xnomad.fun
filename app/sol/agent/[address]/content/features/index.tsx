@@ -22,21 +22,24 @@ export function Features({ nft }: { nft: NFT }) {
       });
   }, []);
   const onSave = useMemoizedFn(async (config: Partial<Config>) => {
-    await api.v1.post<Config>(`/nft/solana/${nft.id}/config`, config);
+    const newConfig = await api.v1.post<{ characterConfig: Config }>(
+      `/nft/solana/${nft.id}/config`,
+      { characterConfig: config }
+    );
+    setConfig(newConfig.characterConfig);
   });
   const hasTwitterConfig = useMemo(() => {
     return Boolean(
-      config?.characterConfig?.settings.secrets?.TWITTER_USERNAME ||
-        config?.characterConfig?.settings.secrets?.TWITTER_PASSWORD ||
-        config?.characterConfig?.settings.secrets?.TWITTER_EMAIL ||
-        config?.characterConfig?.settings.secrets?.TWITTER_2FA_SECRET ||
-        (config?.characterConfig?.postExamples?.length ?? 0) > 0
+      config?.settings.secrets?.TWITTER_USERNAME ||
+        config?.settings.secrets?.TWITTER_PASSWORD ||
+        config?.settings.secrets?.TWITTER_EMAIL ||
+        config?.settings.secrets?.TWITTER_2FA_SECRET ||
+        ((config?.postExamples?.length ?? 0) > 0 &&
+          Boolean(config?.postExamples?.[0]))
     );
   }, [config]);
   const hasTgConfig = useMemo(() => {
-    return Boolean(
-      config?.characterConfig?.settings.secrets?.TELEGRAM_BOT_TOKEN
-    );
+    return Boolean(config?.settings.secrets?.TELEGRAM_BOT_TOKEN);
   }, [config]);
   return (
     <>
@@ -47,6 +50,7 @@ export function Features({ nft }: { nft: NFT }) {
             <span>X(Twitter) Integration</span>
           </div>
           <Button
+            className='w-[7.5rem]'
             onClick={() => {
               setXOpen(true);
             }}
@@ -60,11 +64,12 @@ export function Features({ nft }: { nft: NFT }) {
             <span>Telegram Integration</span>
           </div>
           <Button
+            className='w-[7.5rem]'
             onClick={() => {
               setTgOpen(true);
             }}
           >
-            {hasTgConfig ? "Add" : "Edit"}
+            {hasTgConfig ? "Edit" : "Add"}
           </Button>
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>
@@ -81,6 +86,7 @@ export function Features({ nft }: { nft: NFT }) {
           </div>
           <Button
             variant='secondary'
+            className='w-[7.5rem]'
             onClick={() => {
               setVoiceOpen(true);
             }}

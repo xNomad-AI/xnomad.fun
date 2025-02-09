@@ -28,7 +28,7 @@ export function Content({ address }: { address: string }) {
       })
       .then((res) => {
         if (res) {
-          setXnomads(res[XNOMAD_ID].nfts);
+          setXnomads(res[XNOMAD_ID]?.nfts ?? []);
         }
       });
   });
@@ -48,7 +48,7 @@ export function Content({ address }: { address: string }) {
       })
       .then((res) => {
         if (res) {
-          setSociety(res[NOMADS_SOCIETY_ID].nfts);
+          setSociety(res[NOMADS_SOCIETY_ID]?.nfts ?? []);
         }
       });
   });
@@ -61,7 +61,7 @@ export function Content({ address }: { address: string }) {
           }`}
           onClick={() => setTab("xnomad")}
         >
-          Xnomad({xnomads.length})
+          Xnomad({xnomads?.length})
         </button>
         <button
           className={`text-size-20 font-bold ${
@@ -69,13 +69,13 @@ export function Content({ address }: { address: string }) {
           }`}
           onClick={() => setTab("society")}
         >
-          Society({society.length})
+          Society({society?.length})
         </button>
       </div>
       <CardViewGallery
         loading={loading || societyLoading}
         loadingMore={false}
-        count={tab === "society" ? society.length : xnomads.length}
+        count={tab === "society" ? society?.length : xnomads?.length}
       >
         {(tab === "society" ? society : xnomads)?.map((nft) => (
           <NFTCard

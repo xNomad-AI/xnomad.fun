@@ -32,33 +32,33 @@ export function TwitterModal({
   const { form, updateForm } = useTwitterStore();
   const [saving, setSaving] = useState(false);
   const initForm = useMemoizedFn(() => {
-    config?.characterConfig?.settings.secrets?.TWITTER_USERNAME &&
+    config?.settings.secrets?.TWITTER_USERNAME &&
       updateForm("userName", {
-        value: config?.characterConfig?.settings.secrets.TWITTER_USERNAME,
+        value: config?.settings.secrets.TWITTER_USERNAME,
         isInValid: false,
         errorMsg: "",
       });
-    config?.characterConfig?.settings.secrets?.TWITTER_PASSWORD &&
+    config?.settings.secrets?.TWITTER_PASSWORD &&
       updateForm("password", {
-        value: config?.characterConfig?.settings.secrets.TWITTER_PASSWORD,
+        value: config?.settings.secrets.TWITTER_PASSWORD,
         isInValid: false,
         errorMsg: "",
       });
-    config?.characterConfig?.settings.secrets?.TWITTER_2FA_SECRET &&
+    config?.settings.secrets?.TWITTER_2FA_SECRET &&
       updateForm("twoFa", {
-        value: config?.characterConfig?.settings.secrets.TWITTER_2FA_SECRET,
+        value: config?.settings.secrets.TWITTER_2FA_SECRET,
         isInValid: false,
         errorMsg: "",
       });
-    config?.characterConfig?.settings.secrets?.TWITTER_EMAIL &&
+    config?.settings.secrets?.TWITTER_EMAIL &&
       updateForm("email", {
-        value: config?.characterConfig?.settings.secrets.TWITTER_EMAIL,
+        value: config?.settings.secrets.TWITTER_EMAIL,
         isInValid: false,
         errorMsg: "",
       });
-    config?.characterConfig?.postExamples &&
+    config?.postExamples &&
       updateForm("examples", {
-        value: config?.characterConfig?.postExamples,
+        value: config?.postExamples,
         isInValid: false,
         errorMsg: "",
       });
@@ -242,15 +242,13 @@ export function TwitterModal({
               if (!allValid) return;
               setSaving(true);
               onSave({
-                characterConfig: {
-                  postExamples: form.examples.value,
-                  settings: {
-                    secrets: {
-                      TWITTER_USERNAME: form.userName.value,
-                      TWITTER_PASSWORD: form.password.value,
-                      TWITTER_2FA_SECRET: form.twoFa.value,
-                      TWITTER_EMAIL: form.email.value,
-                    },
+                postExamples: form.examples.value,
+                settings: {
+                  secrets: {
+                    TWITTER_USERNAME: form.userName.value,
+                    TWITTER_PASSWORD: form.password.value,
+                    TWITTER_2FA_SECRET: form.twoFa.value,
+                    TWITTER_EMAIL: form.email.value,
                   },
                 },
               })

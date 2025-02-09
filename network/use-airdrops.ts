@@ -54,24 +54,28 @@ export function useAirdrops({
   agentAddress: string;
 }) {
   const [airdrops, setAirDrops] = useState<Airdrop[]>([]);
+  const checkSingleStatus = useMemoizedFn(async (airdrop: Airdrop) => {
+    const res = await fetch(airdrop.rules.checkEligibilityUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userStorage.getCurrentToken()?.jwt}`,
+      },
+      body: JSON.stringify({
+        agentAddress: agentAddress,
+      }),
+    });
+    const { claimable, claimed }: ClaimStatus = await res.json();
+    airdrop.claimable = claimable;
+    airdrop.claimed = claimed;
+    return airdrop;
+  });
   const checkStatus = useMemoizedFn(async (airdrops: Airdrop[]) => {
     const processedAirdrops = [];
     for (const airdrop of airdrops) {
       try {
-        const res = await fetch(airdrop.rules.checkEligibilityUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userStorage.getCurrentToken()?.jwt}`,
-          },
-          body: JSON.stringify({
-            agentAddress: agentAddress,
-          }),
-        });
-        const { claimable, claimed }: ClaimStatus = await res.json();
-        airdrop.claimable = claimable;
-        airdrop.claimed = claimed;
-        processedAirdrops.push(airdrop);
+        const newAirdrop = await checkSingleStatus(airdrop);
+        processedAirdrops.push(newAirdrop);
       } catch (error) {
         console.log(error);
       }
@@ -88,5 +92,14 @@ export function useAirdrops({
         checkStatus(res);
       });
   }, [name]);
-  return airdrops;
+  const updateAirdrop = useMemoizedFn((airdrop: Airdrop) => {
+    const index = airdrops.findIndex((a) => a.id === airdrop.id);
+    if (index === -1) {
+      return;
+    }
+    const newAirdrops = [...airdrops];
+    newAirdrops[index] = airdrop;
+    setAirDrops(newAirdrops);
+  });
+  return { airdrops, checkStatus, checkSingleStatus, updateAirdrop };
 }

@@ -96,7 +96,8 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-  const airdrops = useAirdrops({
+  const [claimedAirdrops, setClaimedAirdrops] = useState<string[]>([]);
+  const { airdrops } = useAirdrops({
     name: nft.collectionId === XNOMAD_ID ? "XnomadAI" : "NomadsSociety",
     agentAddress: nft.agentAccount.solana,
   });
@@ -316,7 +317,10 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
                                             <Button
                                               disabled={
                                                 !airdrop.claimable ||
-                                                airdrop.claimed
+                                                airdrop.claimed ||
+                                                claimedAirdrops.includes(
+                                                  airdrop.id
+                                                )
                                               }
                                               onClick={() => {
                                                 const input = `Claim Airdrop of [${airdrop?.name}]`;
@@ -333,6 +337,9 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
                                                     createdAt: Date.now(),
                                                   },
                                                 ];
+                                                setClaimedAirdrops((old) => {
+                                                  return [...old, airdrop.id];
+                                                });
                                                 setMessage(newMessages);
                                                 sendMessageMutation.mutate({
                                                   message: input,
@@ -340,7 +347,10 @@ export function ChatPage({ agentId, nft }: { agentId: UUID; nft: NFT }) {
                                               }}
                                             >
                                               {airdrop.claimable
-                                                ? airdrop.claimed
+                                                ? airdrop.claimed ||
+                                                  claimedAirdrops.includes(
+                                                    airdrop.id
+                                                  )
                                                   ? "Claimed"
                                                   : "Claim"
                                                 : "Not Eligible"}

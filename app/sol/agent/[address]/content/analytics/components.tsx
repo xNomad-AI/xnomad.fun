@@ -56,7 +56,7 @@ export function ActionContent({
   } else {
     return (
       <>
-        <TokenItem data={data.quote} isRed={type === "receive"} />
+        <TokenItem data={data.quote} isRed={type === "receive"} noPrice />
         <span className='text-size-12 text-text2'>
           {type === "receive" ? "from" : "to"}
         </span>
@@ -66,7 +66,15 @@ export function ActionContent({
   }
 }
 
-export function TokenItem({ data, isRed }: { data: Token; isRed?: boolean }) {
+export function TokenItem({
+  data,
+  isRed,
+  noPrice,
+}: {
+  data: Token;
+  isRed?: boolean;
+  noPrice?: boolean;
+}) {
   const isBaseToken = isBasicToken(data.symbol);
   return (
     <>
@@ -75,20 +83,22 @@ export function TokenItem({ data, isRed }: { data: Token; isRed?: boolean }) {
         <span className={isRed ? "text-red" : "text-green"}>
           {data.symbol ?? "Unknown"}
         </span>
-        <span className='text-text2'>
-          (
-          <TokenNumber
-            prefix={"$"}
-            number={
-              isBaseToken
-                ? BigNumber(data.ui_amount).multipliedBy(
-                    data.price || data.nearest_price
-                  )
-                : data.price || data.nearest_price
-            }
-          />
-          )
-        </span>
+        {!noPrice && (
+          <span className='text-text2'>
+            (
+            <TokenNumber
+              prefix={"$"}
+              number={
+                isBaseToken
+                  ? BigNumber(data.ui_amount).multipliedBy(
+                      data.price || data.nearest_price
+                    )
+                  : data.price || data.nearest_price
+              }
+            />
+            )
+          </span>
+        )}
       </div>
     </>
   );

@@ -48,3 +48,70 @@ export function getActivities({
     afterTime,
   });
 }
+interface TransferActivity {
+  type: string;
+  source: string;
+  destination: string;
+  amount: string;
+  tokenMint: string; // token address
+  decimals: number;
+  signature: string; // tx hash
+  slot: number;
+  time: number;
+  symbol: string;
+}
+function transferToActivity(transfer: TransferActivity): Activity {
+  return {
+    quote: {
+      symbol: transfer.symbol,
+      decimals: transfer.decimals,
+      address: transfer.tokenMint,
+      amount: Number(transfer.amount),
+      type: "token",
+      type_swap: "token",
+      ui_amount: Number(transfer.amount),
+      price: 0,
+      nearest_price: 0,
+      change_amount: 0,
+      ui_change_amount: 0,
+    },
+    base: {
+      symbol: "SOL",
+      decimals: 9,
+      address: "",
+      amount: 0,
+      type: "token",
+      type_swap: "token",
+      ui_amount: 0,
+      price: 0,
+      nearest_price: 0,
+      change_amount: 0,
+      ui_change_amount: 0,
+    },
+    base_price: 0,
+    quote_price: 0,
+    tx_hash: transfer.signature,
+    source: transfer.source,
+    block_unix_time: transfer.time,
+    tx_type: transfer.type,
+    address: transfer.destination,
+    owner: transfer.source,
+  };
+}
+export async function getTransferActivity({
+  address,
+  limit,
+}: {
+  address: string;
+  limit: number;
+}) {
+  const res = await api.v1.get<{ items: TransferActivity[] }>(
+    "/agent-account/defi/transfer-txs",
+    {
+      address,
+      limit,
+      chain: "solana",
+    }
+  );
+  return res.items.map(transferToActivity);
+}

@@ -1,19 +1,20 @@
-import { Card, IconSol } from "@/primitive/components";
+import { Card } from "@/primitive/components";
 import { NFT } from "@/types";
-import BigNumber from "bignumber.js";
-import { toIntl } from "@/lib/utils/number/bignumber";
 import { DepositContainer } from "../container";
 import { useEffect, useState } from "react";
-import { Activity, getActivities } from "./network";
-import { upperFirstLetter } from "@/lib/utils/string";
+import { Activity, getActivities, getTransferActivity } from "./network";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
-import { useRequest } from "ahooks";
+import { useMemoizedFn, useRequest } from "ahooks";
 import { useTimeStore } from "@/primitive/hooks/time";
-import { TokenNumber } from "@/components/token-number";
+import { ActionContent, ActionTag, Skeleton } from "./components";
+import { getActionType } from "./utils";
 export function Analytics({ nft }: { nft: NFT }) {
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
+
   const { loading, run } = useRequest(
     async () => {
       getActivities({
@@ -27,19 +28,65 @@ export function Analytics({ nft }: { nft: NFT }) {
     },
     {
       manual: true,
+      ready: isInitialized,
     }
   );
+  const initData = useMemoizedFn(async () => {
+    setIsInitializing(true);
+    try {
+      const swapActivity = await getActivities({
+        address: nft.agentAccount.solana,
+        offset: 0,
+        limit: 20,
+      });
+      setHasNextPage(swapActivity.has_next);
+      setActivity(swapActivity.items);
+      setIsInitializing(false);
+      setIsInitialized(true);
+      const transferActivity = await getTransferActivity({
+        address: nft.agentAccount.solana,
+        limit: 20,
+      });
+      setActivity((old) => {
+        return [...transferActivity, ...old].sort(
+          (a, b) => b.block_unix_time - a.block_unix_time
+        );
+      });
+    } catch (error) {
+      setIsInitializing(false);
+    }
+  });
   useEffect(() => {
-    if (!nft.agentAccount.solana) return;
-    getActivities({
-      address: nft.agentAccount.solana,
-      offset: 0,
-      limit: 20,
-    }).then((res) => {
-      setActivity(res.items);
-      setHasNextPage(res.has_next);
-    });
+    if (nft.agentAccount.solana && !isInitialized) {
+      initData();
+    }
   }, [nft.agentAccount.solana]);
+  useRequest(
+    async () => {
+      const swapActivity = await getActivities({
+        address: nft.agentAccount.solana,
+        offset: activity.length,
+        afterTime: activity[0].block_unix_time,
+        limit: 5,
+      });
+      const transferActivity = await getTransferActivity({
+        address: nft.agentAccount.solana,
+        limit: 5,
+      });
+      const newActivities = swapActivity.items
+        .concat(transferActivity)
+        .filter((item) => !activity.find((a) => a.tx_hash === item.tx_hash));
+      setActivity(
+        [...newActivities, ...activity].sort(
+          (a, b) => b.block_unix_time - a.block_unix_time
+        )
+      );
+    },
+    {
+      pollingInterval: 10000,
+      ready: !!nft.agentAccount.solana && isInitialized,
+    }
+  );
   // use time tick to update time every second
   useTimeStore();
   return (
@@ -48,62 +95,40 @@ export function Analytics({ nft }: { nft: NFT }) {
         {activity?.length > 0 ? (
           <InfiniteScrollList
             items={activity}
-            renderItem={(item) => (
-              <Card key={item.tx_hash} className='p-16 flex items-center gap-8'>
-                <ActionTag data={item} />
-                <span>{toIntl(BigNumber(item.quote.ui_amount))}</span>
-                <div className='flex items-center gap-4'>
-                  <span
-                    className={
-                      item.base.change_amount > 0 ? "text-red" : "text-green"
-                    }
-                  >
-                    {item.quote.symbol}
-                  </span>
-                  <span className='text-text2'>
-                    (
-                    <TokenNumber
-                      prefix={"$"}
-                      number={BigNumber(item.quote.ui_amount).multipliedBy(
-                        item.quote.price || item.quote.nearest_price
-                      )}
-                    />
-                    )
-                  </span>
-                </div>
-                <span className='text-size-12 text-text2'>with</span>
-
-                <div className='flex items-center gap-4'>
-                  {item.base.symbol}
-                  <p className='text-text2'>
-                    <span className='text-text1'>
-                      <TokenNumber number={item.base.ui_amount} />
-                    </span>
-                    (
-                    <TokenNumber
-                      prefix={"$"}
-                      number={BigNumber(item.base.ui_amount).multipliedBy(
-                        item.base.price || item.base.nearest_price
-                      )}
-                    />
-                    )
-                  </p>
-                </div>
-                <div className='flex-1'></div>
-                <a
-                  href={`https://explorer.solana.com/tx/${item.tx_hash}`}
-                  target='_blank'
-                  rel='noreferrer'
-                  className='underline'
+            renderItem={(item) => {
+              const actionType = getActionType({
+                data: item,
+                agentAccount: nft.agentAccount.solana,
+              });
+              return (
+                <Card
+                  key={item.tx_hash}
+                  className='p-16 flex items-center gap-8'
                 >
-                  {beautifyTimeV2(item.block_unix_time * 1000)}
-                </a>
-              </Card>
-            )}
+                  <ActionTag type={actionType} />
+                  <ActionContent data={item} type={actionType} />
+                  <div className='flex-1'></div>
+                  <a
+                    href={`https://explorer.solana.com/tx/${item.tx_hash}`}
+                    target='_blank'
+                    rel='noreferrer'
+                    className='underline'
+                  >
+                    {beautifyTimeV2(item.block_unix_time * 1000)}
+                  </a>
+                </Card>
+              );
+            }}
             hasNextPage={hasNextPage}
             isNextPageLoading={loading}
             loadNextPage={run}
           />
+        ) : isInitializing ? (
+          <div className='w-full flex flex-col gap-16'>
+            {new Array(10).fill(0).map((_, index) => {
+              return <Skeleton key={index} />;
+            })}
+          </div>
         ) : (
           <div className='flex justify-center w-full p-16 h-[200px] items-center text-text2'>
             No Activities
@@ -112,30 +137,4 @@ export function Analytics({ nft }: { nft: NFT }) {
       </div>
     </DepositContainer>
   );
-}
-
-function ActionTag({ data }: { data: Activity }) {
-  switch (data.tx_type) {
-    case "swap":
-      if (data.base.change_amount > 0) {
-        return (
-          <div className='px-8 py-4 h-26 flex items-center bg-red-10 text-red rounded-4'>
-            Sell
-          </div>
-        );
-      } else {
-        return (
-          <div className='px-8 py-4 h-26 flex items-center bg-green-10 text-green rounded-4'>
-            Buy
-          </div>
-        );
-      }
-
-    default:
-      return (
-        <div className='px-8 py-4 h-26 flex items-center bg-brand-10 text-brand rounded-4'>
-          {upperFirstLetter(data.tx_type)}
-        </div>
-      );
-  }
 }

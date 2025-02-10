@@ -63,7 +63,6 @@ const fetcher = async ({
     throw new Error(errorMessage);
   });
 };
-export const roomId = stringToUuid("web");
 
 export const apiClient = {
   sendMessage: (
@@ -75,7 +74,7 @@ export const apiClient = {
     const formData = new FormData();
     formData.append("text", message);
     formData.append("user", "user");
-    formData.append("roomId", roomId);
+    formData.append("roomId", userId);
     formData.append("userId", userId);
     if (selectedFile) {
       formData.append("file", selectedFile);

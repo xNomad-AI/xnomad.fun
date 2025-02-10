@@ -22,6 +22,7 @@ import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { useConnectModalStore } from "@/components/connect-modal/store";
 import { NFT } from "@/types";
 import { onError } from "@/lib/utils/error";
+import { TokenNumber } from "@/components/token-number";
 
 export function DepositContainer({
   address,
@@ -57,11 +58,11 @@ export function DepositContainer({
           />
           <div>
             Balance:&nbsp;
-            {toIntl(
-              BigNumber(solItem?.balance ?? "0").div(
+            <TokenNumber
+              number={BigNumber(solItem?.balance ?? "0").div(
                 10 ** (solItem?.decimals ?? 9)
-              )
-            )}
+              )}
+            />
             &nbsp;SOL
           </div>
         </div>

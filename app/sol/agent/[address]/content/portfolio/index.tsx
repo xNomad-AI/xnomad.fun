@@ -1,10 +1,10 @@
 import { Card } from "@/primitive/components";
 import { NFT } from "@/types";
 import BigNumber from "bignumber.js";
-import { toIntl } from "@/lib/utils/number/bignumber";
 import { DepositContainer } from "../container";
 import { useAgentStore } from "../../store";
-import { toCardNum } from "@/lib/utils/number";
+import { Address } from "@/components/address";
+import { TokenNumber } from "@/components/token-number";
 
 export function Portfolio({ nft }: { nft: NFT }) {
   const { portfolio } = useAgentStore();
@@ -14,7 +14,7 @@ export function Portfolio({ nft }: { nft: NFT }) {
         <Card className='flex flex-col p-16'>
           <span className='text-size-12'>Net Worth</span>
           <span className='text-size-24 font-bold mobile:text-size-16'>
-            ${toIntl(BigNumber(portfolio?.totalUsd || 0))}
+            <TokenNumber number={portfolio?.totalUsd || 0} prefix={"$"} />
           </span>
         </Card>
         <Card className='flex flex-col p-16'>
@@ -45,28 +45,37 @@ export function Portfolio({ nft }: { nft: NFT }) {
             >
               <div className='flex w-[160px] gap-4'>
                 <img
-                  height={20}
-                  width={20}
-                  className='rounded-full'
+                  height={32}
+                  width={32}
+                  className='w-32 aspect-square rounded-full flex-shrink-0'
                   src={item.logoURI}
                   alt=''
                 />
-                <span className='font-bold'>{item.symbol}</span>
+                <div className='flex flex-col gap-4'>
+                  <span className='font-bold'>{item.symbol}</span>
+                  <Address
+                    address={item.address}
+                    enableCopy
+                    className='text-size-12 text-text2'
+                  />
+                </div>
               </div>
               <div className='flex w-[120px] justify-end'>
-                {toCardNum(item.priceUsd, "$")}
+                <TokenNumber prefix={"$"} number={item.priceUsd} />
               </div>
               <div className='flex w-[120px] justify-end'>
-                {toIntl(BigNumber(item.balance).div(10 ** item.decimals))}
+                <TokenNumber
+                  number={BigNumber(item.balance).div(10 ** item.decimals)}
+                />
               </div>
               <div className='flex w-[120px] justify-end'>
-                {toCardNum(item.valueUsd, "$")}
+                <TokenNumber prefix={"$"} number={item.valueUsd} />
               </div>
             </div>
           ))
         ) : (
-          <div className='flex justify-center w-full p-16 h-[200px] items-center'>
-            No assets
+          <div className='flex justify-center w-full p-16 h-[200px] items-center text-text2'>
+            No Assets
           </div>
         )}
       </div>

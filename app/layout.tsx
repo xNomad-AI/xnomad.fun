@@ -12,6 +12,7 @@ import { Header } from "./layout/header";
 import { Portal } from "./layout/portal";
 import { PAGE_VIEW_ID } from "@/lib/page-view";
 import { InitStore } from "./layout/init-store";
+import { PageLoadingProgressBar } from "./layout/page-loading-progress";
 
 const ibm = IBM_Plex_Mono({
   variable: "--ibm-plex-mono",
@@ -52,6 +53,7 @@ export default function RootLayout({
         >
           <FloatLayerProvider>
             <WalletProvider>
+              <PageLoadingProgressBar />
               <Header />
               <Portal />
               <InitStore />

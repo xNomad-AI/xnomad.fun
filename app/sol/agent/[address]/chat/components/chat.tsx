@@ -1,7 +1,7 @@
 "use client";
 import { useTransition, animated } from "@react-spring/web";
-import { Paperclip, Send, X } from "lucide-react";
-import { use, useEffect, useRef, useState } from "react";
+import { Paperclip, Send } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Character, Content, UUID } from "@elizaos/core";
 import CopyButton from "./copy-button";
 import ChatTtsButton from "./ui/chat/chat-tts-button";
@@ -22,7 +22,7 @@ import {
   Spin,
   Tooltip,
 } from "@/primitive/components";
-import { apiClient } from "../lib/api";
+import { apiClient, roomId } from "../lib/api";
 import { ChatMessageList } from "./ui/chat/chat-message-list";
 import {
   ChatBubble,
@@ -35,11 +35,11 @@ import { ChatInput } from "./ui/chat/chat-input";
 import { NFT } from "@/types";
 import { useAirdrops } from "@/network/use-airdrops";
 import { useLocalStorageState, useMemoizedFn } from "ahooks";
-import { XNOMAD_ID } from "@/app/sol/xnomad/constants";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { isOwner } from "@/lib/user/ownership";
 import { api } from "@/primitive/api";
-
+import { onError } from "@/lib/utils/error";
+import { stringToUuid } from "../lib/uuid";
 interface ExtraContentFields {
   user: string;
   createdAt: number;
@@ -67,6 +67,29 @@ export function ChatPage({
   const formRef = useRef<HTMLFormElement>(null);
   const [isAgentSetup, setIsAgentSetup] = useState(true);
   const hasTriggered = useRef(false);
+  const userId = useMemo(() => {
+    if (publicKey) {
+      return stringToUuid(publicKey.toBase58());
+    } else {
+      return stringToUuid(`web-${Date.now()}-${agentId}-${Math.random()}`);
+    }
+  }, [publicKey, agentId]);
+  const [isClearingMemory, setIsClearingMemory] = useState(false);
+  const clearMemory = useMemoizedFn(async () => {
+    try {
+      setIsClearingMemory(true);
+      await api.v1.delete(`/agent/memory/`, {
+        agentId,
+        roomId,
+        userId,
+      });
+      setMessages([]);
+    } catch (error) {
+      onError(error);
+    } finally {
+      setIsClearingMemory(false);
+    }
+  });
   const triggerAgentSetup = useMemoizedFn(async () => {
     try {
       await api.v1.post(`/agent`, {
@@ -193,7 +216,7 @@ export function ChatPage({
     }: {
       message: string;
       selectedFile?: File | null;
-    }) => apiClient.sendMessage(agentId, message, selectedFile),
+    }) => apiClient.sendMessage(userId, agentId, message, selectedFile),
     onSuccess: (newMessages: ContentWithUser[]) => {
       setMessages((old: ContentWithUser[] = []) => [
         ...old.filter((msg) => !msg.isLoading),
@@ -446,29 +469,41 @@ export function ChatPage({
           </div>
           <div className='w-full flex flex-col gap-8'>
             {isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "") && (
-              <Button
-                onClick={() => {
-                  const newMessages = [
-                    {
-                      text: "Claim Airdrop",
-                      user: "user",
-                      createdAt: Date.now(),
-                    },
-                    {
-                      text: "Claim Airdrop",
-                      isAirdrop: true,
-                      user: nft.name,
-                      createdAt: Date.now(),
-                    },
-                  ];
+              <div className='flex items-center justify-between gap-16'>
+                <Button
+                  onClick={() => {
+                    const newMessages = [
+                      {
+                        text: "Claim Airdrop",
+                        user: "user",
+                        createdAt: Date.now(),
+                      },
+                      {
+                        text: "Claim Airdrop",
+                        isAirdrop: true,
+                        user: nft.name,
+                        createdAt: Date.now(),
+                      },
+                    ];
 
-                  setMessage(newMessages);
-                }}
-                variant='secondary'
-              >
-                Claim Airdrop
-              </Button>
+                    setMessage(newMessages);
+                  }}
+                  variant='secondary'
+                >
+                  Claim Airdrop
+                </Button>
+
+                <Button
+                  variant='danger'
+                  loading={isClearingMemory}
+                  size='s'
+                  onClick={clearMemory}
+                >
+                  Clear Memory
+                </Button>
+              </div>
             )}
+
             <form
               ref={formRef}
               onSubmit={handleSendMessage}

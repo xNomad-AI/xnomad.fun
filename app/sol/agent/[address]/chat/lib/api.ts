@@ -1,5 +1,6 @@
 import { userStorage } from "@/lib/user/storage";
 import { type UUID, type Character } from "@elizaos/core";
+import { stringToUuid } from "./uuid";
 
 const BASE_URL = process.env.NEXT_AGENT_API_HOST;
 
@@ -62,9 +63,11 @@ const fetcher = async ({
     throw new Error(errorMessage);
   });
 };
+export const roomId = stringToUuid("web");
 
 export const apiClient = {
   sendMessage: (
+    userId: UUID,
     agentId: string,
     message: string,
     selectedFile?: File | null
@@ -72,7 +75,8 @@ export const apiClient = {
     const formData = new FormData();
     formData.append("text", message);
     formData.append("user", "user");
-
+    formData.append("roomId", roomId);
+    formData.append("userId", userId);
     if (selectedFile) {
       formData.append("file", selectedFile);
     }

@@ -52,6 +52,11 @@ export const request: ApiServiceRequestInterceptor = (config) => {
   }
 
   switch (config.method) {
+    case "DELETE":
+      if (hasPayload) {
+        config.url = dealGetUrl(config.url, config.payload);
+      }
+      break;
     case "GET":
       if (hasPayload) {
         config.url = dealGetUrl(config.url, config.payload);

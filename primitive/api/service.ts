@@ -46,7 +46,7 @@ export class ApiService {
     init: FetchInit = {}
   ) => {
     this.ensureValidPathname(source);
-    init.method = "delete";
+    init.method = "DELETE";
     return this.fetch(source, payload, init) as R;
   };
 

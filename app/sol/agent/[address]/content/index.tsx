@@ -75,11 +75,7 @@ export function Content({ nft }: { nft: NFT }) {
       </RadioButtonGroup>
 
       {nft.agentId && (
-        <ChatPage
-          agentId={nft.agentId}
-          nft={nft}
-          show={tab === "chat" || mobileTab === "chat"}
-        />
+        <ChatPage nft={nft} show={tab === "chat" || mobileTab === "chat"} />
       )}
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
         mobileTab === "asset" && <InfoSection nft={nft} />}

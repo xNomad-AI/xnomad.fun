@@ -34,7 +34,7 @@ import { moment } from "../lib/utils";
 import { ChatInput } from "./ui/chat/chat-input";
 import { NFT } from "@/types";
 import { useAirdrops } from "@/network/use-airdrops";
-import { useLocalStorageState, useMemoizedFn } from "ahooks";
+import { useLocalStorageState, useMemoizedFn, useMount } from "ahooks";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { isOwner } from "@/lib/user/ownership";
 import { api } from "@/primitive/api";
@@ -49,15 +49,8 @@ interface ExtraContentFields {
 
 type ContentWithUser = Content & ExtraContentFields;
 
-export function ChatPage({
-  agentId,
-  nft,
-  show,
-}: {
-  agentId: UUID;
-  nft: NFT;
-  show: boolean;
-}) {
+export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
+  const agentId = nft.agentId;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [input, setInput] = useState("");
   const { publicKey } = useWallet();
@@ -65,7 +58,7 @@ export function ChatPage({
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [isAgentSetup, setIsAgentSetup] = useState(true);
+  const [isAgentSetup, setIsAgentSetup] = useState(false);
   const hasTriggered = useRef(false);
   const userId = useMemo(() => {
     if (publicKey) {
@@ -150,18 +143,42 @@ export function ChatPage({
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
+  const setMessage = useMemoizedFn((newMessages: ContentWithUser[]) => {
+    setMessages((old = []) => [...old, ...newMessages]);
+  });
+  useMount(() => {
     scrollToBottom();
-  }, []);
+    if (!((messages?.length ?? 0) > 0)) {
+      api.v1
+        .get<{ prologue: string }>("/agent/prologue", {
+          nftId: nft.id,
+          chain: "solana",
+        })
+        .then((res) => {
+          const newMessages = [
+            {
+              text: res.prologue,
+              user: nft.name,
+              createdAt: Date.now(),
+            },
+          ];
+          setMessages((old) => {
+            if (!old || old?.length === 0) {
+              return newMessages;
+            } else {
+              return old ?? [];
+            }
+          });
+        });
+    }
+  });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       handleSendMessage(e as unknown as React.FormEvent<HTMLFormElement>);
     }
   };
-  const setMessage = useMemoizedFn((newMessages: ContentWithUser[]) => {
-    setMessages((old = []) => [...old, ...newMessages]);
-  });
+
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input && !selectedFile) return;

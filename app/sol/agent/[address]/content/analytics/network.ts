@@ -1,4 +1,5 @@
 import { api } from "@/primitive/api";
+import BigNumber from "bignumber.js";
 export interface Token {
   symbol: string;
   decimals: number;
@@ -69,7 +70,9 @@ function transferToActivity(transfer: TransferActivity): Activity {
       amount: Number(transfer.amount),
       type: "token",
       type_swap: "token",
-      ui_amount: Number(transfer.amount),
+      ui_amount: BigNumber(transfer.amount)
+        .dividedBy(10 ** transfer.decimals)
+        .toNumber(),
       price: 0,
       nearest_price: 0,
       change_amount: 0,

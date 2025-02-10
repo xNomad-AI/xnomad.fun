@@ -10,11 +10,8 @@ import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { useRequest } from "ahooks";
 import { useTimeStore } from "@/primitive/hooks/time";
-const AFTER_TIME = Math.floor(
-  new Date("2025-02-07T02:45:00Z").getTime() / 1000
-);
+import { TokenNumber } from "@/components/token-number";
 export function Analytics({ nft }: { nft: NFT }) {
-  // FIXME: demo purpose, should be removed
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
   const { loading, run } = useRequest(
@@ -23,7 +20,6 @@ export function Analytics({ nft }: { nft: NFT }) {
         address: nft.agentAccount.solana,
         offset: activity.length,
         limit: 20,
-        afterTime: AFTER_TIME,
       }).then((res) => {
         setActivity([...activity, ...res.items]);
         setHasNextPage(res.has_next);
@@ -39,7 +35,6 @@ export function Analytics({ nft }: { nft: NFT }) {
       address: nft.agentAccount.solana,
       offset: 0,
       limit: 20,
-      afterTime: AFTER_TIME,
     }).then((res) => {
       setActivity(res.items);
       setHasNextPage(res.has_next);
@@ -66,29 +61,31 @@ export function Analytics({ nft }: { nft: NFT }) {
                     {item.quote.symbol}
                   </span>
                   <span className='text-text2'>
-                    ($
-                    {toIntl(
-                      BigNumber(item.quote.ui_amount).multipliedBy(
+                    (
+                    <TokenNumber
+                      prefix={"$"}
+                      number={BigNumber(item.quote.ui_amount).multipliedBy(
                         item.quote.price || item.quote.nearest_price
-                      )
-                    )}
+                      )}
+                    />
                     )
                   </span>
                 </div>
                 <span className='text-size-12 text-text2'>with</span>
 
                 <div className='flex items-center gap-4'>
-                  <IconSol className='text-size-16' />
+                  {item.base.symbol}
                   <p className='text-text2'>
                     <span className='text-text1'>
-                      {toIntl(BigNumber(item.base.ui_amount))}
+                      <TokenNumber number={item.base.ui_amount} />
                     </span>
-                    ($
-                    {toIntl(
-                      BigNumber(item.base.ui_amount).multipliedBy(
+                    (
+                    <TokenNumber
+                      prefix={"$"}
+                      number={BigNumber(item.base.ui_amount).multipliedBy(
                         item.base.price || item.base.nearest_price
-                      )
-                    )}
+                      )}
+                    />
                     )
                   </p>
                 </div>

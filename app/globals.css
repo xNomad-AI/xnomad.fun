@@ -2,8 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
 @layer components {
+  .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
   .scale-default {
     @apply hover:scale-110 duration-300 transition-all ease-in-out;
   }

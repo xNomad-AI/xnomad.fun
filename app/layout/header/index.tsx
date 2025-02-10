@@ -45,13 +45,17 @@ export function Header() {
           "fixed bg-white/[0.01] backdrop-blur-[20px] top-0 left-0 w-full z-10 border-b h-64 flex items-center px-64 mobile:px-16 justify-between"
         )}
       >
-        <Link href={"/"} className='flex items-center gap-8 mobile:hidden'>
+        <Link
+          prefetch
+          href={"/"}
+          className='flex items-center gap-8 mobile:hidden'
+        >
           <Image src={"/brand.png"} width={145} height={40} alt='' />
           <div className='bg-white-60 text-black rounded-4 text-size-12 font-bold py-2 px-4'>
             Beta
           </div>
         </Link>
-        <Link href={"/"} className='hidden mobile:block'>
+        <Link href={"/"} className='hidden mobile:block' prefetch>
           <Image src={"/logo.svg"} width={40} height={40} alt='' />
         </Link>
         <div className='flex items-center gap-32 portrait-tablet:gap-24'>
@@ -85,6 +89,7 @@ export function Header() {
                 {navs.map((nav) => (
                   <Link
                     key={nav.key}
+                    prefetch
                     onClick={(e) => {
                       if (nav.key === "create-ai-nft") {
                         if (!publicKey) {
@@ -116,7 +121,7 @@ export function Header() {
             <Dropdown
               content={
                 <div className='flex flex-col gap-8'>
-                  <Link href={`/sol/profile/${publicKey.toBase58()}`}>
+                  <Link prefetch href={`/sol/profile/${publicKey.toBase58()}`}>
                     <SelectOption selected={false}>My AI-NFTs</SelectOption>
                   </Link>
 
@@ -157,6 +162,7 @@ function NavItem({
   return (
     <Link
       href={href}
+      prefix=''
       onClick={(e) => {
         if (onClick) {
           onClick(e);

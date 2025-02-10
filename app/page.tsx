@@ -25,7 +25,7 @@ export default function Home() {
       <div></div>
       <h2 className='text-size-20 font-bold'>Portal</h2>
       <div className='grid grid-cols-2 w-full gap-16 mobile:grid-cols-1'>
-        <Link href='/sol/xnomad'>
+        <Link href='/sol/xnomad' prefetch>
           <Card className='hover:border-white-40 relative w-full aspect-[16/9] flex items-center justify-center'>
             <img
               src={"/xnomad.webp"}
@@ -33,7 +33,7 @@ export default function Home() {
             />
             <div className='pointer-events-none w-full h-full bg-black-20 absolute left-0 top-0 z-2'></div>
             <span
-              className='pointer-events-none text-[40px] z-3'
+              className='pointer-events-none text-[40px] z-3 text-center'
               style={{
                 ...bungee.style,
                 textShadow: "0px 0px 6px rgba(255, 255, 255, 0.60)",
@@ -45,7 +45,7 @@ export default function Home() {
             </span>
           </Card>
         </Link>
-        <Link href='/sol/nomad-society'>
+        <Link href='/sol/nomad-society' prefetch>
           <Card className='hover:border-white-40 relative w-full aspect-[16/9] flex items-center justify-center'>
             <img
               src={"/society.webp"}
@@ -53,7 +53,7 @@ export default function Home() {
             />
             <div className='pointer-events-none w-full h-full bg-black-20 absolute left-0 top-0 z-2'></div>
             <span
-              className='text-[40px] z-3 pointer-events-none'
+              className='text-[40px] z-3 pointer-events-none text-center'
               style={{
                 ...bungee.style,
                 textShadow: "0px 0px 6px rgba(255, 255, 255, 0.60)",

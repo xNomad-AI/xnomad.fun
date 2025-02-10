@@ -108,8 +108,8 @@ export function Analytics({ nft }: { nft: NFT }) {
             loadNextPage={run}
           />
         ) : (
-          <div className='flex justify-center w-full p-16 h-[200px] items-center'>
-            No Activity
+          <div className='flex justify-center w-full p-16 h-[200px] items-center text-text2'>
+            No Activities
           </div>
         )}
       </div>

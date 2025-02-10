@@ -5,6 +5,7 @@ import { toIntl } from "@/lib/utils/number/bignumber";
 import { DepositContainer } from "../container";
 import { useAgentStore } from "../../store";
 import { toCardNum } from "@/lib/utils/number";
+import { Address } from "@/components/address";
 
 export function Portfolio({ nft }: { nft: NFT }) {
   const { portfolio } = useAgentStore();
@@ -45,13 +46,20 @@ export function Portfolio({ nft }: { nft: NFT }) {
             >
               <div className='flex w-[160px] gap-4'>
                 <img
-                  height={20}
-                  width={20}
-                  className='rounded-full'
+                  height={32}
+                  width={32}
+                  className='w-32 aspect-square rounded-full flex-shrink-0'
                   src={item.logoURI}
                   alt=''
                 />
-                <span className='font-bold'>{item.symbol}</span>
+                <div className='flex flex-col gap-4'>
+                  <span className='font-bold'>{item.symbol}</span>
+                  <Address
+                    address={item.address}
+                    enableCopy
+                    className='text-size-12 text-text2'
+                  />
+                </div>
               </div>
               <div className='flex w-[120px] justify-end'>
                 {toCardNum(item.priceUsd, "$")}
@@ -65,8 +73,8 @@ export function Portfolio({ nft }: { nft: NFT }) {
             </div>
           ))
         ) : (
-          <div className='flex justify-center w-full p-16 h-[200px] items-center'>
-            No assets
+          <div className='flex justify-center w-full p-16 h-[200px] items-center text-text2'>
+            No Assets
           </div>
         )}
       </div>

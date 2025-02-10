@@ -22,7 +22,7 @@ import {
   Spin,
   Tooltip,
 } from "@/primitive/components";
-import { apiClient, roomId } from "../lib/api";
+import { apiClient } from "../lib/api";
 import { ChatMessageList } from "./ui/chat/chat-message-list";
 import {
   ChatBubble,
@@ -80,7 +80,7 @@ export function ChatPage({
       setIsClearingMemory(true);
       await api.v1.delete(`/agent/memory/`, {
         agentId,
-        roomId,
+        roomId: userId,
         userId,
       });
       setMessages([]);

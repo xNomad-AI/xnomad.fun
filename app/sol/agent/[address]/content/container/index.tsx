@@ -1,5 +1,4 @@
 import { Address } from "@/components/address";
-import { toIntl } from "@/lib/utils/number/bignumber";
 import {
   Card,
   Button,
@@ -8,6 +7,7 @@ import {
   Modal,
   ModalContent,
   TextField,
+  Tooltip,
 } from "@/primitive/components";
 import BigNumber from "bignumber.js";
 import { useMemo, useEffect, PropsWithChildren, useState } from "react";
@@ -23,28 +23,38 @@ import { useConnectModalStore } from "@/components/connect-modal/store";
 import { NFT } from "@/types";
 import { onError } from "@/lib/utils/error";
 import { TokenNumber } from "@/components/token-number";
+import { isOwner } from "@/lib/user/ownership";
 
 export function DepositContainer({
-  address,
+  nft,
   children,
-}: PropsWithChildren<{ address: string }>) {
+}: PropsWithChildren<{ nft?: NFT }>) {
+  const { publicKey } = useWallet();
   const { setPortfolio, portfolio } = useAgentStore();
   const solItem = useMemo(
     () => portfolio?.items.filter((item) => item.symbol === "SOL")?.[0],
     [portfolio]
   );
-  const getPortfolioData = useMemoizedFn(async () => {
+  const getPortfolioData = useMemoizedFn(async (address: string) => {
     getPortfolio({
       address,
     }).then((data) => {
       setPortfolio(data);
     });
   });
+  const agentAccountSol = useMemo(
+    () => nft?.agentAccount.solana ?? "",
+    [nft?.agentAccount.solana]
+  );
   useEffect(() => {
-    if (!address) return;
-    getPortfolioData();
-  }, [address]);
+    if (!agentAccountSol) return;
+    getPortfolioData(agentAccountSol);
+  }, [agentAccountSol]);
   const [depositOpen, setDepositOpen] = useState(false);
+  const isNFTowner = useMemo(
+    () => isOwner(nft?.owner, publicKey?.toBase58()),
+    [nft?.owner, publicKey]
+  );
   return (
     <div className='w-full flex flex-col gap-16'>
       <Card className='flex items-center justify-between gap-16 p-16'>
@@ -54,7 +64,7 @@ export function DepositContainer({
             className='text-size-20 font-bold'
             wholeAddress
             enableCopy
-            address={address}
+            address={agentAccountSol}
           />
           <div>
             Balance:&nbsp;
@@ -66,22 +76,30 @@ export function DepositContainer({
             &nbsp;SOL
           </div>
         </div>
-        <Button
-          className='!text-black'
-          onClick={() => {
-            setDepositOpen(true);
-          }}
+        <Tooltip
+          disabled={isNFTowner}
+          content={
+            "Only the NFT owner can deposit, manage, and use this Agent Wallet"
+          }
         >
-          Deposit
-        </Button>
+          <Button
+            disabled={!isNFTowner}
+            className='!text-black'
+            onClick={() => {
+              setDepositOpen(true);
+            }}
+          >
+            Deposit
+          </Button>
+        </Tooltip>
       </Card>
       {children}
       <DepositModal
-        address={address}
+        address={agentAccountSol}
         onClose={() => {
           setDepositOpen(false);
         }}
-        onSuccess={getPortfolioData}
+        onSuccess={() => getPortfolioData(agentAccountSol)}
         open={depositOpen}
       />
     </div>

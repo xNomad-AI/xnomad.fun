@@ -9,7 +9,7 @@ import { TokenNumber } from "@/components/token-number";
 export function Portfolio({ nft }: { nft: NFT }) {
   const { portfolio } = useAgentStore();
   return (
-    <DepositContainer address={nft.agentAccount.solana}>
+    <DepositContainer nft={nft}>
       <div className='grid grid-cols-3 gap-16'>
         <Card className='flex flex-col p-16'>
           <span className='text-size-12'>Net Worth</span>

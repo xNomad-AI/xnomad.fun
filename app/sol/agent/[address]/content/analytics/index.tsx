@@ -90,7 +90,7 @@ export function Analytics({ nft }: { nft: NFT }) {
   // use time tick to update time every second
   useTimeStore();
   return (
-    <DepositContainer address={nft.agentAccount.solana}>
+    <DepositContainer nft={nft}>
       <div className='flex mt-16 flex-col w-full'>
         {activity?.length > 0 ? (
           <InfiniteScrollList

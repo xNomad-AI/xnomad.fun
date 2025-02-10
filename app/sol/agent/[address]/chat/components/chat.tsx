@@ -7,7 +7,6 @@ import CopyButton from "./copy-button";
 import ChatTtsButton from "./ui/chat/chat-tts-button";
 import AIWriter from "react-aiwriter";
 import { AudioRecorder } from "./audio-recorder";
-// import { Badge } from "./ui/badge";
 import { IAttachment } from "../types";
 import { useMutation } from "@tanstack/react-query";
 

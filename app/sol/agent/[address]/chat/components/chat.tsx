@@ -141,7 +141,7 @@ export function ChatPage({
   });
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!input) return;
+    if (!input && !selectedFile) return;
 
     const attachments: IAttachment[] | undefined = selectedFile
       ? [
@@ -475,7 +475,7 @@ export function ChatPage({
               className='rounded-12 p-16 bg-surface flex items-center gap-8 border border-white-20'
             >
               <Tooltip
-                content={<p>Attach file</p>}
+                content={<p>Attach file(Images only)</p>}
                 className='flex items-center'
               >
                 <button
@@ -490,6 +490,7 @@ export function ChatPage({
                 </button>
                 <input
                   type='file'
+                  key={`attach-file-${selectedFile?.name}`}
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   accept='image/*'
@@ -526,11 +527,13 @@ export function ChatPage({
                 </div>
               ) : null}
               <button
-                disabled={!input || sendMessageMutation?.isPending}
+                disabled={
+                  (!input && !selectedFile) || sendMessageMutation?.isPending
+                }
                 type='submit'
                 className={clsx("flex items-center", {
                   "cursor-not-allowed":
-                    !input || sendMessageMutation?.isPending,
+                    (!input && !selectedFile) || sendMessageMutation?.isPending,
                 })}
               >
                 {sendMessageMutation?.isPending ? (

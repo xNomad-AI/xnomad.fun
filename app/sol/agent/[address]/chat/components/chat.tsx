@@ -446,7 +446,7 @@ export function ChatPage({
             </ChatMessageList>
           </div>
           <div className='w-full flex flex-col gap-8'>
-            {isOwner(publicKey?.toBase58() ?? "", nft.owner) && (
+            {isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "") && (
               <Button
                 onClick={() => {
                   const newMessages = [

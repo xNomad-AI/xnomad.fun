@@ -37,7 +37,7 @@ export function SideBar() {
   }, [collection]);
   const traitsCount = useMemo(() => {
     return filterTemplate.reduce((acc, curr) => {
-      return acc + curr.traitValues.reduce((acc, curr) => acc + curr.count, 0);
+      return acc + curr.traitValues.length;
     }, 0);
   }, [filterTemplate]);
   const content = (
@@ -48,10 +48,7 @@ export function SideBar() {
       }
     >
       {filterTemplate.map((template) => {
-        const count = template.traitValues.reduce(
-          (acc, curr) => acc + curr.count,
-          0
-        );
+        const count = template.traitValues.length;
         return (
           <Collapse
             key={template.traitType}

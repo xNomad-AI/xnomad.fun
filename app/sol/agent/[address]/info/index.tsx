@@ -46,11 +46,11 @@ export function InfoSection({ nft }: { nft: NFT }) {
         <Card className='flex flex-col gap-16 p-16 w-full'>
           <div className='flex items-center justify-between'>
             <span className='font-bold'>Asset ID</span>
-            <Address address={nft.id} />
+            {<Address address={nft.id} />}
           </div>
           <div className='flex items-center justify-between'>
             <span className='font-bold'>Owner</span>
-            <Address address={nft.owner} />
+            {nft.owner && <Address address={nft.owner} />}
           </div>
           <div className='flex items-center justify-between'>
             <span className='font-bold'>Character Files</span>

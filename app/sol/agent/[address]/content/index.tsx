@@ -23,7 +23,7 @@ export function Content({ nft }: { nft: NFT }) {
     if (
       tab === "features" &&
       (!publicKey ||
-        publicKey.toBase58().toLowerCase() !== nft.owner.toLowerCase())
+        publicKey.toBase58().toLowerCase() !== nft.owner?.toLowerCase())
     ) {
       message("You must be the owner to access this feature", {
         type: "error",

@@ -9,7 +9,7 @@ import { useRequest } from "ahooks";
 import { useState } from "react";
 
 export function Content({ address }: { address: string }) {
-  const [tab, setTab] = useState<"xnomad" | "society">("society");
+  const [tab, setTab] = useState<"xnomad" | "society">("xnomad");
   const [xnomads, setXnomads] = useState<NFT[]>([]);
   const [society, setSociety] = useState<NFT[]>([]);
   const { loading } = useRequest(async () => {
@@ -61,7 +61,7 @@ export function Content({ address }: { address: string }) {
           }`}
           onClick={() => setTab("xnomad")}
         >
-          Xnomad({xnomads?.length})
+          xNomad({xnomads?.length})
         </button>
         <button
           className={`text-size-20 font-bold ${

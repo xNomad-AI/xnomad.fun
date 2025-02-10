@@ -26,6 +26,7 @@ export function InfoSection({ nft }: { nft: NFT }) {
     rank: nft.rarity.rank,
     total: nft.collectionId === XNOMAD_ID ? 5000 : Infinity,
   });
+  const isXnomad = nft.collectionId === XNOMAD_ID;
   return (
     <div className='flex flex-col w-[280px] portrait-tablet:w-full gap-16 flex-shrink-0'>
       <img
@@ -40,12 +41,15 @@ export function InfoSection({ nft }: { nft: NFT }) {
           {nft.name}
         </h1>
         <Link
-          href={`/sol/${
-            nft.collectionId === XNOMAD_ID ? "xnomad" : "nomad-society"
-          }`}
+          href={`/sol/${isXnomad ? "xnomad" : "nomad-society"}`}
           className='flex items-center gap-4'
         >
-          <CollectionLogo logo={"/xnomad-nft-logo.svg"} size={24} />
+          <CollectionLogo
+            logo={
+              isXnomad ? "/xnomad-nft-logo.svg" : "/nomad-society-logo.webp"
+            }
+            size={24}
+          />
           {nft.collectionName}
         </Link>
         <Card className='flex flex-col gap-16 p-16 w-full'>
@@ -62,26 +66,30 @@ export function InfoSection({ nft }: { nft: NFT }) {
             <CharacterFileModal character={nft.aiAgent.character} />
           </div>
         </Card>
-        <Card className='flex flex-col gap-16 p-16 w-full'>
-          <div className='flex items-center justify-between'>
-            <span className='font-bold'>Rarity</span>
-            <span className={style.className}>#{nft.rarity.rank}</span>
-          </div>
-        </Card>
-        <Card className='flex flex-col gap-16 p-16 w-full'>
-          <span className='font-bold'>Traits</span>
-          {nft.traits.map((trait) => (
-            <div
-              key={trait.value}
-              className='flex items-center justify-between gap-16'
-            >
-              <TextWithEllipsis className='max-w-[90px] flex-shrink-0'>
-                {trait.type}
-              </TextWithEllipsis>
-              <TextWithEllipsis>{trait.value}</TextWithEllipsis>
+        {isXnomad && (
+          <Card className='flex flex-col gap-16 p-16 w-full'>
+            <div className='flex items-center justify-between'>
+              <span className='font-bold'>Rarity</span>
+              <span className={style.className}>#{nft.rarity.rank}</span>
             </div>
-          ))}
-        </Card>
+          </Card>
+        )}
+        {isXnomad && (
+          <Card className='flex flex-col gap-16 p-16 w-full'>
+            <span className='font-bold'>Traits</span>
+            {nft.traits.map((trait) => (
+              <div
+                key={trait.value}
+                className='flex items-center justify-between gap-16'
+              >
+                <TextWithEllipsis className='max-w-[90px] flex-shrink-0'>
+                  {trait.type}
+                </TextWithEllipsis>
+                <TextWithEllipsis>{trait.value}</TextWithEllipsis>
+              </div>
+            ))}
+          </Card>
+        )}
       </div>
     </div>
   );

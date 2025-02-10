@@ -33,7 +33,7 @@ export default function Home() {
             />
             <div className='pointer-events-none w-full h-full bg-black-20 absolute left-0 top-0 z-2'></div>
             <span
-              className='pointer-events-none text-[40px] z-3'
+              className='pointer-events-none text-[40px] z-3 text-center'
               style={{
                 ...bungee.style,
                 textShadow: "0px 0px 6px rgba(255, 255, 255, 0.60)",
@@ -53,7 +53,7 @@ export default function Home() {
             />
             <div className='pointer-events-none w-full h-full bg-black-20 absolute left-0 top-0 z-2'></div>
             <span
-              className='text-[40px] z-3 pointer-events-none'
+              className='text-[40px] z-3 pointer-events-none text-center'
               style={{
                 ...bungee.style,
                 textShadow: "0px 0px 6px rgba(255, 255, 255, 0.60)",

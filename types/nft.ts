@@ -4,7 +4,7 @@ export interface NFT {
   _id: string;
   id: UUID;
   agentId: UUID;
-  owner: string;
+  owner?: string;
   aiAgent: {
     engine: string;
     character: Character;

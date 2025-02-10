@@ -15,7 +15,12 @@ import { NFT } from "@/types";
 import { Character } from "@elizaos/core";
 import clsx from "clsx";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { marked } from "marked";
+async function parseMarkdownText(text: string) {
+  const markedText = await marked.parse(text);
+  return markedText;
+}
 export function InfoSection({ nft }: { nft: NFT }) {
   const style = useRarity({
     rank: nft.rarity.rank,
@@ -36,7 +41,7 @@ export function InfoSection({ nft }: { nft: NFT }) {
         </h1>
         <Link
           href={`/sol/${
-            nft.collectionId === XNOMAD_ID ? "xnomad" : "nomads-society"
+            nft.collectionId === XNOMAD_ID ? "xnomad" : "nomad-society"
           }`}
           className='flex items-center gap-4'
         >
@@ -112,6 +117,12 @@ function CollectionLogo({
 
 function CharacterFileModal({ character }: { character: Character }) {
   const [open, setOpen] = useState(false);
+  const [content, setContent] = useState("");
+  useEffect(() => {
+    parseMarkdownText(JSON.stringify(character, null, "\n\u00A0")).then(
+      setContent
+    );
+  }, [character]);
   return (
     <>
       <IconContract
@@ -125,7 +136,11 @@ function CharacterFileModal({ character }: { character: Character }) {
           Character Files
         </ModalTitleWithBorder>
         <ModalContent className='overflow-auto max-h-[600px]'>
-          <p>{JSON.stringify(character, null, 2)}</p>
+          <p
+            dangerouslySetInnerHTML={{
+              __html: content,
+            }}
+          ></p>
         </ModalContent>
       </Modal>
     </>

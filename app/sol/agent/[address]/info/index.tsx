@@ -36,7 +36,7 @@ export function InfoSection({ nft }: { nft: NFT }) {
         </h1>
         <Link
           href={`/sol/${
-            nft.collectionId === XNOMAD_ID ? "xnomad" : "nomads-society"
+            nft.collectionId === XNOMAD_ID ? "xnomad" : "nomad-society"
           }`}
           className='flex items-center gap-4'
         >

@@ -1,7 +1,7 @@
 "use client";
 import { CardViewGallery } from "@/app/sol/components/card-view-gallery";
 import { NFTCard } from "@/app/sol/components/collection-nfts";
-import { NOMADS_SOCIETY_ID } from "@/app/sol/nomads-society/constants";
+import { NOMADS_SOCIETY_ID } from "@/app/sol/nomad-society/constants";
 import { XNOMAD_ID } from "@/app/sol/xnomad/constants";
 import { api } from "@/primitive/api";
 import { NFT } from "@/types";

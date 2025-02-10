@@ -45,7 +45,7 @@ export default function Home() {
             </span>
           </Card>
         </Link>
-        <Link href='/sol/nomads-society'>
+        <Link href='/sol/nomad-society'>
           <Card className='hover:border-white-40 relative w-full aspect-[16/9] flex items-center justify-center'>
             <img
               src={"/society.webp"}
@@ -59,7 +59,7 @@ export default function Home() {
                 textShadow: "0px 0px 6px rgba(255, 255, 255, 0.60)",
               }}
             >
-              Nomads
+              Nomad
               <br />
               Society
             </span>

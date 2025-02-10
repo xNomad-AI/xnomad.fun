@@ -140,7 +140,7 @@ export function Content() {
       >
         <h1 className='text-size-24 font-bold'>Create An AI-NFT</h1>
         <p>
-          Notice: The AI-NFTs you create will be in the [Nomads Society]
+          Notice: The AI-NFTs you create will be in the [Nomad Society]
           collection.
         </p>
         <RadioButtonGroup disableAnimation onChange={setMode} value={mode}>

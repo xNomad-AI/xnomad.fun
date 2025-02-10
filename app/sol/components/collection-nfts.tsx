@@ -108,6 +108,7 @@ export function NFTCard({
   });
   return (
     <Link
+      prefetch
       href={`/sol/agent/${nft.id}`}
       key={nft.id}
       className='flex-col group rounded-12 flex gap-12 min-w-[180px] mobile:min-w-[unset] max-w-[240px]'

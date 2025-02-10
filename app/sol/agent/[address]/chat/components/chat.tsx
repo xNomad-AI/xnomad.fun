@@ -468,8 +468,8 @@ export function ChatPage({
             </ChatMessageList>
           </div>
           <div className='w-full flex flex-col gap-8'>
-            {isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "") && (
-              <div className='flex items-center justify-between gap-16'>
+            <div className='flex items-center justify-between gap-16'>
+              {isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "") ? (
                 <Button
                   onClick={() => {
                     const newMessages = [
@@ -492,17 +492,19 @@ export function ChatPage({
                 >
                   Claim Airdrop
                 </Button>
+              ) : (
+                <div></div>
+              )}
 
-                <Button
-                  variant='danger'
-                  loading={isClearingMemory}
-                  size='s'
-                  onClick={clearMemory}
-                >
-                  Clear Memory
-                </Button>
-              </div>
-            )}
+              <Button
+                variant='danger'
+                loading={isClearingMemory}
+                size='s'
+                onClick={clearMemory}
+              >
+                Clear Memory
+              </Button>
+            </div>
 
             <form
               ref={formRef}

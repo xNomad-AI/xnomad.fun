@@ -2,7 +2,7 @@
 import { useTransition, animated } from "@react-spring/web";
 import { Paperclip, Send } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Character, Content, UUID } from "@elizaos/core";
+import { Character, Content } from "@elizaos/core";
 import CopyButton from "./copy-button";
 import ChatTtsButton from "./ui/chat/chat-tts-button";
 import AIWriter from "react-aiwriter";
@@ -34,7 +34,12 @@ import { moment } from "../lib/utils";
 import { ChatInput } from "./ui/chat/chat-input";
 import { NFT } from "@/types";
 import { useAirdrops } from "@/network/use-airdrops";
-import { useLocalStorageState, useMemoizedFn, useMount } from "ahooks";
+import {
+  useLocalStorageState,
+  useMemoizedFn,
+  useMount,
+  useUnmount,
+} from "ahooks";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { isOwner } from "@/lib/user/ownership";
 import { api } from "@/primitive/api";
@@ -171,6 +176,11 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
           });
         });
     }
+  });
+  useUnmount(() => {
+    setMessages((messages) => {
+      return messages?.filter((msg) => msg.isLoading !== true) ?? [];
+    });
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -447,12 +457,12 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
                             !message.isAirdrop ? (
                               <div className='flex items-center gap-12'>
                                 <CopyButton text={message?.text} />
-                                {message?.user !== "user" && (
+                                {/* {message?.user !== "user" && (
                                   <ChatTtsButton
                                     agentId={agentId}
                                     text={message?.text}
                                   />
-                                )}
+                                )} */}
                               </div>
                             ) : null}
                             <div

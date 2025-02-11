@@ -43,7 +43,7 @@ export function Analytics({ nft }: { nft: NFT }) {
         }),
         getTransferActivity({
           address: nft.agentAccount.solana,
-          limit: 20,
+          limit: 10,
         }),
       ]);
       setHasNextPage(swapActivity.has_next);

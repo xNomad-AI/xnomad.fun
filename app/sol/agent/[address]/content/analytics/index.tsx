@@ -34,24 +34,28 @@ export function Analytics({ nft }: { nft: NFT }) {
   const initData = useMemoizedFn(async () => {
     setIsInitializing(true);
     try {
-      const swapActivity = await getActivities({
-        address: nft.agentAccount.solana,
-        offset: 0,
-        limit: 20,
-      });
+      const [swapActivity, transferActivity] = await Promise.all([
+        getActivities({
+          address: nft.agentAccount.solana,
+          offset: 0,
+          limit: 20,
+        }),
+        getTransferActivity({
+          address: nft.agentAccount.solana,
+          limit: 20,
+        }),
+      ]);
       setHasNextPage(swapActivity.has_next);
-      setActivity(swapActivity.items);
-      setIsInitializing(false);
-      setIsInitialized(true);
-      const transferActivity = await getTransferActivity({
-        address: nft.agentAccount.solana,
-        limit: 20,
-      });
       setActivity((old) => {
-        return [...transferActivity, ...old].sort(
+        const newActivities = swapActivity.items
+          .concat(transferActivity)
+          .filter((item) => !old.find((a) => a.tx_hash === item.tx_hash));
+        return [...newActivities, ...old].sort(
           (a, b) => b.block_unix_time - a.block_unix_time
         );
       });
+      setIsInitializing(false);
+      setIsInitialized(true);
     } catch (error) {
       setIsInitializing(false);
     }
@@ -73,14 +77,15 @@ export function Analytics({ nft }: { nft: NFT }) {
         address: nft.agentAccount.solana,
         limit: 5,
       });
-      const newActivities = swapActivity.items
-        .concat(transferActivity)
-        .filter((item) => !activity.find((a) => a.tx_hash === item.tx_hash));
-      setActivity(
-        [...newActivities, ...activity].sort(
+
+      setActivity((old) => {
+        const newActivities = swapActivity.items
+          .concat(transferActivity)
+          .filter((item) => !old.find((a) => a.tx_hash === item.tx_hash));
+        return [...newActivities, ...old].sort(
           (a, b) => b.block_unix_time - a.block_unix_time
-        )
-      );
+        );
+      });
     },
     {
       pollingInterval: 10000,

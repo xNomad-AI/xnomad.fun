@@ -17,7 +17,7 @@ import { validNumberInput } from "@/lib/utils/input-helper";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useSolana } from "@/lib/hooks/use-solana";
 import { toCardNum } from "@/lib/utils/number";
-import { useMemoizedFn } from "ahooks";
+import { useMemoizedFn, useRequest } from "ahooks";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { useConnectModalStore } from "@/components/connect-modal/store";
 import { NFT } from "@/types";
@@ -46,10 +46,16 @@ export function DepositContainer({
     () => nft?.agentAccount.solana ?? "",
     [nft?.agentAccount.solana]
   );
-  useEffect(() => {
-    if (!agentAccountSol) return;
-    getPortfolioData(agentAccountSol);
-  }, [agentAccountSol]);
+  useRequest(
+    async () => {
+      getPortfolioData(agentAccountSol);
+    },
+    {
+      refreshDeps: [agentAccountSol],
+      ready: !!agentAccountSol,
+      pollingInterval: 5000,
+    }
+  );
   const [depositOpen, setDepositOpen] = useState(false);
   const isNFTowner = useMemo(
     () => isOwner(nft?.owner, publicKey?.toBase58()),

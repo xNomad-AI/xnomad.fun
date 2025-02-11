@@ -6,14 +6,20 @@ import { useUserInfoStore } from "./user-store";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { api } from "@/primitive/api";
 import bs58 from "bs58";
+import { useRef } from "react";
 
 export function useLogin() {
   const { publicKey, signMessage, disconnect } = useWallet();
   const { setUserInfo } = useUserInfoStore();
+  const isLoginRef = useRef(false);
   const login = useMemoizedFn(async (onSuccess?: (token?: string) => void) => {
     if (!publicKey || !signMessage) {
       return;
     }
+    if (isLoginRef.current) {
+      return;
+    }
+    isLoginRef.current = true;
     try {
       const nonce = await api.v1.get<{
         message: string;
@@ -39,9 +45,11 @@ export function useLogin() {
         expires: token.expiresIn ?? Date.now() + 60 * 60 * 24 * 1000,
       });
       onSuccess?.(token.accessToken);
+      isLoginRef.current = false;
     } catch (e) {
       onError(e);
       disconnect();
+      isLoginRef.current = false;
     }
   });
   return login;

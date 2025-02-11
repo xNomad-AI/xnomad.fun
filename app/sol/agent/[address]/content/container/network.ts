@@ -23,8 +23,14 @@ export function getPortfolio({
   chain?: "solana" | "ethereum";
   address: string;
 }) {
-  return api.v1.get<AgentPortfolio>("/agent-account/defi/portfolio", {
-    chain,
-    address,
-  });
+  return api.v1.get<AgentPortfolio>(
+    "/agent-account/defi/portfolio",
+    {
+      chain,
+      address,
+    },
+    {
+      cache: "no-cache",
+    }
+  );
 }

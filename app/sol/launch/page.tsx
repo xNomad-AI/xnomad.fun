@@ -9,7 +9,7 @@ export default function Page() {
         <Card className='bg-surface w-[20rem] h-[20rem] flex flex-col gap-16 items-center justify-center'>
           <h1 className='text-[96px]'>🤖</h1>
           <h2 className='text-center max-w-[230px] text-size-24 font-bold'>
-            Create An AI-NFT
+            Create a Single AI-NFT Agent.
           </h2>
         </Card>
       </Link>
@@ -30,7 +30,7 @@ export default function Page() {
             🤖🤖🤖🤖🤖🤖
           </h1>
           <h2 className='text-center max-w-[230px] text-size-24 font-bold'>
-            Create AI-NFT Collection
+            Create an AI-NFT Collection
           </h2>
         </Card>
       </Link>

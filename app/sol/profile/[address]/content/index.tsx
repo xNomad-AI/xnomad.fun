@@ -13,44 +13,38 @@ export function Content({ address }: { address: string }) {
   const [xnomads, setXnomads] = useState<NFT[]>([]);
   const [society, setSociety] = useState<NFT[]>([]);
   const { loading } = useRequest(async () => {
-    api.v1
-      .get<
-        Record<
-          string,
-          {
-            collectionId: string;
-            collectionName: string;
-            nfts: NFT[];
-          }
-        >
-      >(`/nft/solana/address/${address}/nfts`, {
-        collectionId: XNOMAD_ID,
-      })
-      .then((res) => {
-        if (res) {
-          setXnomads(res[XNOMAD_ID]?.nfts ?? []);
+    const res = await api.v1.get<
+      Record<
+        string,
+        {
+          collectionId: string;
+          collectionName: string;
+          nfts: NFT[];
         }
-      });
+      >
+    >(`/nft/solana/address/${address}/nfts`, {
+      collectionId: XNOMAD_ID,
+    });
+    if (res) {
+      setXnomads(res[XNOMAD_ID]?.nfts ?? []);
+    }
   });
   const { loading: societyLoading } = useRequest(async () => {
-    api.v1
-      .get<
-        Record<
-          string,
-          {
-            collectionId: string;
-            collectionName: string;
-            nfts: NFT[];
-          }
-        >
-      >(`/nft/solana/address/${address}/nfts`, {
-        collectionId: NOMADS_SOCIETY_ID,
-      })
-      .then((res) => {
-        if (res) {
-          setSociety(res[NOMADS_SOCIETY_ID]?.nfts ?? []);
+    const res = await api.v1.get<
+      Record<
+        string,
+        {
+          collectionId: string;
+          collectionName: string;
+          nfts: NFT[];
         }
-      });
+      >
+    >(`/nft/solana/address/${address}/nfts`, {
+      collectionId: NOMADS_SOCIETY_ID,
+    });
+    if (res) {
+      setSociety(res[NOMADS_SOCIETY_ID]?.nfts ?? []);
+    }
   });
   return (
     <div className='w-full flex flex-col gap-32'>
@@ -73,7 +67,7 @@ export function Content({ address }: { address: string }) {
         </button>
       </div>
       <CardViewGallery
-        loading={loading || societyLoading}
+        loading={loading}
         loadingMore={false}
         count={tab === "society" ? society?.length : xnomads?.length}
       >

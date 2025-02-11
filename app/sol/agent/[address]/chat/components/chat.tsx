@@ -4,7 +4,6 @@ import { Paperclip, Send } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Character, Content } from "@elizaos/core";
 import CopyButton from "./copy-button";
-import ChatTtsButton from "./ui/chat/chat-tts-button";
 import AIWriter from "react-aiwriter";
 import { AudioRecorder } from "./audio-recorder";
 import { IAttachment } from "../types";
@@ -18,7 +17,6 @@ import {
   IconTelegramFilled,
   IconTwitterX,
   IconWebsiteFilled,
-  message,
   Spin,
   Tooltip,
 } from "@/primitive/components";
@@ -46,6 +44,8 @@ import { api } from "@/primitive/api";
 import { onError } from "@/lib/utils/error";
 import { stringToUuid } from "../lib/uuid";
 import { useConnectModalStore } from "@/components/connect-modal/store";
+import { use100vh } from "react-div-100vh";
+import { useBreakpoint } from "@/primitive/hooks/use-screen";
 interface ExtraContentFields {
   user: string;
   createdAt: number;
@@ -291,9 +291,14 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
     enter: { opacity: 1, transform: "translateY(0px)" },
     leave: { opacity: 0, transform: "translateY(10px)" },
   });
-
+  const height = use100vh();
+  const { breakpoint } = useBreakpoint();
   return (
     <div
+      style={{
+        height:
+          breakpoint === "mobile" && height ? height - 80 - 64 - 72 : undefined,
+      }}
       className={clsx(
         "relative flex flex-col w-full max-w-[720px] h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-80px-64px-72px)] gap-32",
         {
@@ -347,7 +352,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
                                     ? airdrops.map((airdrop) => (
                                         <Card
                                           key={airdrop?.id}
-                                          className='py-14 px-8 flex font-bold items-center gap-8 justify-between'
+                                          className='py-14 px-8 flex font-bold items-center gap-8 justify-between flex-wrap'
                                         >
                                           <div className='flex items-center gap-8'>
                                             <img

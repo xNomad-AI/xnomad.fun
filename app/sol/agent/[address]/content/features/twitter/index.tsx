@@ -126,10 +126,10 @@ export function TwitterModal({
         <FormItem label='2FA Secret' {...form.twoFa}>
           <TextField
             value={form.twoFa.value}
-            placeholder='Enter your 2FA secret'
+            placeholder='Enter your 2FA secret. It must be 16 uppercase letters or numbers.'
             onChange={(e) => {
               updateForm("twoFa", {
-                value: e.target.value,
+                value: e.target.value.toUpperCase(),
                 isInValid: false,
                 errorMsg: "",
               });

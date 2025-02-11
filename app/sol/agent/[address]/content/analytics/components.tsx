@@ -37,20 +37,27 @@ export function ActionContent({
   type: ActionType;
 }) {
   if (type === "buy" || type === "sell") {
+    const toToken = data.quote.type_swap === "to" ? data.quote : data.base;
+    const fromToken = data.quote.type_swap === "from" ? data.quote : data.base;
     return (
       <>
-        <TokenItem data={data.quote} isRed={type === "sell"} />
+        <TokenItem
+          data={type === "sell" ? fromToken : toToken}
+          isRed={type === "sell"}
+        />
         <span className='text-size-12 text-text2'>with</span>
 
-        <TokenItem data={data.base} />
+        <TokenItem data={type === "sell" ? toToken : fromToken} />
       </>
     );
   } else if (type === "swap") {
+    const toToken = data.quote.type_swap === "to" ? data.quote : data.base;
+    const fromToken = data.quote.type_swap === "from" ? data.quote : data.base;
     return (
       <>
-        <TokenItem data={data.base} isRed />
+        <TokenItem data={toToken} isRed />
         <span className='text-size-12 text-text2'>to</span>
-        <TokenItem data={data.quote} />
+        <TokenItem data={fromToken} />
       </>
     );
   } else {

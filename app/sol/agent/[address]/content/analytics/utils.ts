@@ -23,11 +23,19 @@ export function getActionType({
       return "transfer";
     }
   }
-  const isBaseToken = isBasicToken(data.base.symbol);
+  const isBaseBasicToken = isBasicToken(data.base.symbol);
+  const isQuoteBasicToken = isBasicToken(data.quote.symbol);
   switch (data.tx_type) {
     case "swap":
-      if (isBaseToken) {
+      if (isBaseBasicToken) {
         if (data.base.change_amount > 0) {
+          return "sell";
+        } else {
+          return "buy";
+        }
+      }
+      if (isQuoteBasicToken) {
+        if (data.quote.change_amount > 0) {
           return "sell";
         } else {
           return "buy";

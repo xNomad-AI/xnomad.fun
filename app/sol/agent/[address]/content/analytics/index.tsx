@@ -9,6 +9,7 @@ import { useMemoizedFn, useRequest } from "ahooks";
 import { useTimeStore } from "@/primitive/hooks/time";
 import { ActionContent, ActionTag, Skeleton } from "./components";
 import { getActionType } from "./utils";
+import { useBreakpoint } from "@/primitive/hooks/use-screen";
 export function Analytics({ nft }: { nft: NFT }) {
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -94,12 +95,14 @@ export function Analytics({ nft }: { nft: NFT }) {
   );
   // use time tick to update time every second
   useTimeStore();
+  const { breakpoint } = useBreakpoint();
   return (
     <DepositContainer nft={nft}>
       <div className='flex mt-16 flex-col w-full'>
         {activity?.length > 0 ? (
           <InfiniteScrollList
             items={activity}
+            itemSize={breakpoint === "mobile" ? 89 : 60}
             renderItem={(item) => {
               const actionType = getActionType({
                 data: item,
@@ -108,7 +111,7 @@ export function Analytics({ nft }: { nft: NFT }) {
               return (
                 <Card
                   key={item.tx_hash}
-                  className='p-16 flex items-center gap-8'
+                  className='p-16 flex items-center gap-8 flex-wrap'
                 >
                   <ActionTag type={actionType} />
                   <ActionContent data={item} type={actionType} />

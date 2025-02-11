@@ -47,7 +47,7 @@ export function Portfolio({ nft }: { nft: NFT }) {
                 <img
                   height={32}
                   width={32}
-                  className='w-32 h-32 aspect-square rounded-full flex-shrink-0'
+                  className='w-32 h-32 aspect-square rounded-full flex-shrink-0 mobile:hidden'
                   src={item.logoURI}
                   alt=''
                 />

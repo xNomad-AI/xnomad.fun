@@ -50,7 +50,7 @@ export function InfoSection({ nft }: { nft: NFT }) {
             }
             size={24}
           />
-          {nft.collectionName}
+          {isXnomad ? "xNomad Genesis" : nft.collectionName}
         </Link>
         <Card className='flex flex-col gap-16 p-16 w-full'>
           <div className='flex items-center justify-between'>

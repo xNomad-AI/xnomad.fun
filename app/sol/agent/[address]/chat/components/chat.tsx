@@ -256,9 +256,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
       ]);
     },
     onError: (e) => {
-      message(e.message, {
-        type: "error",
-      });
+      onError(e);
     },
   });
 

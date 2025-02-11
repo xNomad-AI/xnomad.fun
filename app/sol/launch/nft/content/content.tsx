@@ -293,7 +293,7 @@ Despite his mechanical nature, he displays deep emotions and loyalty.`}
                 <textarea
                   className='min-h-[76px] bg-transparent w-full focus-visible:outline-none placeholder:text-text2'
                   value={form.greeting.value}
-                  placeholder="e.g. Brave, Kind, Resourceful, Loving, Nostalgic, PersistentHey! I'm Wallet, and I'm here to make waves and change the game! How can I inspire you today? "
+                  placeholder="e.g. I'm Walle, and I'm here to make waves and change the game! How can I inspire you today? "
                   onChange={(e) => {
                     updateForm("greeting", {
                       value: e.target.value,

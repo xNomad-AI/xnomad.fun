@@ -153,30 +153,47 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   const setMessage = useMemoizedFn((newMessages: ContentWithUser[]) => {
     setMessages((old = []) => [...old, ...newMessages]);
   });
+  // greeting
+  const getGreeting = useMemoizedFn(async () => {
+    const promptSuggestion = `Here are some example prompts if you want to trade: 
+- Buy: 
+  *Buy [symbol] [ca] with [amount] SOL
+- Sell: 
+  *Sell [amount] [symbol] [ca] for SOL
+- Swap: 
+  *swap [amount] SOL for [symbol] [ca]
+  *swap [amount][symbol] [ca] for [symbol] [ca]
+- Limit Order: 
+  *Create an automatic task to buy [symbol] [ca] with [amount] SOL when the token price is under $xx
+  *Create an automatic task to sell [amount][symbol] [ca] for SOL when the token price is above $xx`;
+    const greet = await api.v1.get<{ prologue: string }>("/agent/prologue", {
+      nftId: nft.id,
+      chain: "solana",
+    });
+    const newMessages = [
+      {
+        text: greet.prologue,
+        user: nft.name,
+        createdAt: Date.now(),
+      },
+      {
+        text: promptSuggestion,
+        user: nft.name,
+        createdAt: Date.now(),
+      },
+    ];
+    setMessages((old) => {
+      if (!old || old?.length === 0) {
+        return newMessages;
+      } else {
+        return old ?? [];
+      }
+    });
+  });
   useMount(() => {
     scrollToBottom();
     if (!((messages?.length ?? 0) > 0)) {
-      api.v1
-        .get<{ prologue: string }>("/agent/prologue", {
-          nftId: nft.id,
-          chain: "solana",
-        })
-        .then((res) => {
-          const newMessages = [
-            {
-              text: res.prologue,
-              user: nft.name,
-              createdAt: Date.now(),
-            },
-          ];
-          setMessages((old) => {
-            if (!old || old?.length === 0) {
-              return newMessages;
-            } else {
-              return old ?? [];
-            }
-          });
-        });
+      getGreeting();
     }
   });
   useUnmount(() => {

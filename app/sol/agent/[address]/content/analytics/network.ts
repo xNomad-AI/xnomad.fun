@@ -114,6 +114,9 @@ export async function getTransferActivity({
       address,
       limit,
       chain: "solana",
+    },
+    {
+      cache: "no-cache",
     }
   );
   return res.items.map(transferToActivity);

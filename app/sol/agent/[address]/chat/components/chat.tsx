@@ -45,6 +45,7 @@ import { isOwner } from "@/lib/user/ownership";
 import { api } from "@/primitive/api";
 import { onError } from "@/lib/utils/error";
 import { stringToUuid } from "../lib/uuid";
+import { useConnectModalStore } from "@/components/connect-modal/store";
 interface ExtraContentFields {
   user: string;
   createdAt: number;
@@ -65,6 +66,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [isAgentSetup, setIsAgentSetup] = useState(false);
   const hasTriggered = useRef(false);
+  const { setVisible } = useConnectModalStore();
   const userId = useMemo(() => {
     if (publicKey) {
       return stringToUuid(publicKey.toBase58());
@@ -534,6 +536,14 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
             </div>
 
             <form
+              onClick={(e) => {
+                if (!publicKey) {
+                  inputRef.current?.blur();
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setVisible(true);
+                }
+              }}
               ref={formRef}
               onSubmit={handleSendMessage}
               className='rounded-12 p-16 bg-surface flex items-center gap-8 border border-white-20'

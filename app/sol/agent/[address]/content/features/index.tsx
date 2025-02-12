@@ -1,4 +1,4 @@
-import { Button, Card, message } from "@/primitive/components";
+import { Button, Card } from "@/primitive/components";
 import { NFT } from "@/types";
 import Image from "next/image";
 import { TwitterModal } from "./twitter";
@@ -76,11 +76,6 @@ export function Features({ nft }: { nft: NFT }) {
             <span>X(Twitter) Integration</span>
           </div>
           <div className='flex items-center gap-16'>
-            {twitterBound ? (
-              <span className='text-green'>Online</span>
-            ) : (
-              <span className='text-red'>Offline</span>
-            )}
             <Button
               className='!w-[7.5rem]'
               onClick={() => {

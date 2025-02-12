@@ -1,45 +1,57 @@
 const defined = {
   max: 2560,
-  'landscape-tablet': 1024,
-  'portrait-tablet': 768,
+  "landscape-tablet": 1024,
+  "portrait-tablet": 768,
   mobile: 576,
 };
 
 export const screens = {
-  max: defined.max + 'px',
-  'landscape-tablet': {
-    max: defined['landscape-tablet'] + 'px',
+  max: defined.max + "px",
+  "landscape-tablet": {
+    max: defined["landscape-tablet"] + "px",
   },
-  'portrait-tablet': {
-    max: defined['portrait-tablet'] + 'px',
+  "portrait-tablet": {
+    max: defined["portrait-tablet"] + "px",
   },
   mobile: {
-    max: defined.mobile + 'px',
+    max: defined.mobile + "px",
+  },
+  "not-portrait-tablet": {
+    min: defined["portrait-tablet"] + 1 + "px",
+  },
+  "not-mobile": {
+    min: defined.mobile + 1 + "px",
   },
 };
 
-export type ScreenBreakpoint = 'base' | 'max' | 'landscape-tablet' | 'portrait-tablet' | 'mobile' | 'not-mobile';
+export type ScreenBreakpoint =
+  | "base"
+  | "max"
+  | "landscape-tablet"
+  | "portrait-tablet"
+  | "mobile"
+  | "not-mobile";
 
 export function getScreen(viewport: unknown): ScreenBreakpoint {
-  if (typeof viewport === 'number') {
+  if (typeof viewport === "number") {
     if (viewport >= defined.max) {
-      return 'max';
+      return "max";
     }
 
     if (viewport >= 1024) {
-      return 'base';
+      return "base";
     }
 
     if (viewport >= 768) {
-      return 'landscape-tablet';
+      return "landscape-tablet";
     }
 
     if (viewport >= 576) {
-      return 'portrait-tablet';
+      return "portrait-tablet";
     }
 
-    return 'mobile';
+    return "mobile";
   }
 
-  return 'base';
+  return "base";
 }

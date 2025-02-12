@@ -97,6 +97,10 @@ export function Header() {
                           e.stopPropagation();
                           setVisible(true);
                         }
+                      } else if (!nav.href) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        message("Coming soon");
                       }
                     }}
                     href={
@@ -162,7 +166,6 @@ function NavItem({
   return (
     <Link
       href={href}
-      prefix=''
       onClick={(e) => {
         if (onClick) {
           onClick(e);

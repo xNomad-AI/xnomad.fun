@@ -8,17 +8,43 @@ import { Config } from "./types";
 import { useMemoizedFn } from "ahooks";
 import { TelegramModal } from "./telegram";
 import { VoiceModal } from "./voice";
-
+function configTwitter({
+  nftId,
+  config,
+  testContent,
+}: {
+  nftId: string;
+  config: Partial<Config>;
+  testContent?: string;
+}) {
+  return api.v1.post<{
+    isLogin: boolean;
+    message: string;
+  }>(`/nft/solana/${nftId}/config/twitter`, {
+    characterConfig: config,
+    testContent,
+  });
+}
 export function Features({ nft }: { nft: NFT }) {
   const [xOpen, setXOpen] = useState(false);
   const [tgOpen, setTgOpen] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
   const [config, setConfig] = useState<Config>();
+  const [twitterBound, setTwitterBound] = useState(false);
+
   useEffect(() => {
     api.v1
       .get<{ characterConfig: Config }>(`/nft/solana/${nft.id}/config`)
       .then((res) => {
         setConfig(res.characterConfig);
+        // get twitter bound status
+        configTwitter({
+          nftId: nft.id,
+          config: res.characterConfig,
+          testContent: "",
+        }).then((res) => {
+          setTwitterBound(res.isLogin);
+        });
       });
   }, []);
   const onSave = useMemoizedFn(async (config: Partial<Config>) => {
@@ -49,14 +75,21 @@ export function Features({ nft }: { nft: NFT }) {
             <Image src={"/twitter.svg"} height={64} width={64} alt='' />
             <span>X(Twitter) Integration</span>
           </div>
-          <Button
-            className='!w-[7.5rem]'
-            onClick={() => {
-              setXOpen(true);
-            }}
-          >
-            {hasTwitterConfig ? "Edit" : "Add"}
-          </Button>
+          <div className='flex items-center gap-16'>
+            {twitterBound ? (
+              <span className='text-green'>Online</span>
+            ) : (
+              <span className='text-red'>Offline</span>
+            )}
+            <Button
+              className='!w-[7.5rem]'
+              onClick={() => {
+                setXOpen(true);
+              }}
+            >
+              {hasTwitterConfig ? "Edit" : "Add"}
+            </Button>
+          </div>
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>
           <div className='flex items-center gap-16'>
@@ -97,7 +130,17 @@ export function Features({ nft }: { nft: NFT }) {
       </div>
       <TwitterModal
         open={xOpen}
-        onSave={onSave}
+        onSave={async (config, testContent) => {
+          const res = await configTwitter({
+            nftId: nft.id,
+            config,
+            testContent,
+          });
+          if (!res.isLogin) {
+            throw res.message;
+          }
+          setTwitterBound(true);
+        }}
         config={config}
         onClose={() => {
           setXOpen(false);

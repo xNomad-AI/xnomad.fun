@@ -1,4 +1,4 @@
-import { Card } from "@/primitive/components";
+import { Card, Tooltip } from "@/primitive/components";
 import { isBasicToken } from "./utils";
 import { Activity, Token } from "./network";
 import { TokenNumber } from "@/components/token-number";
@@ -63,7 +63,7 @@ export function ActionContent({
   } else {
     return (
       <>
-        <TokenItem data={data.quote} isRed={type === "receive"} noPrice />
+        <TokenItem data={data.quote} isRed={type === "transfer"} noPrice />
         <span className='text-size-12 text-text2'>
           {type === "receive" ? "from" : "to"}
         </span>
@@ -87,9 +87,11 @@ export function TokenItem({
     <>
       <TokenNumber number={data.ui_amount} />
       <div className='flex items-center gap-4'>
-        <span className={isRed ? "text-red" : "text-green"}>
-          {data.symbol ?? "Unknown"}
-        </span>
+        <Tooltip disabled={!data.address} content={data.address}>
+          <span className={isRed ? "text-red" : "text-green"}>
+            {data.symbol ?? "Unknown"}
+          </span>
+        </Tooltip>
         {!noPrice && (
           <span className='text-text2'>
             (

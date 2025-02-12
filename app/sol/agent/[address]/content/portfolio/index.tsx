@@ -43,7 +43,7 @@ export function Portfolio({ nft }: { nft: NFT }) {
               key={item.symbol}
               className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8'
             >
-              <div className='flex w-[160px] gap-4'>
+              <div className='flex w-[160px] gap-4 items-center'>
                 <img
                   height={32}
                   width={32}

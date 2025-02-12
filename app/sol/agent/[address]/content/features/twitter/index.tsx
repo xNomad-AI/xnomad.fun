@@ -17,6 +17,7 @@ import { Config } from "../types";
 import { useEffect, useRef, useState } from "react";
 import { useMemoizedFn } from "ahooks";
 import { onError } from "@/lib/utils/error";
+import { TextAnchor } from "@/components/text-button";
 
 export function TwitterModal({
   open,
@@ -27,7 +28,7 @@ export function TwitterModal({
   open: boolean;
   onClose: () => void;
   config?: Config;
-  onSave: (config: Partial<Config>) => Promise<void>;
+  onSave: (config: Partial<Config>, testContent?: string) => Promise<void>;
 }) {
   const { form, updateForm } = useTwitterStore();
   const [saving, setSaving] = useState(false);
@@ -62,6 +63,11 @@ export function TwitterModal({
         isInValid: false,
         errorMsg: "",
       });
+    updateForm("testContent", {
+      value: "",
+      isInValid: false,
+      errorMsg: "",
+    });
   });
   useEffect(() => {
     setSaving(false);
@@ -123,7 +129,18 @@ export function TwitterModal({
             }
           />
         </FormItem>
-        <FormItem label='2FA Secret' {...form.twoFa}>
+        <FormItem
+          label='2FA Secret'
+          {...form.twoFa}
+          desc={
+            <TextAnchor
+              withDecoration
+              href='https://docs.xnomad.ai/xnomad.fun/ai-agent-interaction-guide'
+            >
+              Tutorial
+            </TextAnchor>
+          }
+        >
           <TextField
             value={form.twoFa.value}
             placeholder='Enter your 2FA secret. It must be 16 uppercase letters or numbers.'
@@ -218,6 +235,20 @@ export function TwitterModal({
           })}
           <div ref={scrollIntoBar} className='w-full h-0'></div>
         </FormItem>
+        <FormItem label='Email' {...form.testContent}>
+          <TextField
+            value={form.testContent.value}
+            placeholder='Test twitter content'
+            onChange={(e) => {
+              updateForm("testContent", {
+                value: e.target.value,
+                isInValid: false,
+                errorMsg: "",
+              });
+            }}
+            variant={form.testContent.isInValid ? "error" : "normal"}
+          />
+        </FormItem>
         <div className='w-full flex items-center gap-16 sticky bottom-0 py-24 -mt-24 bg-background'>
           <Button variant='secondary' stretch onClick={onClose}>
             Cancel
@@ -241,17 +272,20 @@ export function TwitterModal({
               }
               if (!allValid) return;
               setSaving(true);
-              onSave({
-                postExamples: form.examples.value,
-                settings: {
-                  secrets: {
-                    TWITTER_USERNAME: form.userName.value,
-                    TWITTER_PASSWORD: form.password.value,
-                    TWITTER_2FA_SECRET: form.twoFa.value,
-                    TWITTER_EMAIL: form.email.value,
+              onSave(
+                {
+                  postExamples: form.examples.value,
+                  settings: {
+                    secrets: {
+                      TWITTER_USERNAME: form.userName.value,
+                      TWITTER_PASSWORD: form.password.value,
+                      TWITTER_2FA_SECRET: form.twoFa.value,
+                      TWITTER_EMAIL: form.email.value,
+                    },
                   },
                 },
-              })
+                form.testContent.value
+              )
                 .then(() => {
                   message("Twitter integration updated successfully", {
                     type: "success",

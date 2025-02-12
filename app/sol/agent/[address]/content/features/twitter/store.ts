@@ -5,13 +5,13 @@ import { immer } from "zustand/middleware/immer";
 const BaseForm = {
   userName: {
     value: "",
-    required: false,
+    required: true,
     isInValid: false,
     errorMsg: "",
   } as FormValue<string>,
   password: {
     value: "",
-    required: false,
+    required: true,
     isInValid: false,
     errorMsg: "",
   } as FormValue<string>,
@@ -23,7 +23,7 @@ const BaseForm = {
   } as FormValue<string>,
   email: {
     value: "",
-    required: false,
+    required: true,
     isInValid: false,
     errorMsg: "",
   } satisfies FormValue<string>,
@@ -33,6 +33,12 @@ const BaseForm = {
     isInValid: false,
     errorMsg: "",
   } as FormValue<string[]>,
+  testContent: {
+    value: "",
+    required: false,
+    isInValid: false,
+    errorMsg: "",
+  } as FormValue<string>,
 };
 export type FormKey = keyof typeof BaseForm;
 type FromValueType = string | string[];

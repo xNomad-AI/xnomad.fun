@@ -235,7 +235,7 @@ export function TwitterModal({
           })}
           <div ref={scrollIntoBar} className='w-full h-0'></div>
         </FormItem>
-        <FormItem label='Email' {...form.testContent}>
+        <FormItem label='Test Content' {...form.testContent}>
           <TextField
             value={form.testContent.value}
             placeholder='Test twitter content'

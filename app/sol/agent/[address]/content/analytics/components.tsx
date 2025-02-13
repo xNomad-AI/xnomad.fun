@@ -88,7 +88,9 @@ export function TokenItem({
       <TokenNumber number={data.ui_amount} />
       <div className='flex items-center gap-4'>
         <Tooltip disabled={!data.address} content={data.address}>
-          <span className={isRed ? "text-red" : "text-green"}>
+          <span
+            className={isBaseToken ? "" : isRed ? "text-red" : "text-green"}
+          >
             {data.symbol ?? "Unknown"}
           </span>
         </Tooltip>

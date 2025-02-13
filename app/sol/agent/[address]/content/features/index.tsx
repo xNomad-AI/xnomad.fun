@@ -8,6 +8,7 @@ import { Config } from "./types";
 import { useMemoizedFn } from "ahooks";
 import { TelegramModal } from "./telegram";
 import { VoiceModal } from "./voice";
+import { ConfirmModal } from "./confirm";
 function configTwitter({
   nftId,
   config,
@@ -24,6 +25,12 @@ function configTwitter({
     characterConfig: config,
     testContent,
   });
+}
+function deleteTwitter(nftId: string) {
+  return api.v1.delete<{
+    isLogin: boolean;
+    message: string;
+  }>(`/nft/solana/${nftId}/config/twitter`);
 }
 export function Features({ nft }: { nft: NFT }) {
   const [xOpen, setXOpen] = useState(false);
@@ -67,6 +74,7 @@ export function Features({ nft }: { nft: NFT }) {
   const hasTgConfig = useMemo(() => {
     return Boolean(config?.settings.secrets?.TELEGRAM_BOT_TOKEN);
   }, [config]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   return (
     <>
       <div className='w-full flex flex-col gap-16'>
@@ -76,6 +84,16 @@ export function Features({ nft }: { nft: NFT }) {
             <span>X(Twitter) Integration</span>
           </div>
           <div className='flex items-center gap-16'>
+            {hasTwitterConfig ? (
+              <Button
+                variant='danger'
+                onClick={() => {
+                  setConfirmOpen(true);
+                }}
+              >
+                Clear
+              </Button>
+            ) : null}
             <Button
               className='!w-[7.5rem]'
               onClick={() => {
@@ -155,6 +173,20 @@ export function Features({ nft }: { nft: NFT }) {
         config={config}
         onClose={() => {
           setVoiceOpen(false);
+        }}
+      />
+      <ConfirmModal
+        title='Delete Twitter Integration'
+        content='Are you sure you want to delete the Twitter Integration?'
+        open={confirmOpen}
+        onClose={() => {
+          setConfirmOpen(false);
+        }}
+        onConfirm={() => {
+          deleteTwitter(nft.id).then(() => {
+            setTwitterBound(false);
+            setConfirmOpen(false);
+          });
         }}
       />
     </>

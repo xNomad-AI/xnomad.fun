@@ -63,6 +63,12 @@ export function TwitterModal({
         isInValid: false,
         errorMsg: "",
       });
+    config?.templates?.twitterPostTemplate &&
+      updateForm("examples", {
+        value: config?.templates.twitterPostTemplate,
+        isInValid: false,
+        errorMsg: "",
+      });
     updateForm("testContent", {
       value: "",
       isInValid: false,
@@ -81,7 +87,18 @@ export function TwitterModal({
         Twitter Integration
       </ModalTitleWithBorder>
       <ModalContent className='gap-16 max-h-[600px] overflow-auto pb-0'>
-        <FormItem label='User Name' {...form.userName}>
+        <FormItem
+          suffix={
+            <TextAnchor
+              withDecoration
+              href='https://docs.xnomad.ai/xnomad.fun/ai-agent-interaction-guide'
+            >
+              Tutorial
+            </TextAnchor>
+          }
+          label='User Name'
+          {...form.userName}
+        >
           <TextField
             value={form.userName.value}
             placeholder='Enter your username'
@@ -129,18 +146,21 @@ export function TwitterModal({
             }
           />
         </FormItem>
-        <FormItem
-          label='2FA Secret'
-          {...form.twoFa}
-          desc={
-            <TextAnchor
-              withDecoration
-              href='https://docs.xnomad.ai/xnomad.fun/ai-agent-interaction-guide'
-            >
-              Tutorial
-            </TextAnchor>
-          }
-        >
+        <FormItem label='Email' {...form.email}>
+          <TextField
+            value={form.email.value}
+            placeholder='Enter your email'
+            onChange={(e) => {
+              updateForm("email", {
+                value: e.target.value,
+                isInValid: false,
+                errorMsg: "",
+              });
+            }}
+            variant={form.email.isInValid ? "error" : "normal"}
+          />
+        </FormItem>
+        <FormItem label='2FA Secret' {...form.twoFa}>
           <TextField
             value={form.twoFa.value}
             placeholder='Enter your 2FA secret. It must be 16 uppercase letters or numbers.'
@@ -154,18 +174,18 @@ export function TwitterModal({
             variant={form.twoFa.isInValid ? "error" : "normal"}
           />
         </FormItem>
-        <FormItem label='Email' {...form.email}>
+        <FormItem label='Prompt' {...form.prompt}>
           <TextField
-            value={form.email.value}
-            placeholder='Enter your email'
+            value={form.prompt.value}
+            placeholder='Enter your prompt'
             onChange={(e) => {
-              updateForm("email", {
+              updateForm("prompt", {
                 value: e.target.value,
                 isInValid: false,
                 errorMsg: "",
               });
             }}
-            variant={form.email.isInValid ? "error" : "normal"}
+            variant={form.prompt.isInValid ? "error" : "normal"}
           />
         </FormItem>
         <FormItem label='Example Tweets(Max 10)' {...form.examples}>
@@ -275,6 +295,9 @@ export function TwitterModal({
               onSave(
                 {
                   postExamples: form.examples.value,
+                  templates: {
+                    twitterPostTemplate: form.prompt.value,
+                  },
                   settings: {
                     secrets: {
                       TWITTER_USERNAME: form.userName.value,

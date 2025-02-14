@@ -1,5 +1,8 @@
 export interface Config {
   postExamples?: string[];
+  templates?: {
+    twitterPostTemplate: string;
+  };
   settings: {
     secrets?: Partial<{
       DISCORD_APPLICATION_ID: string;

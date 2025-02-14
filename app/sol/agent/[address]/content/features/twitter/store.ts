@@ -33,6 +33,12 @@ const BaseForm = {
     isInValid: false,
     errorMsg: "",
   } as FormValue<string[]>,
+  prompt: {
+    value: "",
+    required: false,
+    isInValid: false,
+    errorMsg: "",
+  } as FormValue<string>,
   testContent: {
     value: "",
     required: false,

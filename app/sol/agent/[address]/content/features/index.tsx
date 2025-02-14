@@ -67,6 +67,7 @@ export function Features({ nft }: { nft: NFT }) {
         config?.settings.secrets?.TWITTER_PASSWORD ||
         config?.settings.secrets?.TWITTER_EMAIL ||
         config?.settings.secrets?.TWITTER_2FA_SECRET ||
+        config?.templates?.twitterPostTemplate ||
         ((config?.postExamples?.length ?? 0) > 0 &&
           Boolean(config?.postExamples?.[0]))
     );

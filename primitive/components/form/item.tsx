@@ -9,6 +9,7 @@ type Props = {
   horizontal?: boolean;
   className?: string;
   desc?: ReactNode;
+  suffix?: ReactNode;
 };
 
 export function FormItem<T>(props: PropsWithChildren<Props & FormValue<T>>) {
@@ -20,16 +21,19 @@ export function FormItem<T>(props: PropsWithChildren<Props & FormValue<T>>) {
         props.className
       )}
     >
-      <div className='flex items-center gap-8'>
-        <label>
-          {props.label}
-          {props.required && <span className='text-red'>&nbsp;*</span>}
-        </label>
-        {props.desc && (
-          <Tooltip content={props.desc}>
-            <IconInfo />
-          </Tooltip>
-        )}
+      <div className='flex items-center justify-between'>
+        <div className='flex items-center gap-8'>
+          <label>
+            {props.label}
+            {props.required && <span className='text-red'>&nbsp;*</span>}
+          </label>
+          {props.desc && (
+            <Tooltip content={props.desc}>
+              <IconInfo />
+            </Tooltip>
+          )}
+        </div>
+        {props.suffix}
       </div>
       {props.children}
       {props.isInValid && props.errorMsg && (

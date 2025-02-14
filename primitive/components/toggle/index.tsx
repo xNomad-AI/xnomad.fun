@@ -22,7 +22,9 @@ export function Toggle(props: SwitchProps) {
       className={clsx(
         "flex items-center justify-center w-[2.625em] h-[1.25em] rounded-full text-white overflow-hidden text-size-16",
         disable ? "cursor-not-allowed" : "cursor-pointer",
-        !value || disable ? "bg-brand bg-opacity-[0.1]" : "bg-brand",
+        !value || disable
+          ? "bg-brand bg-opacity-[0.1]"
+          : "bg-brand bg-opacity-[0.6]",
         className
       )}
       onClick={handleClick}

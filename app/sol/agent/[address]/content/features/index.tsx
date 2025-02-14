@@ -1,4 +1,10 @@
-import { Button, Card } from "@/primitive/components";
+import {
+  Button,
+  Card,
+  IconDisconnect,
+  Toggle,
+  Tooltip,
+} from "@/primitive/components";
 import { NFT } from "@/types";
 import Image from "next/image";
 import { TwitterModal } from "./twitter";
@@ -38,7 +44,7 @@ export function Features({ nft }: { nft: NFT }) {
   const [voiceOpen, setVoiceOpen] = useState(false);
   const [config, setConfig] = useState<Config>();
   const [twitterBound, setTwitterBound] = useState(false);
-
+  const [isConfigLoading, setIsConfigLoading] = useState(false);
   useEffect(() => {
     api.v1
       .get<{ characterConfig: Config }>(`/nft/solana/${nft.id}/config`)
@@ -57,7 +63,21 @@ export function Features({ nft }: { nft: NFT }) {
   const onSave = useMemoizedFn(async (config: Partial<Config>) => {
     const newConfig = await api.v1.post<{ characterConfig: Config }>(
       `/nft/solana/${nft.id}/config`,
-      { characterConfig: config }
+      {
+        characterConfig: {
+          ...config,
+          settings: {
+            ...config.settings,
+            secrets: {
+              ...config.settings?.secrets,
+              POST_IMMEDIATELY:
+                config.settings?.secrets?.POST_IMMEDIATELY?.toString(),
+              TWITTER_LOGIN_SUSPEND:
+                config.settings?.secrets?.TWITTER_LOGIN_SUSPEND?.toString(),
+            },
+          },
+        },
+      }
     );
     setConfig(newConfig.characterConfig);
   });
@@ -83,18 +103,44 @@ export function Features({ nft }: { nft: NFT }) {
           <div className='flex items-center gap-16'>
             <Image src={"/twitter.svg"} height={64} width={64} alt='' />
             <span>X(Twitter) Integration</span>
-          </div>
-          <div className='flex items-center gap-16'>
             {hasTwitterConfig ? (
-              <Button
-                variant='danger'
+              <button
                 onClick={() => {
                   setConfirmOpen(true);
                 }}
               >
-                Clear
-              </Button>
+                <IconDisconnect className='text-size-24 text-red' />
+              </button>
             ) : null}
+          </div>
+          <div className='flex items-center gap-16'>
+            <div className='flex items-center gap-8'>
+              Suspend Post
+              <Toggle
+                value={
+                  config?.settings.secrets?.TWITTER_LOGIN_SUSPEND === "true"
+                }
+                disable={isConfigLoading}
+                onChange={() => {
+                  setIsConfigLoading(true);
+
+                  onSave({
+                    settings: {
+                      secrets: {
+                        TWITTER_LOGIN_SUSPEND:
+                          config?.settings.secrets?.TWITTER_LOGIN_SUSPEND ===
+                          "true"
+                            ? "false"
+                            : "true",
+                      },
+                    },
+                  }).finally(() => {
+                    setIsConfigLoading(false);
+                  });
+                }}
+              />
+            </div>
+
             <Button
               className='!w-[7.5rem]'
               onClick={() => {
@@ -183,11 +229,17 @@ export function Features({ nft }: { nft: NFT }) {
         onClose={() => {
           setConfirmOpen(false);
         }}
+        isConfirming={isConfigLoading}
         onConfirm={() => {
-          deleteTwitter(nft.id).then(() => {
-            setTwitterBound(false);
-            setConfirmOpen(false);
-          });
+          setIsConfigLoading(true);
+          deleteTwitter(nft.id)
+            .then(() => {
+              setTwitterBound(false);
+              setConfirmOpen(false);
+            })
+            .finally(() => {
+              setIsConfigLoading(false);
+            });
         }}
       />
     </>

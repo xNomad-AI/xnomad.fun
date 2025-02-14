@@ -14,6 +14,12 @@ export interface Config {
       TELEGRAM_BOT_TOKEN: string;
       ELEVENLABS_MODEL_ID: string;
       ELEVENLABS_VOICE_ID: string;
+      POST_INTERVAL_MIN: number;
+      POST_INTERVAL_MAX: number;
+      POST_IMMEDIATELY: "true" | "false";
+      TWITTER_LOGIN_SUSPEND: "true" | "false";
+      TWITTER_POLL_INTERVAL: number;
+      MAX_LENGTH: number;
     }>;
   };
 }

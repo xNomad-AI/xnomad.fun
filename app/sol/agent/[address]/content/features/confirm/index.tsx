@@ -12,12 +12,14 @@ export function ConfirmModal({
   onClose,
   onConfirm,
   open,
+  isConfirming,
 }: {
   title: ReactNode;
   content: ReactNode;
   onConfirm: () => void;
   onClose: () => void;
   open: boolean;
+  isConfirming: boolean;
 }) {
   return (
     <Modal size='s' onMaskClick={onClose} open={open}>
@@ -26,11 +28,11 @@ export function ConfirmModal({
       </ModalTitleWithBorder>
       <ModalContent>
         {content}
-        <div className='w-full flex items-center gap-16'>
+        <div className='w-full flex items-center justify-end gap-16'>
           <Button variant='secondary' onClick={onClose}>
             Cancel
           </Button>
-          <Button variant='danger' onClick={onConfirm}>
+          <Button variant='danger' onClick={onConfirm} loading={isConfirming}>
             Confirm
           </Button>
         </div>

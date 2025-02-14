@@ -10,14 +10,17 @@ import {
   IconEyeClosed,
   Button,
   message,
+  Toggle,
+  Card,
 } from "@/primitive/components";
-import { useTwitterStore } from "./store";
+import { POST_INTERVAL_MIN, POST_MAX_LENGTH, useTwitterStore } from "./store";
 import clsx from "clsx";
 import { Config } from "../types";
 import { useEffect, useRef, useState } from "react";
 import { useMemoizedFn } from "ahooks";
 import { onError } from "@/lib/utils/error";
 import { TextAnchor } from "@/components/text-button";
+import { validNumberInput } from "@/lib/utils/input-helper";
 
 export function TwitterModal({
   open,
@@ -64,8 +67,38 @@ export function TwitterModal({
         errorMsg: "",
       });
     config?.templates?.twitterPostTemplate &&
-      updateForm("examples", {
+      updateForm("prompt", {
         value: config?.templates.twitterPostTemplate,
+        isInValid: false,
+        errorMsg: "",
+      });
+    config?.settings.secrets?.POST_INTERVAL_MIN &&
+      updateForm("postIntervalMin", {
+        value: config?.settings.secrets.POST_INTERVAL_MIN,
+        isInValid: false,
+        errorMsg: "",
+      });
+    config?.settings.secrets?.POST_INTERVAL_MAX &&
+      updateForm("postIntervalMax", {
+        value: config?.settings.secrets.POST_INTERVAL_MAX,
+        isInValid: false,
+        errorMsg: "",
+      });
+    config?.settings.secrets?.POST_IMMEDIATELY &&
+      updateForm("postImmediately", {
+        value: config?.settings.secrets.POST_IMMEDIATELY,
+        isInValid: false,
+        errorMsg: "",
+      });
+    config?.settings.secrets?.TWITTER_LOGIN_SUSPEND &&
+      updateForm("postSuspend", {
+        value: config?.settings.secrets.TWITTER_LOGIN_SUSPEND,
+        isInValid: false,
+        errorMsg: "",
+      });
+    config?.settings.secrets?.MAX_LENGTH &&
+      updateForm("postMaxLength", {
+        value: config?.settings.secrets.MAX_LENGTH,
         isInValid: false,
         errorMsg: "",
       });
@@ -175,100 +208,135 @@ export function TwitterModal({
           />
         </FormItem>
         <FormItem label='Prompt' {...form.prompt}>
+          <Card
+            className={clsx("p-12 focus-within:border-white-40", {
+              "border-red": form.prompt.isInValid,
+            })}
+          >
+            <textarea
+              placeholder={
+                "Describe how your agent should behave on Twitter, what type of content should be posted, etc. It would be helpful to provide some tweet examples."
+              }
+              className='min-h-[76px] bg-transparent w-full focus-visible:outline-none placeholder:text-text2'
+              value={form.prompt.value}
+              onChange={(e) => {
+                updateForm("prompt", {
+                  value: e.target.value,
+                  isInValid: false,
+                  errorMsg: "",
+                });
+              }}
+            />
+          </Card>
+        </FormItem>
+        <FormItem label='Minimum Post-Interval' {...form.postIntervalMin}>
           <TextField
-            value={form.prompt.value}
-            placeholder='Enter your prompt'
+            value={form.postIntervalMin.value}
+            placeholder='Enter min interval(minimum 5 minutes)'
+            onBlur={() => {
+              if (
+                !form.postIntervalMin.value ||
+                form.postIntervalMin.value < POST_INTERVAL_MIN
+              ) {
+                updateForm("postIntervalMin", {
+                  value: POST_INTERVAL_MIN,
+                  isInValid: false,
+                  errorMsg: "",
+                });
+              }
+            }}
             onChange={(e) => {
-              updateForm("prompt", {
-                value: e.target.value,
+              const value = validNumberInput(e.target.value);
+              updateForm("postIntervalMin", {
+                value: value,
                 isInValid: false,
                 errorMsg: "",
               });
             }}
-            variant={form.prompt.isInValid ? "error" : "normal"}
+            suffixNode={<span>minutes</span>}
+            variant={form.postIntervalMin.isInValid ? "error" : "normal"}
           />
         </FormItem>
-        <FormItem label='Example Tweets(Max 10)' {...form.examples}>
-          {form.examples.value.map((example, index) => {
-            return (
-              <div key={index} className='w-full flex items-center gap-16'>
-                <TextField
-                  value={example}
-                  className='w-full'
-                  placeholder='e.g. Be water, my friend.'
-                  onChange={(e) => {
-                    const newExamples = [...form.examples.value];
-                    newExamples[index] = e.target.value;
-                    updateForm("examples", {
-                      value: newExamples,
-                      isInValid: false,
-                      errorMsg: "",
-                    });
-                  }}
-                  variant={form.email.isInValid ? "error" : "normal"}
-                />
-                {form.examples.value.length > 1 &&
-                index < form.examples.value.length - 1 ? (
-                  <button
-                    className='h-32 w-32 flex items-center justify-center'
-                    onClick={() => {
-                      const newExamples = [...form.examples.value];
-                      newExamples.splice(index, 1);
-                      updateForm("examples", {
-                        value: newExamples,
-                        isInValid: false,
-                        errorMsg: "",
-                      });
-                    }}
-                  >
-                    <IconRemove className='text-size-20' />
-                  </button>
-                ) : (
-                  <button
-                    className={clsx(
-                      "h-32 w-32 flex items-center justify-center",
-                      {
-                        "cursor-not-allowed": form.examples.value.length >= 10,
-                      }
-                    )}
-                    onClick={() => {
-                      if (form.examples.value.length >= 10) return;
-                      const newExamples = [...form.examples.value];
-                      newExamples.push("");
-                      updateForm("examples", {
-                        value: newExamples,
-                        isInValid: false,
-                        errorMsg: "",
-                      });
-                      setTimeout(() => {
-                        scrollIntoBar.current?.scrollIntoView({
-                          behavior: "smooth",
-                        });
-                      }, 50);
-                    }}
-                  >
-                    <IconAdd className='text-size-20' />
-                  </button>
-                )}
-              </div>
-            );
-          })}
-          <div ref={scrollIntoBar} className='w-full h-0'></div>
-        </FormItem>
-        <FormItem label='Test Content' {...form.testContent}>
+        <FormItem label='Maximum Post-Interval' {...form.postIntervalMax}>
           <TextField
-            value={form.testContent.value}
-            placeholder='Test twitter content'
+            value={form.postIntervalMax.value}
+            placeholder='Enter max interval'
+            onBlur={() => {
+              if (
+                !form.postIntervalMax.value ||
+                form.postIntervalMax.value < form.postIntervalMin.value
+              ) {
+                updateForm("postIntervalMax", {
+                  value: form.postIntervalMax.value,
+                  isInValid: true,
+                  errorMsg: "Max interval should be greater than min interval",
+                });
+              }
+            }}
             onChange={(e) => {
-              updateForm("testContent", {
-                value: e.target.value,
+              updateForm("postIntervalMax", {
+                value: validNumberInput(e.target.value),
                 isInValid: false,
                 errorMsg: "",
               });
             }}
-            variant={form.testContent.isInValid ? "error" : "normal"}
+            suffixNode={<span>minutes</span>}
+            variant={form.postIntervalMax.isInValid ? "error" : "normal"}
           />
         </FormItem>
+        <FormItem label='Post Immediately' {...form.postImmediately}>
+          <Toggle
+            value={form.postImmediately.value === "true"}
+            onChange={(value) => {
+              updateForm("postImmediately", {
+                value: value ? "true" : "false",
+                isInValid: false,
+                errorMsg: "",
+              });
+            }}
+          />
+        </FormItem>
+        {/* <FormItem label='Suspend Login' {...form.postSuspend}>
+          <Toggle
+            value={form.postSuspend.value}
+            onChange={(value) => {
+              updateForm("postSuspend", {
+                value,
+                isInValid: false,
+                errorMsg: "",
+              });
+            }}
+          />
+        </FormItem> */}
+        <FormItem label='Maximum Post-Length' {...form.postMaxLength}>
+          <TextField
+            value={form.postMaxLength.value}
+            placeholder='Enter max character length'
+            onBlur={() => {
+              if (
+                !form.postMaxLength.value ||
+                form.postMaxLength.value > POST_MAX_LENGTH
+              ) {
+                updateForm("postMaxLength", {
+                  value: POST_MAX_LENGTH,
+                  isInValid: false,
+                  errorMsg: "",
+                });
+              }
+            }}
+            onChange={(e) => {
+              const value = validNumberInput(e.target.value);
+              updateForm("postMaxLength", {
+                value: value,
+                isInValid: false,
+                errorMsg: "",
+              });
+            }}
+            suffixNode={<span>characters</span>}
+            variant={form.postMaxLength.isInValid ? "error" : "normal"}
+          />
+        </FormItem>
+
         <div className='w-full flex items-center gap-16 sticky bottom-0 py-24 -mt-24 bg-background'>
           <Button variant='secondary' stretch onClick={onClose}>
             Cancel
@@ -304,6 +372,11 @@ export function TwitterModal({
                       TWITTER_PASSWORD: form.password.value,
                       TWITTER_2FA_SECRET: form.twoFa.value,
                       TWITTER_EMAIL: form.email.value,
+                      POST_INTERVAL_MIN: form.postIntervalMin.value,
+                      POST_INTERVAL_MAX: form.postIntervalMax.value,
+                      POST_IMMEDIATELY: form.postImmediately.value,
+                      TWITTER_LOGIN_SUSPEND: form.postSuspend.value,
+                      MAX_LENGTH: form.postMaxLength.value,
                     },
                   },
                 },

@@ -71,6 +71,36 @@ export function TwitterModal({
         isInValid: false,
         errorMsg: "",
       });
+    config?.settings.secrets?.POST_INTERVAL_MIN &&
+      updateForm("postIntervalMin", {
+        value: config?.settings.secrets.POST_INTERVAL_MIN,
+        isInValid: false,
+        errorMsg: "",
+      });
+    config?.settings.secrets?.POST_INTERVAL_MAX &&
+      updateForm("postIntervalMax", {
+        value: config?.settings.secrets.POST_INTERVAL_MAX,
+        isInValid: false,
+        errorMsg: "",
+      });
+    config?.settings.secrets?.POST_IMMEDIATELY &&
+      updateForm("postImmediately", {
+        value: config?.settings.secrets.POST_IMMEDIATELY,
+        isInValid: false,
+        errorMsg: "",
+      });
+    config?.settings.secrets?.TWITTER_LOGIN_SUSPEND &&
+      updateForm("postSuspend", {
+        value: config?.settings.secrets.TWITTER_LOGIN_SUSPEND,
+        isInValid: false,
+        errorMsg: "",
+      });
+    config?.settings.secrets?.MAX_LENGTH &&
+      updateForm("postMaxLength", {
+        value: config?.settings.secrets.MAX_LENGTH,
+        isInValid: false,
+        errorMsg: "",
+      });
     updateForm("testContent", {
       value: "",
       isInValid: false,

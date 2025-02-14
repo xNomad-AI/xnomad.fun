@@ -29,7 +29,7 @@ const BaseForm = {
     errorMsg: "",
   } satisfies FormValue<string>,
   postIntervalMin: {
-    value: 5,
+    value: POST_INTERVAL_MIN,
     required: false,
     isInValid: false,
     errorMsg: "",
@@ -53,7 +53,7 @@ const BaseForm = {
     errorMsg: "",
   } as FormValue<boolean>,
   postMaxLength: {
-    value: 30,
+    value: POST_MAX_LENGTH,
     required: false,
     isInValid: false,
     errorMsg: "",

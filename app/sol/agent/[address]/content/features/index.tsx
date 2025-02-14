@@ -1,4 +1,4 @@
-import { Button, Card } from "@/primitive/components";
+import { Button, Card, IconDisconnect } from "@/primitive/components";
 import { NFT } from "@/types";
 import Image from "next/image";
 import { TwitterModal } from "./twitter";
@@ -83,18 +83,17 @@ export function Features({ nft }: { nft: NFT }) {
           <div className='flex items-center gap-16'>
             <Image src={"/twitter.svg"} height={64} width={64} alt='' />
             <span>X(Twitter) Integration</span>
-          </div>
-          <div className='flex items-center gap-16'>
             {hasTwitterConfig ? (
-              <Button
-                variant='danger'
+              <button
                 onClick={() => {
                   setConfirmOpen(true);
                 }}
               >
-                Clear
-              </Button>
+                <IconDisconnect className='text-size-32' />
+              </button>
             ) : null}
+          </div>
+          <div className='flex items-center gap-16'>
             <Button
               className='!w-[7.5rem]'
               onClick={() => {

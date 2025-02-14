@@ -1,7 +1,8 @@
 import { FormValue } from "@/primitive/components";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-
+export const POST_INTERVAL_MIN = 5; //minutes
+export const POST_MAX_LENGTH = 200; //characters
 const BaseForm = {
   userName: {
     value: "",
@@ -27,6 +28,36 @@ const BaseForm = {
     isInValid: false,
     errorMsg: "",
   } satisfies FormValue<string>,
+  postIntervalMin: {
+    value: 5,
+    required: false,
+    isInValid: false,
+    errorMsg: "",
+  } as FormValue<number>,
+  postIntervalMax: {
+    value: 30,
+    required: false,
+    isInValid: false,
+    errorMsg: "",
+  } as FormValue<number>,
+  postImmediately: {
+    value: false,
+    required: false,
+    isInValid: false,
+    errorMsg: "",
+  } as FormValue<boolean>,
+  postSuspend: {
+    value: false,
+    required: false,
+    isInValid: false,
+    errorMsg: "",
+  } as FormValue<boolean>,
+  postMaxLength: {
+    value: 30,
+    required: false,
+    isInValid: false,
+    errorMsg: "",
+  } as FormValue<number>,
   examples: {
     value: [""],
     required: false,
@@ -47,7 +78,7 @@ const BaseForm = {
   } as FormValue<string>,
 };
 export type FormKey = keyof typeof BaseForm;
-type FromValueType = string | string[];
+type FromValueType = string | string[] | number | boolean;
 export const useTwitterStore = create(
   immer<{
     form: typeof BaseForm;

@@ -1,4 +1,4 @@
-import { Button, Card, IconDisconnect } from "@/primitive/components";
+import { Button, Card, IconDisconnect, Tooltip } from "@/primitive/components";
 import { NFT } from "@/types";
 import Image from "next/image";
 import { TwitterModal } from "./twitter";
@@ -89,7 +89,7 @@ export function Features({ nft }: { nft: NFT }) {
                   setConfirmOpen(true);
                 }}
               >
-                <IconDisconnect className='text-size-32' />
+                <IconDisconnect className='text-size-24 text-red' />
               </button>
             ) : null}
           </div>

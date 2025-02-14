@@ -66,7 +66,7 @@ export function TwitterModal({
         errorMsg: "",
       });
     config?.templates?.twitterPostTemplate &&
-      updateForm("examples", {
+      updateForm("prompt", {
         value: config?.templates.twitterPostTemplate,
         isInValid: false,
         errorMsg: "",

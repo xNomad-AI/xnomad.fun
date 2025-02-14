@@ -41,17 +41,17 @@ const BaseForm = {
     errorMsg: "",
   } as FormValue<number>,
   postImmediately: {
-    value: false,
+    value: "false",
     required: false,
     isInValid: false,
     errorMsg: "",
-  } as FormValue<boolean>,
+  } as FormValue<"true" | "false">,
   postSuspend: {
-    value: false,
+    value: "false",
     required: false,
     isInValid: false,
     errorMsg: "",
-  } as FormValue<boolean>,
+  } as FormValue<"true" | "false">,
   postMaxLength: {
     value: POST_MAX_LENGTH,
     required: false,
@@ -78,7 +78,7 @@ const BaseForm = {
   } as FormValue<string>,
 };
 export type FormKey = keyof typeof BaseForm;
-type FromValueType = string | string[] | number | boolean;
+type FromValueType = string | string[] | number | boolean | "true" | "false";
 export const useTwitterStore = create(
   immer<{
     form: typeof BaseForm;

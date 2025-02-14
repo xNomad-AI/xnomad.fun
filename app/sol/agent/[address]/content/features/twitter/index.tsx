@@ -11,6 +11,7 @@ import {
   Button,
   message,
   Toggle,
+  Card,
 } from "@/primitive/components";
 import { POST_INTERVAL_MIN, POST_MAX_LENGTH, useTwitterStore } from "./store";
 import clsx from "clsx";
@@ -207,30 +208,47 @@ export function TwitterModal({
           />
         </FormItem>
         <FormItem label='Prompt' {...form.prompt}>
-          <TextField
-            value={form.prompt.value}
-            placeholder='Enter your prompt'
-            onChange={(e) => {
-              updateForm("prompt", {
-                value: e.target.value,
-                isInValid: false,
-                errorMsg: "",
-              });
-            }}
-            variant={form.prompt.isInValid ? "error" : "normal"}
-          />
+          <Card
+            className={clsx("p-12 focus-within:border-white-40", {
+              "border-red": form.prompt.isInValid,
+            })}
+          >
+            <textarea
+              placeholder={
+                "Describe how your agent should behave on Twitter, what type of content should be posted, etc. It would be helpful to provide some tweet examples."
+              }
+              className='min-h-[76px] bg-transparent w-full focus-visible:outline-none placeholder:text-text2'
+              value={form.prompt.value}
+              onChange={(e) => {
+                updateForm("prompt", {
+                  value: e.target.value,
+                  isInValid: false,
+                  errorMsg: "",
+                });
+              }}
+            />
+          </Card>
         </FormItem>
         <FormItem label='Minimum Post-Interval' {...form.postIntervalMin}>
           <TextField
             value={form.postIntervalMin.value}
             placeholder='Enter min interval(minimum 5 minutes)'
+            onBlur={() => {
+              if (
+                !form.postIntervalMin.value ||
+                form.postIntervalMin.value < POST_INTERVAL_MIN
+              ) {
+                updateForm("postIntervalMin", {
+                  value: POST_INTERVAL_MIN,
+                  isInValid: false,
+                  errorMsg: "",
+                });
+              }
+            }}
             onChange={(e) => {
               const value = validNumberInput(e.target.value);
               updateForm("postIntervalMin", {
-                value:
-                  !value || parseFloat(value) < POST_INTERVAL_MIN
-                    ? POST_INTERVAL_MIN
-                    : value,
+                value: value,
                 isInValid: false,
                 errorMsg: "",
               });
@@ -243,6 +261,18 @@ export function TwitterModal({
           <TextField
             value={form.postIntervalMax.value}
             placeholder='Enter max interval'
+            onBlur={() => {
+              if (
+                !form.postIntervalMax.value ||
+                form.postIntervalMax.value < form.postIntervalMin.value
+              ) {
+                updateForm("postIntervalMax", {
+                  value: form.postIntervalMax.value,
+                  isInValid: true,
+                  errorMsg: "Max interval should be greater than min interval",
+                });
+              }
+            }}
             onChange={(e) => {
               updateForm("postIntervalMax", {
                 value: validNumberInput(e.target.value),
@@ -256,17 +286,17 @@ export function TwitterModal({
         </FormItem>
         <FormItem label='Post Immediately' {...form.postImmediately}>
           <Toggle
-            value={form.postImmediately.value}
+            value={form.postImmediately.value === "true"}
             onChange={(value) => {
               updateForm("postImmediately", {
-                value,
+                value: value ? "true" : "false",
                 isInValid: false,
                 errorMsg: "",
               });
             }}
           />
         </FormItem>
-        <FormItem label='Suspend Login' {...form.postSuspend}>
+        {/* <FormItem label='Suspend Login' {...form.postSuspend}>
           <Toggle
             value={form.postSuspend.value}
             onChange={(value) => {
@@ -277,18 +307,27 @@ export function TwitterModal({
               });
             }}
           />
-        </FormItem>
+        </FormItem> */}
         <FormItem label='Maximum Post-Length' {...form.postMaxLength}>
           <TextField
             value={form.postMaxLength.value}
             placeholder='Enter max character length'
+            onBlur={() => {
+              if (
+                !form.postMaxLength.value ||
+                form.postMaxLength.value > POST_MAX_LENGTH
+              ) {
+                updateForm("postMaxLength", {
+                  value: POST_MAX_LENGTH,
+                  isInValid: false,
+                  errorMsg: "",
+                });
+              }
+            }}
             onChange={(e) => {
               const value = validNumberInput(e.target.value);
               updateForm("postMaxLength", {
-                value:
-                  value && parseFloat(value) > POST_MAX_LENGTH
-                    ? POST_MAX_LENGTH
-                    : value,
+                value: value,
                 isInValid: false,
                 errorMsg: "",
               });
@@ -296,87 +335,6 @@ export function TwitterModal({
             suffixNode={<span>characters</span>}
             variant={form.postMaxLength.isInValid ? "error" : "normal"}
           />
-        </FormItem>
-        <FormItem label='Test Content' {...form.testContent}>
-          <TextField
-            value={form.testContent.value}
-            placeholder='Test twitter content'
-            onChange={(e) => {
-              updateForm("testContent", {
-                value: e.target.value,
-                isInValid: false,
-                errorMsg: "",
-              });
-            }}
-            variant={form.testContent.isInValid ? "error" : "normal"}
-          />
-        </FormItem>
-        <FormItem label='Example Tweets(Max 10)' {...form.examples}>
-          {form.examples.value.map((example, index) => {
-            return (
-              <div key={index} className='w-full flex items-center gap-16'>
-                <TextField
-                  value={example}
-                  className='w-full'
-                  placeholder='e.g. Be water, my friend.'
-                  onChange={(e) => {
-                    const newExamples = [...form.examples.value];
-                    newExamples[index] = e.target.value;
-                    updateForm("examples", {
-                      value: newExamples,
-                      isInValid: false,
-                      errorMsg: "",
-                    });
-                  }}
-                  variant={form.email.isInValid ? "error" : "normal"}
-                />
-                {form.examples.value.length > 1 &&
-                index < form.examples.value.length - 1 ? (
-                  <button
-                    className='h-32 w-32 flex items-center justify-center'
-                    onClick={() => {
-                      const newExamples = [...form.examples.value];
-                      newExamples.splice(index, 1);
-                      updateForm("examples", {
-                        value: newExamples,
-                        isInValid: false,
-                        errorMsg: "",
-                      });
-                    }}
-                  >
-                    <IconRemove className='text-size-20' />
-                  </button>
-                ) : (
-                  <button
-                    className={clsx(
-                      "h-32 w-32 flex items-center justify-center",
-                      {
-                        "cursor-not-allowed": form.examples.value.length >= 10,
-                      }
-                    )}
-                    onClick={() => {
-                      if (form.examples.value.length >= 10) return;
-                      const newExamples = [...form.examples.value];
-                      newExamples.push("");
-                      updateForm("examples", {
-                        value: newExamples,
-                        isInValid: false,
-                        errorMsg: "",
-                      });
-                      setTimeout(() => {
-                        scrollIntoBar.current?.scrollIntoView({
-                          behavior: "smooth",
-                        });
-                      }, 50);
-                    }}
-                  >
-                    <IconAdd className='text-size-20' />
-                  </button>
-                )}
-              </div>
-            );
-          })}
-          <div ref={scrollIntoBar} className='w-full h-0'></div>
         </FormItem>
 
         <div className='w-full flex items-center gap-16 sticky bottom-0 py-24 -mt-24 bg-background'>

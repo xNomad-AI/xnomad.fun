@@ -16,8 +16,8 @@ export interface Config {
       ELEVENLABS_VOICE_ID: string;
       POST_INTERVAL_MIN: number;
       POST_INTERVAL_MAX: number;
-      POST_IMMEDIATELY: boolean;
-      TWITTER_LOGIN_SUSPEND: boolean;
+      POST_IMMEDIATELY: "true" | "false";
+      TWITTER_LOGIN_SUSPEND: "true" | "false";
       TWITTER_POLL_INTERVAL: number;
       MAX_LENGTH: number;
     }>;

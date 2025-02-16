@@ -8,6 +8,7 @@ module.exports = {
     NEXT_AIRDROP_API_HOST: process.env.NEXT_AIRDROP_API_HOST,
     SOLANA_RPC: process.env.SOLANA_RPC,
     DEPLOY_ENV: process.env.DEPLOY_ENV,
+    TWITTER_ENABLED: process.env.TWITTER_ENABLED,
   },
   compiler: {
     removeConsole: process.env.DEPLOY_ENV === "prod",

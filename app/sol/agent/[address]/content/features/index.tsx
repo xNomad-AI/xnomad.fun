@@ -96,6 +96,7 @@ export function Features({ nft }: { nft: NFT }) {
     return Boolean(config?.settings.secrets?.TELEGRAM_BOT_TOKEN);
   }, [config]);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const twitterEnabled = process.env.TWITTER_ENABLED === "true";
   return (
     <>
       <div className='w-full flex flex-col gap-16'>
@@ -103,7 +104,7 @@ export function Features({ nft }: { nft: NFT }) {
           <div className='flex items-center gap-16'>
             <Image src={"/twitter.svg"} height={64} width={64} alt='' />
             <span>X(Twitter) Integration</span>
-            {hasTwitterConfig ? (
+            {hasTwitterConfig && twitterEnabled ? (
               <button
                 onClick={() => {
                   setConfirmOpen(true);
@@ -114,41 +115,50 @@ export function Features({ nft }: { nft: NFT }) {
             ) : null}
           </div>
           <div className='flex items-center gap-16'>
-            <div className='flex items-center gap-8'>
-              Suspend Post
-              <Toggle
-                value={
-                  config?.settings.secrets?.TWITTER_LOGIN_SUSPEND === "true"
-                }
-                disable={isConfigLoading}
-                onChange={() => {
-                  setIsConfigLoading(true);
+            {twitterEnabled && (
+              <div className='flex items-center gap-8'>
+                Suspend Post
+                <Toggle
+                  value={
+                    config?.settings.secrets?.TWITTER_LOGIN_SUSPEND === "true"
+                  }
+                  disable={isConfigLoading}
+                  onChange={() => {
+                    setIsConfigLoading(true);
 
-                  onSave({
-                    settings: {
-                      secrets: {
-                        TWITTER_LOGIN_SUSPEND:
-                          config?.settings.secrets?.TWITTER_LOGIN_SUSPEND ===
-                          "true"
-                            ? "false"
-                            : "true",
+                    onSave({
+                      settings: {
+                        secrets: {
+                          TWITTER_LOGIN_SUSPEND:
+                            config?.settings.secrets?.TWITTER_LOGIN_SUSPEND ===
+                            "true"
+                              ? "false"
+                              : "true",
+                        },
                       },
-                    },
-                  }).finally(() => {
-                    setIsConfigLoading(false);
-                  });
-                }}
-              />
-            </div>
-
-            <Button
-              className='!w-[7.5rem]'
-              onClick={() => {
-                setXOpen(true);
-              }}
+                    }).finally(() => {
+                      setIsConfigLoading(false);
+                    });
+                  }}
+                />
+              </div>
+            )}
+            <Tooltip
+              disabled={twitterEnabled}
+              content={
+                "Due to technical limitations of X, this feature is temporarily unavailable."
+              }
             >
-              {hasTwitterConfig ? "Edit" : "Add"}
-            </Button>
+              <Button
+                className='!w-[7.5rem]'
+                disabled={!twitterEnabled}
+                onClick={() => {
+                  setXOpen(true);
+                }}
+              >
+                {hasTwitterConfig ? "Edit" : "Add"}
+              </Button>
+            </Tooltip>
           </div>
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>

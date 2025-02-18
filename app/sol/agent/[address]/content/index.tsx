@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ChatPage } from "../chat";
 import { NFT } from "@/types";
 import { message, RadioButton, RadioButtonGroup } from "@/primitive/components";
@@ -13,6 +13,7 @@ import { useMemoizedFn } from "ahooks";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { InfoSection } from "../info";
 import { Tasks } from "./tasks";
+import { ChatProvider } from "../chat/store";
 const tabs = ["chat", "tasks", "portfolio", "activity", "features"] as const;
 const mobileTabs = ["chat", "tasks", "asset"] as const;
 type Tab = (typeof tabs)[number];
@@ -76,7 +77,9 @@ export function Content({ nft }: { nft: NFT }) {
       </RadioButtonGroup>
 
       {nft.agentId && (
-        <ChatPage nft={nft} show={tab === "chat" || mobileTab === "chat"} />
+        <ChatProvider agentId={nft.agentId}>
+          <ChatPage nft={nft} show={tab === "chat" || mobileTab === "chat"} />
+        </ChatProvider>
       )}
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
         mobileTab === "asset" && <InfoSection nft={nft} />}

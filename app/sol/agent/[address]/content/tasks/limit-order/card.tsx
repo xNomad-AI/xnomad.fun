@@ -26,50 +26,12 @@ export function TaskCard({
   }, [task]);
 
   const [isDeleting, setIsDeleting] = useState(false);
-  const displayToken = useMemo(() => {
-    if (type === "buy") {
-      return {
-        symbol: task.outputTokenSymbol,
-        ca: task.outputTokenCA,
-      };
-    } else {
-      return {
-        symbol: task.inputTokenSymbol,
-        ca: task.inputTokenCA,
-      };
-    }
-  }, [type, task]);
   return (
     <Card className='p-16 flex items-center gap-8 flex-wrap'>
       <div className='flex flex-col gap-8 flex-1'>
         <div className='flex items-center gap-8'>
           <ActionTag type={type} />
-          <TokenNumber number={task.amount} />
-          {displayToken.symbol ? (
-            <Tooltip
-              content={type === "buy" ? task.outputTokenCA : task.inputTokenCA}
-            >
-              <p
-                className={clsx({
-                  "text-green": type === "buy",
-                  "text-red": type === "sell",
-                })}
-              >
-                $
-                {type === "buy"
-                  ? task.outputTokenSymbol
-                  : task.inputTokenSymbol}
-              </p>
-            </Tooltip>
-          ) : (
-            <Address
-              className={clsx({
-                "text-green": type === "buy",
-                "text-red": type === "sell",
-              })}
-              address={displayToken.ca}
-            />
-          )}
+          <ActionContent type={type} task={task} />
         </div>
         <div className='flex items-center gap-8'>
           <p className='text-text2'>
@@ -119,4 +81,44 @@ function ActionTag({ type }: { type: "sell" | "buy" }) {
       Limit {upperFirstLetter(type)}
     </div>
   );
+}
+
+function ActionContent({ type, task }: { type: "sell" | "buy"; task: Task }) {
+  if (type === "sell") {
+    const displayToken = {
+      symbol: task.inputTokenSymbol,
+      ca: task.inputTokenCA,
+    };
+    return (
+      <>
+        <TokenNumber number={task.amount} />
+        {displayToken.symbol ? (
+          <Tooltip content={displayToken.ca}>
+            <p className={"text-red"}>${displayToken.symbol}</p>
+          </Tooltip>
+        ) : (
+          <Address className={"text-red"} address={displayToken.ca} />
+        )}
+      </>
+    );
+  } else {
+    const displayToken = {
+      symbol: task.outputTokenSymbol,
+      ca: task.outputTokenCA,
+    };
+    return (
+      <>
+        {displayToken.symbol ? (
+          <Tooltip content={displayToken.ca}>
+            <p className={"text-green"}>${displayToken.symbol}</p>
+          </Tooltip>
+        ) : (
+          <Address className={"text-green"} address={displayToken.ca} />
+        )}
+        <span className='text-text2'>with</span>
+        <TokenNumber number={task.amount} />
+        SOL
+      </>
+    );
+  }
 }

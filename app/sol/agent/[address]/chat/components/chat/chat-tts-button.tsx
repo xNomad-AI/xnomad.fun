@@ -1,8 +1,8 @@
 import { Ellipsis, StopCircle, Volume2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import { apiClient } from "../../../lib/api";
 import { message, Tooltip } from "@/primitive/components";
+import { apiClient } from "../../lib/api";
 
 export default function ChatTtsButton({
   agentId,

@@ -1,11 +1,12 @@
-import { Button, Card, message } from "@/primitive/components";
+import { Button, Card, message, Tooltip } from "@/primitive/components";
 import { deleteAutoTask, getAutoTasks, Task } from "./network";
 import { TokenNumber } from "@/components/token-number";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { onError } from "@/lib/utils/error";
 import { upperFirstLetter } from "@/lib/utils/string";
 import clsx from "clsx";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Address } from "@/components/address";
 
 export function TaskCard({
   task,
@@ -16,23 +17,58 @@ export function TaskCard({
   agentId: string;
   onDelete?: () => void;
 }) {
-  const type =
-    task?.outputTokenSymbol?.toLowerCase() === "sol" ? "sell" : "buy";
+  const type = useMemo(() => {
+    if (task.outputTokenSymbol) {
+      return task?.outputTokenSymbol?.toLowerCase() === "sol" ? "sell" : "buy";
+    } else {
+      return task?.inputTokenSymbol?.toLowerCase() === "sol" ? "buy" : "sell";
+    }
+  }, [task]);
+
   const [isDeleting, setIsDeleting] = useState(false);
+  const displayToken = useMemo(() => {
+    if (type === "buy") {
+      return {
+        symbol: task.outputTokenSymbol,
+        ca: task.outputTokenCA,
+      };
+    } else {
+      return {
+        symbol: task.inputTokenSymbol,
+        ca: task.inputTokenCA,
+      };
+    }
+  }, [type, task]);
   return (
     <Card className='p-16 flex items-center gap-8 flex-wrap'>
       <div className='flex flex-col gap-8 flex-1'>
         <div className='flex items-center gap-8'>
           <ActionTag type={type} />
           <TokenNumber number={task.amount} />
-          <p
-            className={clsx({
-              "text-green": type === "buy",
-              "text-red": type === "sell",
-            })}
-          >
-            {type === "buy" ? task.outputTokenSymbol : task.inputTokenSymbol}
-          </p>
+          {displayToken.symbol ? (
+            <Tooltip
+              content={type === "buy" ? task.outputTokenCA : task.inputTokenCA}
+            >
+              <p
+                className={clsx({
+                  "text-green": type === "buy",
+                  "text-red": type === "sell",
+                })}
+              >
+                {type === "buy"
+                  ? task.outputTokenSymbol
+                  : task.inputTokenSymbol}
+              </p>
+            </Tooltip>
+          ) : (
+            <Address
+              className={clsx({
+                "text-green": type === "buy",
+                "text-red": type === "sell",
+              })}
+              address={displayToken.ca}
+            />
+          )}
         </div>
         <div className='flex items-center gap-8'>
           <span className='text-text2'>

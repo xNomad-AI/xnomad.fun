@@ -3,10 +3,8 @@ import { useTransition, animated } from "@react-spring/web";
 import { Paperclip, Send } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Character, Content } from "@elizaos/core";
-import CopyButton from "./copy-button";
 import AIWriter from "react-aiwriter";
-import { AudioRecorder } from "./audio-recorder";
-import { IAttachment } from "../types";
+import { IAttachment } from "./types";
 import { useMutation } from "@tanstack/react-query";
 
 import {
@@ -20,16 +18,10 @@ import {
   Spin,
   Tooltip,
 } from "@/primitive/components";
-import { apiClient } from "../lib/api";
-import { ChatMessageList } from "./ui/chat/chat-message-list";
-import {
-  ChatBubble,
-  ChatBubbleMessage,
-  ChatBubbleTimestamp,
-} from "./ui/chat/chat-bubble";
+import { apiClient } from "./lib/api";
+
 import clsx from "clsx";
-import { moment } from "../lib/utils";
-import { ChatInput } from "./ui/chat/chat-input";
+import { moment } from "./lib/utils";
 import { NFT } from "@/types";
 import { useAirdrops } from "@/network/use-airdrops";
 import {
@@ -42,10 +34,19 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { isOwner } from "@/lib/user/ownership";
 import { api } from "@/primitive/api";
 import { onError } from "@/lib/utils/error";
-import { stringToUuid } from "../lib/uuid";
+import { stringToUuid } from "./lib/uuid";
 import { useConnectModalStore } from "@/components/connect-modal/store";
 import { use100vh } from "react-div-100vh";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
+import { AudioRecorder } from "./components/audio-recorder";
+import {
+  ChatBubble,
+  ChatBubbleMessage,
+  ChatBubbleTimestamp,
+} from "./components/chat/chat-bubble";
+import { ChatInput } from "./components/chat/chat-input";
+import { ChatMessageList } from "./components/chat/chat-message-list";
+import CopyButton from "./components/copy-button";
 interface ExtraContentFields {
   user: string;
   createdAt: number;
@@ -493,12 +494,6 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
                                 "flex items-center justify-between gap-12 select-none",
                               ])}
                             >
-                              {/* {message?.source ? (
-                            <Badge variant='outline'>{message.source}</Badge>
-                          ) : null}
-                          {message?.action ? (
-                            <Badge variant='outline'>{message.action}</Badge>
-                          ) : null} */}
                               {message?.createdAt ? (
                                 <ChatBubbleTimestamp
                                   timestamp={moment(message?.createdAt).format(

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChatPage } from "../chat/components/chat";
+import { ChatPage } from "../chat";
 import { NFT } from "@/types";
 import { message, RadioButton, RadioButtonGroup } from "@/primitive/components";
 import { upperFirstLetter } from "@/lib/utils/string";

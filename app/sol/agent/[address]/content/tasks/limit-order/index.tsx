@@ -1,15 +1,9 @@
 import { useState } from "react";
-import { deleteAutoTask, getAutoTasks, Task } from "./network";
+import { getAutoTasks, Task } from "./network";
 import { NFT } from "@/types";
 import { useMemoizedFn, useRequest } from "ahooks";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
-import { Button, Card, message } from "@/primitive/components";
 import { Skeleton } from "../../analytics/components";
-import { upperFirstLetter } from "@/lib/utils/string";
-import clsx from "clsx";
-import { TokenNumber } from "@/components/token-number";
-import { beautifyTime, beautifyTimeV2 } from "@/lib/utils/beautify-time";
-import { onError } from "@/lib/utils/error";
 import { TaskCard } from "./card";
 
 export function LimitOrderTask({ nft }: { nft: NFT }) {

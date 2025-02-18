@@ -55,6 +55,7 @@ export function TaskCard({
                   "text-red": type === "sell",
                 })}
               >
+                $
                 {type === "buy"
                   ? task.outputTokenSymbol
                   : task.inputTokenSymbol}
@@ -71,13 +72,16 @@ export function TaskCard({
           )}
         </div>
         <div className='flex items-center gap-8'>
-          <span className='text-text2'>
-            {upperFirstLetter(task.priceCondition)}:
-          </span>
+          <p className='text-text2'>
+            Trigger:&nbsp;
+            <span className='text-text1'>
+              {upperFirstLetter(task.priceCondition)}
+            </span>
+          </p>
           <TokenNumber number={task.priceTarget} prefix={"$"} />
-          <span className='text-text2 ml-8'>Expires:</span>
+          <span className='text-text2 ml-8'>Expire:</span>
           <span>
-            {beautifyTimeV2(new Date(task.expireAt).getTime(), true, false)}
+            {beautifyTimeV2(new Date(task.expireAt).getTime(), true, false, "")}
           </span>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { Content } from "@elizaos/core";
-import { Action } from "../response/types";
+import { Action, TradeAction } from "../response/types";
 
 export interface IAttachment {
   url: string;
@@ -12,6 +12,7 @@ export interface ExtraContentFields {
   createdAt: number;
   isLoading?: boolean;
   action?: Action;
+  tradeAction?: TradeAction;
 }
 
 export type ContentWithUser = Content & ExtraContentFields;

@@ -9,12 +9,13 @@ import {
 } from "react";
 import { ContentWithUser, IAttachment } from "./types";
 import { onError } from "@/lib/utils/error";
-import { stringToUuid, UUID } from "@elizaos/core";
+import { UUID } from "@elizaos/core";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { useLocalStorageState, useMemoizedFn } from "ahooks";
 import { apiClient } from "./lib/api";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { SetState } from "ahooks/lib/createUseStorageState";
+import { stringToUuid } from "./lib/uuid";
 const ChatContext = createContext<{
   handleSendMessage: (e: React.FormEvent<HTMLFormElement>) => void;
   setMessage: (newMessages: ContentWithUser[]) => void;
@@ -38,6 +39,8 @@ const ChatContext = createContext<{
   scrollToBottom: () => void;
   formRef: React.RefObject<HTMLFormElement>;
   agentId: UUID;
+  deleteLastMessageByLength: (length?: number) => void;
+  deleteMessageByIndex: (index: number) => void;
 } | null>(null);
 ChatContext.displayName = "ChatContext";
 const { Provider } = ChatContext;
@@ -103,45 +106,57 @@ export function ChatProvider({
   const setMessage = useMemoizedFn((newMessages: ContentWithUser[]) => {
     setMessages((old = []) => [...old, ...newMessages]);
   });
-  const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!input && !selectedFile) return;
+  const handleSendMessage = useMemoizedFn(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (!input && !selectedFile) return;
 
-    const attachments: IAttachment[] | undefined = selectedFile
-      ? [
-          {
-            url: URL.createObjectURL(selectedFile),
-            contentType: selectedFile.type,
-            title: selectedFile.name,
-          },
-        ]
-      : undefined;
+      const attachments: IAttachment[] | undefined = selectedFile
+        ? [
+            {
+              url: URL.createObjectURL(selectedFile),
+              contentType: selectedFile.type,
+              title: selectedFile.name,
+            },
+          ]
+        : undefined;
 
-    const newMessages = [
-      {
-        text: input,
-        user: "user",
-        createdAt: Date.now(),
-        attachments,
-      },
-      {
-        text: input,
-        user: "system",
-        isLoading: true,
-        createdAt: Date.now(),
-      },
-    ];
-    setMessage(newMessages as unknown as ContentWithUser[]);
+      const newMessages = [
+        {
+          text: input,
+          user: "user",
+          createdAt: Date.now(),
+          attachments,
+        },
+        {
+          text: input,
+          user: "system",
+          isLoading: true,
+          createdAt: Date.now(),
+        },
+      ];
+      setMessage(newMessages as unknown as ContentWithUser[]);
 
-    sendMessageMutation.mutate({
-      message: input,
-      selectedFile: selectedFile ? selectedFile : null,
+      sendMessageMutation.mutate({
+        message: input,
+        selectedFile: selectedFile ? selectedFile : null,
+      });
+
+      setSelectedFile(null);
+      setInput("");
+      formRef.current?.reset();
+    }
+  );
+  const deleteLastMessageByLength = useMemoizedFn((length: number = 2) => {
+    setMessages((old) => {
+      return old?.slice(0, -length) ?? [];
     });
-
-    setSelectedFile(null);
-    setInput("");
-    formRef.current?.reset();
-  };
+  });
+  const deleteMessageByIndex = useMemoizedFn((index: number) => {
+    setMessages((old) => {
+      return old?.filter((_, i) => i !== index) ?? [];
+    });
+  });
   return (
     <Provider
       value={{
@@ -159,6 +174,8 @@ export function ChatProvider({
         formRef,
         setMessages,
         agentId,
+        deleteLastMessageByLength,
+        deleteMessageByIndex,
       }}
     >
       {children}

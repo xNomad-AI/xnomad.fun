@@ -23,7 +23,7 @@ export function InputForm() {
     input,
     setInput,
     formRef,
-    handleSendMessage,
+    handleSubmitForm,
     sendMessageMutation,
     selectedFile,
     setSelectedFile,
@@ -39,7 +39,7 @@ export function InputForm() {
   const handleKeyDown = useMemoizedFn(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
-        handleSendMessage(e as unknown as React.FormEvent<HTMLFormElement>);
+        handleSubmitForm(e as unknown as React.FormEvent<HTMLFormElement>);
       }
     }
   );
@@ -54,7 +54,7 @@ export function InputForm() {
         }
       }}
       ref={formRef}
-      onSubmit={handleSendMessage}
+      onSubmit={handleSubmitForm}
       className='rounded-12 p-16 bg-surface flex items-center gap-8 border border-white-20'
     >
       <Tooltip

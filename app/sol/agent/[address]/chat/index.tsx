@@ -36,7 +36,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   const hasTriggered = useRef(false);
   const {
     messages,
-    setMessage,
+    addMessage,
     scrollToBottom,
     messagesContainerRef,
     setMessages,
@@ -78,10 +78,6 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  const getMessageVariant = useMemoizedFn((role: string) =>
-    role !== "user" ? "received" : "sent"
-  );
 
   // greeting
   const getGreeting = useMemoizedFn(async () => {
@@ -166,7 +162,6 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
           <div className='flex-1 overflow-y-auto'>
             <ChatMessageList ref={messagesContainerRef}>
               {transitions((styles, message) => {
-                const variant = getMessageVariant(message?.user ?? "");
                 // FIXME: Fix this any
                 const Comp = animated.div as any;
                 return (
@@ -181,74 +176,9 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
                       />
                     ) : null}
                     <div className='flex flex-col flex-1'>
-                      <ChatBubble
-                        variant={variant}
-                        className='flex flex-row items-center gap-2'
-                      >
-                        <div className='flex flex-col gap-8 w-full'>
-                          <ChatBubbleMessage
-                            variant={variant}
-                            isLoading={message?.isLoading}
-                          >
-                            {message?.user !== "user" ? (
-                              message ? (
-                                <AiResponse message={message} nft={nft} />
-                              ) : null
-                            ) : (
-                              message?.text
-                            )}
-                            {/* Attachments */}
-                            <div>
-                              {message?.attachments?.map((attachment, idx) => (
-                                <div
-                                  className='flex flex-col gap-1 mt-2'
-                                  key={idx}
-                                >
-                                  <img
-                                    src={attachment.url}
-                                    width='100%'
-                                    height='100%'
-                                    className='w-64 rounded-md'
-                                  />
-                                  <div className='flex items-center justify-between gap-4'>
-                                    <span></span>
-                                    <span></span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </ChatBubbleMessage>
-                          <div className='flex items-center gap-12 justify-between text-text2'>
-                            {message?.text &&
-                            !message?.isLoading &&
-                            !message.isAirdrop ? (
-                              <div className='flex items-center gap-12'>
-                                <CopyButton text={message?.text} />
-                                {/* {message?.user !== "user" && (
-                                  <ChatTtsButton
-                                    agentId={agentId}
-                                    text={message?.text}
-                                  />
-                                )} */}
-                              </div>
-                            ) : null}
-                            <div
-                              className={clsx([
-                                message?.isLoading ? "mt-2" : "",
-                                "flex items-center justify-between gap-12 select-none",
-                              ])}
-                            >
-                              {message?.createdAt ? (
-                                <ChatBubbleTimestamp
-                                  timestamp={moment(message?.createdAt).format(
-                                    "LT"
-                                  )}
-                                />
-                              ) : null}
-                            </div>
-                          </div>
-                        </div>
-                      </ChatBubble>
+                      {message ? (
+                        <AiResponse message={message} nft={nft} />
+                      ) : null}
                     </div>
                   </Comp>
                 );
@@ -274,7 +204,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
                       },
                     ];
 
-                    setMessage(newMessages);
+                    addMessage(newMessages);
                   }}
                   variant='secondary'
                 >

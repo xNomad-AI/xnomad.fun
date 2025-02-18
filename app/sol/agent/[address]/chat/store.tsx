@@ -17,8 +17,8 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { SetState } from "ahooks/lib/createUseStorageState";
 import { stringToUuid } from "./lib/uuid";
 const ChatContext = createContext<{
-  handleSendMessage: (e: React.FormEvent<HTMLFormElement>) => void;
-  setMessage: (newMessages: ContentWithUser[]) => void;
+  handleSubmitForm: (e: React.FormEvent<HTMLFormElement>) => void;
+  addMessage: (newMessages: ContentWithUser[]) => void;
   input: string;
   setInput: (value: string) => void;
   selectedFile: File | null;
@@ -41,6 +41,7 @@ const ChatContext = createContext<{
   agentId: UUID;
   deleteLastMessageByLength: (length?: number) => void;
   deleteMessageByIndex: (index: number) => void;
+  addAndSendMessage: (input: string, attachments?: IAttachment[]) => void;
 } | null>(null);
 ChatContext.displayName = "ChatContext";
 const { Provider } = ChatContext;
@@ -103,24 +104,12 @@ export function ChatProvider({
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [input, setInput] = useState("");
-  const setMessage = useMemoizedFn((newMessages: ContentWithUser[]) => {
+  const addMessage = useMemoizedFn((newMessages: ContentWithUser[]) => {
     setMessages((old = []) => [...old, ...newMessages]);
   });
-  const handleSendMessage = useMemoizedFn(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      if (!input && !selectedFile) return;
-
-      const attachments: IAttachment[] | undefined = selectedFile
-        ? [
-            {
-              url: URL.createObjectURL(selectedFile),
-              contentType: selectedFile.type,
-              title: selectedFile.name,
-            },
-          ]
-        : undefined;
-
+  // add message then send message
+  const addAndSendMessage = useMemoizedFn(
+    (input: string, attachments?: IAttachment[]) => {
       const newMessages = [
         {
           text: input,
@@ -135,12 +124,30 @@ export function ChatProvider({
           createdAt: Date.now(),
         },
       ];
-      setMessage(newMessages as unknown as ContentWithUser[]);
+      addMessage(newMessages as unknown as ContentWithUser[]);
 
       sendMessageMutation.mutate({
         message: input,
         selectedFile: selectedFile ? selectedFile : null,
       });
+    }
+  );
+  const handleSubmitForm = useMemoizedFn(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (!input && !selectedFile) return;
+
+      const attachments: IAttachment[] | undefined = selectedFile
+        ? [
+            {
+              url: URL.createObjectURL(selectedFile),
+              contentType: selectedFile.type,
+              title: selectedFile.name,
+            },
+          ]
+        : undefined;
+
+      addAndSendMessage(input, attachments);
 
       setSelectedFile(null);
       setInput("");
@@ -160,8 +167,8 @@ export function ChatProvider({
   return (
     <Provider
       value={{
-        handleSendMessage,
-        setMessage,
+        handleSubmitForm,
+        addMessage,
         input,
         setInput,
         selectedFile,
@@ -176,6 +183,7 @@ export function ChatProvider({
         agentId,
         deleteLastMessageByLength,
         deleteMessageByIndex,
+        addAndSendMessage,
       }}
     >
       {children}

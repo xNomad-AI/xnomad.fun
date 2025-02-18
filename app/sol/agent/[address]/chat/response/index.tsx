@@ -1,7 +1,6 @@
 import { NFT } from "@/types";
 import { ContentWithUser } from "../types";
 import { Airdrop } from "./airdrop";
-import { Buy } from "./trade.tsx/buy";
 import AIWriter from "react-aiwriter";
 
 export function AiResponse({
@@ -17,7 +16,7 @@ export function AiResponse({
     case "trade":
       switch (message.tradeAction) {
         case "buy":
-          return <Buy />;
+        // return <Buy />;
         // case 'sell':
         //   return <Sell />
         // case 'swap':

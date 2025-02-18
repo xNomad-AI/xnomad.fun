@@ -23,7 +23,7 @@ export function TokenNumber({
   return (
     <div
       {...rest}
-      className={clsx("inline-flex items-center gap-4", rest.className)}
+      className={clsx("inline-flex items-center gap-2", rest.className)}
     >
       {prefix}
       <span className='text-inherit'>

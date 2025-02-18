@@ -62,10 +62,10 @@ export function beautifyTimeV2(
   // 最多显示23 hours
   const arrr = simpleTime
     ? [
-        ["D", "D"],
-        ["H", "H"],
-        ["Min", "Min"],
-        ["S", "S"],
+        ["d", "d"],
+        ["h", "h"],
+        ["min", "min"],
+        ["s", "s"],
       ]
     : [
         ["day", "days"],

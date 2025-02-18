@@ -16,7 +16,8 @@ export function TaskCard({
   agentId: string;
   onDelete?: () => void;
 }) {
-  const type = task.outputTokenSymbol.toLowerCase() === "sol" ? "sell" : "buy";
+  const type =
+    task?.outputTokenSymbol?.toLowerCase() === "sol" ? "sell" : "buy";
   const [isDeleting, setIsDeleting] = useState(false);
   return (
     <Card className='p-16 flex items-center gap-8 flex-wrap'>

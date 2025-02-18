@@ -33,6 +33,7 @@ export function LimitOrderTask({ nft }: { nft: NFT }) {
           items={tasks}
           itemSize={85}
           renderItem={(item: Task) => {
+            if (!item) return null;
             return (
               <TaskCard
                 task={item}

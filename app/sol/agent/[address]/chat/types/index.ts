@@ -6,13 +6,15 @@ export interface IAttachment {
   contentType: string;
   title: string;
 }
-
+export type ActionStep = "input" | "confirm" | "finish";
 export interface ExtraContentFields {
   user: string;
   createdAt: number;
   isLoading?: boolean;
-  action?: Action;
+  webAction?: Action;
   tradeAction?: TradeAction;
+  step?: ActionStep;
+  id: string;
 }
 
 export type ContentWithUser = Content & ExtraContentFields;

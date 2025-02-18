@@ -2,45 +2,27 @@
 import { useTransition, animated } from "@react-spring/web";
 import { useEffect, useRef, useState } from "react";
 import { Character } from "@elizaos/core";
-
-import { ContentWithUser } from "./types";
-
-import { Button, Spin } from "@/primitive/components";
-
+import { Spin } from "@/primitive/components";
 import clsx from "clsx";
-import { moment } from "./lib/utils";
 import { NFT } from "@/types";
 import { useMemoizedFn, useMount, useUnmount } from "ahooks";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { isOwner } from "@/lib/user/ownership";
 import { api } from "@/primitive/api";
 import { use100vh } from "react-div-100vh";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
-import {
-  ChatBubble,
-  ChatBubbleMessage,
-  ChatBubbleTimestamp,
-} from "./components/chat/chat-bubble";
 import { ChatMessageList } from "./components/chat/chat-message-list";
-import CopyButton from "./components/copy-button";
 import { AiResponse } from "./response";
 import { useChatContext } from "./store";
 import { ClearMemoryButton } from "./components/clear-memory";
 import { InputForm } from "./components/input-form";
+import { Actions } from "./actions";
 
 export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   const agentId = nft.agentId;
 
-  const { publicKey } = useWallet();
   const [isAgentSetup, setIsAgentSetup] = useState(false);
   const hasTriggered = useRef(false);
-  const {
-    messages,
-    addMessage,
-    scrollToBottom,
-    messagesContainerRef,
-    setMessages,
-  } = useChatContext();
+  const { messages, scrollToBottom, messagesContainerRef, setMessages } =
+    useChatContext();
   const triggerAgentSetup = useMemoizedFn(async () => {
     try {
       await api.v1.post(`/agent`, {
@@ -100,11 +82,13 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
       {
         text: greet.prologue,
         user: nft.name,
+        id: "greeting",
         createdAt: Date.now(),
       },
       {
         text: promptSuggestion,
         user: nft.name,
+        id: "prompt",
         createdAt: Date.now(),
       },
     ];
@@ -124,7 +108,13 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   });
   useUnmount(() => {
     setMessages((messages) => {
-      return messages?.filter((msg) => msg.isLoading !== true) ?? [];
+      return (
+        messages?.filter(
+          (msg) =>
+            msg.isLoading !== true && // remove loading messages
+            !msg.webAction // remove web actions
+        ) ?? []
+      );
     });
   });
 
@@ -186,33 +176,8 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
             </ChatMessageList>
           </div>
           <div className='w-full flex flex-col gap-8'>
-            <div className='flex items-center justify-between gap-16'>
-              {isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "") ? (
-                <Button
-                  onClick={() => {
-                    const newMessages: ContentWithUser[] = [
-                      {
-                        text: "Claim Airdrop",
-                        user: "user",
-                        createdAt: Date.now(),
-                      },
-                      {
-                        text: "Claim Airdrop",
-                        action: "airdrop",
-                        user: nft.name,
-                        createdAt: Date.now(),
-                      },
-                    ];
-
-                    addMessage(newMessages);
-                  }}
-                  variant='secondary'
-                >
-                  Claim Airdrop
-                </Button>
-              ) : (
-                <div></div>
-              )}
+            <div className='flex justify-between gap-16'>
+              <Actions nft={nft} />
               <ClearMemoryButton />
             </div>
             <InputForm />

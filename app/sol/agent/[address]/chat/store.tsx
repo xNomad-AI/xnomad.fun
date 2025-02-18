@@ -18,7 +18,10 @@ import { SetState } from "ahooks/lib/createUseStorageState";
 import { stringToUuid } from "./lib/uuid";
 const ChatContext = createContext<{
   handleSubmitForm: (e: React.FormEvent<HTMLFormElement>) => void;
-  addMessage: (newMessages: ContentWithUser[]) => void;
+  addMessage: (
+    newMessages: ContentWithUser[],
+    removeInvalidAction?: boolean
+  ) => void;
   input: string;
   setInput: (value: string) => void;
   selectedFile: File | null;
@@ -42,6 +45,9 @@ const ChatContext = createContext<{
   deleteLastMessageByLength: (length?: number) => void;
   deleteMessageByIndex: (index: number) => void;
   addAndSendMessage: (input: string, attachments?: IAttachment[]) => void;
+  deleteMessageById: (id: string) => void;
+  updateMessage: (message: ContentWithUser) => void;
+  generateMessageId: (id?: string) => string;
 } | null>(null);
 ChatContext.displayName = "ChatContext";
 const { Provider } = ChatContext;
@@ -94,6 +100,7 @@ export function ChatProvider({
         ...old.filter((msg) => !msg.isLoading),
         ...newMessages.map((msg) => ({
           ...msg,
+          id: generateMessageId(),
           createdAt: Date.now(),
         })),
       ]);
@@ -104,27 +111,39 @@ export function ChatProvider({
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [input, setInput] = useState("");
-  const addMessage = useMemoizedFn((newMessages: ContentWithUser[]) => {
-    setMessages((old = []) => [...old, ...newMessages]);
-  });
+  const addMessage = useMemoizedFn(
+    (newMessages: ContentWithUser[], removeInvalidAction?: boolean) => {
+      setMessages((old = []) => [
+        ...old.filter(
+          (msg) =>
+            !removeInvalidAction ||
+            !msg.webAction ||
+            (msg.webAction && msg.step === "finish")
+        ),
+        ...newMessages,
+      ]);
+    }
+  );
   // add message then send message
   const addAndSendMessage = useMemoizedFn(
     (input: string, attachments?: IAttachment[]) => {
-      const newMessages = [
+      const newMessages: ContentWithUser[] = [
         {
           text: input,
           user: "user",
           createdAt: Date.now(),
-          attachments,
+          attachments: attachments as unknown as ContentWithUser["attachments"],
+          id: generateMessageId("user"),
         },
         {
           text: input,
           user: "system",
           isLoading: true,
           createdAt: Date.now(),
+          id: generateMessageId("system"),
         },
       ];
-      addMessage(newMessages as unknown as ContentWithUser[]);
+      addMessage(newMessages);
 
       sendMessageMutation.mutate({
         message: input,
@@ -164,6 +183,28 @@ export function ChatProvider({
       return old?.filter((_, i) => i !== index) ?? [];
     });
   });
+  const deleteMessageById = useMemoizedFn((id: string) => {
+    setMessages((old) => {
+      return old?.filter((msg) => msg.id !== id) ?? [];
+    });
+  });
+  const updateMessage = useMemoizedFn((message: ContentWithUser) => {
+    setTimeout(() => {
+      setMessages((old) => {
+        return (
+          old?.map((msg) => {
+            if (msg.id === message.id) {
+              return message;
+            }
+            return msg;
+          }) ?? []
+        );
+      });
+    }, 0);
+  });
+  const generateMessageId = useMemoizedFn((id?: string) => {
+    return stringToUuid(`web-${Date.now()}-${agentId}-${Math.random()}-${id}`);
+  });
   return (
     <Provider
       value={{
@@ -184,6 +225,9 @@ export function ChatProvider({
         deleteLastMessageByLength,
         deleteMessageByIndex,
         addAndSendMessage,
+        deleteMessageById,
+        updateMessage,
+        generateMessageId,
       }}
     >
       {children}

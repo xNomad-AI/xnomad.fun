@@ -35,7 +35,7 @@ export function Tasks({ nft }: { nft: NFT }) {
             {t
               .split("-")
               .map((word) => upperFirstLetter(word))
-              .join("")}
+              .join(" ")}
           </button>
         ))}
       </div>

@@ -81,7 +81,7 @@ export function Content({ nft }: { nft: NFT }) {
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
         mobileTab === "asset" && <InfoSection nft={nft} />}
       {tab === "portfolio" && <Portfolio nft={nft} />}
-      {tab === "tasks" || (mobileTab === "tasks" && <Tasks nft={nft} />)}
+      {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
       {tab === "activity" && <Analytics nft={nft} />}
       {tab === "features" && <Features nft={nft} />}
     </div>

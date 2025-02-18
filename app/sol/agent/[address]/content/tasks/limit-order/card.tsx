@@ -72,8 +72,8 @@ function ActionTag({ type }: { type: "sell" | "buy" }) {
   return (
     <div
       className={clsx("px-8 py-4 rounded-4 flex items-center", {
-        "bg-red-10": type === "sell",
-        "bg-green-10": type === "buy",
+        "bg-red-10 text-red": type === "sell",
+        "bg-green-10 text-green": type === "buy",
       })}
     >
       Limit {upperFirstLetter(type)}

@@ -23,10 +23,12 @@ export function FormItem<T>(props: PropsWithChildren<Props & FormValue<T>>) {
     >
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-8'>
-          <label>
+          <div className='flex items-center'>
             {props.label}
-            {props.required && <span className='text-red'>&nbsp;*</span>}
-          </label>
+            {props.required && (
+              <span className='text-red inline-flex'>&nbsp;*</span>
+            )}
+          </div>
           {props.desc && (
             <Tooltip content={props.desc}>
               <IconInfo />

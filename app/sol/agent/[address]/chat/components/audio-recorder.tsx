@@ -6,8 +6,8 @@ import clsx from "clsx";
 
 import { useMutation } from "@tanstack/react-query";
 import { UUID } from "@elizaos/core";
-import { apiClient } from "../lib/api";
 import { IconCheck, message, Tooltip } from "@/primitive/components";
+import { apiClient } from "../lib/api";
 
 type Props = {
   agentId: UUID;

@@ -1,3 +1,4 @@
+import { split } from "lodash";
 import { isValidNumber } from "./number";
 import { format } from "date-fns";
 
@@ -46,12 +47,13 @@ export const beautifyTime = (timestamp: number, simpleTime = false) => {
 export function beautifyTimeV2(
   timestamp?: unknown,
   simpleTime = false,
-  withSuffix = true
+  withSuffix = true,
+  split = " "
 ) {
   if (!isValidNumber(timestamp) || timestamp === 0) {
     return "--";
   }
-  const SPLITER = " ";
+  const SPLIT = split;
   let diff = (Date.now() - timestamp) / 1000;
   // eslint-disable-next-line no-nested-ternary
   const postfix = withSuffix ? (diff > 0 ? "ago" : "after") : "";
@@ -60,10 +62,10 @@ export function beautifyTimeV2(
   // 最多显示23 hours
   const arrr = simpleTime
     ? [
-        ["day", "days"],
-        ["hr", "hrs"],
-        ["min", "mins"],
-        ["sec", "secs"],
+        ["d", "d"],
+        ["h", "h"],
+        ["min", "min"],
+        ["s", "s"],
       ]
     : [
         ["day", "days"],
@@ -73,7 +75,7 @@ export function beautifyTimeV2(
       ];
   const arrn = [86400, 3600, 60, 1];
   if (diff < 1) {
-    return 1 + SPLITER + arrr[3][0] + SPLITER + postfix;
+    return 1 + SPLIT + arrr[3][0] + SPLIT + postfix;
   }
   for (let i = 0; i < 4; i++) {
     const inm = Math.floor(diff / arrn[i]);
@@ -85,7 +87,7 @@ export function beautifyTimeV2(
       //   return format(timestamp, 'MMM dd, yyyy');
       // }
       const index = inm > 1 ? 1 : 0;
-      return inm + SPLITER + arrr[i][index] + SPLITER + postfix;
+      return inm + SPLIT + arrr[i][index] + SPLIT + postfix;
     }
   }
 

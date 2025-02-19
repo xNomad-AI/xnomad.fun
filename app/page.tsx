@@ -1,9 +1,7 @@
-import Image from "next/image";
-import { ConnectButton } from "./home/connect-button";
 import { Container } from "./layout/contianer";
 import { Card } from "@/primitive/components";
 import { bungee } from "./layout/font";
-import { Car } from "lucide-react";
+
 import Link from "next/link";
 
 export default function Home() {

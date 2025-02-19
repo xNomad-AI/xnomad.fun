@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { ChatPage } from "../chat/components/chat";
+import { useState } from "react";
+import { ChatPage } from "../chat";
 import { NFT } from "@/types";
 import { message, RadioButton, RadioButtonGroup } from "@/primitive/components";
 import { upperFirstLetter } from "@/lib/utils/string";
@@ -12,8 +12,10 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useMemoizedFn } from "ahooks";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { InfoSection } from "../info";
-const tabs = ["chat", "portfolio", "activity", "features"] as const;
-const mobileTabs = ["chat", "asset"] as const;
+import { Tasks } from "./tasks";
+import { ChatProvider } from "../chat/store";
+const tabs = ["chat", "tasks", "portfolio", "activity", "features"] as const;
+const mobileTabs = ["chat", "tasks", "asset"] as const;
 type Tab = (typeof tabs)[number];
 type MobileTab = (typeof mobileTabs)[number];
 export function Content({ nft }: { nft: NFT }) {
@@ -21,7 +23,7 @@ export function Content({ nft }: { nft: NFT }) {
   const [tab, _setTab] = useState<Tab | null>("chat");
   const setTab = useMemoizedFn((tab: Tab | null) => {
     if (
-      tab === "features" &&
+      (tab === "features" || tab === "tasks") &&
       (!publicKey ||
         publicKey.toBase58().toLowerCase() !== nft.owner?.toLowerCase())
     ) {
@@ -42,7 +44,7 @@ export function Content({ nft }: { nft: NFT }) {
           setMobileTab(value);
           setTab(null);
         }}
-        value={tab === "chat" ? "chat" : mobileTab}
+        value={tab === "chat" || tab === "tasks" ? tab : mobileTab}
         className='portrait-tablet:flex hidden'
       >
         {mobileTabs.map((t) => (
@@ -57,12 +59,12 @@ export function Content({ nft }: { nft: NFT }) {
           setTab(value);
           setMobileTab(null);
         }}
-        value={mobileTab === "chat" ? "chat" : tab}
+        value={mobileTab === "chat" || mobileTab === "tasks" ? mobileTab : tab}
       >
         {tabs.map((t) => {
           if (
             (breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
-            t === "chat"
+            (t === "chat" || t === "tasks")
           ) {
             return null;
           }
@@ -75,11 +77,14 @@ export function Content({ nft }: { nft: NFT }) {
       </RadioButtonGroup>
 
       {nft.agentId && (
-        <ChatPage nft={nft} show={tab === "chat" || mobileTab === "chat"} />
+        <ChatProvider agentId={nft.agentId}>
+          <ChatPage nft={nft} show={tab === "chat" || mobileTab === "chat"} />
+        </ChatProvider>
       )}
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
         mobileTab === "asset" && <InfoSection nft={nft} />}
       {tab === "portfolio" && <Portfolio nft={nft} />}
+      {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
       {tab === "activity" && <Analytics nft={nft} />}
       {tab === "features" && <Features nft={nft} />}
     </div>

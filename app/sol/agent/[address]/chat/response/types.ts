@@ -22,7 +22,6 @@ export const actionConfigs = {
   },
   "issue-token": {
     title: "Issue Token",
-    disabled: true,
   },
 } as { [key in Action]: { title: string; disabled?: boolean } };
 export const tradeActionConfigs = {

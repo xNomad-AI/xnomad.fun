@@ -8,6 +8,7 @@ import { Sell } from "./trade.tsx/sell";
 import { Transfer } from "./trade.tsx/transfer";
 import { Swap } from "./trade.tsx/swap";
 import { LimitOrder } from "./trade.tsx/limit-order";
+import { IssueToken } from "./issue-token";
 
 export function AiResponse({
   message,
@@ -39,7 +40,7 @@ export function AiResponse({
     case "analyze":
     // return <Analyze />
     case "issue-token":
-    // return <IssueToken />;
+      return <IssueToken message={message} nft={nft} />;
     default:
       return (
         <ResponseContainer showCopyButton showTimestamp message={message}>

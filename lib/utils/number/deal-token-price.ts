@@ -32,7 +32,7 @@ export const toSimpleNum = (num: number, precision = 2) => {
     suffix = "";
   }
   const actualNum =
-    Math.round(numFixed * Math.pow(10, precision)) / Math.pow(10, precision);
+    Math.floor(numFixed * Math.pow(10, precision)) / Math.pow(10, precision);
   return (isNegative ? "-" : "") + actualNum + suffix;
 };
 
@@ -44,7 +44,7 @@ export const toThousandNum = (num: unknown, precision = 2, padZero = false) => {
   const isNegative = num < 0;
   const absNum = Math.abs(num);
   const numFixed =
-    Math.round(absNum * Math.pow(10, precision)) / Math.pow(10, precision);
+    Math.floor(absNum * Math.pow(10, precision)) / Math.pow(10, precision);
   const intNum = Math.floor(numFixed);
   const intNumStr = (intNum || 0)
     .toString()

@@ -34,7 +34,7 @@ export function TokenNumber({
             {nonZeroString}
           </>
         ) : (
-          dealCardTokenPrice(number.toString(), undefined, undefined, 6)
+          dealCardTokenPrice(number.toString())
         )}
       </span>
       {suffix}

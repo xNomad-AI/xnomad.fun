@@ -22,7 +22,7 @@ export function AiResponse({
     case "trade":
       switch (message.tradeAction) {
         case "buy":
-          return <Buy message={message} />;
+          return <Buy message={message} nft={nft} />;
         case "sell":
           return <Sell message={message} />;
         case "swap":
@@ -30,7 +30,7 @@ export function AiResponse({
         case "transfer":
           return <Transfer message={message} nft={nft} />;
         case "limit-order":
-          return <LimitOrder message={message} />;
+          return <LimitOrder message={message} nft={nft} />;
         // case 'copy-trade':
         //   return <CopyTrade />
         default:
@@ -39,7 +39,7 @@ export function AiResponse({
     case "analyze":
     // return <Analyze />
     case "issue-token":
-    // return <IssueToken />
+    // return <IssueToken />;
     default:
       return (
         <ResponseContainer showCopyButton showTimestamp message={message}>

@@ -19,8 +19,16 @@ import { TokenNumber } from "@/components/token-number";
 import { upperFirstLetter } from "@/lib/utils/string";
 import { useSolana } from "@/lib/hooks/use-solana";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import { NFT } from "@/types";
 
-export function LimitOrder({ message }: { message: ContentWithUser }) {
+export function LimitOrder({
+  message,
+  nft,
+}: {
+  message: ContentWithUser;
+  nft: NFT;
+}) {
   const { deleteMessageById, addAndSendMessage, updateMessage } =
     useChatContext();
   const [type, setType] = useState<"buy" | "sell">("buy");
@@ -55,17 +63,13 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
       errorMsg: "",
     },
   });
-  const { publicKey } = useWallet();
   const { getBalance } = useSolana();
   const [balance, setBalance] = useState<number>();
   useEffect(() => {
-    if (!publicKey) {
-      return;
-    }
-    getBalance(publicKey).then((balance) => {
+    getBalance(new PublicKey(nft.agentAccount.solana)).then((balance) => {
       setBalance(balance);
     });
-  }, [publicKey]);
+  }, []);
   const step = message.step;
   return (
     <ResponseContainer

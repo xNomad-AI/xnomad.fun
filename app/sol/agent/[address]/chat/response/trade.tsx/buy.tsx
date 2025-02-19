@@ -9,21 +9,19 @@ import { ResponseContainer } from "../container";
 import { ActionStep, ContentWithUser } from "../../types";
 import { useSolana } from "@/lib/hooks/use-solana";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { NFT } from "@/types";
+import { PublicKey } from "@solana/web3.js";
 
-export function Buy({ message }: { message: ContentWithUser }) {
+export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
   const { deleteMessageById, addAndSendMessage, updateMessage } =
     useChatContext();
-  const { publicKey } = useWallet();
   const { getBalance } = useSolana();
   const [balance, setBalance] = useState<number>();
   useEffect(() => {
-    if (!publicKey) {
-      return;
-    }
-    getBalance(publicKey).then((balance) => {
+    getBalance(new PublicKey(nft.agentAccount.solana)).then((balance) => {
       setBalance(balance);
     });
-  }, [publicKey]);
+  }, []);
   const [form, setForm] = useState<{
     tokenContractAddress: FormValue<string>;
     amount: FormValue<string>;

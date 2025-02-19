@@ -184,20 +184,25 @@ export function Actions({ nft }: { nft: NFT }) {
         }}
         className='flex items-center gap-8'
       >
-        {actions.map((action) => (
-          <Button
-            size='s'
-            className='!font-normal'
-            variant='secondary'
-            key={action}
-            onClick={() => {
-              onActionClick(action);
-            }}
-            disabled={actionConfigs[action].disabled}
-          >
-            {actionConfigs[action].title}
-          </Button>
-        ))}
+        {actions.map((action) => {
+          if (process.env.DEPLOY_ENV === "prod" && action !== "airdrop") {
+            return null;
+          }
+          return (
+            <Button
+              size='s'
+              className='!font-normal'
+              variant='secondary'
+              key={action}
+              onClick={() => {
+                onActionClick(action);
+              }}
+              disabled={actionConfigs[action].disabled}
+            >
+              {actionConfigs[action].title}
+            </Button>
+          );
+        })}
       </motion.div>
 
       <motion.div

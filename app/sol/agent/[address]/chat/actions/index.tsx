@@ -175,8 +175,15 @@ export function Actions({ nft }: { nft: NFT }) {
     }
   });
   return isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "") ? (
-    <div className='flex flex-col gap-16'>
-      <div className='flex items-center gap-8'>
+    <div className='flex gap-16 flex-1 overflow-hidden'>
+      <motion.div
+        animate={{
+          width: action !== "trade" ? "100%" : 0,
+          opacity: action !== "trade" ? 1 : 0,
+          display: action !== "trade" ? "flex" : "none",
+        }}
+        className='flex items-center gap-8'
+      >
         {actions.map((action) => (
           <Button
             size='s'
@@ -191,7 +198,7 @@ export function Actions({ nft }: { nft: NFT }) {
             {actionConfigs[action].title}
           </Button>
         ))}
-      </div>
+      </motion.div>
 
       <motion.div
         animate={{

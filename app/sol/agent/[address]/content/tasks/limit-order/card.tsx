@@ -110,14 +110,14 @@ function ActionContent({ type, task }: { type: "sell" | "buy"; task: Task }) {
       <>
         {displayToken.symbol && displayToken.symbol !== displayToken.ca ? (
           <Tooltip content={displayToken.ca}>
-            <p className={"text-green"}>${displayToken.symbol}</p>
+            <p className={"text-green"}>{displayToken.symbol}</p>
           </Tooltip>
         ) : (
           <Address className={"text-green"} address={displayToken.ca} />
         )}
         <span className='text-text2'>with</span>
         <TokenNumber number={task.amount} />
-        SOL
+        {task.inputTokenSymbol ?? "SOL"}
       </>
     );
   }

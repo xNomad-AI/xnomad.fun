@@ -5,6 +5,7 @@ import { useMemoizedFn, useRequest } from "ahooks";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { Skeleton } from "../../analytics/components";
 import { TaskCard } from "./card";
+import { use100vh } from "react-div-100vh";
 
 export function LimitOrderTask({ nft }: { nft: NFT }) {
   const [isInitializing, setIsInitializing] = useState(true);
@@ -20,12 +21,14 @@ export function LimitOrderTask({ nft }: { nft: NFT }) {
     pollingInterval: 5000,
     ready: !!nft.agentId,
   });
+  const height = use100vh();
   return (
     <div className='flex flex-col w-full'>
       {tasks?.length > 0 ? (
         <InfiniteScrollList
           items={tasks}
           itemSize={85}
+          height={height ? height - 254 : 0}
           renderItem={(item: Task) => {
             if (!item) return null;
             return (

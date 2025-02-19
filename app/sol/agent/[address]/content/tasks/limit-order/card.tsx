@@ -117,7 +117,7 @@ function ActionContent({ type, task }: { type: "sell" | "buy"; task: Task }) {
         )}
         <span className='text-text2'>with</span>
         <TokenNumber number={task.amount} />
-        SOL
+        {task.inputTokenSymbol ?? "SOL"}
       </>
     );
   }

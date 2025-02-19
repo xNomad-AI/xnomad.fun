@@ -108,7 +108,7 @@ function ActionContent({ type, task }: { type: "sell" | "buy"; task: Task }) {
     };
     return (
       <>
-        {displayToken.symbol ? (
+        {displayToken.symbol && displayToken.symbol !== displayToken.ca ? (
           <Tooltip content={displayToken.ca}>
             <p className={"text-green"}>${displayToken.symbol}</p>
           </Tooltip>

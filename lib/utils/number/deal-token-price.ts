@@ -60,7 +60,7 @@ export const toThousandNum = (num: unknown, precision = 2, padZero = false) => {
 export const toCardNum = (
   _num: unknown,
   money = "",
-  base = 1000,
+  base = 10000,
   precision = 2,
   withNegative = false
 ) => {
@@ -99,7 +99,7 @@ const deleteLastZero = (numArr: string[], makeZero = false): string => {
   }
   return numArr.join("");
 };
-export const BASE_SMALL_NUM_PRECISION = 6;
+export const BASE_SMALL_NUM_PRECISION = 4;
 export function isMinimumTokenNumber(num: number) {
   const targetNum = parseFloat(
     `0.${new Array(BASE_SMALL_NUM_PRECISION - 1).fill(0).join("")}1`
@@ -108,7 +108,7 @@ export function isMinimumTokenNumber(num: number) {
 }
 export const dealCardTokenPrice = (
   num: unknown,
-  base = 1000,
+  base = 10000,
   smallNumPrecision = BASE_SMALL_NUM_PRECISION,
   bigNumPrecision = 2,
   precisionBase = 1

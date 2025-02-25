@@ -46,7 +46,6 @@ export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
   } = props;
 
   const internalRef = useRef<HTMLInputElement | null>(null);
-  const [clearVisible, setClearVisible] = useState(false);
 
   useImperativeHandle(ref, () => internalRef.current!, []);
 
@@ -97,16 +96,11 @@ export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
         aria-disabled={disabled}
         disabled={disabled}
         onChange={(e) => {
-          if (e.target.value.length > 1) {
-            setClearVisible(true);
-          } else {
-            setClearVisible(false);
-          }
           onChange?.(e);
         }}
         {...raw}
       />
-      {clearable && clearVisible ? (
+      {clearable && (internalRef.current?.value.length ?? 0) > 0 ? (
         <IconClose
           className='text-size-16 cursor-pointer'
           onClick={handleClear}

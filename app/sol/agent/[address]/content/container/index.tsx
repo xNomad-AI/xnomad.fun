@@ -30,31 +30,14 @@ export function DepositContainer({
   children,
 }: PropsWithChildren<{ nft?: NFT }>) {
   const { publicKey } = useWallet();
-  const { setPortfolio, portfolio } = useAgentStore();
+  const { portfolio, setPortfolio } = useAgentStore();
   const solItem = useMemo(
     () => portfolio?.items.filter((item) => item.symbol === "SOL")?.[0],
     [portfolio]
   );
-  const getPortfolioData = useMemoizedFn(async (address: string) => {
-    getPortfolio({
-      address,
-    }).then((data) => {
-      setPortfolio(data);
-    });
-  });
   const agentAccountSol = useMemo(
     () => nft?.agentAccount.solana ?? "",
     [nft?.agentAccount.solana]
-  );
-  useRequest(
-    async () => {
-      getPortfolioData(agentAccountSol);
-    },
-    {
-      refreshDeps: [agentAccountSol],
-      ready: !!agentAccountSol,
-      pollingInterval: 5000,
-    }
   );
   const [depositOpen, setDepositOpen] = useState(false);
   const isNFTowner = useMemo(
@@ -105,7 +88,13 @@ export function DepositContainer({
         onClose={() => {
           setDepositOpen(false);
         }}
-        onSuccess={() => getPortfolioData(agentAccountSol)}
+        onSuccess={() => {
+          getPortfolio({
+            address: agentAccountSol,
+          }).then((data) => {
+            setPortfolio(data);
+          });
+        }}
         open={depositOpen}
       />
     </div>

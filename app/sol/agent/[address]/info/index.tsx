@@ -15,8 +15,11 @@ import { NFT } from "@/types";
 import { Character } from "@elizaos/core";
 import clsx from "clsx";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { marked } from "marked";
+import { useMemoizedFn, useRequest } from "ahooks";
+import { getPortfolio } from "../content/container/network";
+import { useAgentStore } from "../store";
 async function parseMarkdownText(text: string) {
   const markedText = await marked.parse(text);
   return markedText;
@@ -27,6 +30,30 @@ export function InfoSection({ nft }: { nft: NFT }) {
     total: nft.collectionId === XNOMAD_ID ? 5000 : Infinity,
   });
   const isXnomad = nft.collectionId === XNOMAD_ID;
+  const { setPortfolio } = useAgentStore();
+  // get portfolio data, temporary
+  // TODO: move this to portfolio section
+  const getPortfolioData = useMemoizedFn(async (address: string) => {
+    getPortfolio({
+      address,
+    }).then((data) => {
+      setPortfolio(data);
+    });
+  });
+  const agentAccountSol = useMemo(
+    () => nft?.agentAccount.solana ?? "",
+    [nft?.agentAccount.solana]
+  );
+  useRequest(
+    async () => {
+      getPortfolioData(agentAccountSol);
+    },
+    {
+      refreshDeps: [agentAccountSol],
+      ready: !!agentAccountSol,
+      pollingInterval: 5000,
+    }
+  );
   return (
     <div className='flex flex-col w-[280px] portrait-tablet:w-full gap-16 flex-shrink-0'>
       <img

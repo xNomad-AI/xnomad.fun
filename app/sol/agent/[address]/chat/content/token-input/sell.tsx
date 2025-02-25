@@ -13,6 +13,7 @@ import { useDebounce, useRequest } from "ahooks";
 import { useMemo, useRef, useState } from "react";
 import { TokenValue } from ".";
 import { WalletItem } from "../../../content/container/network";
+import { CommonInput } from "./common";
 type InnerData = TokenValue &
   Pick<Partial<WalletItem>, "priceUsd" | "uiAmount">;
 export function TokenInputSell({
@@ -26,9 +27,7 @@ export function TokenInputSell({
   onChange: (value: TokenValue) => void;
   tokenLimitList?: InnerData[];
 }) {
-  const [focused, setFocused] = useState(false);
   const [search, setSearch] = useState("");
-  const dropdownRef = useRef<DropdownController>(null);
   const data = useMemo(() => {
     return (
       tokenLimitList?.filter(
@@ -39,67 +38,15 @@ export function TokenInputSell({
     );
   }, [tokenLimitList, value]);
   return (
-    <Dropdown
-      trigger={["click"]}
-      ref={dropdownRef}
-      stretch
-      className='!w-full'
-      content={
-        <div className='w-full flex flex-col max-h-[20rem] overflow-auto'>
-          {data.length > 0 ? (
-            data.map((item) => (
-              <TokenItem
-                key={item.ca}
-                value={item}
-                selected={item.ca === value.ca}
-                handleSelect={(value) => {
-                  onChange(value);
-                  setFocused(false);
-                  dropdownRef.current?.close();
-                }}
-              />
-            ))
-          ) : (
-            <Empty />
-          )}
-        </div>
-      }
-    >
-      <TextField
-        className={className}
-        placeholder='Search ticker or CA'
-        onClick={(e) => {
-          if (dropdownRef.current?.opened) {
-            e.stopPropagation();
-          }
-        }}
-        onFocus={() => {
-          setFocused(true);
-        }}
-        onBlur={() => {
-          setFocused(false);
-        }}
-        prefixNode={
-          focused || !value.ticker ? (
-            ""
-          ) : (
-            <div className='flex items-center gap-8'>
-              <img
-                src={value.logo}
-                alt='logo'
-                className='w-20 h-20 rounded-full object-contain'
-              />
-              <span className='text-size-14 text-text1'>{value.ticker}</span>
-              <Address address={value.ca} className='text-size-12 text-text2' />
-            </div>
-          )
-        }
-        value={focused ? search : " "}
-        onChange={(e) => {
-          setSearch(e.target.value);
-        }}
-      />
-    </Dropdown>
+    <CommonInput
+      data={data}
+      value={value}
+      search={search}
+      setSearch={setSearch}
+      onChange={onChange}
+      className={className}
+      TokenItem={TokenItem}
+    />
   );
 }
 

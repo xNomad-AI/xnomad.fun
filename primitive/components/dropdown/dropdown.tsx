@@ -19,7 +19,7 @@ export type DropdownProps = {
   content?: ReactNode;
   className?: string;
   dropdownClassName?: string;
-  trigger?: ("click" | "hover")[];
+  trigger?: ("click" | "hover" | "none")[];
   placement?: "start" | "end" | "auto";
   stretch?: boolean;
   onVisibleChange?: (visible: boolean) => void;
@@ -33,6 +33,7 @@ export type DropdownController = {
   open: () => void;
   close: () => void;
   toggle: () => void;
+  opened: boolean;
 };
 
 export const Dropdown = forwardRef<
@@ -140,6 +141,7 @@ export const Dropdown = forwardRef<
       close,
       open,
       toggle,
+      opened: show,
     };
   });
 

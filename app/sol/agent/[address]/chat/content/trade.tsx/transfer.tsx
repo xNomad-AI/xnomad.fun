@@ -1,11 +1,12 @@
 import { Button, FormItem, FormValue, TextField } from "@/primitive/components";
 import { useState } from "react";
-import BigNumber from "bignumber.js";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
 import { NFT } from "@/types";
 import { validNumberInput } from "@/lib/utils/input-helper";
+import { TokenInputSell, TokenValue } from "../token-input";
+import { useAgentStore } from "../../../store";
 
 export function Transfer({
   message,
@@ -16,15 +17,18 @@ export function Transfer({
 }) {
   const { deleteMessageById, addAndSendMessage, updateMessage } =
     useChatContext();
-
+  const { portfolio } = useAgentStore();
   const [form, setForm] = useState<{
-    tokenContractAddress: FormValue<string>;
+    tokenContractAddress: FormValue<TokenValue>;
     amount: FormValue<string>;
     toAddress: FormValue<string>;
-    symbol: FormValue<string>;
   }>({
     tokenContractAddress: {
-      value: "",
+      value: {
+        ca: "",
+        logo: "",
+        ticker: "",
+      },
       required: true,
       isInValid: false,
       errorMsg: "",
@@ -38,12 +42,6 @@ export function Transfer({
     amount: {
       value: "",
       required: true,
-      isInValid: false,
-      errorMsg: "",
-    },
-    symbol: {
-      value: "",
-      required: false,
       isInValid: false,
       errorMsg: "",
     },
@@ -72,8 +70,10 @@ export function Transfer({
                 updateMessage({ ...message, step: "finish" });
                 addAndSendMessage(
                   `Transfer ${form.amount.value} ${
-                    form.symbol.value ? `${form.symbol.value} ` : ""
-                  }${form.tokenContractAddress.value} to ${
+                    form.tokenContractAddress.value.ticker
+                      ? `${form.tokenContractAddress.value.ticker} `
+                      : ""
+                  }${form.tokenContractAddress.value.ca} to ${
                     form.toAddress.value
                   }`
                 );
@@ -88,34 +88,22 @@ export function Transfer({
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
           <span className='font-bold text-size-16'>Transfer</span>
-          <FormItem
-            label={"Token Contract Address"}
-            {...form.tokenContractAddress}
-          >
-            <TextField
+          <FormItem label={"Token"} {...form.tokenContractAddress}>
+            <TokenInputSell
+              tokenLimitList={portfolio?.items.map((item) => ({
+                ca: item.address,
+                logo: item.logoURI,
+                ticker: item.symbol,
+                priceUsd: item.priceUsd,
+                uiAmount: item.uiAmount,
+              }))}
               value={form.tokenContractAddress.value}
-              placeholder='Token Contract Address'
-              onChange={(event) => {
+              onChange={(value) => {
                 setForm({
                   ...form,
                   tokenContractAddress: {
                     ...form.tokenContractAddress,
-                    value: event.target.value,
-                  },
-                });
-              }}
-            />
-          </FormItem>
-          <FormItem label={"Symbol"} {...form.symbol}>
-            <TextField
-              value={form.symbol.value}
-              placeholder='Symbol (optional)'
-              onChange={(event) => {
-                setForm({
-                  ...form,
-                  symbol: {
-                    ...form.symbol,
-                    value: event.target.value,
+                    value,
                   },
                 });
               }}
@@ -196,8 +184,10 @@ export function Transfer({
           ⬇️Type: Transfer
           <br />
           🪙Token:&nbsp;
-          {form.symbol.value ? `${form.symbol.value} ` : ""}
-          {form.tokenContractAddress.value}
+          {form.tokenContractAddress.value.ticker
+            ? `${form.tokenContractAddress.value.ticker} `
+            : ""}
+          {form.tokenContractAddress.value.ca}
           <br />
           💰Amount:&nbsp;{form.amount.value}
           <br />

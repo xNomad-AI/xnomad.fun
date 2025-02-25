@@ -13,24 +13,34 @@ import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ActionStep, ContentWithUser } from "../../types";
 import { validNumberInput } from "@/lib/utils/input-helper";
+import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
+import { useAgentStore } from "../../../store";
 
 export function Swap({ message }: { message: ContentWithUser }) {
   const { deleteMessageById, addAndSendMessage, updateMessage } =
     useChatContext();
-
+  const { portfolio } = useAgentStore();
   const [form, setForm] = useState<{
-    fromContract: FormValue<string>;
+    fromContract: FormValue<TokenValue>;
     amount: FormValue<string>;
-    toContract: FormValue<string>;
+    toContract: FormValue<TokenValue>;
   }>({
     fromContract: {
-      value: "",
+      value: {
+        ca: "",
+        logo: "",
+        ticker: "",
+      },
       required: true,
       isInValid: false,
       errorMsg: "",
     },
     toContract: {
-      value: "",
+      value: {
+        ca: "",
+        logo: "",
+        ticker: "",
+      },
       required: true,
       isInValid: false,
       errorMsg: "",
@@ -85,15 +95,21 @@ export function Swap({ message }: { message: ContentWithUser }) {
               label={"A Token address"}
               {...form.fromContract}
             >
-              <TextField
+              <TokenInputSell
+                tokenLimitList={portfolio?.items.map((item) => ({
+                  ca: item.address,
+                  logo: item.logoURI,
+                  ticker: item.symbol,
+                  priceUsd: item.priceUsd,
+                  uiAmount: item.uiAmount,
+                }))}
                 value={form.fromContract.value}
-                placeholder='Token Contract Address'
-                onChange={(event) => {
+                onChange={(value) => {
                   setForm({
                     ...form,
                     fromContract: {
                       ...form.fromContract,
-                      value: event.target.value,
+                      value,
                     },
                   });
                 }}
@@ -105,15 +121,14 @@ export function Swap({ message }: { message: ContentWithUser }) {
               label={"B Token address"}
               {...form.toContract}
             >
-              <TextField
+              <TokenInputBuy
                 value={form.toContract.value}
-                placeholder='Token Contract Address'
-                onChange={(event) => {
+                onChange={(value) => {
                   setForm({
                     ...form,
                     toContract: {
                       ...form.toContract,
-                      value: event.target.value,
+                      value,
                     },
                   });
                 }}
@@ -179,9 +194,11 @@ export function Swap({ message }: { message: ContentWithUser }) {
           <br />
           ⬇️Type: Swap(swap A for B)
           <br />
-          🪙A Token:&nbsp;{form.fromContract.value}
+          🪙A Token:&nbsp;{form.fromContract.value.ticker}&nbsp;
+          {form.fromContract.value.ca}
           <br />
-          🪙B Token:&nbsp;{form.toContract.value}
+          🪙B Token:&nbsp;{form.toContract.value.ticker}&nbsp;
+          {form.toContract.value.ca}
           <br />
           💰Swap Amount:&nbsp;{form.amount.value}
         </p>

@@ -8,7 +8,7 @@ import {
   RadioGroup,
   TextField,
 } from "@/primitive/components";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
@@ -18,9 +18,9 @@ import { useAgentStore } from "../../../store";
 import { TokenNumber } from "@/components/token-number";
 import { upperFirstLetter } from "@/lib/utils/string";
 import { useSolana } from "@/lib/hooks/use-solana";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { NFT } from "@/types";
+import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 
 export function LimitOrder({
   message,
@@ -29,17 +29,22 @@ export function LimitOrder({
   message: ContentWithUser;
   nft: NFT;
 }) {
+  const { portfolio } = useAgentStore();
   const { deleteMessageById, addAndSendMessage, updateMessage } =
     useChatContext();
   const [type, setType] = useState<"buy" | "sell">("buy");
   const [form, setForm] = useState<{
-    tokenContract: FormValue<string>;
+    token: FormValue<TokenValue>;
     amount: FormValue<string>;
     target: FormValue<string>;
     direction: FormValue<"above" | "below">;
   }>({
-    tokenContract: {
-      value: "",
+    token: {
+      value: {
+        ca: "",
+        ticker: "",
+        logo: "",
+      },
       required: true,
       isInValid: false,
       errorMsg: "",
@@ -95,8 +100,8 @@ export function LimitOrder({
                 updateMessage({ ...message, step: "finish" });
                 addAndSendMessage(
                   type === "buy"
-                    ? `Create an automatic task to buy ${form.tokenContract.value} with ${form.amount.value} SOL when the token price is ${form.direction.value} ${form.target.value}`
-                    : `Create an automatic task to sell ${form.amount.value} ${form.tokenContract.value} for SOL when the token price is ${form.direction.value} ${form.target.value}`
+                    ? `Create an automatic task to buy ${form.token.value} with ${form.amount.value} SOL when the token price is ${form.direction.value} ${form.target.value}`
+                    : `Create an automatic task to sell ${form.amount.value} ${form.token.value} for SOL when the token price is ${form.direction.value} ${form.target.value}`
                 );
               }}
             >
@@ -113,20 +118,41 @@ export function LimitOrder({
             <RadioButton value='buy'>Limit Buy</RadioButton>
             <RadioButton value='sell'>Limit Sell</RadioButton>
           </RadioButtonGroup>
-          <FormItem label={"Token Contract Address"} {...form.tokenContract}>
-            <TextField
-              value={form.tokenContract.value}
-              placeholder='Token Contract Address'
-              onChange={(event) => {
-                setForm({
-                  ...form,
-                  tokenContract: {
-                    ...form.tokenContract,
-                    value: event.target.value,
-                  },
-                });
-              }}
-            />
+          <FormItem label={"Token"} {...form.token}>
+            {type === "buy" ? (
+              <TokenInputBuy
+                value={form.token.value}
+                onChange={(value) => {
+                  setForm({
+                    ...form,
+                    token: {
+                      ...form.token,
+                      value,
+                    },
+                  });
+                }}
+              />
+            ) : (
+              <TokenInputSell
+                tokenLimitList={portfolio?.items.map((item) => ({
+                  ca: item.address,
+                  logo: item.logoURI,
+                  ticker: item.symbol,
+                  priceUsd: item.priceUsd,
+                  uiAmount: item.uiAmount,
+                }))}
+                value={form.token.value}
+                onChange={(value) => {
+                  setForm({
+                    ...form,
+                    token: {
+                      ...form.token,
+                      value,
+                    },
+                  });
+                }}
+              />
+            )}
           </FormItem>
           <div className='w-full flex flex-col gap-8'>
             <FormItem
@@ -240,7 +266,8 @@ export function LimitOrder({
           <br />
           ⬇️Type: Limit {type} order
           <br />
-          🪙Token:&nbsp;{form.tokenContract.value}
+          🪙Token:&nbsp;{form.token.value.ticker}&nbsp;
+          {form.token.value.ca}
           <br />
           💰{upperFirstLetter(type)} Amount:&nbsp;{form.amount.value}
           <br />

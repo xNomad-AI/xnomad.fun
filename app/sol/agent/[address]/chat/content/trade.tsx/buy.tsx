@@ -9,6 +9,7 @@ import { ContentWithUser } from "../../types";
 import { useSolana } from "@/lib/hooks/use-solana";
 import { NFT } from "@/types";
 import { PublicKey } from "@solana/web3.js";
+import { TokenInputBuy, TokenValue } from "../token-input";
 
 export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
   const { deleteMessageById, addAndSendMessage, updateMessage } =
@@ -21,19 +22,16 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
     });
   }, []);
   const [form, setForm] = useState<{
-    tokenContractAddress: FormValue<string>;
+    token: FormValue<TokenValue>;
     amount: FormValue<string>;
-    symbol: FormValue<string>;
   }>({
-    tokenContractAddress: {
-      value: "",
+    token: {
+      value: {
+        ca: "",
+        ticker: "",
+        logo: "",
+      },
       required: true,
-      isInValid: false,
-      errorMsg: "",
-    },
-    symbol: {
-      value: "",
-      required: false,
       isInValid: false,
       errorMsg: "",
     },
@@ -66,9 +64,9 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
               size='s'
               onClick={() => {
                 addAndSendMessage(
-                  `Buy ${form.symbol.value ? `${form.symbol.value} ` : ""}${
-                    form.tokenContractAddress.value
-                  } with ${form.amount.value} SOL`
+                  `Buy ${
+                    form.token.value.ticker ? `${form.token.value.ticker} ` : ""
+                  }${form.token.value.ca} with ${form.amount.value} SOL`
                 );
                 updateMessage({ ...message, step: "finish" });
               }}
@@ -82,34 +80,15 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
           <span className='font-bold text-size-16'>Buy</span>
-          <FormItem
-            label={"Token Contract Address"}
-            {...form.tokenContractAddress}
-          >
-            <TextField
-              value={form.tokenContractAddress.value}
-              placeholder='Token Contract Address'
-              onChange={(event) => {
+          <FormItem label={"Token"} {...form.token}>
+            <TokenInputBuy
+              value={form.token.value}
+              onChange={(value) => {
                 setForm({
                   ...form,
-                  tokenContractAddress: {
-                    ...form.tokenContractAddress,
-                    value: event.target.value,
-                  },
-                });
-              }}
-            />
-          </FormItem>
-          <FormItem label={"Symbol"} {...form.symbol}>
-            <TextField
-              value={form.symbol.value}
-              placeholder='Symbol (optional)'
-              onChange={(event) => {
-                setForm({
-                  ...form,
-                  symbol: {
-                    ...form.symbol,
-                    value: event.target.value,
+                  token: {
+                    ...form.token,
+                    value,
                   },
                 });
               }}
@@ -179,8 +158,9 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
           <br />
           ⬇️Type: Buy
           <br />
-          🪙Token: {form.symbol.value ? `${form.symbol.value} ` : ""}
-          {form.tokenContractAddress.value}
+          🪙Token:{" "}
+          {form.token.value.ticker ? `${form.token.value.ticker} ` : ""}
+          {form.token.value.ca}
           <br />
           💰Buy Amount:&nbsp;
           <TokenNumber className='inline-flex' number={form.amount.value} /> SOL

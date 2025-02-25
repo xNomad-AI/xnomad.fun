@@ -10,7 +10,7 @@ import { api } from "@/primitive/api";
 import { use100vh } from "react-div-100vh";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { ChatMessageList } from "./components/chat/chat-message-list";
-import { ChatContent } from "./response";
+import { ChatContent } from "./content";
 import { useChatContext } from "./store";
 import { ClearMemoryButton } from "./components/clear-memory";
 import { InputForm } from "./components/input-form";

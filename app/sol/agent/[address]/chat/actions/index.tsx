@@ -8,7 +8,7 @@ import {
   TradeAction,
   tradeActionConfigs,
   tradeActions,
-} from "../response/types";
+} from "../content/types";
 import { Button, IconArrowLeft } from "@/primitive/components";
 import { useMemoizedFn } from "ahooks";
 import { useChatContext } from "../store";

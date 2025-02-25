@@ -1,5 +1,5 @@
 import { Content } from "@elizaos/core";
-import { Action, TradeAction } from "../response/types";
+import { Action, TradeAction } from "../content/types";
 
 export interface IAttachment {
   url: string;

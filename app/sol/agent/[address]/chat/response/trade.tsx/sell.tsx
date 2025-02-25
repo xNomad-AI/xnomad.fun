@@ -2,7 +2,7 @@ import { validNumberInput } from "@/lib/utils/input-helper";
 import { Button, FormItem, FormValue, TextField } from "@/primitive/components";
 import { useState } from "react";
 import { useChatContext } from "../../store";
-import { ResponseContainer } from "../container";
+import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
 
 export function Sell({ message }: { message: ContentWithUser }) {
@@ -36,7 +36,7 @@ export function Sell({ message }: { message: ContentWithUser }) {
   const step = message.step;
 
   return (
-    <ResponseContainer
+    <ChatContentContainer
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
@@ -170,6 +170,6 @@ export function Sell({ message }: { message: ContentWithUser }) {
           💰Sell Amount:&nbsp;{form.amount.value}
         </p>
       )}
-    </ResponseContainer>
+    </ChatContentContainer>
   );
 }

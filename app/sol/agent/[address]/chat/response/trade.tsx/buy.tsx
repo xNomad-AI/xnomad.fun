@@ -1,14 +1,12 @@
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { Button, FormItem, FormValue, TextField } from "@/primitive/components";
-import { useEffect, useMemo, useState } from "react";
-import { useAgentStore } from "../../../store";
+import { useEffect, useState } from "react";
 import { TokenNumber } from "@/components/token-number";
 import BigNumber from "bignumber.js";
 import { useChatContext } from "../../store";
-import { ResponseContainer } from "../container";
-import { ActionStep, ContentWithUser } from "../../types";
+import { ChatContentContainer } from "../container";
+import { ContentWithUser } from "../../types";
 import { useSolana } from "@/lib/hooks/use-solana";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { NFT } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 
@@ -48,7 +46,7 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
   });
   const step = message.step;
   return (
-    <ResponseContainer
+    <ChatContentContainer
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
@@ -188,6 +186,6 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
           <TokenNumber className='inline-flex' number={form.amount.value} /> SOL
         </p>
       )}
-    </ResponseContainer>
+    </ChatContentContainer>
   );
 }

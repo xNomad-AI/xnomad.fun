@@ -33,8 +33,9 @@ const ChatBubble = React.forwardRef<HTMLDivElement, ChatBubbleProps>(
   ({ className, variant, layout, children, ...props }, ref) => (
     <div
       className={clsx(
-        chatBubbleVariant({ variant, layout, className }),
-        "relative group"
+        chatBubbleVariant({ variant, layout }),
+        "relative group",
+        className
       )}
       ref={ref}
       {...props}

@@ -2,7 +2,7 @@ import { NFT } from "@/types";
 import { ContentWithUser } from "../types";
 import { Airdrop } from "./airdrop";
 import AIWriter from "react-aiwriter";
-import { ResponseContainer } from "./container";
+import { ChatContentContainer } from "./container";
 import { Buy } from "./trade.tsx/buy";
 import { Sell } from "./trade.tsx/sell";
 import { Transfer } from "./trade.tsx/transfer";
@@ -10,7 +10,7 @@ import { Swap } from "./trade.tsx/swap";
 import { LimitOrder } from "./trade.tsx/limit-order";
 import { IssueToken } from "./issue-token";
 
-export function AiResponse({
+export function ChatContent({
   message,
   nft,
 }: {
@@ -43,9 +43,9 @@ export function AiResponse({
       return <IssueToken message={message} nft={nft} />;
     default:
       return (
-        <ResponseContainer showCopyButton showTimestamp message={message}>
+        <ChatContentContainer showCopyButton showTimestamp message={message}>
           <AIWriter>{message?.text}</AIWriter>
-        </ResponseContainer>
+        </ChatContentContainer>
       );
   }
 }

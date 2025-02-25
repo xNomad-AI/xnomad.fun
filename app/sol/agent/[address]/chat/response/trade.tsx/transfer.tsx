@@ -2,7 +2,7 @@ import { Button, FormItem, FormValue, TextField } from "@/primitive/components";
 import { useState } from "react";
 import BigNumber from "bignumber.js";
 import { useChatContext } from "../../store";
-import { ResponseContainer } from "../container";
+import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
 import { NFT } from "@/types";
 import { validNumberInput } from "@/lib/utils/input-helper";
@@ -50,7 +50,7 @@ export function Transfer({
   });
   const step = message.step;
   return (
-    <ResponseContainer
+    <ChatContentContainer
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
@@ -206,6 +206,6 @@ export function Transfer({
           💼To:&nbsp;{form.toAddress.value}
         </p>
       )}
-    </ResponseContainer>
+    </ChatContentContainer>
   );
 }

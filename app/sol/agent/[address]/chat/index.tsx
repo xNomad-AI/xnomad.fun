@@ -10,7 +10,7 @@ import { api } from "@/primitive/api";
 import { use100vh } from "react-div-100vh";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { ChatMessageList } from "./components/chat/chat-message-list";
-import { AiResponse } from "./response";
+import { ChatContent } from "./response";
 import { useChatContext } from "./store";
 import { ClearMemoryButton } from "./components/clear-memory";
 import { InputForm } from "./components/input-form";
@@ -165,11 +165,10 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
                         src={nft.image}
                       />
                     ) : null}
-                    <div className='flex flex-col flex-1'>
-                      {message ? (
-                        <AiResponse message={message} nft={nft} />
-                      ) : null}
-                    </div>
+
+                    {message ? (
+                      <ChatContent message={message} nft={nft} />
+                    ) : null}
                   </Comp>
                 );
               })}

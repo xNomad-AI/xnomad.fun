@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { TokenNumber } from "@/components/token-number";
 import BigNumber from "bignumber.js";
-import { ResponseContainer } from "../container";
+import { ChatContentContainer } from "../container";
 import { ContentWithUser, IAttachment } from "../../types";
 import { useSolana } from "@/lib/hooks/use-solana";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -124,7 +124,7 @@ export function IssueToken({
     reader.readAsDataURL(file);
   });
   return (
-    <ResponseContainer
+    <ChatContentContainer
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
@@ -425,6 +425,6 @@ export function IssueToken({
           buy {form.amount.value} SOL worth.
         </p>
       )}
-    </ResponseContainer>
+    </ChatContentContainer>
   );
 }

@@ -11,7 +11,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import { useChatContext } from "../../store";
-import { ResponseContainer } from "../container";
+import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { useAgentStore } from "../../../store";
@@ -72,7 +72,7 @@ export function LimitOrder({
   }, []);
   const step = message.step;
   return (
-    <ResponseContainer
+    <ChatContentContainer
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
@@ -247,6 +247,6 @@ export function LimitOrder({
           ⚡️Trigger: price above ${form.target.value}
         </p>
       )}
-    </ResponseContainer>
+    </ChatContentContainer>
   );
 }

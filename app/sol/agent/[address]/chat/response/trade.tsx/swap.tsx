@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import BigNumber from "bignumber.js";
 import { useChatContext } from "../../store";
-import { ResponseContainer } from "../container";
+import { ChatContentContainer } from "../container";
 import { ActionStep, ContentWithUser } from "../../types";
 import { validNumberInput } from "@/lib/utils/input-helper";
 
@@ -45,7 +45,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
   const step = message.step;
 
   return (
-    <ResponseContainer
+    <ChatContentContainer
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
@@ -186,6 +186,6 @@ export function Swap({ message }: { message: ContentWithUser }) {
           💰Swap Amount:&nbsp;{form.amount.value}
         </p>
       )}
-    </ResponseContainer>
+    </ChatContentContainer>
   );
 }

@@ -13,7 +13,7 @@ import CopyButton from "../components/copy-button";
 function getMessageVariant(role: string) {
   return role !== "user" ? "received" : "sent";
 }
-export function ResponseContainer({
+export function ChatContentContainer({
   message,
   children,
   showCopyButton,
@@ -30,7 +30,9 @@ export function ResponseContainer({
     <div className='flex flex-col flex-1 gap-8'>
       <ChatBubble
         variant={variant}
-        className='flex flex-row items-center gap-2'
+        className={clsx("flex flex-row items-center gap-2", {
+          "!w-full": Boolean(message.webAction),
+        })}
       >
         <div className='flex flex-col gap-8 w-full'>
           <ChatBubbleMessage variant={variant} isLoading={message?.isLoading}>

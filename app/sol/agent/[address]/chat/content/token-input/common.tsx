@@ -6,7 +6,7 @@ import {
   Spin,
   TextField,
 } from "@/primitive/components";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { TokenValue } from ".";
 
 export function CommonInput<T extends TokenValue>({

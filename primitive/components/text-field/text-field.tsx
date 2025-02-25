@@ -54,7 +54,6 @@ export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
 
     if (input) {
       /**
-       * 修改原生元素的值
        * https://stackoverflow.com/questions/23892547/what-is-the-best-way-to-trigger-onchange-event-in-react-js
        */
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(

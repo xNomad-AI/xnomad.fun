@@ -76,7 +76,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
               onClick={() => {
                 updateMessage({ ...message, step: "finish" });
                 addAndSendMessage(
-                  `Swap ${form.amount.value} ${form.fromContract.value} for ${form.toContract.value}`
+                  `Swap ${form.amount.value} ${form.fromContract.value.ca} for ${form.toContract.value.ca}`
                 );
               }}
             >

@@ -1,16 +1,16 @@
 # xNomad.fun :robot:
 ![NPM Version](https://img.shields.io/badge/npm->20.0.0-blue) ![Typescript Version](https://img.shields.io/badge/Typescript-5-blue) ![React Version](https://img.shields.io/badge/React-18-blue) [![License](https://img.shields.io/npm/l/reactstrap.svg)](./LICENSE)
 
-The repository is the open-source codebase for the website[<ins>xNomad.fun</ins>](https://xnomad.fun).
+The repository is the open-source codebase for the website [<ins>xNomad.fun</ins>](https://xnomad.fun).
 Project goals:
-- To provide a reference for those who wish to develop AI-NFT applications based on our[<ins>MCV</ins>](https://github.com/xNomad-AI/mcv)项project.
+- To provide a reference for those who wish to develop AI-NFT applications based on our [<ins>MCV</ins>](https://github.com/xNomad-AI/mcv) project.
 - To leverage the power of the community to make the xNomad.fun project a groundbreaking initiative that will transform both the AI and blockchain industries.
 
-If you're interested in us, feel free to learn more about us through the[<ins>xNomad Documentation</ins>](https://docs.xnomad.ai/).
+If you're interested in us, feel free to learn more about us through the [<ins>xNomad Documentation</ins>](https://docs.xnomad.ai/).
 
 ## :rocket: Quick Start
 
-1. First, you need to get the [core](https://github.com/xNomad-AI/core)service running, which will provide you with two endpoints. If you run the core service locally with the default configuration, you should get the following two endpoints:
+1. First, you need to get the [core](https://github.com/xNomad-AI/core) service running, which will provide you with two endpoints. If you run the core service locally with the default configuration, you should get the following two endpoints:
   - localhost:8080
   - localhost:8080/agent  
 > Of course, you can also deploy the core service on any server as needed.

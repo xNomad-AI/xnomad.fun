@@ -1,6 +1,8 @@
 import {
   createContext,
+  Dispatch,
   PropsWithChildren,
+  SetStateAction,
   useContext,
   useEffect,
   useMemo,
@@ -16,6 +18,7 @@ import { apiClient } from "./lib/api";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { SetState } from "ahooks/lib/createUseStorageState";
 import { stringToUuid } from "./lib/uuid";
+import { api } from "@/primitive/api";
 const ChatContext = createContext<{
   handleSubmitForm: (e: React.FormEvent<HTMLFormElement>) => void;
   addMessage: (
@@ -27,7 +30,7 @@ const ChatContext = createContext<{
   selectedFile: File | null;
   setSelectedFile: (file: File | null) => void;
   messages?: ContentWithUser[];
-  setMessages: (value?: SetState<ContentWithUser[]> | undefined) => void;
+  setMessages: Dispatch<SetStateAction<ContentWithUser[]>>;
   userId: string;
   messagesContainerRef: React.RefObject<HTMLDivElement>;
   sendMessageMutation: UseMutationResult<
@@ -61,13 +64,25 @@ export function ChatProvider({
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-
-  const [messages, setMessages] = useLocalStorageState<ContentWithUser[]>(
-    `messages-${agentId}`,
-    {
-      defaultValue: [],
+  const userId = useMemo(() => {
+    if (publicKey) {
+      return stringToUuid(publicKey.toBase58());
+    } else {
+      return stringToUuid(`web-${Date.now()}-${agentId}-${Math.random()}`);
     }
-  );
+  }, [publicKey, agentId]);
+  const [messages, setMessages] = useState<ContentWithUser[]>([]);
+  useEffect(() => {
+    api.agent
+      .get<{
+        agentId: string;
+        memories: ContentWithUser[];
+        roomId: string;
+      }>(`/agents/${agentId}/${userId}/memories`)
+      .then((res) => {
+        setMessages(res.memories);
+      });
+  }, [agentId, userId]);
   const scrollToBottom = useMemoizedFn(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop =
@@ -78,13 +93,6 @@ export function ChatProvider({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  const userId = useMemo(() => {
-    if (publicKey) {
-      return stringToUuid(publicKey.toBase58());
-    } else {
-      return stringToUuid(`web-${Date.now()}-${agentId}-${Math.random()}`);
-    }
-  }, [publicKey, agentId]);
 
   const sendMessageMutation = useMutation({
     mutationKey: ["send_message", agentId],

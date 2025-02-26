@@ -12,10 +12,10 @@ export function Sell({ message }: { message: ContentWithUser }) {
     useChatContext();
   const { portfolio } = useAgentStore();
   const [form, setForm] = useState<{
-    tokenContractAddress: FormValue<TokenValue>;
+    token: FormValue<TokenValue>;
     amount: FormValue<string>;
   }>({
-    tokenContractAddress: {
+    token: {
       value: {
         ca: "",
         logo: "",
@@ -57,10 +57,8 @@ export function Sell({ message }: { message: ContentWithUser }) {
                 updateMessage({ ...message, step: "finish" });
                 addAndSendMessage(
                   `Sell ${form.amount.value} ${
-                    form.tokenContractAddress.value.ticker
-                      ? `${form.tokenContractAddress.value.ticker} `
-                      : ""
-                  }${form.tokenContractAddress.value.ca} for SOL`
+                    form.token.value.ticker ? `${form.token.value.ticker} ` : ""
+                  }${form.token.value.ca} for SOL`
                 );
               }}
             >
@@ -73,7 +71,7 @@ export function Sell({ message }: { message: ContentWithUser }) {
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
           <span className='font-bold text-size-16'>Sell</span>
-          <FormItem label={"Token"} {...form.tokenContractAddress}>
+          <FormItem label={"Token"} {...form.token}>
             <TokenInputSell
               tokenLimitList={portfolio?.items.map((item) => ({
                 ca: item.address,
@@ -82,12 +80,13 @@ export function Sell({ message }: { message: ContentWithUser }) {
                 priceUsd: item.priceUsd,
                 uiAmount: item.uiAmount,
               }))}
-              value={form.tokenContractAddress.value}
+              value={form.token.value}
               onChange={(value) => {
                 setForm({
                   ...form,
-                  tokenContractAddress: {
-                    ...form.tokenContractAddress,
+                  token: {
+                    ...form.token,
+                    isInValid: false,
                     value,
                   },
                 });
@@ -104,6 +103,7 @@ export function Sell({ message }: { message: ContentWithUser }) {
                   ...form,
                   amount: {
                     ...form.amount,
+                    isInValid: false,
                     value,
                   },
                 });
@@ -130,10 +130,16 @@ export function Sell({ message }: { message: ContentWithUser }) {
                 const newForm = { ...form };
                 Object.keys(newForm).forEach((_key) => {
                   const key = _key as keyof typeof newForm;
-                  if (newForm[key].required && !newForm[key].value) {
-                    allValid = false;
-                    newForm[key].isInValid = true;
-                    newForm[key].errorMsg = "Required";
+                  if (newForm[key].required) {
+                    if (
+                      !newForm[key].value ||
+                      (typeof newForm[key].value === "object" &&
+                        Object.values(newForm[key].value).some((item) => !item))
+                    ) {
+                      allValid = false;
+                      newForm[key].isInValid = true;
+                      newForm[key].errorMsg = "Required";
+                    }
                   }
                 });
                 if (!allValid) {
@@ -154,10 +160,8 @@ export function Sell({ message }: { message: ContentWithUser }) {
           ⬇️Type: Sell
           <br />
           🪙Token:{" "}
-          {form.tokenContractAddress.value.ticker
-            ? `${form.tokenContractAddress.value.ticker} `
-            : ""}
-          {form.tokenContractAddress.value.ca}
+          {form.token.value.ticker ? `${form.token.value.ticker} ` : ""}
+          {form.token.value.ca}
           <br />
           💰Sell Amount:&nbsp;{form.amount.value}
         </p>

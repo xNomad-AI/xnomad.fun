@@ -21,11 +21,11 @@ export function Swap({ message }: { message: ContentWithUser }) {
     useChatContext();
   const { portfolio } = useAgentStore();
   const [form, setForm] = useState<{
-    fromContract: FormValue<TokenValue>;
+    fromToken: FormValue<TokenValue>;
     amount: FormValue<string>;
-    toContract: FormValue<TokenValue>;
+    toToken: FormValue<TokenValue>;
   }>({
-    fromContract: {
+    fromToken: {
       value: {
         ca: "",
         logo: "",
@@ -35,7 +35,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
       isInValid: false,
       errorMsg: "",
     },
-    toContract: {
+    toToken: {
       value: {
         ca: "",
         logo: "",
@@ -76,7 +76,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
               onClick={() => {
                 updateMessage({ ...message, step: "finish" });
                 addAndSendMessage(
-                  `Swap ${form.amount.value} ${form.fromContract.value.ca} for ${form.toContract.value.ca}`
+                  `Swap ${form.amount.value} ${form.fromToken.value.ca} for ${form.toToken.value.ca}`
                 );
               }}
             >
@@ -93,7 +93,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
             <FormItem
               className='w-full'
               label={"A Token address"}
-              {...form.fromContract}
+              {...form.fromToken}
             >
               <TokenInputSell
                 tokenLimitList={portfolio?.items.map((item) => ({
@@ -103,12 +103,13 @@ export function Swap({ message }: { message: ContentWithUser }) {
                   priceUsd: item.priceUsd,
                   uiAmount: item.uiAmount,
                 }))}
-                value={form.fromContract.value}
+                value={form.fromToken.value}
                 onChange={(value) => {
                   setForm({
                     ...form,
-                    fromContract: {
-                      ...form.fromContract,
+                    fromToken: {
+                      ...form.fromToken,
+                      isInValid: false,
                       value,
                     },
                   });
@@ -119,15 +120,16 @@ export function Swap({ message }: { message: ContentWithUser }) {
             <FormItem
               className='w-full'
               label={"B Token address"}
-              {...form.toContract}
+              {...form.toToken}
             >
               <TokenInputBuy
-                value={form.toContract.value}
+                value={form.toToken.value}
                 onChange={(value) => {
                   setForm({
                     ...form,
-                    toContract: {
-                      ...form.toContract,
+                    toToken: {
+                      ...form.toToken,
+                      isInValid: false,
                       value,
                     },
                   });
@@ -145,6 +147,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
                   ...form,
                   amount: {
                     ...form.amount,
+                    isInValid: false,
                     value,
                   },
                 });
@@ -171,10 +174,16 @@ export function Swap({ message }: { message: ContentWithUser }) {
                 const newForm = { ...form };
                 Object.keys(newForm).forEach((_key) => {
                   const key = _key as keyof typeof newForm;
-                  if (newForm[key].required && !newForm[key].value) {
-                    allValid = false;
-                    newForm[key].isInValid = true;
-                    newForm[key].errorMsg = "Required";
+                  if (newForm[key].required) {
+                    if (
+                      !newForm[key].value ||
+                      (typeof newForm[key].value === "object" &&
+                        Object.values(newForm[key].value).some((item) => !item))
+                    ) {
+                      allValid = false;
+                      newForm[key].isInValid = true;
+                      newForm[key].errorMsg = "Required";
+                    }
                   }
                 });
                 if (!allValid) {
@@ -194,11 +203,11 @@ export function Swap({ message }: { message: ContentWithUser }) {
           <br />
           ⬇️Type: Swap(swap A for B)
           <br />
-          🪙A Token:&nbsp;{form.fromContract.value.ticker}&nbsp;
-          {form.fromContract.value.ca}
+          🪙A Token:&nbsp;{form.fromToken.value.ticker}&nbsp;
+          {form.fromToken.value.ca}
           <br />
-          🪙B Token:&nbsp;{form.toContract.value.ticker}&nbsp;
-          {form.toContract.value.ca}
+          🪙B Token:&nbsp;{form.toToken.value.ticker}&nbsp;
+          {form.toToken.value.ca}
           <br />
           💰Swap Amount:&nbsp;{form.amount.value}
         </p>

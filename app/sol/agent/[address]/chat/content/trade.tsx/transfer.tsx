@@ -19,11 +19,11 @@ export function Transfer({
     useChatContext();
   const { portfolio } = useAgentStore();
   const [form, setForm] = useState<{
-    tokenContractAddress: FormValue<TokenValue>;
+    token: FormValue<TokenValue>;
     amount: FormValue<string>;
     toAddress: FormValue<string>;
   }>({
-    tokenContractAddress: {
+    token: {
       value: {
         ca: "",
         logo: "",
@@ -70,12 +70,8 @@ export function Transfer({
                 updateMessage({ ...message, step: "finish" });
                 addAndSendMessage(
                   `Transfer ${form.amount.value} ${
-                    form.tokenContractAddress.value.ticker
-                      ? `${form.tokenContractAddress.value.ticker} `
-                      : ""
-                  }${form.tokenContractAddress.value.ca} to ${
-                    form.toAddress.value
-                  }`
+                    form.token.value.ticker ? `${form.token.value.ticker} ` : ""
+                  }${form.token.value.ca} to ${form.toAddress.value}`
                 );
               }}
             >
@@ -88,7 +84,7 @@ export function Transfer({
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
           <span className='font-bold text-size-16'>Transfer</span>
-          <FormItem label={"Token"} {...form.tokenContractAddress}>
+          <FormItem label={"Token"} {...form.token}>
             <TokenInputSell
               tokenLimitList={portfolio?.items.map((item) => ({
                 ca: item.address,
@@ -97,12 +93,13 @@ export function Transfer({
                 priceUsd: item.priceUsd,
                 uiAmount: item.uiAmount,
               }))}
-              value={form.tokenContractAddress.value}
+              value={form.token.value}
               onChange={(value) => {
                 setForm({
                   ...form,
-                  tokenContractAddress: {
-                    ...form.tokenContractAddress,
+                  token: {
+                    ...form.token,
+                    isInValid: false,
                     value,
                   },
                 });
@@ -119,6 +116,7 @@ export function Transfer({
                   ...form,
                   amount: {
                     ...form.amount,
+                    isInValid: false,
                     value,
                   },
                 });
@@ -134,6 +132,7 @@ export function Transfer({
                   ...form,
                   toAddress: {
                     ...form.toAddress,
+                    isInValid: false,
                     value: event.target.value,
                   },
                 });
@@ -160,10 +159,16 @@ export function Transfer({
                 const newForm = { ...form };
                 Object.keys(newForm).forEach((_key) => {
                   const key = _key as keyof typeof newForm;
-                  if (newForm[key].required && !newForm[key].value) {
-                    allValid = false;
-                    newForm[key].isInValid = true;
-                    newForm[key].errorMsg = "Required";
+                  if (newForm[key].required) {
+                    if (
+                      !newForm[key].value ||
+                      (typeof newForm[key].value === "object" &&
+                        Object.values(newForm[key].value).some((item) => !item))
+                    ) {
+                      allValid = false;
+                      newForm[key].isInValid = true;
+                      newForm[key].errorMsg = "Required";
+                    }
                   }
                 });
                 if (!allValid) {
@@ -184,10 +189,8 @@ export function Transfer({
           ⬇️Type: Transfer
           <br />
           🪙Token:&nbsp;
-          {form.tokenContractAddress.value.ticker
-            ? `${form.tokenContractAddress.value.ticker} `
-            : ""}
-          {form.tokenContractAddress.value.ca}
+          {form.token.value.ticker ? `${form.token.value.ticker} ` : ""}
+          {form.token.value.ca}
           <br />
           💰Amount:&nbsp;{form.amount.value}
           <br />

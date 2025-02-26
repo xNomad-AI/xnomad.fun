@@ -18,7 +18,6 @@ export const actionConfigs = {
   },
   analyze: {
     title: "Analyze",
-    disabled: true,
   },
   "issue-token": {
     title: "Issue Token",

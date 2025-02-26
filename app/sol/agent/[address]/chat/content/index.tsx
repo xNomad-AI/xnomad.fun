@@ -9,6 +9,7 @@ import { Transfer } from "./trade.tsx/transfer";
 import { Swap } from "./trade.tsx/swap";
 import { LimitOrder } from "./trade.tsx/limit-order";
 import { IssueToken } from "./issue-token";
+import { AnalyzeInput, AnalyzeResponse } from "./analyze";
 
 export function ChatContent({
   message,
@@ -38,7 +39,11 @@ export function ChatContent({
           return "Trade action not found";
       }
     case "analyze":
-    // return <Analyze />
+      if (message.user === "user") {
+        return <AnalyzeInput message={message} />;
+      } else {
+        return <AnalyzeResponse message={message} nft={nft} />;
+      }
     case "issue-token":
       return <IssueToken message={message} nft={nft} />;
     default:

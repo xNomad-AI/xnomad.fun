@@ -1,0 +1,138 @@
+import { Button, FormItem, FormValue } from "@/primitive/components";
+import { useRef, useState } from "react";
+import { useChatContext } from "../../store";
+import { ChatContentContainer } from "../container";
+import { ContentWithUser } from "../../types";
+import { TokenInputBuy, TokenValue } from "../token-input";
+
+export function AnalyzeInput({ message }: { message: ContentWithUser }) {
+  const { deleteMessageById, addMessage, updateMessage, generateMessageId } =
+    useChatContext();
+  const [form, setForm] = useState<{
+    token: FormValue<TokenValue>;
+  }>({
+    token: {
+      value: {
+        ca: "",
+        ticker: "",
+        logo: "",
+      },
+      required: true,
+      isInValid: false,
+      errorMsg: "",
+    },
+  });
+  const step = message.step;
+  return (
+    <ChatContentContainer
+      message={message}
+      showTimestamp={step !== "input"}
+      showCopyButton={step !== "input"}
+      suffixNode={
+        step === "confirm" ? (
+          <div className='flex items-center gap-16'>
+            <Button
+              size='s'
+              variant='secondary'
+              onClick={() => {
+                updateMessage({ ...message, step: "input" });
+              }}
+            >
+              Edit
+            </Button>
+            <Button
+              size='s'
+              onClick={() => {
+                addMessage([
+                  {
+                    text: `Help me analyze this token: ${form.token.value.ca}`,
+                    user: "user",
+                    createdAt: Date.now(),
+                    id: generateMessageId("analyze-input"),
+                  },
+                  {
+                    text: `Help me analyze this token: ${form.token.value.ca}`,
+                    user: "system",
+                    isLoading: true,
+                    webAction: "analyze",
+                    createdAt: Date.now(),
+                    id: generateMessageId("analyze-input-loading"),
+                  },
+                ]);
+                updateMessage({ ...message, step: "finish" });
+              }}
+            >
+              Confirm
+            </Button>
+          </div>
+        ) : null
+      }
+    >
+      {step === "input" ? (
+        <div className='flex flex-col gap-16 w-full'>
+          <span className='font-bold text-size-16'>Buy</span>
+          <FormItem label={"Token"} {...form.token}>
+            <TokenInputBuy
+              value={form.token.value}
+              onChange={(value) => {
+                setForm({
+                  ...form,
+                  token: {
+                    ...form.token,
+                    value,
+                  },
+                });
+              }}
+            />
+          </FormItem>
+          <div className='w-full flex justify-end items-center gap-16'>
+            <Button
+              size='s'
+              variant='secondary'
+              onClick={() => {
+                deleteMessageById(message.id);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              size='s'
+              onClick={() => {
+                if (Object.values(form).some((item) => item.isInValid)) {
+                  return;
+                }
+                let allValid = true;
+                const newForm = { ...form };
+                Object.keys(newForm).forEach((_key) => {
+                  const key = _key as keyof typeof newForm;
+                  if (newForm[key].required && !newForm[key].value) {
+                    allValid = false;
+                    newForm[key].isInValid = true;
+                    newForm[key].errorMsg = "Required";
+                  }
+                });
+                if (!allValid) {
+                  setForm(newForm);
+                  return;
+                }
+                updateMessage({ ...message, step: "confirm" });
+              }}
+            >
+              Generate Prompt
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <p>
+          Please confirm the info.
+          <br />
+          ⬇️Type: Analyze
+          <br />
+          🪙Token:{" "}
+          {form.token.value.ticker ? `${form.token.value.ticker} ` : ""}
+          {form.token.value.ca}
+        </p>
+      )}
+    </ChatContentContainer>
+  );
+}

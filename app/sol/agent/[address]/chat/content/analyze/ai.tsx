@@ -364,7 +364,10 @@ export function AnalyzeResponse({
         <br />
         Name: @{twitter?.screen_name}
         <br />
-        Registered in: {format(twitter?.register_date ?? "", "MMM dd , yyyy")}
+        Registered in:{" "}
+        {twitter?.register_date
+          ? format(twitter?.register_date ?? "", "MMM dd , yyyy")
+          : "N/A"}
         <br />
         Followers: {toThousandNum(twitter?.followers_count ?? 0)}
         <br />

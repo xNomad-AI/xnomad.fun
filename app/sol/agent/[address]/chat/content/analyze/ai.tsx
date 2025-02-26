@@ -136,12 +136,12 @@ export function AnalyzeResponse({
 }) {
   const ca = message.text.split(": ")[1];
   const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(null);
-  const [news, setNes] = useState<News[]>([]);
+  const [news, setNews] = useState<News[]>([]);
   const [twitter, setTwitter] = useState<Twitter>();
-  const { updateMessage, addMessage } = useChatContext();
+  const { updateMessage } = useChatContext();
   useEffect(() => {
     api.v1
-      .get<TokenInfo>("/agent/token/info", {
+      .get<TokenInfo>("/token/info", {
         tokenAddress: ca,
       })
       .then((res) => {
@@ -153,7 +153,7 @@ export function AnalyzeResponse({
         tokenAddress: ca,
       })
       .then((res) => {
-        setNes(res);
+        setNews(res);
       });
     api.v1
       .get<Twitter>("/agent/token/twitter-info", {

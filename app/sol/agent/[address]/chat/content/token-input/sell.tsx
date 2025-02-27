@@ -36,7 +36,7 @@ export function TokenInputSell({
           item.ticker.toLowerCase().includes(search.toLowerCase())
       ) ?? []
     );
-  }, [tokenLimitList, value]);
+  }, [tokenLimitList, value, search]);
   const selectedData = useMemo(
     () => data.find((item) => item.ca === value.ca),
     [value, data]

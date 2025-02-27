@@ -131,37 +131,53 @@ export function AnalyzeResponse({
   message,
   nft,
 }: {
-  message: ContentWithUser;
+  message: ContentWithUser & {
+    data?: {
+      info?: TokenInfo;
+      news?: News[];
+      twitter?: Twitter;
+    };
+  };
   nft: NFT;
 }) {
   const ca = message.text.split(": ")[1];
-  const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(null);
-  const [news, setNews] = useState<News[]>([]);
-  const [twitter, setTwitter] = useState<Twitter>();
+  const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(
+    message.data?.info ?? null
+  );
+  const [news, setNews] = useState<News[]>(message.data?.news ?? []);
+  const [twitter, setTwitter] = useState<Twitter | undefined>(
+    message.data?.twitter
+  );
   const { updateMessage } = useChatContext();
   useEffect(() => {
-    api.v1
-      .get<TokenInfo>("/token/info", {
-        tokenAddress: ca,
-      })
-      .then((res) => {
-        setTokenInfo(res);
-        updateMessage({ ...message, user: nft.name, isLoading: false });
-      });
-    api.v1
-      .get<News[]>("/agent/token/news", {
-        tokenAddress: ca,
-      })
-      .then((res) => {
-        setNews(res);
-      });
-    api.v1
-      .get<Twitter>("/agent/token/twitter-info", {
-        tokenAddress: ca,
-      })
-      .then((res) => {
-        setTwitter(res);
-      });
+    if (!message.data?.info?.address) {
+      api.v1
+        .get<TokenInfo>("/token/info", {
+          tokenAddress: ca,
+        })
+        .then((res) => {
+          setTokenInfo(res);
+          updateMessage({ ...message, user: nft.name, isLoading: false });
+        });
+    }
+    if (!message.data?.news?.length) {
+      api.v1
+        .get<News[]>("/agent/token/news", {
+          tokenAddress: ca,
+        })
+        .then((res) => {
+          setNews(res);
+        });
+    }
+    if (!message.data?.twitter?.id) {
+      api.v1
+        .get<Twitter>("/agent/token/twitter-info", {
+          tokenAddress: ca,
+        })
+        .then((res) => {
+          setTwitter(res);
+        });
+    }
   }, [ca]);
   const [infoType, setInfoType] = useState<"basic" | "twitter" | "news">(
     "basic"

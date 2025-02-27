@@ -13,13 +13,21 @@ import { ContentWithUser, IAttachment } from "./types";
 import { onError } from "@/lib/utils/error";
 import { UUID } from "@elizaos/core";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
-import { useLocalStorageState, useMemoizedFn } from "ahooks";
+import { useMemoizedFn } from "ahooks";
 import { apiClient } from "./lib/api";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { SetState } from "ahooks/lib/createUseStorageState";
 import { stringToUuid } from "./lib/uuid";
 import { api } from "@/primitive/api";
 import { Action } from "./content/types";
+function convertMessageActionToWebAction(action: string) {
+  switch (action) {
+    case "ANALYZE_TOKEN":
+      return "analyze";
+
+    default:
+      return action;
+  }
+}
 const ChatContext = createContext<{
   handleSubmitForm: (e: React.FormEvent<HTMLFormElement>) => void;
   addMessage: (
@@ -110,7 +118,9 @@ export function ChatProvider({
               user: msg.userId === agentId ? "system" : "user",
               createdAt: msg.createdAt,
               id: msg.id,
-              webAction: msg.content.webAction,
+              webAction:
+                msg.content.webAction ||
+                convertMessageActionToWebAction(msg.content.action),
             }))
         );
       });

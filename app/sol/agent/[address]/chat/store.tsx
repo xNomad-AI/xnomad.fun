@@ -56,7 +56,7 @@ const ChatContext = createContext<{
   agentId: UUID;
   deleteLastMessageByLength: (length?: number) => void;
   deleteMessageByIndex: (index: number) => void;
-  addAndSendMessage: (input: string, attachments?: IAttachment[]) => void;
+  addAndSendMessage: (input: string, file?: File | null) => void;
   deleteMessageById: (id: string) => void;
   updateMessage: (message: ContentWithUser) => void;
   generateMessageId: (id?: string) => string;
@@ -176,7 +176,16 @@ export function ChatProvider({
   );
   // add message then send message
   const addAndSendMessage = useMemoizedFn(
-    (input: string, attachments?: IAttachment[]) => {
+    (input: string, file?: File | null) => {
+      const attachments: IAttachment[] | undefined = file
+        ? [
+            {
+              url: URL.createObjectURL(file),
+              contentType: file.type,
+              title: file.name,
+            },
+          ]
+        : undefined;
       const newMessages: ContentWithUser[] = [
         {
           text: input,
@@ -197,7 +206,7 @@ export function ChatProvider({
 
       sendMessageMutation.mutate({
         message: input,
-        selectedFile: selectedFile ? selectedFile : null,
+        selectedFile: file || (selectedFile ? selectedFile : null),
       });
     }
   );
@@ -206,17 +215,7 @@ export function ChatProvider({
       e.preventDefault();
       if (!input && !selectedFile) return;
 
-      const attachments: IAttachment[] | undefined = selectedFile
-        ? [
-            {
-              url: URL.createObjectURL(selectedFile),
-              contentType: selectedFile.type,
-              title: selectedFile.name,
-            },
-          ]
-        : undefined;
-
-      addAndSendMessage(input, attachments);
+      addAndSendMessage(input, selectedFile);
 
       setSelectedFile(null);
       setInput("");

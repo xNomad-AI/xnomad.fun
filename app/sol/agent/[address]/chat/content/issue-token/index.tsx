@@ -143,15 +143,6 @@ export function IssueToken({
             <Button
               size='s'
               onClick={() => {
-                const attachments: IAttachment[] | undefined = form.image.value
-                  ? [
-                      {
-                        url: URL.createObjectURL(form.image.value),
-                        contentType: form.image.value.type,
-                        title: form.image.value.name,
-                      },
-                    ]
-                  : undefined;
                 addAndSendMessage(
                   `Create a new token called ${
                     form.tokenName.value
@@ -172,7 +163,7 @@ export function IssueToken({
                       ? `, with discord ${form.discord.value}`
                       : ""
                   }, buy ${form.amount.value} SOL worth.`,
-                  attachments
+                  form.image.value
                 );
                 updateMessage({ ...message, step: "finish" });
               }}

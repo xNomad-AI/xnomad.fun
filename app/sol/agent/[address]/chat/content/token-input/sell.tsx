@@ -37,16 +37,27 @@ export function TokenInputSell({
       ) ?? []
     );
   }, [tokenLimitList, value]);
+  const selectedData = useMemo(
+    () => data.find((item) => item.ca === value.ca),
+    [value, data]
+  );
   return (
-    <CommonInput
-      data={data}
-      value={value}
-      search={search}
-      setSearch={setSearch}
-      onChange={onChange}
-      className={className}
-      TokenItem={TokenItem}
-    />
+    <div className='flex flex-col gap-8 w-full'>
+      <CommonInput
+        data={data}
+        value={value}
+        search={search}
+        setSearch={setSearch}
+        onChange={onChange}
+        className={className}
+        TokenItem={TokenItem}
+      />
+      {selectedData && (
+        <div className='flex items-center gap-4 text-text2'>
+          Balance: <TokenNumber number={selectedData.uiAmount ?? ""} />
+        </div>
+      )}
+    </div>
   );
 }
 

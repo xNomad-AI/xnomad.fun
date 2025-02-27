@@ -9,7 +9,7 @@ import {
   tradeActionConfigs,
   tradeActions,
 } from "../content/types";
-import { Button, IconArrowLeft } from "@/primitive/components";
+import { Button, IconArrowLeft, message } from "@/primitive/components";
 import { useMemoizedFn } from "ahooks";
 import { useChatContext } from "../store";
 import { ContentWithUser } from "../types";
@@ -78,6 +78,12 @@ export function Actions({ nft }: { nft: NFT }) {
     }
   });
   const onTradeClick = useMemoizedFn((tradeAction: TradeAction) => {
+    if (!isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "")) {
+      message("Available to owner only", {
+        type: "error",
+      });
+      return;
+    }
     let newMessages: ContentWithUser[] = [];
     switch (tradeAction) {
       case "buy":
@@ -174,7 +180,7 @@ export function Actions({ nft }: { nft: NFT }) {
         break;
     }
   });
-  return isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "") ? (
+  return (
     <div className='flex gap-16 flex-1 overflow-hidden'>
       <motion.div
         animate={{
@@ -236,7 +242,5 @@ export function Actions({ nft }: { nft: NFT }) {
         ))}
       </motion.div>
     </div>
-  ) : (
-    <div></div>
   );
 }

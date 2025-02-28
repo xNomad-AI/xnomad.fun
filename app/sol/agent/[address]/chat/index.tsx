@@ -21,8 +21,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
 
   const [isAgentSetup, setIsAgentSetup] = useState(false);
   const hasTriggered = useRef(false);
-  const { messages, scrollToBottom, messagesContainerRef, setMessages } =
-    useChatContext();
+  const { messages, scrollToBottom, setMessages } = useChatContext();
   const triggerAgentSetup = useMemoizedFn(async () => {
     try {
       await api.v1.post(`/agent`, {
@@ -121,9 +120,12 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   const transitions = useTransition(messages, {
     keys: (message) =>
       `${message?.createdAt}-${message?.user}-${message?.text}`,
-    from: { opacity: 0, transform: "translateY(50px)" },
+    from: { opacity: 0, transform: "translateY(32px)" },
     enter: { opacity: 1, transform: "translateY(0px)" },
-    leave: { opacity: 0, transform: "translateY(10px)" },
+    leave: { opacity: 0, transform: "translateY(8px)" },
+    config: {
+      duration: 200,
+    },
   });
   const height = use100vh();
   const { breakpoint } = useBreakpoint();
@@ -150,7 +152,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
       ) : (
         <>
           <div className='flex-1 overflow-y-auto'>
-            <ChatMessageList ref={messagesContainerRef}>
+            <ChatMessageList>
               {transitions((styles, message) => {
                 // FIXME: Fix this any
                 const Comp = animated.div as any;

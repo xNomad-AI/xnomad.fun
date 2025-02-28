@@ -64,7 +64,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
           <span className='font-bold text-size-16'>Swap A for B</span>
-          <div className='flex items-center gap-8 w-full'>
+          <div className='flex gap-8 w-full'>
             <FormItem
               className='w-full'
               label={"A Token address"}
@@ -92,7 +92,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
                 }}
               />
             </FormItem>
-            <IconArrowForwardright className='text-size-20 text-text1 mt-30' />
+            <IconArrowForwardright className='text-size-20 text-text1 mt-[40px]' />
             <FormItem
               className='w-full'
               label={"B Token address"}

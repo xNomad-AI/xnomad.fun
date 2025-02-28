@@ -26,7 +26,7 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
   return (
     <ChatContentContainer message={message}>
       <div className='flex flex-col gap-16 w-full'>
-        <span className='font-bold text-size-16'>Buy</span>
+        <span className='font-bold text-size-16'>Analyze</span>
         <FormItem label={"Token"} {...form.token}>
           <TokenInputBuy
             className='!bg-background'

@@ -101,124 +101,69 @@ export function LimitOrder({
     }
   );
   return (
-    <ChatContentContainer
-      message={message}
-      showTimestamp={step !== "input"}
-      showCopyButton={step !== "input"}
-    >
-      {step === "input" ? (
-        <div className='flex flex-col gap-16 w-full'>
-          <span className='font-bold text-size-16'>Limit Order</span>
-          <RadioButtonGroup value={type} onChange={setType} disableAnimation>
-            <RadioButton value='buy'>Limit Buy</RadioButton>
-            <RadioButton value='sell'>Limit Sell</RadioButton>
-          </RadioButtonGroup>
-          <FormItem label={"Token"} {...form.token}>
-            {type === "buy" ? (
-              <TokenInputBuy
-                className='!bg-background'
-                value={form.token.value}
-                onChange={(value) => {
-                  setForm({
-                    ...form,
-                    token: {
-                      ...form.token,
-                      value,
-                      isInValid: false,
-                    },
-                  });
-                }}
-              />
-            ) : (
-              <TokenInputSell
-                className='!bg-background'
-                tokenLimitList={portfolio?.items.map((item) => ({
-                  ca: item.address,
-                  logo: item.logoURI,
-                  ticker: item.symbol,
-                  priceUsd: item.priceUsd,
-                  uiAmount: item.uiAmount,
-                }))}
-                tokenAmount={tokenAmount?.uiAmount}
-                value={form.token.value}
-                onChange={(value) => {
-                  setForm({
-                    ...form,
-                    token: {
-                      ...form.token,
-                      value,
-                      isInValid: false,
-                    },
-                  });
-                }}
-              />
-            )}
-          </FormItem>
-          <div className='w-full flex flex-col gap-8'>
-            <FormItem
-              label={type === "buy" ? "Buy Amount(SOL)" : "Sell Amount"}
-              {...form.amount}
-            >
-              <AmountInput
-                placeholder={type === "buy" ? "SOL" : "Amount"}
-                value={form.amount.value}
-                amount={type === "buy" ? undefined : tokenAmount?.uiAmount}
-                decimals={type === "buy" ? undefined : tokenAmount?.decimals}
-                onChange={(value) => {
-                  setForm({
-                    ...form,
-                    amount: {
-                      ...form.amount,
-                      isInValid: false,
-                      value,
-                    },
-                  });
-                }}
-              />
-            </FormItem>
-            {type === "buy" ? (
-              <div className='text-size-12'>
-                Balance:&nbsp;
-                <TokenNumber number={balance} />
-                &nbsp;SOL
-              </div>
-            ) : null}
-          </div>
-
-          <FormItem
-            label={
-              <div className='flex items-center gap-16'>
-                <span>Trigger: Price($)</span>
-                <RadioGroup
-                  className='gap-16'
-                  value={form.direction.value}
-                  onChange={(value) => {
-                    setForm({
-                      ...form,
-                      direction: {
-                        ...form.direction,
-                        value: value as "above" | "below",
-                      },
-                    });
-                  }}
-                >
-                  <Radio value={"above"}>Above</Radio>
-                  <Radio value={"below"}>Below</Radio>
-                </RadioGroup>
-              </div>
-            }
-            {...form.target}
-          >
-            <TextField
-              value={form.target.value}
+    <ChatContentContainer message={message}>
+      <div className='flex flex-col gap-16 w-full'>
+        <span className='font-bold text-size-16'>Limit Order</span>
+        <RadioButtonGroup value={type} onChange={setType} disableAnimation>
+          <RadioButton value='buy'>Limit Buy</RadioButton>
+          <RadioButton value='sell'>Limit Sell</RadioButton>
+        </RadioButtonGroup>
+        <FormItem label={"Token"} {...form.token}>
+          {type === "buy" ? (
+            <TokenInputBuy
               className='!bg-background'
-              prefixNode={<span className='text-text2'>$</span>}
-              onChange={(event) => {
-                const value = validNumberInput(event.target.value, true);
+              value={form.token.value}
+              onChange={(value) => {
                 setForm({
                   ...form,
-                  target: {
-                    ...form.target,
+                  token: {
+                    ...form.token,
+                    value,
+                    isInValid: false,
+                  },
+                });
+              }}
+            />
+          ) : (
+            <TokenInputSell
+              className='!bg-background'
+              tokenLimitList={portfolio?.items.map((item) => ({
+                ca: item.address,
+                logo: item.logoURI,
+                ticker: item.symbol,
+                priceUsd: item.priceUsd,
+                uiAmount: item.uiAmount,
+              }))}
+              tokenAmount={tokenAmount?.uiAmount}
+              value={form.token.value}
+              onChange={(value) => {
+                setForm({
+                  ...form,
+                  token: {
+                    ...form.token,
+                    value,
+                    isInValid: false,
+                  },
+                });
+              }}
+            />
+          )}
+        </FormItem>
+        <div className='w-full flex flex-col gap-8'>
+          <FormItem
+            label={type === "buy" ? "Buy Amount(SOL)" : "Sell Amount"}
+            {...form.amount}
+          >
+            <AmountInput
+              placeholder={type === "buy" ? "SOL" : "Amount"}
+              value={form.amount.value}
+              amount={type === "buy" ? undefined : tokenAmount?.uiAmount}
+              decimals={type === "buy" ? undefined : tokenAmount?.decimals}
+              onChange={(value) => {
+                setForm({
+                  ...form,
+                  amount: {
+                    ...form.amount,
                     isInValid: false,
                     value,
                   },
@@ -226,53 +171,102 @@ export function LimitOrder({
               }}
             />
           </FormItem>
-
-          <div className='w-full flex justify-end items-center gap-16'>
-            <CancelButton
-              onClick={() => {
-                deleteMessageById(message.id);
-              }}
-            />
-            <Button
-              size='s'
-              onClick={() => {
-                if (Object.values(form).some((item) => item.isInValid)) {
-                  return;
-                }
-                let allValid = true;
-                const newForm = { ...form };
-                Object.keys(newForm).forEach((_key) => {
-                  const key = _key as keyof typeof newForm;
-                  if (newForm[key].required) {
-                    if (
-                      !newForm[key].value ||
-                      (typeof newForm[key].value === "object" &&
-                        Object.values(newForm[key].value).some((item) => !item))
-                    ) {
-                      allValid = false;
-                      newForm[key].isInValid = true;
-                      newForm[key].errorMsg = "Required";
-                    }
-                  }
-                });
-                if (!allValid) {
-                  setForm(newForm);
-                  return;
-                }
-
-                addAndSendMessage(
-                  type === "buy"
-                    ? `Create an automatic task to buy ${form.token.value.ca} with ${form.amount.value} SOL when the token price is ${form.direction.value} $${form.target.value}`
-                    : `Create an automatic task to sell ${form.amount.value} ${form.token.value.ca} for SOL when the token price is ${form.direction.value} $${form.target.value}`
-                );
-                deleteMessageById(message.id);
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
+          {type === "buy" ? (
+            <div className='text-size-12'>
+              Balance:&nbsp;
+              <TokenNumber number={balance} />
+              &nbsp;SOL
+            </div>
+          ) : null}
         </div>
-      ) : null}
+
+        <FormItem
+          label={
+            <div className='flex items-center gap-16'>
+              <span>Trigger: Price($)</span>
+              <RadioGroup
+                className='gap-16'
+                value={form.direction.value}
+                onChange={(value) => {
+                  setForm({
+                    ...form,
+                    direction: {
+                      ...form.direction,
+                      value: value as "above" | "below",
+                    },
+                  });
+                }}
+              >
+                <Radio value={"above"}>Above</Radio>
+                <Radio value={"below"}>Below</Radio>
+              </RadioGroup>
+            </div>
+          }
+          {...form.target}
+        >
+          <TextField
+            value={form.target.value}
+            className='!bg-background'
+            prefixNode={<span className='text-text2'>$</span>}
+            onChange={(event) => {
+              const value = validNumberInput(event.target.value, true);
+              setForm({
+                ...form,
+                target: {
+                  ...form.target,
+                  isInValid: false,
+                  value,
+                },
+              });
+            }}
+          />
+        </FormItem>
+
+        <div className='w-full flex justify-end items-center gap-16'>
+          <CancelButton
+            onClick={() => {
+              deleteMessageById(message.id);
+            }}
+          />
+          <Button
+            size='s'
+            onClick={() => {
+              if (Object.values(form).some((item) => item.isInValid)) {
+                return;
+              }
+              let allValid = true;
+              const newForm = { ...form };
+              Object.keys(newForm).forEach((_key) => {
+                const key = _key as keyof typeof newForm;
+                if (newForm[key].required) {
+                  if (
+                    !newForm[key].value ||
+                    (typeof newForm[key].value === "object" &&
+                      Object.values(newForm[key].value).some((item) => !item))
+                  ) {
+                    allValid = false;
+                    newForm[key].isInValid = true;
+                    newForm[key].errorMsg = "Required";
+                  }
+                }
+              });
+              if (!allValid) {
+                setForm(newForm);
+                return;
+              }
+
+              addAndSendMessage(
+                type === "buy"
+                  ? `Create an automatic task to buy ${form.token.value.ca} with ${form.amount.value} SOL when the token price is ${form.direction.value} $${form.target.value}`
+                  : `Create an automatic task to sell ${form.amount.value} ${form.token.value.ca} for SOL when the token price is ${form.direction.value} $${form.target.value}`
+              );
+              deleteMessageById(message.id);
+            }}
+          >
+            Confirm
+          </Button>
+        </div>
+      </div>
     </ChatContentContainer>
   );
 }

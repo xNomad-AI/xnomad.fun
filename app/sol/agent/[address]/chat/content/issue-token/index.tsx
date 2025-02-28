@@ -120,6 +120,7 @@ export function IssueToken({
       image: {
         ...form.image,
         value: file,
+        isInValid: false,
       },
     });
     setUseAgentImage(false);
@@ -159,6 +160,7 @@ export function IssueToken({
                   tokenName: {
                     ...form.tokenName,
                     value: event.target.value,
+                    isInValid: false,
                   },
                 });
               }}
@@ -175,6 +177,7 @@ export function IssueToken({
                   symbol: {
                     ...form.symbol,
                     value: event.target.value,
+                    isInValid: false,
                   },
                 });
               }}
@@ -208,6 +211,7 @@ export function IssueToken({
                       image: {
                         ...form.image,
                         value: null,
+                        isInValid: false,
                       },
                     });
                   }}
@@ -258,6 +262,7 @@ export function IssueToken({
               Upload a images in JPEG/PNG/GIF formats, with a size limit of
               10MB.
             </p>
+
             <button
               className='flex items-center gap-8 w-fit'
               onClick={() => {
@@ -280,6 +285,7 @@ export function IssueToken({
                         image: {
                           ...form.image,
                           value: file,
+                          isInValid: false,
                         },
                       });
                     });
@@ -293,6 +299,7 @@ export function IssueToken({
                     image: {
                       ...form.image,
                       value: null,
+                      isInValid: false,
                     },
                   });
                 }
@@ -326,6 +333,7 @@ export function IssueToken({
                   description: {
                     ...form.description,
                     value: event.target.value,
+                    isInValid: false,
                   },
                 });
               }}
@@ -343,6 +351,7 @@ export function IssueToken({
                   amount: {
                     ...form.amount,
                     value,
+                    isInValid: false,
                   },
                 });
               }}
@@ -364,6 +373,7 @@ export function IssueToken({
                   twitter: {
                     ...form.twitter,
                     value: event.target.value,
+                    isInValid: false,
                   },
                 });
               }}
@@ -380,6 +390,7 @@ export function IssueToken({
                   telegram: {
                     ...form.telegram,
                     value: event.target.value,
+                    isInValid: false,
                   },
                 });
               }}
@@ -396,6 +407,7 @@ export function IssueToken({
                   website: {
                     ...form.website,
                     value: event.target.value,
+                    isInValid: false,
                   },
                 });
               }}

@@ -20,16 +20,11 @@ import clsx from "clsx";
 
 export function Actions({ nft }: { nft: NFT }) {
   const { publicKey } = useWallet();
-  const { addMessage, generateMessageId, chatBottomRef } = useChatContext();
+  const { addMessage, generateMessageId } = useChatContext();
   const [action, setAction] = useState<Action | null>(null);
   const addActionMessage = useMemoizedFn((newMessages: ContentWithUser[]) => {
     if (newMessages.length > 0) {
       addMessage(newMessages, true);
-      setTimeout(() => {
-        chatBottomRef.current?.scrollIntoView({
-          behavior: "smooth",
-        });
-      }, 50);
     }
   });
   const checkOwnership = useMemoizedFn(() => {

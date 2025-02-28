@@ -344,7 +344,11 @@ export function IssueToken({
                     form.telegram.value
                       ? `, with telegram ${form.telegram.value}`
                       : ""
-                  }, buy ${form.amount.value} SOL worth.`,
+                  }${
+                    form.amount.value
+                      ? `, buy ${form.amount.value} SOL worth`
+                      : ""
+                  }.`,
                   form.image.value
                 );
                 updateMessage({ ...message, step: "finish" });

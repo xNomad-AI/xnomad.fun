@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { FixedSizeList } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 
-export function InfiniteScrollList({
+function MemoInfiniteScrollList({
   // Are there more items to load?
   // (This information comes from the most recent API request.)
   hasNextPage,
@@ -107,3 +107,10 @@ export function InfiniteScrollList({
     </InfiniteLoader>
   );
 }
+
+export const InfiniteScrollList = React.memo(
+  MemoInfiniteScrollList,
+  (pre, next) => {
+    return pre.items.length === next.items.length;
+  }
+);

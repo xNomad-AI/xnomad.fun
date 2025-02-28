@@ -31,8 +31,7 @@ export function LimitOrder({
   nft: NFT;
 }) {
   const { portfolio } = useAgentStore();
-  const { deleteMessageById, addAndSendMessage, updateMessage } =
-    useChatContext();
+  const { deleteMessageById, addAndSendMessage } = useChatContext();
   const [type, setType] = useState<"buy" | "sell">("buy");
   const [form, setForm] = useState<{
     token: FormValue<TokenValue>;
@@ -244,12 +243,13 @@ export function LimitOrder({
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "finish" });
+
                 addAndSendMessage(
                   type === "buy"
                     ? `Create an automatic task to buy ${form.token.value.ca} with ${form.amount.value} SOL when the token price is ${form.direction.value} ${form.target.value}`
                     : `Create an automatic task to sell ${form.amount.value} ${form.token.value.ca} for SOL when the token price is ${form.direction.value} ${form.target.value}`
                 );
+                deleteMessageById(message.id);
               }}
             >
               Confirm

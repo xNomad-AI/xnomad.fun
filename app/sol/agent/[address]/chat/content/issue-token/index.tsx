@@ -29,8 +29,7 @@ export function IssueToken({
   message: ContentWithUser;
   nft: NFT;
 }) {
-  const { deleteMessageById, addAndSendMessage, updateMessage } =
-    useChatContext();
+  const { deleteMessageById, addAndSendMessage } = useChatContext();
   const { getBalance } = useSolana();
   const [balance, setBalance] = useState<number>();
   useEffect(() => {
@@ -357,7 +356,7 @@ export function IssueToken({
                   }.`,
                   form.image.value
                 );
-                updateMessage({ ...message, step: "finish" });
+                deleteMessageById(message.id);
               }}
             >
               Confirm

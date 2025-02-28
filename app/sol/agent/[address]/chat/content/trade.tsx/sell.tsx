@@ -9,8 +9,7 @@ import { TokenInputSell, TokenValue } from "../token-input";
 import { AmountInput } from "../amount-input";
 
 export function Sell({ message }: { message: ContentWithUser }) {
-  const { deleteMessageById, addAndSendMessage, updateMessage } =
-    useChatContext();
+  const { deleteMessageById, addAndSendMessage } = useChatContext();
   const { portfolio } = useAgentStore();
   const [form, setForm] = useState<{
     token: FormValue<TokenValue>;
@@ -123,12 +122,12 @@ export function Sell({ message }: { message: ContentWithUser }) {
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "finish" });
                 addAndSendMessage(
                   `Sell ${form.amount.value} ${
                     form.token.value.ticker ? `${form.token.value.ticker} ` : ""
                   }${form.token.value.ca} for SOL`
                 );
+                deleteMessageById(message.id);
               }}
             >
               Confirm

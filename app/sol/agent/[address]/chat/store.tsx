@@ -169,7 +169,7 @@ export function ChatProvider({
           (msg) =>
             !removeInvalidAction ||
             !msg.webAction ||
-            (msg.webAction && (msg.step === "finish" || !msg.step))
+            (msg.webAction && !msg.step)
         ),
         ...newMessages,
       ]);

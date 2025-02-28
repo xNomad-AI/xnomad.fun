@@ -18,8 +18,7 @@ import { useAgentStore } from "../../../store";
 import { AmountInput } from "../amount-input";
 
 export function Swap({ message }: { message: ContentWithUser }) {
-  const { deleteMessageById, addAndSendMessage, updateMessage } =
-    useChatContext();
+  const { deleteMessageById, addAndSendMessage } = useChatContext();
   const { portfolio } = useAgentStore();
   const [form, setForm] = useState<{
     fromToken: FormValue<TokenValue>;
@@ -170,10 +169,10 @@ export function Swap({ message }: { message: ContentWithUser }) {
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "finish" });
                 addAndSendMessage(
                   `Swap ${form.amount.value} ${form.fromToken.value.ca} for ${form.toToken.value.ca}`
                 );
+                deleteMessageById(message.id);
               }}
             >
               Confirm

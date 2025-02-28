@@ -12,8 +12,7 @@ import { PublicKey } from "@solana/web3.js";
 import { TokenInputBuy, TokenValue } from "../token-input";
 
 export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
-  const { deleteMessageById, addAndSendMessage, updateMessage } =
-    useChatContext();
+  const { deleteMessageById, addAndSendMessage } = useChatContext();
   const { getBalance } = useSolana();
   const [balance, setBalance] = useState<number>();
   useEffect(() => {
@@ -130,7 +129,7 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
                     form.token.value.ticker ? `${form.token.value.ticker} ` : ""
                   }${form.token.value.ca} with ${form.amount.value} SOL`
                 );
-                updateMessage({ ...message, step: "finish" });
+                deleteMessageById(message.id);
               }}
             >
               Confirm

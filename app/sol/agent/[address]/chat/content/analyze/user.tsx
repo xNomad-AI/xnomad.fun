@@ -6,8 +6,7 @@ import { ContentWithUser } from "../../types";
 import { TokenInputBuy, TokenValue } from "../token-input";
 
 export function AnalyzeInput({ message }: { message: ContentWithUser }) {
-  const { deleteMessageById, addMessage, updateMessage, generateMessageId } =
-    useChatContext();
+  const { deleteMessageById, addMessage, generateMessageId } = useChatContext();
   const [form, setForm] = useState<{
     token: FormValue<TokenValue>;
   }>({
@@ -99,7 +98,7 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
                     id: generateMessageId("analyze-input-loading"),
                   },
                 ]);
-                updateMessage({ ...message, step: "finish" });
+                deleteMessageById(message.id);
               }}
             >
               Confirm

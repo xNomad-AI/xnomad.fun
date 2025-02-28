@@ -16,8 +16,7 @@ export function Transfer({
   message: ContentWithUser;
   nft: NFT;
 }) {
-  const { deleteMessageById, addAndSendMessage, updateMessage } =
-    useChatContext();
+  const { deleteMessageById, addAndSendMessage } = useChatContext();
   const { portfolio } = useAgentStore();
   const [form, setForm] = useState<{
     token: FormValue<TokenValue>;
@@ -153,12 +152,12 @@ export function Transfer({
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "finish" });
                 addAndSendMessage(
                   `Transfer ${form.amount.value} ${
                     form.token.value.ticker ? `${form.token.value.ticker} ` : ""
                   }${form.token.value.ca} to ${form.toAddress.value}`
                 );
+                deleteMessageById(message.id);
               }}
             >
               Confirm

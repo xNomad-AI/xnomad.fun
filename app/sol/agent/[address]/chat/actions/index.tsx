@@ -185,9 +185,6 @@ export function Actions({ nft }: { nft: NFT }) {
           className='flex items-center gap-8'
         >
           {actions.map((action) => {
-            if (process.env.DEPLOY_ENV === "prod" && action !== "airdrop") {
-              return null;
-            }
             return (
               <Button
                 size='s'

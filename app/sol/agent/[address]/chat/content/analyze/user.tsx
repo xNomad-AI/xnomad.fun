@@ -28,45 +28,6 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
-      suffixNode={
-        step === "confirm" ? (
-          <div className='flex items-center gap-16'>
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                updateMessage({ ...message, step: "input" });
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              size='s'
-              onClick={() => {
-                addMessage([
-                  {
-                    text: `Help me analyze this token: ${form.token.value.ca}`,
-                    user: "user",
-                    createdAt: Date.now(),
-                    id: generateMessageId("analyze-input"),
-                  },
-                  {
-                    text: `Help me analyze this token: ${form.token.value.ca}`,
-                    user: "system",
-                    isLoading: true,
-                    webAction: "analyze",
-                    createdAt: Date.now(),
-                    id: generateMessageId("analyze-input-loading"),
-                  },
-                ]);
-                updateMessage({ ...message, step: "finish" });
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        ) : null
-      }
     >
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
@@ -115,24 +76,30 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "confirm" });
+                addMessage([
+                  {
+                    text: `Help me analyze this token: ${form.token.value.ca}`,
+                    user: "user",
+                    createdAt: Date.now(),
+                    id: generateMessageId("analyze-input"),
+                  },
+                  {
+                    text: `Help me analyze this token: ${form.token.value.ca}`,
+                    user: "system",
+                    isLoading: true,
+                    webAction: "analyze",
+                    createdAt: Date.now(),
+                    id: generateMessageId("analyze-input-loading"),
+                  },
+                ]);
+                updateMessage({ ...message, step: "finish" });
               }}
             >
-              Generate Prompt
+              Confirm
             </Button>
           </div>
         </div>
-      ) : (
-        <p>
-          Please confirm the info.
-          <br />
-          ⬇️Type: Analyze
-          <br />
-          🪙Token:{" "}
-          {form.token.value.ticker ? `${form.token.value.ticker} ` : ""}
-          {form.token.value.ca}
-        </p>
-      )}
+      ) : null}
     </ChatContentContainer>
   );
 }

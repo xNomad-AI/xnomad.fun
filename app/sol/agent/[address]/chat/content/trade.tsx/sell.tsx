@@ -39,34 +39,6 @@ export function Sell({ message }: { message: ContentWithUser }) {
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
-      suffixNode={
-        step === "confirm" ? (
-          <div className='flex items-center gap-16'>
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                updateMessage({ ...message, step: "input" });
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              size='s'
-              onClick={() => {
-                updateMessage({ ...message, step: "finish" });
-                addAndSendMessage(
-                  `Sell ${form.amount.value} ${
-                    form.token.value.ticker ? `${form.token.value.ticker} ` : ""
-                  }${form.token.value.ca} for SOL`
-                );
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        ) : null
-      }
     >
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
@@ -146,26 +118,19 @@ export function Sell({ message }: { message: ContentWithUser }) {
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "confirm" });
+                updateMessage({ ...message, step: "finish" });
+                addAndSendMessage(
+                  `Sell ${form.amount.value} ${
+                    form.token.value.ticker ? `${form.token.value.ticker} ` : ""
+                  }${form.token.value.ca} for SOL`
+                );
               }}
             >
-              Generate Prompt
+              Confirm
             </Button>
           </div>
         </div>
-      ) : (
-        <p>
-          Please confirm the info.
-          <br />
-          ⬇️Type: Sell
-          <br />
-          🪙Token:{" "}
-          {form.token.value.ticker ? `${form.token.value.ticker} ` : ""}
-          {form.token.value.ca}
-          <br />
-          💰Sell Amount:&nbsp;{form.amount.value}
-        </p>
-      )}
+      ) : null}
     </ChatContentContainer>
   );
 }

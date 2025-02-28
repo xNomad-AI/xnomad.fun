@@ -48,34 +48,6 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
-      suffixNode={
-        step === "confirm" ? (
-          <div className='flex items-center gap-16'>
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                updateMessage({ ...message, step: "input" });
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              size='s'
-              onClick={() => {
-                addAndSendMessage(
-                  `Buy ${
-                    form.token.value.ticker ? `${form.token.value.ticker} ` : ""
-                  }${form.token.value.ca} with ${form.amount.value} SOL`
-                );
-                updateMessage({ ...message, step: "finish" });
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        ) : null
-      }
     >
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
@@ -153,27 +125,19 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "confirm" });
+                addAndSendMessage(
+                  `Buy ${
+                    form.token.value.ticker ? `${form.token.value.ticker} ` : ""
+                  }${form.token.value.ca} with ${form.amount.value} SOL`
+                );
+                updateMessage({ ...message, step: "finish" });
               }}
             >
-              Generate Prompt
+              Confirm
             </Button>
           </div>
         </div>
-      ) : (
-        <p>
-          Please confirm the info.
-          <br />
-          ⬇️Type: Buy
-          <br />
-          🪙Token:{" "}
-          {form.token.value.ticker ? `${form.token.value.ticker} ` : ""}
-          {form.token.value.ca}
-          <br />
-          💰Buy Amount:&nbsp;
-          <TokenNumber className='inline-flex' number={form.amount.value} /> SOL
-        </p>
-      )}
+      ) : null}
     </ChatContentContainer>
   );
 }

@@ -59,32 +59,6 @@ export function Swap({ message }: { message: ContentWithUser }) {
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
-      suffixNode={
-        step === "confirm" ? (
-          <div className='flex items-center gap-16'>
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                updateMessage({ ...message, step: "input" });
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              size='s'
-              onClick={() => {
-                updateMessage({ ...message, step: "finish" });
-                addAndSendMessage(
-                  `Swap ${form.amount.value} ${form.fromToken.value.ca} for ${form.toToken.value.ca}`
-                );
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        ) : null
-      }
     >
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
@@ -190,28 +164,17 @@ export function Swap({ message }: { message: ContentWithUser }) {
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "confirm" });
+                updateMessage({ ...message, step: "finish" });
+                addAndSendMessage(
+                  `Swap ${form.amount.value} ${form.fromToken.value.ca} for ${form.toToken.value.ca}`
+                );
               }}
             >
-              Generate Prompt
+              Confirm
             </Button>
           </div>
         </div>
-      ) : (
-        <p>
-          Please confirm the info.
-          <br />
-          ⬇️Type: Swap(swap A for B)
-          <br />
-          🪙A Token:&nbsp;{form.fromToken.value.ticker}&nbsp;
-          {form.fromToken.value.ca}
-          <br />
-          🪙B Token:&nbsp;{form.toToken.value.ticker}&nbsp;
-          {form.toToken.value.ca}
-          <br />
-          💰Swap Amount:&nbsp;{form.amount.value}
-        </p>
-      )}
+      ) : null}
     </ChatContentContainer>
   );
 }

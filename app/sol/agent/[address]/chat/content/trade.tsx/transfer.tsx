@@ -52,34 +52,6 @@ export function Transfer({
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
-      suffixNode={
-        step === "confirm" ? (
-          <div className='flex items-center gap-16'>
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                updateMessage({ ...message, step: "input" });
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              size='s'
-              onClick={() => {
-                updateMessage({ ...message, step: "finish" });
-                addAndSendMessage(
-                  `Transfer ${form.amount.value} ${
-                    form.token.value.ticker ? `${form.token.value.ticker} ` : ""
-                  }${form.token.value.ca} to ${form.toAddress.value}`
-                );
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        ) : null
-      }
     >
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
@@ -175,30 +147,19 @@ export function Transfer({
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "confirm" });
+                updateMessage({ ...message, step: "finish" });
+                addAndSendMessage(
+                  `Transfer ${form.amount.value} ${
+                    form.token.value.ticker ? `${form.token.value.ticker} ` : ""
+                  }${form.token.value.ca} to ${form.toAddress.value}`
+                );
               }}
             >
-              Generate Prompt
+              Confirm
             </Button>
           </div>
         </div>
-      ) : (
-        <p>
-          Please confirm the info.
-          <br />
-          ⬇️Type: Transfer
-          <br />
-          🪙Token:&nbsp;
-          {form.token.value.ticker ? `${form.token.value.ticker} ` : ""}
-          {form.token.value.ca}
-          <br />
-          💰Amount:&nbsp;{form.amount.value}
-          <br />
-          💼From:&nbsp;{nft.agentAccount.solana}
-          <br />
-          💼To:&nbsp;{form.toAddress.value}
-        </p>
-      )}
+      ) : null}
     </ChatContentContainer>
   );
 }

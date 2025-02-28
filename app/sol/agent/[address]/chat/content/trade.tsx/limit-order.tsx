@@ -81,35 +81,6 @@ export function LimitOrder({
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
-      suffixNode={
-        step === "confirm" ? (
-          <div className='flex items-center gap-16'>
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                updateMessage({ ...message, step: "input" });
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              size='s'
-              onClick={() => {
-                debugger;
-                updateMessage({ ...message, step: "finish" });
-                addAndSendMessage(
-                  type === "buy"
-                    ? `Create an automatic task to buy ${form.token.value.ca} with ${form.amount.value} SOL when the token price is ${form.direction.value} ${form.target.value}`
-                    : `Create an automatic task to sell ${form.amount.value} ${form.token.value.ca} for SOL when the token price is ${form.direction.value} ${form.target.value}`
-                );
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        ) : null
-      }
     >
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
@@ -263,27 +234,19 @@ export function LimitOrder({
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "confirm" });
+                updateMessage({ ...message, step: "finish" });
+                addAndSendMessage(
+                  type === "buy"
+                    ? `Create an automatic task to buy ${form.token.value.ca} with ${form.amount.value} SOL when the token price is ${form.direction.value} ${form.target.value}`
+                    : `Create an automatic task to sell ${form.amount.value} ${form.token.value.ca} for SOL when the token price is ${form.direction.value} ${form.target.value}`
+                );
               }}
             >
-              Generate Prompt
+              Confirm
             </Button>
           </div>
         </div>
-      ) : (
-        <p>
-          Please confirm the info.
-          <br />
-          ⬇️Type: Limit {type} order
-          <br />
-          🪙Token:&nbsp;{form.token.value.ticker}&nbsp;
-          {form.token.value.ca}
-          <br />
-          💰{upperFirstLetter(type)} Amount:&nbsp;{form.amount.value}
-          <br />
-          ⚡️Trigger: price above ${form.target.value}
-        </p>
-      )}
+      ) : null}
     </ChatContentContainer>
   );
 }

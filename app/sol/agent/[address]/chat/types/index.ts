@@ -6,7 +6,7 @@ export interface IAttachment {
   contentType: string;
   title: string;
 }
-export type ActionStep = "input" | "confirm" | "finish";
+export type ActionStep = "input" | "finish";
 export interface ExtraContentFields {
   user: string;
   createdAt: number;

@@ -128,51 +128,6 @@ export function IssueToken({
       message={message}
       showTimestamp={step !== "input"}
       showCopyButton={step !== "input"}
-      suffixNode={
-        step === "confirm" ? (
-          <div className='flex items-center gap-16'>
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                updateMessage({ ...message, step: "input" });
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              size='s'
-              onClick={() => {
-                addAndSendMessage(
-                  `Create a new token called ${
-                    form.tokenName.value
-                  } with symbol ${form.symbol.value}${
-                    form.twitter.value
-                      ? `, with twitter ${form.twitter.value}`
-                      : ""
-                  }${
-                    form.twitter.value
-                      ? `, with website ${form.website.value}`
-                      : ""
-                  }${
-                    form.telegram.value
-                      ? `, with telegram ${form.telegram.value}`
-                      : ""
-                  }${
-                    form.discord.value
-                      ? `, with discord ${form.discord.value}`
-                      : ""
-                  }, buy ${form.amount.value} SOL worth.`,
-                  form.image.value
-                );
-                updateMessage({ ...message, step: "finish" });
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        ) : null
-      }
     >
       {step === "input" ? (
         <div className='flex flex-col gap-16 w-full'>
@@ -396,26 +351,36 @@ export function IssueToken({
                   setForm(newForm);
                   return;
                 }
-                updateMessage({ ...message, step: "confirm" });
+                addAndSendMessage(
+                  `Create a new token called ${
+                    form.tokenName.value
+                  } with symbol ${form.symbol.value}${
+                    form.twitter.value
+                      ? `, with twitter ${form.twitter.value}`
+                      : ""
+                  }${
+                    form.twitter.value
+                      ? `, with website ${form.website.value}`
+                      : ""
+                  }${
+                    form.telegram.value
+                      ? `, with telegram ${form.telegram.value}`
+                      : ""
+                  }${
+                    form.discord.value
+                      ? `, with discord ${form.discord.value}`
+                      : ""
+                  }, buy ${form.amount.value} SOL worth.`,
+                  form.image.value
+                );
+                updateMessage({ ...message, step: "finish" });
               }}
             >
-              Generate Prompt
+              Confirm
             </Button>
           </div>
         </div>
-      ) : (
-        <p>
-          Please confirm the info.
-          <br />
-          Create a new token called {form.tokenName.value} with symbol $
-          {form.symbol.value}
-          {form.twitter.value ? `, with twitter ${form.twitter.value}` : ""}
-          {form.twitter.value ? `, with website ${form.website.value}` : ""}
-          {form.telegram.value ? `, with telegram ${form.telegram.value}` : ""}
-          {form.discord.value ? `, with discord ${form.discord.value}` : ""},
-          buy {form.amount.value} SOL worth.
-        </p>
-      )}
+      ) : null}
     </ChatContentContainer>
   );
 }

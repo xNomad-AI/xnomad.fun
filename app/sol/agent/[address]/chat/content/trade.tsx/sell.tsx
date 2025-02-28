@@ -6,6 +6,7 @@ import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
 import { useAgentStore } from "../../../store";
 import { TokenInputSell, TokenValue } from "../token-input";
+import { AmountInput } from "../amount-input";
 
 export function Sell({ message }: { message: ContentWithUser }) {
   const { deleteMessageById, addAndSendMessage, updateMessage } =
@@ -45,6 +46,7 @@ export function Sell({ message }: { message: ContentWithUser }) {
           <span className='font-bold text-size-16'>Sell</span>
           <FormItem label={"Token"} {...form.token}>
             <TokenInputSell
+              className='!bg-background'
               tokenLimitList={portfolio?.items.map((item) => ({
                 ca: item.address,
                 logo: item.logoURI,
@@ -66,11 +68,14 @@ export function Sell({ message }: { message: ContentWithUser }) {
             />
           </FormItem>
           <FormItem label={"Sell Amount"} {...form.amount}>
-            <TextField
+            <AmountInput
               value={form.amount.value}
-              placeholder='Amount'
-              onChange={(event) => {
-                const value = validNumberInput(event.target.value, true);
+              amount={
+                portfolio?.items.find(
+                  (item) => item.address === form.token.value.ca
+                )?.uiAmount
+              }
+              onChange={(value) => {
                 setForm({
                   ...form,
                   amount: {

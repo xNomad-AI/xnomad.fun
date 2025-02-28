@@ -21,6 +21,7 @@ import { useSolana } from "@/lib/hooks/use-solana";
 import { PublicKey } from "@solana/web3.js";
 import { NFT } from "@/types";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
+import { AmountInput } from "../amount-input";
 
 export function LimitOrder({
   message,
@@ -92,6 +93,7 @@ export function LimitOrder({
           <FormItem label={"Token"} {...form.token}>
             {type === "buy" ? (
               <TokenInputBuy
+                className='!bg-background'
                 value={form.token.value}
                 onChange={(value) => {
                   setForm({
@@ -106,6 +108,7 @@ export function LimitOrder({
               />
             ) : (
               <TokenInputSell
+                className='!bg-background'
                 tokenLimitList={portfolio?.items.map((item) => ({
                   ca: item.address,
                   logo: item.logoURI,
@@ -132,17 +135,23 @@ export function LimitOrder({
               label={type === "buy" ? "Buy Amount(SOL)" : "Sell Amount"}
               {...form.amount}
             >
-              <TextField
-                value={form.amount.value}
+              <AmountInput
                 placeholder={type === "buy" ? "SOL" : "Amount"}
-                onChange={(event) => {
-                  const value = validNumberInput(event.target.value, true);
+                value={form.amount.value}
+                amount={
+                  type === "buy"
+                    ? undefined
+                    : portfolio?.items.find(
+                        (item) => item.address === form.token.value.ca
+                      )?.uiAmount
+                }
+                onChange={(value) => {
                   setForm({
                     ...form,
                     amount: {
                       ...form.amount,
-                      value,
                       isInValid: false,
+                      value,
                     },
                   });
                 }}
@@ -183,6 +192,7 @@ export function LimitOrder({
           >
             <TextField
               value={form.target.value}
+              className='!bg-background'
               prefixNode={<span className='text-text2'>$</span>}
               onChange={(event) => {
                 const value = validNumberInput(event.target.value, true);

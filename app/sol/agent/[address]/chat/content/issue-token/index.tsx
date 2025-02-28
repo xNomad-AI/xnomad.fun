@@ -127,6 +127,7 @@ export function IssueToken({
           <span className='font-bold text-size-16'>Issue Token</span>
           <FormItem label={"Token Name"} {...form.tokenName}>
             <TextField
+              className='!bg-background'
               value={form.tokenName.value}
               placeholder='Token Name'
               onChange={(event) => {
@@ -142,6 +143,7 @@ export function IssueToken({
           </FormItem>
           <FormItem label={"Symbol"} {...form.symbol}>
             <TextField
+              className='!bg-background'
               value={form.symbol.value}
               prefixNode={<span className='text-text2'>$</span>}
               onChange={(event) => {
@@ -167,7 +169,7 @@ export function IssueToken({
                   const file = e.dataTransfer.files?.[0];
                   onLogoFileChange(file);
                 }}
-                className='relative h-[7.5rem] w-[7.5rem] rounded-6 bg-surface border border-white-20 flex items-center justify-center cursor-pointer'
+                className='relative h-[7.5rem] w-[7.5rem] rounded-6 bg-background border border-white-20 flex items-center justify-center cursor-pointer'
               >
                 <ActionButton
                   onClick={(e) => {
@@ -235,6 +237,7 @@ export function IssueToken({
           </FormItem>
           <FormItem label={"Buy(SOL)"} {...form.amount}>
             <TextField
+              className='!bg-background'
               value={form.amount.value}
               placeholder='Initial Buy Amount'
               onChange={(event) => {
@@ -256,6 +259,7 @@ export function IssueToken({
           </FormItem>
           <FormItem label={"Twitter"} {...form.twitter}>
             <TextField
+              className='!bg-background'
               value={form.twitter.value}
               placeholder='Twitter'
               onChange={(event) => {
@@ -271,6 +275,7 @@ export function IssueToken({
           </FormItem>
           <FormItem label={"Telegram"} {...form.telegram}>
             <TextField
+              className='!bg-background'
               value={form.telegram.value}
               placeholder='Telegram'
               onChange={(event) => {
@@ -286,6 +291,7 @@ export function IssueToken({
           </FormItem>
           <FormItem label={"Website"} {...form.website}>
             <TextField
+              className='!bg-background'
               value={form.website.value}
               placeholder='Website'
               onChange={(event) => {

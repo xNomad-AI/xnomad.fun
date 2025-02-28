@@ -15,6 +15,7 @@ import { ActionStep, ContentWithUser } from "../../types";
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { useAgentStore } from "../../../store";
+import { AmountInput } from "../amount-input";
 
 export function Swap({ message }: { message: ContentWithUser }) {
   const { deleteMessageById, addAndSendMessage, updateMessage } =
@@ -70,6 +71,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
               {...form.fromToken}
             >
               <TokenInputSell
+                className='!bg-background'
                 tokenLimitList={portfolio?.items.map((item) => ({
                   ca: item.address,
                   logo: item.logoURI,
@@ -97,6 +99,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
               {...form.toToken}
             >
               <TokenInputBuy
+                className='!bg-background'
                 value={form.toToken.value}
                 onChange={(value) => {
                   setForm({
@@ -112,11 +115,14 @@ export function Swap({ message }: { message: ContentWithUser }) {
             </FormItem>
           </div>
           <FormItem label={"Swap Amount"} {...form.amount}>
-            <TextField
+            <AmountInput
               value={form.amount.value}
-              placeholder='Amount'
-              onChange={(event) => {
-                const value = validNumberInput(event.target.value, true);
+              amount={
+                portfolio?.items.find(
+                  (item) => item.address === form.fromToken.value.ca
+                )?.uiAmount
+              }
+              onChange={(value) => {
                 setForm({
                   ...form,
                   amount: {

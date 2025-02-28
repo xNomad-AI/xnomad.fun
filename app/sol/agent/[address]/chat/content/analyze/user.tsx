@@ -34,6 +34,7 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
           <span className='font-bold text-size-16'>Buy</span>
           <FormItem label={"Token"} {...form.token}>
             <TokenInputBuy
+              className='!bg-background'
               value={form.token.value}
               onChange={(value) => {
                 setForm({

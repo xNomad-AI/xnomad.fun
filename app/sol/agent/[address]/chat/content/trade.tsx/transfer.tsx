@@ -7,6 +7,7 @@ import { NFT } from "@/types";
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { TokenInputSell, TokenValue } from "../token-input";
 import { useAgentStore } from "../../../store";
+import { AmountInput } from "../amount-input";
 
 export function Transfer({
   message,
@@ -58,6 +59,7 @@ export function Transfer({
           <span className='font-bold text-size-16'>Transfer</span>
           <FormItem label={"Token"} {...form.token}>
             <TokenInputSell
+              className='!bg-background'
               tokenLimitList={portfolio?.items.map((item) => ({
                 ca: item.address,
                 logo: item.logoURI,
@@ -79,11 +81,14 @@ export function Transfer({
             />
           </FormItem>
           <FormItem label={"Transfer Amount"} {...form.amount}>
-            <TextField
+            <AmountInput
               value={form.amount.value}
-              placeholder='Amount'
-              onChange={(event) => {
-                const value = validNumberInput(event.target.value, true);
+              amount={
+                portfolio?.items.find(
+                  (item) => item.address === form.token.value.ca
+                )?.uiAmount
+              }
+              onChange={(value) => {
                 setForm({
                   ...form,
                   amount: {
@@ -97,6 +102,7 @@ export function Transfer({
           </FormItem>
           <FormItem label={"Transfer to Address"} {...form.toAddress}>
             <TextField
+              className='!bg-background'
               value={form.toAddress.value}
               placeholder='Receiver Address'
               onChange={(event) => {

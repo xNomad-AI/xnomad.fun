@@ -32,7 +32,19 @@ export function Actions({ nft }: { nft: NFT }) {
       }, 50);
     }
   });
+  const checkOwnership = useMemoizedFn(() => {
+    if (!isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "")) {
+      message("Available to owner only", {
+        type: "error",
+      });
+      return false;
+    }
+    return true;
+  });
   const onActionClick = useMemoizedFn((action: Action) => {
+    if (!checkOwnership()) {
+      return;
+    }
     setAction(action);
     let newMessages: ContentWithUser[] = [];
     switch (action) {
@@ -87,10 +99,7 @@ export function Actions({ nft }: { nft: NFT }) {
     addActionMessage(newMessages);
   });
   const onTradeClick = useMemoizedFn((tradeAction: TradeAction) => {
-    if (!isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "")) {
-      message("Available to owner only", {
-        type: "error",
-      });
+    if (!checkOwnership()) {
       return;
     }
     let newMessages: ContentWithUser[] = [];

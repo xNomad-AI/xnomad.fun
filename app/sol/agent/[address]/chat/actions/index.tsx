@@ -20,8 +20,18 @@ import clsx from "clsx";
 
 export function Actions({ nft }: { nft: NFT }) {
   const { publicKey } = useWallet();
-  const { addMessage, generateMessageId } = useChatContext();
+  const { addMessage, generateMessageId, chatBottomRef } = useChatContext();
   const [action, setAction] = useState<Action | null>(null);
+  const addActionMessage = useMemoizedFn((newMessages: ContentWithUser[]) => {
+    if (newMessages.length > 0) {
+      addMessage(newMessages, true);
+      setTimeout(() => {
+        chatBottomRef.current?.scrollIntoView({
+          behavior: "smooth",
+        });
+      }, 50);
+    }
+  });
   const onActionClick = useMemoizedFn((action: Action) => {
     setAction(action);
     let newMessages: ContentWithUser[] = [];
@@ -43,7 +53,6 @@ export function Actions({ nft }: { nft: NFT }) {
           },
         ];
 
-        addMessage(newMessages, true);
         break;
       case "trade":
         break;
@@ -59,7 +68,6 @@ export function Actions({ nft }: { nft: NFT }) {
           },
         ];
 
-        addMessage(newMessages, true);
         break;
       case "issue-token":
         newMessages = [
@@ -72,12 +80,11 @@ export function Actions({ nft }: { nft: NFT }) {
             id: generateMessageId("issue-token"),
           },
         ];
-
-        addMessage(newMessages, true);
         break;
       default:
         break;
     }
+    addActionMessage(newMessages);
   });
   const onTradeClick = useMemoizedFn((tradeAction: TradeAction) => {
     if (!isOwner(publicKey?.toBase58() ?? "", nft.owner ?? "")) {
@@ -101,7 +108,6 @@ export function Actions({ nft }: { nft: NFT }) {
           },
         ];
 
-        addMessage(newMessages, true);
         break;
       case "sell":
         newMessages = [
@@ -116,7 +122,6 @@ export function Actions({ nft }: { nft: NFT }) {
           },
         ];
 
-        addMessage(newMessages, true);
         break;
       case "swap":
         newMessages = [
@@ -131,7 +136,6 @@ export function Actions({ nft }: { nft: NFT }) {
           },
         ];
 
-        addMessage(newMessages, true);
         break;
       case "transfer":
         newMessages = [
@@ -146,7 +150,6 @@ export function Actions({ nft }: { nft: NFT }) {
           },
         ];
 
-        addMessage(newMessages, true);
         break;
       case "limit-order":
         newMessages = [
@@ -160,27 +163,11 @@ export function Actions({ nft }: { nft: NFT }) {
             id: generateMessageId("limit-order"),
           },
         ];
-
-        addMessage(newMessages, true);
-        break;
-      case "copy-trade":
-        newMessages = [
-          {
-            text: "Copy Trade",
-            webAction: "trade",
-            step: "input",
-            tradeAction: "copy-trade",
-            user: "user",
-            createdAt: Date.now(),
-            id: generateMessageId("copy-trade"),
-          },
-        ];
-
-        addMessage(newMessages, true);
         break;
       default:
         break;
     }
+    addActionMessage(newMessages);
   });
   return (
     <div className='flex items-center justify-between w-full'>

@@ -1,20 +1,20 @@
 import * as React from "react";
 import { ArrowDown } from "lucide-react";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
+import { useChatContext } from "../../store";
 
 interface ChatMessageListProps extends React.HTMLAttributes<HTMLDivElement> {
   smooth?: boolean;
 }
 
 const ChatMessageList = React.forwardRef<HTMLDivElement, ChatMessageListProps>(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ({ className, children, smooth = false, ...props }, _ref) => {
     const { scrollRef, isAtBottom, scrollToBottom, disableAutoScroll } =
       useAutoScroll({
         smooth,
         content: children,
       });
-
+    const { chatBottomRef } = useChatContext();
     return (
       <div className='relative w-full h-full'>
         <div
@@ -25,6 +25,7 @@ const ChatMessageList = React.forwardRef<HTMLDivElement, ChatMessageListProps>(
           {...props}
         >
           <div className='flex flex-col gap-24'>{children}</div>
+          <div ref={chatBottomRef} className='w-full' />
         </div>
 
         {!isAtBottom && (

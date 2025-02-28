@@ -258,49 +258,49 @@ export function IssueToken({
               Upload a images in JPEG/PNG/GIF formats, with a size limit of
               10MB.
             </p>
-            <div className='flex items-center gap-8'>
-              <Checkbox
-                value={useAgentImage}
-                onClick={() => {
-                  const result = !useAgentImage;
-                  setUseAgentImage(result);
-                  if (result) {
-                    const img = document.getElementById(
-                      IMAGE_ID
-                    ) as HTMLImageElement;
-                    img.src = nft.image;
-                    // file from image url
-                    fetch(nft.image)
-                      .then((res) => res.blob())
-                      .then((blob) => {
-                        const file = new File([blob], "image.png", {
-                          type: blob.type,
-                        });
-                        setForm({
-                          ...form,
-                          image: {
-                            ...form.image,
-                            value: file,
-                          },
-                        });
+            <button
+              className='flex items-center gap-8 w-fit'
+              onClick={() => {
+                const result = !useAgentImage;
+                setUseAgentImage(result);
+                if (result) {
+                  const img = document.getElementById(
+                    IMAGE_ID
+                  ) as HTMLImageElement;
+                  img.src = nft.image;
+                  // file from image url
+                  fetch(nft.image)
+                    .then((res) => res.blob())
+                    .then((blob) => {
+                      const file = new File([blob], "image.png", {
+                        type: blob.type,
                       });
-                  } else {
-                    const img = document.getElementById(
-                      IMAGE_ID
-                    ) as HTMLImageElement;
-                    img.src = "";
-                    setForm({
-                      ...form,
-                      image: {
-                        ...form.image,
-                        value: null,
-                      },
+                      setForm({
+                        ...form,
+                        image: {
+                          ...form.image,
+                          value: file,
+                        },
+                      });
                     });
-                  }
-                }}
-              />
+                } else {
+                  const img = document.getElementById(
+                    IMAGE_ID
+                  ) as HTMLImageElement;
+                  img.src = "";
+                  setForm({
+                    ...form,
+                    image: {
+                      ...form.image,
+                      value: null,
+                    },
+                  });
+                }
+              }}
+            >
+              <Checkbox value={useAgentImage} />
               <span>Or use AI-NFT image</span>
-            </div>
+            </button>
           </FormItem>
           <FormItem label={"Description"} {...form.description}>
             <TextField
@@ -438,7 +438,7 @@ export function IssueToken({
                     form.twitter.value
                       ? `, with twitter ${form.twitter.value}`
                       : ""
-                  } with description ${form.description.value}${
+                  } with description "${form.description.value}"${
                     form.twitter.value
                       ? `, with twitter ${form.twitter.value}`
                       : ""

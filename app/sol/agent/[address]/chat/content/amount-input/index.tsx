@@ -1,5 +1,6 @@
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { TextField } from "@/primitive/components";
+import BigNumber from "bignumber.js";
 
 export function AmountInput({
   value,
@@ -30,7 +31,12 @@ export function AmountInput({
               key={percentage}
               percentage={percentage}
               onClick={(percentage) => {
-                onChange(((amount ?? 0) * percentage) / 100 + "");
+                onChange(
+                  BigNumber(amount ?? 0)
+                    .times(percentage)
+                    .div(100)
+                    .toString()
+                );
               }}
             />
           ))}

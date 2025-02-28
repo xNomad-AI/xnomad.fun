@@ -51,7 +51,6 @@ export function InfoSection({ nft }: { nft: NFT }) {
     {
       refreshDeps: [agentAccountSol],
       ready: !!agentAccountSol,
-      pollingInterval: 5000,
     }
   );
   return (

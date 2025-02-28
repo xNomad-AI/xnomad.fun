@@ -88,10 +88,11 @@ function ActionContent({ type, task }: { type: "sell" | "buy"; task: Task }) {
     const displayToken = {
       symbol: task.inputTokenSymbol,
       ca: task.inputTokenCA,
+      amount: task.inputTokenAmount,
     };
     return (
       <>
-        <TokenNumber number={task.amount} />
+        <TokenNumber number={displayToken.amount ?? ""} />
         {displayToken.symbol ? (
           <Tooltip content={displayToken.ca}>
             <p className={"text-red"}>${displayToken.symbol}</p>
@@ -105,6 +106,7 @@ function ActionContent({ type, task }: { type: "sell" | "buy"; task: Task }) {
     const displayToken = {
       symbol: task.outputTokenSymbol,
       ca: task.outputTokenCA,
+      amount: task.outputTokenAmount,
     };
     return (
       <>
@@ -116,7 +118,7 @@ function ActionContent({ type, task }: { type: "sell" | "buy"; task: Task }) {
           <Address className={"text-green"} address={displayToken.ca} />
         )}
         <span className='text-text2'>with</span>
-        <TokenNumber number={task.amount} />
+        <TokenNumber number={task.inputTokenAmount ?? ""} />
         {task.inputTokenSymbol ?? "SOL"}
       </>
     );

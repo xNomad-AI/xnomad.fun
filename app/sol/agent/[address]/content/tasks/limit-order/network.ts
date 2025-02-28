@@ -7,12 +7,14 @@ export interface Task {
   outputTokenSymbol: string;
   inputTokenCA: string;
   outputTokenCA: string;
-  amount: string;
+  inputTokenAmount?: number;
+  outputTokenAmount?: number;
   delay: number | null;
   startAt: string;
   expireAt: string;
   priceCondition: "under" | "up";
   priceTarget: string;
+  tokenTarget: string;
 }
 
 export function getAutoTasks(agentId: string) {

@@ -12,6 +12,7 @@
     "@elizaos/core": "^0.1.8",
     "@popperjs/core": "^2.11.8",
     "@react-spring/web": "^9.7.5",
+    "@solana/spl-token": "^0.4.12",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-react-ui": "^0.9.35",

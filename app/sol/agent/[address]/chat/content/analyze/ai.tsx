@@ -162,7 +162,7 @@ export function AnalyzeResponse({
     }
     if (!message.data?.news?.length) {
       api.v1
-        .get<News[]>("/agent/token/news", {
+        .get<News[]>("/token/news", {
           tokenAddress: ca,
         })
         .then((res) => {
@@ -171,7 +171,7 @@ export function AnalyzeResponse({
     }
     if (!message.data?.twitter?.id) {
       api.v1
-        .get<Twitter>("/agent/token/twitter-info", {
+        .get<Twitter>("/token/twitter-info", {
           tokenAddress: ca,
         })
         .then((res) => {

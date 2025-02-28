@@ -30,7 +30,6 @@ export function LimitOrderTask({ nft }: { nft: NFT }) {
           itemSize={85}
           height={height ? height - 254 : 0}
           renderItem={(item: Task) => {
-            if (!item) return null;
             return (
               <TaskCard
                 task={item}

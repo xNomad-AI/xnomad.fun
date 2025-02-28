@@ -10,7 +10,7 @@ import { api } from "@/primitive/api";
 import { use100vh } from "react-div-100vh";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { ChatMessageList } from "./components/chat/chat-message-list";
-import { AiResponse } from "./response";
+import { ChatContent } from "./content";
 import { useChatContext } from "./store";
 import { ClearMemoryButton } from "./components/clear-memory";
 import { InputForm } from "./components/input-form";
@@ -21,8 +21,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
 
   const [isAgentSetup, setIsAgentSetup] = useState(false);
   const hasTriggered = useRef(false);
-  const { messages, scrollToBottom, messagesContainerRef, setMessages } =
-    useChatContext();
+  const { messages, scrollToBottom, setMessages } = useChatContext();
   const triggerAgentSetup = useMemoizedFn(async () => {
     try {
       await api.v1.post(`/agent`, {
@@ -121,9 +120,12 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   const transitions = useTransition(messages, {
     keys: (message) =>
       `${message?.createdAt}-${message?.user}-${message?.text}`,
-    from: { opacity: 0, transform: "translateY(50px)" },
+    from: { opacity: 0, transform: "translateY(32px)" },
     enter: { opacity: 1, transform: "translateY(0px)" },
-    leave: { opacity: 0, transform: "translateY(10px)" },
+    leave: { opacity: 0, transform: "translateY(8px)" },
+    config: {
+      duration: 200,
+    },
   });
   const height = use100vh();
   const { breakpoint } = useBreakpoint();
@@ -150,7 +152,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
       ) : (
         <>
           <div className='flex-1 overflow-y-auto'>
-            <ChatMessageList ref={messagesContainerRef}>
+            <ChatMessageList>
               {transitions((styles, message) => {
                 // FIXME: Fix this any
                 const Comp = animated.div as any;
@@ -165,21 +167,18 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
                         src={nft.image}
                       />
                     ) : null}
-                    <div className='flex flex-col flex-1'>
-                      {message ? (
-                        <AiResponse message={message} nft={nft} />
-                      ) : null}
-                    </div>
+
+                    {message ? (
+                      <ChatContent message={message} nft={nft} />
+                    ) : null}
                   </Comp>
                 );
               })}
             </ChatMessageList>
           </div>
           <div className='w-full flex flex-col gap-8'>
-            <div className='flex justify-between gap-16'>
-              <Actions nft={nft} />
-              <ClearMemoryButton />
-            </div>
+            <Actions nft={nft} />
+
             <InputForm />
           </div>
         </>

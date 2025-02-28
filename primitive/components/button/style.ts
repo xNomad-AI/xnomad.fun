@@ -25,7 +25,7 @@ export const style: Style = {
   },
   variant: {
     primary: clsx("text-black bg-brand"),
-    secondary: clsx("text-text1 bg-surface"),
+    secondary: clsx("text-text1 bg-white-10"),
     warning: clsx("text-red bg-red-10"),
     plain: clsx("text-text1 bg-surface"),
     ghost: clsx("backdrop-blur"),

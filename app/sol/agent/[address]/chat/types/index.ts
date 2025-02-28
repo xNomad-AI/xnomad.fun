@@ -1,12 +1,12 @@
 import { Content } from "@elizaos/core";
-import { Action, TradeAction } from "../response/types";
+import { Action, TradeAction } from "../content/types";
 
 export interface IAttachment {
   url: string;
   contentType: string;
   title: string;
 }
-export type ActionStep = "input" | "confirm" | "finish";
+export type ActionStep = "input" | "finish";
 export interface ExtraContentFields {
   user: string;
   createdAt: number;

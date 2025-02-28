@@ -30,31 +30,14 @@ export function DepositContainer({
   children,
 }: PropsWithChildren<{ nft?: NFT }>) {
   const { publicKey } = useWallet();
-  const { setPortfolio, portfolio } = useAgentStore();
+  const { portfolio, triggerRefresh } = useAgentStore();
   const solItem = useMemo(
     () => portfolio?.items.filter((item) => item.symbol === "SOL")?.[0],
     [portfolio]
   );
-  const getPortfolioData = useMemoizedFn(async (address: string) => {
-    getPortfolio({
-      address,
-    }).then((data) => {
-      setPortfolio(data);
-    });
-  });
   const agentAccountSol = useMemo(
     () => nft?.agentAccount.solana ?? "",
     [nft?.agentAccount.solana]
-  );
-  useRequest(
-    async () => {
-      getPortfolioData(agentAccountSol);
-    },
-    {
-      refreshDeps: [agentAccountSol],
-      ready: !!agentAccountSol,
-      pollingInterval: 5000,
-    }
   );
   const [depositOpen, setDepositOpen] = useState(false);
   const isNFTowner = useMemo(
@@ -105,7 +88,9 @@ export function DepositContainer({
         onClose={() => {
           setDepositOpen(false);
         }}
-        onSuccess={() => getPortfolioData(agentAccountSol)}
+        onSuccess={() => {
+          triggerRefresh();
+        }}
         open={depositOpen}
       />
     </div>
@@ -126,14 +111,14 @@ function DepositModal({
   const [input, setInput] = useState("");
   const { setVisible } = useConnectModalStore();
   const { publicKey, signTransaction, sendTransaction } = useWallet();
-  const { getBalance, connection } = useSolana();
-  const [balance, setBalance] = useState(0);
+  const { getSolBalance, connection } = useSolana();
+  const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
   useEffect(() => {
     if (!publicKey) {
       return;
     }
-    getBalance(publicKey).then((data) => {
-      setBalance(data / 10 ** 9);
+    getSolBalance(publicKey).then((data) => {
+      setBalance(data);
     });
   }, [publicKey]);
   const [depositing, setDepositing] = useState(false);
@@ -184,7 +169,7 @@ function DepositModal({
             placeholder='SOL'
             onChange={(e) => {
               const value = validNumberInput(e.target.value, true);
-              if (parseFloat(value) > balance) {
+              if (balance.lt(value)) {
                 setInput(balance.toString());
               } else {
                 setInput(validNumberInput(e.target.value, true));
@@ -192,7 +177,7 @@ function DepositModal({
             }}
           />
           <span className='text-size-12 text-text2'>
-            Connected Wallet Balance: {toCardNum(balance)} SOL
+            Connected Wallet Balance: {toCardNum(balance.toNumber())} SOL
           </span>
         </div>
         <Button loading={depositing} stretch onClick={deposit}>

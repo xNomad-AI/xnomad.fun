@@ -5,9 +5,17 @@ import { DepositContainer } from "../container";
 import { useAgentStore } from "../../store";
 import { Address } from "@/components/address";
 import { TokenNumber } from "@/components/token-number";
+import { useEffect } from "react";
 
 export function Portfolio({ nft }: { nft: NFT }) {
-  const { portfolio } = useAgentStore();
+  const { portfolio, triggerRefresh } = useAgentStore();
+  // Refresh every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      triggerRefresh();
+    }, 1000 * 5);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <DepositContainer nft={nft}>
       <div className='grid grid-cols-3 gap-16'>

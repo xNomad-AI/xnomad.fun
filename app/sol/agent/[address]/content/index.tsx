@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChatPage } from "../chat";
 import { NFT } from "@/types";
 import { message, RadioButton, RadioButtonGroup } from "@/primitive/components";
@@ -9,11 +9,13 @@ import { Portfolio } from "./portfolio";
 import { Analytics } from "./analytics";
 import { Features } from "./features";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useMemoizedFn } from "ahooks";
+import { useMemoizedFn, useRequest } from "ahooks";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { InfoSection } from "../info";
 import { Tasks } from "./tasks";
 import { ChatProvider } from "../chat/store";
+import { useAgentStore } from "../store";
+import { getPortfolio } from "./container/network";
 const tabs = ["chat", "tasks", "portfolio", "activity", "features"] as const;
 const mobileTabs = ["chat", "tasks", "asset"] as const;
 type Tab = (typeof tabs)[number];
@@ -36,6 +38,27 @@ export function Content({ nft }: { nft: NFT }) {
   });
   const [mobileTab, setMobileTab] = useState<MobileTab | null>(null);
   const { breakpoint } = useBreakpoint();
+  const { setPortfolio, refreshCount } = useAgentStore();
+  const getPortfolioData = useMemoizedFn(async (address: string) => {
+    getPortfolio({
+      address,
+    }).then((data) => {
+      setPortfolio(data);
+    });
+  });
+  const agentAccountSol = useMemo(
+    () => nft?.agentAccount.solana ?? "",
+    [nft?.agentAccount.solana]
+  );
+  useRequest(
+    async () => {
+      getPortfolioData(agentAccountSol);
+    },
+    {
+      refreshDeps: [agentAccountSol, refreshCount],
+      ready: !!agentAccountSol,
+    }
+  );
   return (
     <div className='w-full flex flex-col items-center gap-32 portrait-tablet:gap-16'>
       <RadioButtonGroup

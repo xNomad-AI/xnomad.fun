@@ -90,6 +90,7 @@ export function Radio(props: RadioProps) {
             { "!border-text2": disabled }
           )}
           type='radio'
+          id={value}
           checked={isChecked}
           value={value}
           disabled={disabled}
@@ -103,6 +104,7 @@ export function Radio(props: RadioProps) {
       {children ? (
         <div className='flex items-center justify-center'>
           <label
+            htmlFor={value}
             className={clsx("cursor-pointer select-none", {
               "!cursor-not-allowed": disabled,
             })}

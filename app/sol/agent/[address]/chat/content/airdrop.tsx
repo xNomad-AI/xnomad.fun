@@ -10,7 +10,7 @@ import {
 import { NFT } from "@/types";
 import { useState } from "react";
 import { useChatContext } from "../store";
-import { ResponseContainer } from "./container";
+import { ChatContentContainer } from "./container";
 import { ContentWithUser } from "../types";
 
 export function Airdrop({
@@ -26,7 +26,7 @@ export function Airdrop({
   });
   const { addAndSendMessage } = useChatContext();
   return (
-    <ResponseContainer message={message}>
+    <ChatContentContainer message={message}>
       <div className='flex flex-col gap-8 w-full'>
         <span>Here are the airdrops you can claim:</span>
         {airdrops?.length > 0
@@ -90,6 +90,6 @@ export function Airdrop({
             ))
           : "No airdrops available"}
       </div>
-    </ResponseContainer>
+    </ChatContentContainer>
   );
 }

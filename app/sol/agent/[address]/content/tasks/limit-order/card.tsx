@@ -5,10 +5,11 @@ import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { onError } from "@/lib/utils/error";
 import { upperFirstLetter } from "@/lib/utils/string";
 import clsx from "clsx";
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Address } from "@/components/address";
+import { ConfirmModal } from "../../features/confirm";
 
-export function TaskCard({
+function MemoTaskCard({
   task,
   onDelete,
   agentId,
@@ -47,8 +48,7 @@ export function TaskCard({
           </span>
         </div>
       </div>
-      <Button
-        variant='secondary'
+      <CancelButton
         loading={isDeleting}
         onClick={() => {
           setIsDeleting(true);
@@ -64,12 +64,13 @@ export function TaskCard({
               setIsDeleting(false);
             });
         }}
-      >
-        Cancel
-      </Button>
+      />
     </Card>
   );
 }
+export const TaskCard = memo(MemoTaskCard, (prev, next) => {
+  return prev.task.id === next.task.id;
+});
 function ActionTag({ type }: { type: "sell" | "buy" }) {
   return (
     <div
@@ -88,10 +89,11 @@ function ActionContent({ type, task }: { type: "sell" | "buy"; task: Task }) {
     const displayToken = {
       symbol: task.inputTokenSymbol,
       ca: task.inputTokenCA,
+      amount: task.inputTokenAmount,
     };
     return (
       <>
-        <TokenNumber number={task.amount} />
+        <TokenNumber number={displayToken.amount ?? ""} />
         {displayToken.symbol ? (
           <Tooltip content={displayToken.ca}>
             <p className={"text-red"}>${displayToken.symbol}</p>
@@ -105,6 +107,7 @@ function ActionContent({ type, task }: { type: "sell" | "buy"; task: Task }) {
     const displayToken = {
       symbol: task.outputTokenSymbol,
       ca: task.outputTokenCA,
+      amount: task.outputTokenAmount,
     };
     return (
       <>
@@ -116,9 +119,44 @@ function ActionContent({ type, task }: { type: "sell" | "buy"; task: Task }) {
           <Address className={"text-green"} address={displayToken.ca} />
         )}
         <span className='text-text2'>with</span>
-        <TokenNumber number={task.amount} />
+        <TokenNumber number={task.inputTokenAmount ?? ""} />
         {task.inputTokenSymbol ?? "SOL"}
       </>
     );
   }
+}
+
+function CancelButton({
+  onClick,
+  loading,
+}: {
+  onClick: () => void;
+  loading: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button
+        variant='secondary'
+        loading={loading}
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        Cancel
+      </Button>
+      <ConfirmModal
+        title='Cancel Task'
+        content='Are you sure to cancel the task?'
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+        onConfirm={() => {
+          setOpen(false);
+          onClick();
+        }}
+      />
+    </>
+  );
 }

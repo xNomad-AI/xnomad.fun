@@ -1,8 +1,22 @@
 import { sleep } from "@/primitive/utils/sleep";
-import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
+import {
+  clusterApiUrl,
+  Connection,
+  PublicKey,
+  TokenAmount,
+} from "@solana/web3.js";
 import { useMemoizedFn } from "ahooks";
 import { useMemo } from "react";
-
+import {
+  getAssociatedTokenAddressSync,
+  TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
+} from "@solana/spl-token";
+import BigNumber from "bignumber.js";
+const solMintAddress = [
+  "So11111111111111111111111111111111111111111",
+  "So11111111111111111111111111111111111111112",
+];
 export function useSolana() {
   const connection = useMemo(
     () =>
@@ -38,13 +52,50 @@ export function useSolana() {
       }
     }
   }
-  const getBalance = useMemoizedFn(async (publicKey: PublicKey) => {
+  const getSolBalance = useMemoizedFn(async (publicKey: PublicKey) => {
     const balance = await connection.getBalance(publicKey);
-    return balance;
+    return BigNumber(balance).dividedBy(10 ** 9);
   });
+  const getTokenProgramId = useMemoizedFn(async (mintTokenAddress: string) => {
+    const address = new PublicKey(mintTokenAddress);
+    const accountInfo = await connection.getParsedAccountInfo(address);
+    if (accountInfo?.value?.owner.equals(TOKEN_2022_PROGRAM_ID))
+      return TOKEN_2022_PROGRAM_ID;
+    if (accountInfo?.value?.owner.equals(TOKEN_PROGRAM_ID))
+      return TOKEN_PROGRAM_ID;
+    throw new Error(
+      `Invalid token program ID, mint=${mintTokenAddress}, owner=${accountInfo.value?.owner.toBase58()}`
+    );
+  });
+  const getSPLBalance = useMemoizedFn(
+    async (mintTokenAddress: string, publicKey: PublicKey) => {
+      if (solMintAddress.includes(mintTokenAddress)) {
+        const uiAmount = await getSolBalance(publicKey);
+        return {
+          amount: uiAmount.multipliedBy(10 ** 9).toString(),
+          decimals: 9,
+          uiAmount: uiAmount.toNumber(),
+          uiAmountString: uiAmount.toString(),
+        } satisfies TokenAmount;
+      }
+      const programId = await getTokenProgramId(mintTokenAddress);
+      const associatedAccount = getAssociatedTokenAddressSync(
+        new PublicKey(mintTokenAddress),
+        publicKey,
+        false,
+        programId
+      );
+
+      const balance = await connection.getTokenAccountBalance(
+        associatedAccount
+      );
+      return balance.value;
+    }
+  );
   return {
     connection,
     inspectTransaction,
-    getBalance,
+    getSolBalance,
+    getSPLBalance,
   };
 }

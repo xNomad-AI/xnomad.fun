@@ -175,10 +175,8 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
             </ChatMessageList>
           </div>
           <div className='w-full flex flex-col gap-8'>
-            <div className='flex justify-between gap-16'>
-              <Actions nft={nft} />
-              <ClearMemoryButton />
-            </div>
+            <Actions nft={nft} />
+
             <InputForm />
           </div>
         </>

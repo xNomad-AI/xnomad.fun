@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useChatContext } from "../store";
 import { onError } from "@/lib/utils/error";
 import { Button } from "@/primitive/components";
+import clsx from "clsx";
 
-export function ClearMemoryButton() {
+export function ClearMemoryButton({ className }: { className?: string }) {
   const { userId, agentId, setMessages } = useChatContext();
   const [isClearingMemory, setIsClearingMemory] = useState(false);
   const clearMemory = useMemoizedFn(async () => {
@@ -25,9 +26,10 @@ export function ClearMemoryButton() {
   });
   return (
     <Button
-      variant='danger'
+      variant='secondary'
       loading={isClearingMemory}
       size='s'
+      className={clsx("!text-red", className)}
       onClick={clearMemory}
     >
       Clear Memory

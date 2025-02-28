@@ -15,6 +15,8 @@ import { useChatContext } from "../store";
 import { ContentWithUser } from "../types";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { ClearMemoryButton } from "../components/clear-memory";
+import clsx from "clsx";
 
 export function Actions({ nft }: { nft: NFT }) {
   const { publicKey } = useWallet();
@@ -181,66 +183,73 @@ export function Actions({ nft }: { nft: NFT }) {
     }
   });
   return (
-    <div className='flex gap-16 flex-1 overflow-hidden'>
-      <motion.div
-        animate={{
-          width: action !== "trade" ? "100%" : 0,
-          opacity: action !== "trade" ? 1 : 0,
-          display: action !== "trade" ? "flex" : "none",
-        }}
-        className='flex items-center gap-8'
-      >
-        {actions.map((action) => {
-          if (process.env.DEPLOY_ENV === "prod" && action !== "airdrop") {
-            return null;
-          }
-          return (
-            <Button
-              size='s'
-              className='!font-normal'
-              variant='secondary'
-              key={action}
-              onClick={() => {
-                onActionClick(action);
-              }}
-              disabled={actionConfigs[action].disabled}
-            >
-              {actionConfigs[action].title}
-            </Button>
-          );
-        })}
-      </motion.div>
-
-      <motion.div
-        animate={{
-          width: action === "trade" ? "100%" : 0,
-          opacity: action === "trade" ? 1 : 0,
-          display: action === "trade" ? "flex" : "none",
-        }}
-        className='flex items-center gap-8 overflow-hidden'
-      >
-        <Button
-          className='!w-32 !px-0'
-          onClick={() => setAction(null)}
-          size='s'
-          variant='secondary'
+    <div className='flex items-center justify-between w-full'>
+      <div className='flex gap-16 flex-1 overflow-hidden'>
+        <motion.div
+          animate={{
+            width: action !== "trade" ? "100%" : 0,
+            opacity: action !== "trade" ? 1 : 0,
+            display: action !== "trade" ? "flex" : "none",
+          }}
+          className='flex items-center gap-8'
         >
-          <IconArrowLeft className='text-size-16' />
-        </Button>
-        {tradeActions.map((tradeAction) => (
+          {actions.map((action) => {
+            if (process.env.DEPLOY_ENV === "prod" && action !== "airdrop") {
+              return null;
+            }
+            return (
+              <Button
+                size='s'
+                className='!font-normal'
+                variant='secondary'
+                key={action}
+                onClick={() => {
+                  onActionClick(action);
+                }}
+                disabled={actionConfigs[action].disabled}
+              >
+                {actionConfigs[action].title}
+              </Button>
+            );
+          })}
+        </motion.div>
+
+        <motion.div
+          animate={{
+            width: action === "trade" ? "100%" : 0,
+            opacity: action === "trade" ? 1 : 0,
+            display: action === "trade" ? "flex" : "none",
+          }}
+          className='flex items-center gap-8 overflow-hidden'
+        >
           <Button
-            className='!font-normal whitespace-pre'
-            variant='secondary'
+            className='!w-32 !px-0'
+            onClick={() => setAction(null)}
             size='s'
-            disabled={tradeActionConfigs[tradeAction].disabled}
-            onClick={() => {
-              onTradeClick(tradeAction);
-            }}
+            variant='secondary'
           >
-            {tradeActionConfigs[tradeAction].title}
+            <IconArrowLeft className='text-size-16' />
           </Button>
-        ))}
-      </motion.div>
+          {tradeActions.map((tradeAction) => (
+            <Button
+              className='!font-normal whitespace-pre'
+              variant='secondary'
+              size='s'
+              disabled={tradeActionConfigs[tradeAction].disabled}
+              onClick={() => {
+                onTradeClick(tradeAction);
+              }}
+            >
+              {tradeActionConfigs[tradeAction].title}
+            </Button>
+          ))}
+        </motion.div>
+      </div>
+      <ClearMemoryButton
+        className={clsx({
+          hidden: action === "trade",
+        })}
+      />
     </div>
   );
 }

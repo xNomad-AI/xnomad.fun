@@ -16,13 +16,12 @@ import { ContentWithUser } from "../../types";
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { useAgentStore } from "../../../store";
 import { TokenNumber } from "@/components/token-number";
-import { upperFirstLetter } from "@/lib/utils/string";
 import { useSolana } from "@/lib/hooks/use-solana";
 import { PublicKey } from "@solana/web3.js";
 import { NFT } from "@/types";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { AmountInput } from "../amount-input";
-import { useMemoizedFn } from "ahooks";
+import { useMemoizedFn, useRequest } from "ahooks";
 type LimitOrderForm = {
   token: FormValue<TokenValue>;
   amount: FormValue<string>;
@@ -74,7 +73,7 @@ export function LimitOrder({
     _setType(value);
     setForm(initForm);
   });
-  const { getSolBalance } = useSolana();
+  const { getSolBalance, getSPLBalance } = useSolana();
   const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
   useEffect(() => {
     getSolBalance(new PublicKey(nft.agentAccount.solana)).then((balance) => {
@@ -82,6 +81,24 @@ export function LimitOrder({
     });
   }, []);
   const step = message.step;
+  const [tokenAmount, setTokenAmount] = useState<number>();
+  useRequest(
+    async () => {
+      if (form.token.value.ca && form.token.value.ca !== "") {
+        getSPLBalance(
+          form.token.value.ca,
+          new PublicKey(nft.agentAccount.solana)
+        ).then((balance) => {
+          setTokenAmount(balance ?? undefined);
+        });
+      }
+    },
+    {
+      refreshDeps: [form.token.value.ca, nft.agentAccount.solana, type],
+      ready: type === "sell",
+      pollingInterval: 10000,
+    }
+  );
   return (
     <ChatContentContainer
       message={message}
@@ -121,6 +138,7 @@ export function LimitOrder({
                   priceUsd: item.priceUsd,
                   uiAmount: item.uiAmount,
                 }))}
+                tokenAmount={tokenAmount}
                 value={form.token.value}
                 onChange={(value) => {
                   setForm({
@@ -143,13 +161,7 @@ export function LimitOrder({
               <AmountInput
                 placeholder={type === "buy" ? "SOL" : "Amount"}
                 value={form.amount.value}
-                amount={
-                  type === "buy"
-                    ? undefined
-                    : portfolio?.items.find(
-                        (item) => item.address === form.token.value.ca
-                      )?.uiAmount
-                }
+                amount={type === "buy" ? undefined : tokenAmount}
                 onChange={(value) => {
                   setForm({
                     ...form,

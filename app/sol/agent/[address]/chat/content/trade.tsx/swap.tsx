@@ -2,22 +2,21 @@ import {
   Button,
   FormItem,
   FormValue,
-  IconArrowForward,
   IconArrowForwardright,
-  IconArrowRight,
-  TextField,
 } from "@/primitive/components";
 import { useState } from "react";
-import BigNumber from "bignumber.js";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
-import { ActionStep, ContentWithUser } from "../../types";
-import { validNumberInput } from "@/lib/utils/input-helper";
+import { ContentWithUser } from "../../types";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { useAgentStore } from "../../../store";
 import { AmountInput } from "../amount-input";
+import { PublicKey } from "@solana/web3.js";
+import { useSolana } from "@/lib/hooks/use-solana";
+import { NFT } from "@/types";
+import { useRequest } from "ahooks";
 
-export function Swap({ message }: { message: ContentWithUser }) {
+export function Swap({ message, nft }: { message: ContentWithUser; nft: NFT }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
   const { portfolio } = useAgentStore();
   const [form, setForm] = useState<{
@@ -53,7 +52,24 @@ export function Swap({ message }: { message: ContentWithUser }) {
     },
   });
   const step = message.step;
-
+  const [tokenAmount, setTokenAmount] = useState<number>();
+  const { getSPLBalance } = useSolana();
+  useRequest(
+    async () => {
+      if (form.fromToken.value.ca && form.fromToken.value.ca !== "") {
+        getSPLBalance(
+          form.fromToken.value.ca,
+          new PublicKey(nft.agentAccount.solana)
+        ).then((balance) => {
+          setTokenAmount(balance ?? undefined);
+        });
+      }
+    },
+    {
+      refreshDeps: [form.fromToken.value.ca, nft.agentAccount.solana],
+      pollingInterval: 10000,
+    }
+  );
   return (
     <ChatContentContainer
       message={message}
@@ -78,6 +94,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
                   priceUsd: item.priceUsd,
                   uiAmount: item.uiAmount,
                 }))}
+                tokenAmount={tokenAmount}
                 value={form.fromToken.value}
                 onChange={(value) => {
                   setForm({
@@ -116,11 +133,7 @@ export function Swap({ message }: { message: ContentWithUser }) {
           <FormItem label={"Swap Amount"} {...form.amount}>
             <AmountInput
               value={form.amount.value}
-              amount={
-                portfolio?.items.find(
-                  (item) => item.address === form.fromToken.value.ca
-                )?.uiAmount
-              }
+              amount={tokenAmount}
               onChange={(value) => {
                 setForm({
                   ...form,

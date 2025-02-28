@@ -1,4 +1,3 @@
-import { validNumberInput } from "@/lib/utils/input-helper";
 import { Button, FormItem, FormValue, TextField } from "@/primitive/components";
 import { useState } from "react";
 import { useChatContext } from "../../store";
@@ -7,8 +6,12 @@ import { ContentWithUser } from "../../types";
 import { useAgentStore } from "../../../store";
 import { TokenInputSell, TokenValue } from "../token-input";
 import { AmountInput } from "../amount-input";
+import { useSolana } from "@/lib/hooks/use-solana";
+import { PublicKey } from "@solana/web3.js";
+import { useRequest } from "ahooks";
+import { NFT } from "@/types";
 
-export function Sell({ message }: { message: ContentWithUser }) {
+export function Sell({ message, nft }: { message: ContentWithUser; nft: NFT }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
   const { portfolio } = useAgentStore();
   const [form, setForm] = useState<{
@@ -33,7 +36,24 @@ export function Sell({ message }: { message: ContentWithUser }) {
     },
   });
   const step = message.step;
-
+  const [tokenAmount, setTokenAmount] = useState<number>();
+  const { getSPLBalance } = useSolana();
+  useRequest(
+    async () => {
+      if (form.token.value.ca && form.token.value.ca !== "") {
+        getSPLBalance(
+          form.token.value.ca,
+          new PublicKey(nft.agentAccount.solana)
+        ).then((balance) => {
+          setTokenAmount(balance ?? undefined);
+        });
+      }
+    },
+    {
+      refreshDeps: [form.token.value.ca, nft.agentAccount.solana],
+      pollingInterval: 10000,
+    }
+  );
   return (
     <ChatContentContainer
       message={message}
@@ -53,6 +73,7 @@ export function Sell({ message }: { message: ContentWithUser }) {
                 priceUsd: item.priceUsd,
                 uiAmount: item.uiAmount,
               }))}
+              tokenAmount={tokenAmount}
               value={form.token.value}
               onChange={(value) => {
                 setForm({
@@ -69,11 +90,7 @@ export function Sell({ message }: { message: ContentWithUser }) {
           <FormItem label={"Sell Amount"} {...form.amount}>
             <AmountInput
               value={form.amount.value}
-              amount={
-                portfolio?.items.find(
-                  (item) => item.address === form.token.value.ca
-                )?.uiAmount
-              }
+              amount={tokenAmount}
               onChange={(value) => {
                 setForm({
                   ...form,

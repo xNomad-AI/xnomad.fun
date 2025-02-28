@@ -1,16 +1,7 @@
 import { Address } from "@/components/address";
-import { Empty } from "@/components/empty";
 import { TokenNumber } from "@/components/token-number";
-import { api } from "@/primitive/api";
-import {
-  Dropdown,
-  DropdownController,
-  SelectOption,
-  Spin,
-  TextField,
-} from "@/primitive/components";
-import { useDebounce, useRequest } from "ahooks";
-import { useMemo, useRef, useState } from "react";
+import { SelectOption } from "@/primitive/components";
+import { useMemo, useState } from "react";
 import { TokenValue } from ".";
 import { WalletItem } from "../../../content/container/network";
 import { CommonInput } from "./common";
@@ -21,11 +12,13 @@ export function TokenInputSell({
   className,
   onChange,
   tokenLimitList,
+  tokenAmount,
 }: {
   className?: string;
   value: TokenValue;
   onChange: (value: TokenValue) => void;
   tokenLimitList?: InnerData[];
+  tokenAmount?: number;
 }) {
   const [search, setSearch] = useState("");
   const data = useMemo(() => {
@@ -37,10 +30,7 @@ export function TokenInputSell({
       ) ?? []
     );
   }, [tokenLimitList, value, search]);
-  const selectedData = useMemo(
-    () => data.find((item) => item.ca === value.ca),
-    [value, data]
-  );
+
   return (
     <div className='flex flex-col gap-8 w-full'>
       <CommonInput
@@ -52,9 +42,9 @@ export function TokenInputSell({
         className={className}
         TokenItem={TokenItem}
       />
-      {selectedData && (
+      {tokenAmount && (
         <div className='flex items-center gap-4 text-text2'>
-          Balance: <TokenNumber number={selectedData.uiAmount ?? ""} />
+          Balance: <TokenNumber number={tokenAmount ?? ""} />
         </div>
       )}
     </div>

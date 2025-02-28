@@ -4,10 +4,12 @@ import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
 import { NFT } from "@/types";
-import { validNumberInput } from "@/lib/utils/input-helper";
 import { TokenInputSell, TokenValue } from "../token-input";
 import { useAgentStore } from "../../../store";
 import { AmountInput } from "../amount-input";
+import { useSolana } from "@/lib/hooks/use-solana";
+import { PublicKey } from "@solana/web3.js";
+import { useRequest } from "ahooks";
 
 export function Transfer({
   message,
@@ -47,6 +49,24 @@ export function Transfer({
     },
   });
   const step = message.step;
+  const [tokenAmount, setTokenAmount] = useState<number>();
+  const { getSPLBalance } = useSolana();
+  useRequest(
+    async () => {
+      if (form.token.value.ca && form.token.value.ca !== "") {
+        getSPLBalance(
+          form.token.value.ca,
+          new PublicKey(nft.agentAccount.solana)
+        ).then((balance) => {
+          setTokenAmount(balance ?? undefined);
+        });
+      }
+    },
+    {
+      refreshDeps: [form.token.value.ca, nft.agentAccount.solana],
+      pollingInterval: 10000,
+    }
+  );
   return (
     <ChatContentContainer
       message={message}
@@ -66,6 +86,7 @@ export function Transfer({
                 priceUsd: item.priceUsd,
                 uiAmount: item.uiAmount,
               }))}
+              tokenAmount={tokenAmount}
               value={form.token.value}
               onChange={(value) => {
                 setForm({
@@ -82,11 +103,7 @@ export function Transfer({
           <FormItem label={"Transfer Amount"} {...form.amount}>
             <AmountInput
               value={form.amount.value}
-              amount={
-                portfolio?.items.find(
-                  (item) => item.address === form.token.value.ca
-                )?.uiAmount
-              }
+              amount={tokenAmount}
               onChange={(value) => {
                 setForm({
                   ...form,

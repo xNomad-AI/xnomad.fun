@@ -26,9 +26,9 @@ export function ChatContent({
         case "buy":
           return <Buy message={message} nft={nft} />;
         case "sell":
-          return <Sell message={message} />;
+          return <Sell message={message} nft={nft} />;
         case "swap":
-          return <Swap message={message} />;
+          return <Swap message={message} nft={nft} />;
         case "transfer":
           return <Transfer message={message} nft={nft} />;
         case "limit-order":

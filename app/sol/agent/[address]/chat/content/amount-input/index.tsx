@@ -7,11 +7,13 @@ export function AmountInput({
   onChange,
   placeholder = "Amount",
   amount,
+  decimals = 9,
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  amount?: number;
+  amount?: number | null;
+  decimals?: number | null;
 }) {
   return (
     <div className='w-full flex flex-col gap-8'>
@@ -32,9 +34,11 @@ export function AmountInput({
               percentage={percentage}
               onClick={(percentage) => {
                 onChange(
-                  BigNumber(amount ?? 0)
-                    .times(percentage)
-                    .div(100)
+                  // token length cannot greater than decimals
+                  new BigNumber(amount ?? 0)
+                    .multipliedBy(percentage)
+                    .dividedBy(100)
+                    .decimalPlaces(decimals ?? 9, BigNumber.ROUND_DOWN)
                     .toString()
                 );
               }}

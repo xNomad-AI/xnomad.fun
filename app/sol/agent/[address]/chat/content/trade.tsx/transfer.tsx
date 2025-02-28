@@ -8,7 +8,7 @@ import { TokenInputSell, TokenValue } from "../token-input";
 import { useAgentStore } from "../../../store";
 import { AmountInput } from "../amount-input";
 import { useSolana } from "@/lib/hooks/use-solana";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, TokenAmount } from "@solana/web3.js";
 import { useRequest } from "ahooks";
 
 export function Transfer({
@@ -49,7 +49,7 @@ export function Transfer({
     },
   });
   const step = message.step;
-  const [tokenAmount, setTokenAmount] = useState<number>();
+  const [tokenAmount, setTokenAmount] = useState<TokenAmount>();
   const { getSPLBalance } = useSolana();
   useRequest(
     async () => {
@@ -86,7 +86,7 @@ export function Transfer({
                 priceUsd: item.priceUsd,
                 uiAmount: item.uiAmount,
               }))}
-              tokenAmount={tokenAmount}
+              tokenAmount={tokenAmount?.uiAmount}
               value={form.token.value}
               onChange={(value) => {
                 setForm({
@@ -103,7 +103,8 @@ export function Transfer({
           <FormItem label={"Transfer Amount"} {...form.amount}>
             <AmountInput
               value={form.amount.value}
-              amount={tokenAmount}
+              amount={tokenAmount?.uiAmount}
+              decimals={tokenAmount?.decimals}
               onChange={(value) => {
                 setForm({
                   ...form,

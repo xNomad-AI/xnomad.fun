@@ -11,7 +11,7 @@ import { ContentWithUser } from "../../types";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { useAgentStore } from "../../../store";
 import { AmountInput } from "../amount-input";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, TokenAmount } from "@solana/web3.js";
 import { useSolana } from "@/lib/hooks/use-solana";
 import { NFT } from "@/types";
 import { useRequest } from "ahooks";
@@ -52,7 +52,7 @@ export function Swap({ message, nft }: { message: ContentWithUser; nft: NFT }) {
     },
   });
   const step = message.step;
-  const [tokenAmount, setTokenAmount] = useState<number>();
+  const [tokenAmount, setTokenAmount] = useState<TokenAmount>();
   const { getSPLBalance } = useSolana();
   useRequest(
     async () => {
@@ -94,7 +94,7 @@ export function Swap({ message, nft }: { message: ContentWithUser; nft: NFT }) {
                   priceUsd: item.priceUsd,
                   uiAmount: item.uiAmount,
                 }))}
-                tokenAmount={tokenAmount}
+                tokenAmount={tokenAmount?.uiAmount}
                 value={form.fromToken.value}
                 onChange={(value) => {
                   setForm({
@@ -133,7 +133,8 @@ export function Swap({ message, nft }: { message: ContentWithUser; nft: NFT }) {
           <FormItem label={"Swap Amount"} {...form.amount}>
             <AmountInput
               value={form.amount.value}
-              amount={tokenAmount}
+              amount={tokenAmount?.uiAmount}
+              decimals={tokenAmount?.decimals}
               onChange={(value) => {
                 setForm({
                   ...form,

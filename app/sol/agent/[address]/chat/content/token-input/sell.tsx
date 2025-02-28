@@ -18,7 +18,7 @@ export function TokenInputSell({
   value: TokenValue;
   onChange: (value: TokenValue) => void;
   tokenLimitList?: InnerData[];
-  tokenAmount?: number;
+  tokenAmount?: number | null;
 }) {
   const [search, setSearch] = useState("");
   const data = useMemo(() => {

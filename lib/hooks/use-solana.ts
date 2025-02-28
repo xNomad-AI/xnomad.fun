@@ -71,7 +71,7 @@ export function useSolana() {
       const balance = await connection.getTokenAccountBalance(
         associatedAccount
       );
-      return balance.value.uiAmount;
+      return balance.value;
     }
   );
   return {

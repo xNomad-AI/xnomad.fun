@@ -17,7 +17,7 @@ import { validNumberInput } from "@/lib/utils/input-helper";
 import { useAgentStore } from "../../../store";
 import { TokenNumber } from "@/components/token-number";
 import { useSolana } from "@/lib/hooks/use-solana";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, TokenAmount } from "@solana/web3.js";
 import { NFT } from "@/types";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { AmountInput } from "../amount-input";
@@ -81,7 +81,7 @@ export function LimitOrder({
     });
   }, []);
   const step = message.step;
-  const [tokenAmount, setTokenAmount] = useState<number>();
+  const [tokenAmount, setTokenAmount] = useState<TokenAmount>();
   useRequest(
     async () => {
       if (form.token.value.ca && form.token.value.ca !== "") {
@@ -138,7 +138,7 @@ export function LimitOrder({
                   priceUsd: item.priceUsd,
                   uiAmount: item.uiAmount,
                 }))}
-                tokenAmount={tokenAmount}
+                tokenAmount={tokenAmount?.uiAmount}
                 value={form.token.value}
                 onChange={(value) => {
                   setForm({
@@ -161,7 +161,8 @@ export function LimitOrder({
               <AmountInput
                 placeholder={type === "buy" ? "SOL" : "Amount"}
                 value={form.amount.value}
-                amount={type === "buy" ? undefined : tokenAmount}
+                amount={type === "buy" ? undefined : tokenAmount?.uiAmount}
+                decimals={type === "buy" ? undefined : tokenAmount?.decimals}
                 onChange={(value) => {
                   setForm({
                     ...form,

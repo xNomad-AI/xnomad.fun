@@ -19,7 +19,7 @@ export function ConfirmModal({
   onConfirm: () => void;
   onClose: () => void;
   open: boolean;
-  isConfirming: boolean;
+  isConfirming?: boolean;
 }) {
   return (
     <Modal size='s' onMaskClick={onClose} open={open}>

@@ -22,6 +22,7 @@ import { NFT } from "@/types";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { AmountInput } from "../amount-input";
 import { useMemoizedFn, useRequest } from "ahooks";
+import { CancelButton } from "../cancel-button";
 type LimitOrderForm = {
   token: FormValue<TokenValue>;
   amount: FormValue<string>;
@@ -227,15 +228,11 @@ export function LimitOrder({
           </FormItem>
 
           <div className='w-full flex justify-end items-center gap-16'>
-            <Button
-              variant='secondary'
-              size='s'
+            <CancelButton
               onClick={() => {
                 deleteMessageById(message.id);
               }}
-            >
-              Cancel
-            </Button>
+            />
             <Button
               size='s'
               onClick={() => {

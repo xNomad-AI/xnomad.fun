@@ -4,6 +4,7 @@ import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
 import { TokenInputBuy, TokenValue } from "../token-input";
+import { CancelButton } from "../cancel-button";
 
 export function AnalyzeInput({ message }: { message: ContentWithUser }) {
   const { deleteMessageById, addMessage, generateMessageId } = useChatContext();
@@ -48,15 +49,11 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
             />
           </FormItem>
           <div className='w-full flex justify-end items-center gap-16'>
-            <Button
-              size='s'
-              variant='secondary'
+            <CancelButton
               onClick={() => {
                 deleteMessageById(message.id);
               }}
-            >
-              Cancel
-            </Button>
+            />
             <Button
               size='s'
               onClick={() => {

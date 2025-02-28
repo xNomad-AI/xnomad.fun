@@ -10,6 +10,7 @@ import { useSolana } from "@/lib/hooks/use-solana";
 import { NFT } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import { TokenInputBuy, TokenValue } from "../token-input";
+import { CancelButton } from "../cancel-button";
 
 export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
@@ -89,15 +90,11 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
             </div>
           </FormItem>
           <div className='w-full flex justify-end items-center gap-16'>
-            <Button
-              size='s'
-              variant='secondary'
+            <CancelButton
               onClick={() => {
                 deleteMessageById(message.id);
               }}
-            >
-              Cancel
-            </Button>
+            />
             <Button
               size='s'
               onClick={() => {

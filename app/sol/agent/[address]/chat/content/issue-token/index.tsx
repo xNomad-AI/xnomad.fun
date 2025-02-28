@@ -22,6 +22,7 @@ import { useMemoizedFn } from "ahooks";
 import { useChatContext } from "../../store";
 import { PublicKey } from "@solana/web3.js";
 import { NFT } from "@/types";
+import { CancelButton } from "../cancel-button";
 
 export function IssueToken({
   message,
@@ -414,15 +415,11 @@ export function IssueToken({
             />
           </FormItem>
           <div className='w-full flex justify-end items-center gap-16'>
-            <Button
-              size='s'
-              variant='secondary'
+            <CancelButton
               onClick={() => {
                 deleteMessageById(message.id);
               }}
-            >
-              Cancel
-            </Button>
+            />
             <Button
               size='s'
               onClick={() => {

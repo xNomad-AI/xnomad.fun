@@ -10,6 +10,7 @@ import { AmountInput } from "../amount-input";
 import { useSolana } from "@/lib/hooks/use-solana";
 import { PublicKey, TokenAmount } from "@solana/web3.js";
 import { useRequest } from "ahooks";
+import { CancelButton } from "../cancel-button";
 
 export function Transfer({
   message,
@@ -135,15 +136,11 @@ export function Transfer({
             />
           </FormItem>
           <div className='w-full flex justify-end items-center gap-16'>
-            <Button
-              variant='secondary'
-              size='s'
+            <CancelButton
               onClick={() => {
                 deleteMessageById(message.id);
               }}
-            >
-              Cancel
-            </Button>
+            />
             <Button
               size='s'
               onClick={() => {

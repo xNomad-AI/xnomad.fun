@@ -60,6 +60,7 @@ const ChatContext = createContext<{
   deleteMessageById: (id: string) => void;
   updateMessage: (message: ContentWithUser) => void;
   generateMessageId: (id?: string) => string;
+  chatBottomRef: React.RefObject<HTMLDivElement>;
 } | null>(null);
 ChatContext.displayName = "ChatContext";
 const { Provider } = ChatContext;
@@ -168,8 +169,7 @@ export function ChatProvider({
           (msg) =>
             !removeInvalidAction ||
             !msg.webAction ||
-            (msg.webAction === "analyze" && !msg.step) || // keep analyze messages
-            (msg.webAction && msg.step === "finish")
+            (msg.webAction && (msg.step === "finish" || !msg.step))
         ),
         ...newMessages,
       ]);
@@ -255,6 +255,7 @@ export function ChatProvider({
   const generateMessageId = useMemoizedFn((id?: string) => {
     return stringToUuid(`web-${Date.now()}-${agentId}-${Math.random()}-${id}`);
   });
+  const chatBottomRef = useRef<HTMLDivElement>(null);
   return (
     <Provider
       value={{
@@ -278,6 +279,7 @@ export function ChatProvider({
         deleteMessageById,
         updateMessage,
         generateMessageId,
+        chatBottomRef,
       }}
     >
       {children}

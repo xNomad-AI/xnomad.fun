@@ -438,6 +438,10 @@ export function IssueToken({
                     form.twitter.value
                       ? `, with twitter ${form.twitter.value}`
                       : ""
+                  } with description ${form.description.value}${
+                    form.twitter.value
+                      ? `, with twitter ${form.twitter.value}`
+                      : ""
                   }${
                     form.twitter.value
                       ? `, with website ${form.website.value}`

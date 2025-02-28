@@ -30,10 +30,10 @@ export function IssueToken({
   nft: NFT;
 }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
-  const { getBalance } = useSolana();
-  const [balance, setBalance] = useState<number>();
+  const { getSolBalance } = useSolana();
+  const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
   useEffect(() => {
-    getBalance(new PublicKey(nft.agentAccount.solana)).then((balance) => {
+    getSolBalance(new PublicKey(nft.agentAccount.solana)).then((balance) => {
       setBalance(balance);
     });
   }, []);
@@ -252,7 +252,7 @@ export function IssueToken({
             />
             <div className='text-size-12'>
               Balance:&nbsp;
-              <TokenNumber number={BigNumber(balance ?? "0").div(10 ** 9)} />
+              <TokenNumber number={balance} />
               &nbsp;SOL
             </div>
           </FormItem>

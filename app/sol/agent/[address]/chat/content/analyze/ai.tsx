@@ -250,7 +250,7 @@ export function AnalyzeResponse({
           />{" "}
           <RateNum
             className='inline-block'
-            num={tokenInfo?.priceChange1h ?? 0}
+            num={(tokenInfo?.priceChange1h ?? 0) / 100}
           />
           (1H)
           <br />
@@ -267,7 +267,7 @@ export function AnalyzeResponse({
           24H Vol:{" "}
           <TokenNumber number={tokenInfo?.volume24h ?? ""} prefix={"$"} />{" "}
           <RateNum
-            num={tokenInfo?.volume24hChange ?? 0}
+            num={(tokenInfo?.volume24hChange ?? 0) / 100}
             className='inline-block'
           />
           <br />

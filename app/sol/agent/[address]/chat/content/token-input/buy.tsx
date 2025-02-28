@@ -3,11 +3,11 @@ import { TokenNumber } from "@/components/token-number";
 import { api } from "@/primitive/api";
 import { SelectOption } from "@/primitive/components";
 import { useDebounce, useRequest } from "ahooks";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { SearchToken, TokenValue } from ".";
 import { CommonInput } from "./common";
 type InnerData = TokenValue &
-  Pick<Partial<SearchToken>, "volume_24h_usd" | "liquidity">;
+  Pick<Partial<SearchToken>, "volume_24h_usd" | "liquidity" | "price">;
 export function TokenInputBuy({
   value,
   className,
@@ -37,6 +37,7 @@ export function TokenInputBuy({
                 logo: item.logo_uri,
                 volume_24h_usd: item.volume_24h_usd,
                 liquidity: item.liquidity,
+                price: item.price,
               };
             })
           );
@@ -46,17 +47,28 @@ export function TokenInputBuy({
       refreshDeps: [debouncedSearch],
     }
   );
+  const selectedData = useMemo(
+    () => data.find((item) => item.ca === value.ca),
+    [data, value]
+  );
   return (
-    <CommonInput
-      data={data}
-      value={value}
-      search={search}
-      setSearch={setSearch}
-      onChange={onChange}
-      className={className}
-      loading={loading}
-      TokenItem={TokenItem}
-    />
+    <div className='flex w-full flex-col gap-8'>
+      <CommonInput
+        data={data}
+        value={value}
+        search={search}
+        setSearch={setSearch}
+        onChange={onChange}
+        className={className}
+        loading={loading}
+        TokenItem={TokenItem}
+      />
+      {selectedData && (
+        <span className='text-size-12 text-text2'>
+          Price: <TokenNumber number={selectedData.price ?? ""} prefix={"$"} />
+        </span>
+      )}
+    </div>
   );
 }
 

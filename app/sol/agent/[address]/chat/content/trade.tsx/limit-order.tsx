@@ -22,7 +22,43 @@ import { PublicKey } from "@solana/web3.js";
 import { NFT } from "@/types";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { AmountInput } from "../amount-input";
-
+import { useMemoizedFn } from "ahooks";
+type LimitOrderForm = {
+  token: FormValue<TokenValue>;
+  amount: FormValue<string>;
+  target: FormValue<string>;
+  direction: FormValue<"above" | "below">;
+};
+const initForm = {
+  token: {
+    value: {
+      ca: "",
+      ticker: "",
+      logo: "",
+    },
+    required: true,
+    isInValid: false,
+    errorMsg: "",
+  },
+  direction: {
+    value: "above",
+    required: true,
+    isInValid: false,
+    errorMsg: "",
+  },
+  amount: {
+    value: "",
+    required: true,
+    isInValid: false,
+    errorMsg: "",
+  },
+  target: {
+    value: "",
+    required: true,
+    isInValid: false,
+    errorMsg: "",
+  },
+} satisfies LimitOrderForm;
 export function LimitOrder({
   message,
   nft,
@@ -32,41 +68,11 @@ export function LimitOrder({
 }) {
   const { portfolio } = useAgentStore();
   const { deleteMessageById, addAndSendMessage } = useChatContext();
-  const [type, setType] = useState<"buy" | "sell">("buy");
-  const [form, setForm] = useState<{
-    token: FormValue<TokenValue>;
-    amount: FormValue<string>;
-    target: FormValue<string>;
-    direction: FormValue<"above" | "below">;
-  }>({
-    token: {
-      value: {
-        ca: "",
-        ticker: "",
-        logo: "",
-      },
-      required: true,
-      isInValid: false,
-      errorMsg: "",
-    },
-    direction: {
-      value: "above",
-      required: true,
-      isInValid: false,
-      errorMsg: "",
-    },
-    amount: {
-      value: "",
-      required: true,
-      isInValid: false,
-      errorMsg: "",
-    },
-    target: {
-      value: "",
-      required: true,
-      isInValid: false,
-      errorMsg: "",
-    },
+  const [type, _setType] = useState<"buy" | "sell">("buy");
+  const [form, setForm] = useState<LimitOrderForm>(initForm);
+  const setType = useMemoizedFn((value: "buy" | "sell") => {
+    _setType(value);
+    setForm(initForm);
   });
   const { getBalance } = useSolana();
   const [balance, setBalance] = useState<number>();

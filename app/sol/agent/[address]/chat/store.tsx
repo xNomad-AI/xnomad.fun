@@ -168,6 +168,7 @@ export function ChatProvider({
           (msg) =>
             !removeInvalidAction ||
             !msg.webAction ||
+            (msg.webAction === "analyze" && !msg.step) || // keep analyze messages
             (msg.webAction && msg.step === "finish")
         ),
         ...newMessages,

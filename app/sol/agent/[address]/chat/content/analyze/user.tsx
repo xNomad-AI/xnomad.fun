@@ -67,10 +67,16 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
                 const newForm = { ...form };
                 Object.keys(newForm).forEach((_key) => {
                   const key = _key as keyof typeof newForm;
-                  if (newForm[key].required && !newForm[key].value) {
-                    allValid = false;
-                    newForm[key].isInValid = true;
-                    newForm[key].errorMsg = "Required";
+                  if (newForm[key].required) {
+                    if (
+                      !newForm[key].value ||
+                      (typeof newForm[key].value === "object" &&
+                        Object.values(newForm[key].value).some((item) => !item))
+                    ) {
+                      allValid = false;
+                      newForm[key].isInValid = true;
+                      newForm[key].errorMsg = "Required";
+                    }
                   }
                 });
                 if (!allValid) {

@@ -19,6 +19,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { stringToUuid } from "./lib/uuid";
 import { api } from "@/primitive/api";
 import { Action } from "./content/types";
+import { useAutoScroll } from "./hooks/useAutoScroll";
 function convertMessageActionToWebAction(action: string) {
   switch (action) {
     case "ANALYZE_TOKEN":
@@ -28,40 +29,40 @@ function convertMessageActionToWebAction(action: string) {
       return action;
   }
 }
-const ChatContext = createContext<{
-  handleSubmitForm: (e: React.FormEvent<HTMLFormElement>) => void;
-  addMessage: (
-    newMessages: ContentWithUser[],
-    removeInvalidAction?: boolean
-  ) => void;
-  input: string;
-  setInput: (value: string) => void;
-  selectedFile: File | null;
-  setSelectedFile: (file: File | null) => void;
-  messages?: ContentWithUser[];
-  setMessages: Dispatch<SetStateAction<ContentWithUser[]>>;
-  userId: string;
-  messagesContainerRef: React.RefObject<HTMLDivElement>;
-  sendMessageMutation: UseMutationResult<
-    ContentWithUser[],
-    Error,
-    {
-      message: string;
-      selectedFile?: File | null;
-    },
-    unknown
-  >;
-  scrollToBottom: () => void;
-  formRef: React.RefObject<HTMLFormElement>;
-  agentId: UUID;
-  deleteLastMessageByLength: (length?: number) => void;
-  deleteMessageByIndex: (index: number) => void;
-  addAndSendMessage: (input: string, file?: File | null) => void;
-  deleteMessageById: (id: string) => void;
-  updateMessage: (message: ContentWithUser) => void;
-  generateMessageId: (id?: string) => string;
-  chatBottomRef: React.RefObject<HTMLDivElement>;
-} | null>(null);
+const ChatContext = createContext<
+  | ({
+      handleSubmitForm: (e: React.FormEvent<HTMLFormElement>) => void;
+      addMessage: (
+        newMessages: ContentWithUser[],
+        removeInvalidAction?: boolean
+      ) => void;
+      input: string;
+      setInput: (value: string) => void;
+      selectedFile: File | null;
+      setSelectedFile: (file: File | null) => void;
+      messages?: ContentWithUser[];
+      setMessages: Dispatch<SetStateAction<ContentWithUser[]>>;
+      userId: string;
+      sendMessageMutation: UseMutationResult<
+        ContentWithUser[],
+        Error,
+        {
+          message: string;
+          selectedFile?: File | null;
+        },
+        unknown
+      >;
+      formRef: React.RefObject<HTMLFormElement>;
+      agentId: UUID;
+      deleteLastMessageByLength: (length?: number) => void;
+      deleteMessageByIndex: (index: number) => void;
+      addAndSendMessage: (input: string, file?: File | null) => void;
+      deleteMessageById: (id: string) => void;
+      updateMessage: (message: ContentWithUser) => void;
+      generateMessageId: (id?: string) => string;
+    } & ReturnType<typeof useAutoScroll>)
+  | null
+>(null);
 ChatContext.displayName = "ChatContext";
 const { Provider } = ChatContext;
 export function ChatProvider({
@@ -72,7 +73,6 @@ export function ChatProvider({
 }>) {
   const { publicKey } = useWallet();
 
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const userId = useMemo(() => {
     if (publicKey) {
@@ -126,11 +126,16 @@ export function ChatProvider({
         );
       });
   }, [agentId, userId]);
-  const scrollToBottom = useMemoizedFn(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop =
-        messagesContainerRef.current.scrollHeight;
-    }
+
+  const {
+    scrollRef,
+    isAtBottom,
+    scrollToBottom,
+    disableAutoScroll,
+    autoScrollEnabled,
+  } = useAutoScroll({
+    smooth: true,
+    refreshDependency: messages,
   });
 
   useEffect(() => {
@@ -255,7 +260,7 @@ export function ChatProvider({
   const generateMessageId = useMemoizedFn((id?: string) => {
     return stringToUuid(`web-${Date.now()}-${agentId}-${Math.random()}-${id}`);
   });
-  const chatBottomRef = useRef<HTMLDivElement>(null);
+
   return (
     <Provider
       value={{
@@ -267,7 +272,6 @@ export function ChatProvider({
         setSelectedFile,
         messages,
         userId,
-        messagesContainerRef,
         sendMessageMutation,
         scrollToBottom,
         formRef,
@@ -279,7 +283,10 @@ export function ChatProvider({
         deleteMessageById,
         updateMessage,
         generateMessageId,
-        chatBottomRef,
+        scrollRef,
+        isAtBottom,
+        disableAutoScroll,
+        autoScrollEnabled,
       }}
     >
       {children}

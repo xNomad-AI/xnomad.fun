@@ -30,7 +30,7 @@ export function DepositContainer({
   children,
 }: PropsWithChildren<{ nft?: NFT }>) {
   const { publicKey } = useWallet();
-  const { portfolio, setPortfolio } = useAgentStore();
+  const { portfolio, triggerRefresh } = useAgentStore();
   const solItem = useMemo(
     () => portfolio?.items.filter((item) => item.symbol === "SOL")?.[0],
     [portfolio]
@@ -89,11 +89,7 @@ export function DepositContainer({
           setDepositOpen(false);
         }}
         onSuccess={() => {
-          getPortfolio({
-            address: agentAccountSol,
-          }).then((data) => {
-            setPortfolio(data);
-          });
+          triggerRefresh();
         }}
         open={depositOpen}
       />

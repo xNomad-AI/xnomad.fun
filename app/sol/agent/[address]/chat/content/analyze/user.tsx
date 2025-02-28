@@ -41,6 +41,7 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
                   token: {
                     ...form.token,
                     value,
+                    isInValid: false,
                   },
                 });
               }}

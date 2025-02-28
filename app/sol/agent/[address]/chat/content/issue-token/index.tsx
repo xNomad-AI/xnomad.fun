@@ -42,7 +42,6 @@ export function IssueToken({
     tokenName: FormValue<string>;
     twitter: FormValue<string>;
     telegram: FormValue<string>;
-    discord: FormValue<string>;
     website: FormValue<string>;
     image: FormValue<File | null>;
     symbol: FormValue<string>;
@@ -79,12 +78,6 @@ export function IssueToken({
       errorMsg: "",
     },
     website: {
-      value: "",
-      required: false,
-      isInValid: false,
-      errorMsg: "",
-    },
-    discord: {
       value: "",
       required: false,
       isInValid: false,
@@ -291,21 +284,6 @@ export function IssueToken({
               }}
             />
           </FormItem>
-          <FormItem label={"Discord"} {...form.discord}>
-            <TextField
-              value={form.discord.value}
-              placeholder='Discord'
-              onChange={(event) => {
-                setForm({
-                  ...form,
-                  discord: {
-                    ...form.discord,
-                    value: event.target.value,
-                  },
-                });
-              }}
-            />
-          </FormItem>
           <FormItem label={"Website"} {...form.website}>
             <TextField
               value={form.website.value}
@@ -365,10 +343,6 @@ export function IssueToken({
                   }${
                     form.telegram.value
                       ? `, with telegram ${form.telegram.value}`
-                      : ""
-                  }${
-                    form.discord.value
-                      ? `, with discord ${form.discord.value}`
                       : ""
                   }, buy ${form.amount.value} SOL worth.`,
                   form.image.value

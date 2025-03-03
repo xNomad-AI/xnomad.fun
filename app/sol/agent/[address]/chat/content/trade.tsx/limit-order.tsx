@@ -257,8 +257,8 @@ export function LimitOrder({
 
               addAndSendMessage(
                 type === "buy"
-                  ? `Create an automatic task to buy ${form.token.value.ca} with ${form.amount.value} SOL when the token price is ${form.direction.value} $${form.target.value}`
-                  : `Create an automatic task to sell ${form.amount.value} ${form.token.value.ca} for SOL when the token price is ${form.direction.value} $${form.target.value}`
+                  ? `Create an automatic task to buy ${form.token.value.ticker}(${form.token.value.ca}) with ${form.amount.value} SOL when ${form.token.value.ticker} price is ${form.direction.value} $${form.target.value}`
+                  : `Create an automatic task to sell ${form.amount.value} ${form.token.value.ticker}(${form.token.value.ca}) for SOL when ${form.token.value.ticker} price is ${form.direction.value} $${form.target.value}`
               );
               deleteMessageById(message.id);
             }}

@@ -176,7 +176,7 @@ export function Swap({ message, nft }: { message: ContentWithUser; nft: NFT }) {
                 return;
               }
               addAndSendMessage(
-                `Swap ${form.amount.value} ${form.fromToken.value.ca} for ${form.toToken.value.ca}`
+                `Swap ${form.amount.value} $${form.fromToken.value.ticker}(${form.fromToken.value.ca}) for $${form.toToken.value.ticker}(${form.toToken.value.ca})`
               );
               deleteMessageById(message.id);
             }}

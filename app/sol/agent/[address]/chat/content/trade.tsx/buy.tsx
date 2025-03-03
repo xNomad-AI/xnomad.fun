@@ -118,9 +118,7 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
                 return;
               }
               addAndSendMessage(
-                `Buy ${
-                  form.token.value.ticker ? `${form.token.value.ticker} ` : ""
-                }${form.token.value.ca} with ${form.amount.value} SOL`
+                `Buy $${form.token.value.ticker}(${form.token.value.ca}) with ${form.amount.value} SOL`
               );
               deleteMessageById(message.id);
             }}

@@ -13,10 +13,7 @@ import {
   TOKEN_2022_PROGRAM_ID,
 } from "@solana/spl-token";
 import BigNumber from "bignumber.js";
-const solMintAddress = [
-  "So11111111111111111111111111111111111111111",
-  "So11111111111111111111111111111111111111112",
-];
+const solMintAddress = ["So11111111111111111111111111111111111111111"];
 export function useSolana() {
   const connection = useMemo(
     () =>

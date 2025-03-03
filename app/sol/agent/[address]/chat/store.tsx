@@ -17,18 +17,8 @@ import { useMemoizedFn } from "ahooks";
 import { apiClient } from "./lib/api";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { stringToUuid } from "./lib/uuid";
-import { api } from "@/primitive/api";
-import { Action } from "./content/types";
-import { useAutoScroll } from "./hooks/useAutoScroll";
-function convertMessageActionToWebAction(action: string) {
-  switch (action) {
-    case "ANALYZE_TOKEN":
-      return "analyze";
+import { useAutoScroll } from "./hooks/use-auto-scroll";
 
-    default:
-      return action;
-  }
-}
 const ChatContext = createContext<
   | ({
       handleSubmitForm: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -82,50 +72,6 @@ export function ChatProvider({
     }
   }, [publicKey, agentId]);
   const [messages, setMessages] = useState<ContentWithUser[]>([]);
-  const abortController = useRef<AbortController | null>(null);
-  useEffect(() => {
-    // TODO: backend error, encoded room id twice, need to fix
-    const roomId = stringToUuid(userId);
-    if (abortController.current) {
-      abortController.current.abort();
-    }
-    abortController.current = new AbortController();
-    api.agent
-      .get<{
-        agentId: string;
-        memories: {
-          id: string;
-          userId: string;
-          agentId: string;
-          createdAt: number; // in ms
-          content: {
-            text: string;
-            action: string;
-            webAction: Action;
-          };
-          roomId: string;
-          unique: boolean;
-        }[];
-        roomId: string;
-      }>(`/agents/${agentId}/${roomId}/memories`, undefined, {
-        signal: abortController.current?.signal,
-      })
-      .then((res) => {
-        setMessages(
-          res.memories
-            .sort((a, b) => a.createdAt - b.createdAt)
-            .map((msg) => ({
-              text: msg.content.text,
-              user: msg.userId === agentId ? "system" : "user",
-              createdAt: msg.createdAt,
-              id: msg.id,
-              webAction:
-                msg.content.webAction ||
-                convertMessageActionToWebAction(msg.content.action),
-            }))
-        );
-      });
-  }, [agentId, userId]);
 
   const {
     scrollRef,

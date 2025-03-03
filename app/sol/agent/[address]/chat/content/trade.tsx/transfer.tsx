@@ -163,9 +163,7 @@ export function Transfer({
                 return;
               }
               addAndSendMessage(
-                `Transfer ${form.amount.value} ${
-                  form.token.value.ticker ? `${form.token.value.ticker} ` : ""
-                }${form.token.value.ca} to ${form.toAddress.value}`
+                `Transfer ${form.amount.value} $${form.token.value.ticker}(${form.token.value.ca}) to ${form.toAddress.value}`
               );
               deleteMessageById(message.id);
             }}

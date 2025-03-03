@@ -1,13 +1,15 @@
 import { api } from "@/primitive/api";
-import { stringToUuid } from "@elizaos/core";
 import { useState, useRef, useEffect } from "react";
 import { useChatContext } from "../store";
 import { Action } from "../content/types";
-function convertMessageActionToWebAction(action: string): Action {
+import { stringToUuid } from "../lib/uuid";
+function convertMessageActionToWebAction(action: string): Action | undefined {
   switch (action) {
     case "ANALYZE_TOKEN":
       return "analyze";
-
+    case "none": {
+      return undefined;
+    }
     default:
       return action as unknown as Action;
   }

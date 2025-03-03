@@ -60,6 +60,7 @@ const ChatContext = createContext<
       deleteMessageById: (id: string) => void;
       updateMessage: (message: ContentWithUser) => void;
       generateMessageId: (id?: string) => string;
+      initializingMemory: boolean;
     } & ReturnType<typeof useAutoScroll>)
   | null
 >(null);
@@ -82,6 +83,7 @@ export function ChatProvider({
     }
   }, [publicKey, agentId]);
   const [messages, setMessages] = useState<ContentWithUser[]>([]);
+  const [initializingMemory, setInitializingMemory] = useState(true);
   const abortController = useRef<AbortController | null>(null);
   useEffect(() => {
     // TODO: backend error, encoded room id twice, need to fix
@@ -111,6 +113,7 @@ export function ChatProvider({
         signal: abortController.current?.signal,
       })
       .then((res) => {
+        setInitializingMemory(false);
         setMessages(
           res.memories
             .sort((a, b) => a.createdAt - b.createdAt)
@@ -124,6 +127,9 @@ export function ChatProvider({
                 convertMessageActionToWebAction(msg.content.action),
             }))
         );
+      })
+      .catch(() => {
+        setInitializingMemory(false);
       });
   }, [agentId, userId]);
 
@@ -287,6 +293,7 @@ export function ChatProvider({
         isAtBottom,
         disableAutoScroll,
         autoScrollEnabled,
+        initializingMemory,
       }}
     >
       {children}

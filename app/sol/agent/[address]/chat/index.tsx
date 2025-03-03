@@ -21,7 +21,8 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
 
   const [isAgentSetup, setIsAgentSetup] = useState(false);
   const hasTriggered = useRef(false);
-  const { messages, scrollToBottom, setMessages } = useChatContext();
+  const { messages, scrollToBottom, setMessages, initializingMemory } =
+    useChatContext();
   const triggerAgentSetup = useMemoizedFn(async () => {
     try {
       await api.v1.post(`/agent`, {
@@ -101,12 +102,12 @@ _ Transfer:
       }
     });
   });
-  useMount(() => {
+  useEffect(() => {
     scrollToBottom();
-    if (!((messages?.length ?? 0) > 0)) {
+    if (!((messages?.length ?? 0) > 0) && !initializingMemory) {
       getGreeting();
     }
-  });
+  }, [initializingMemory]);
   useUnmount(() => {
     setMessages((messages) => {
       return (

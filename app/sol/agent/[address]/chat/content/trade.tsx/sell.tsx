@@ -133,7 +133,7 @@ export function Sell({ message, nft }: { message: ContentWithUser; nft: NFT }) {
                 return;
               }
               addAndSendMessage(
-                `Sell ${form.amount.value} ${form.token.value.ticker}(${form.token.value.ca}) for SOL`
+                `Sell ${form.amount.value} $${form.token.value.ticker}(${form.token.value.ca}) for SOL`
               );
               deleteMessageById(message.id);
             }}

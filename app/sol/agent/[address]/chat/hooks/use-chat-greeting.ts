@@ -59,5 +59,5 @@ _ Transfer:
     if (!((messages?.length ?? 0) > 0)) {
       getGreeting();
     }
-  }, [initializingMemory]);
+  }, [initializingMemory, messages]);
 }

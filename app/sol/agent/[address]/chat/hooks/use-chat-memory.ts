@@ -26,6 +26,7 @@ export function useChatMemory(isAgentSetup: boolean) {
       abortController.current.abort();
     }
     abortController.current = new AbortController();
+    setInitializingMemory(true);
     api.agent
       .get<{
         agentId: string;

@@ -140,7 +140,8 @@ export function AnalyzeResponse({
   };
   nft: NFT;
 }) {
-  const ca = message.text.split(": ")[1];
+  const ca =
+    message.text.match(/\((.*?)\)/)?.[1] ?? message.text.split(": ")[1];
   const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(
     message.data?.info ?? null
   );

@@ -77,13 +77,13 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
               }
               addMessage([
                 {
-                  text: `Help me analyze this token: ${form.token.value.ca}`,
+                  text: `Help me analyze this token: $${form.token.value.ticker}(${form.token.value.ca})`,
                   user: "user",
                   createdAt: Date.now(),
                   id: generateMessageId("analyze-input"),
                 },
                 {
-                  text: `Help me analyze this token: ${form.token.value.ca}`,
+                  text: `Help me analyze this token: $${form.token.value.ticker}(${form.token.value.ca})`,
                   user: "system",
                   isLoading: true,
                   webAction: "analyze",

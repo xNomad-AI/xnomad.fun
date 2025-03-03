@@ -1,113 +1,37 @@
 "use client";
 import { useTransition, animated } from "@react-spring/web";
-import { useEffect, useRef, useState } from "react";
-import { Character } from "@elizaos/core";
 import { Spin } from "@/primitive/components";
 import clsx from "clsx";
 import { NFT } from "@/types";
-import { useMemoizedFn, useMount, useUnmount } from "ahooks";
-import { api } from "@/primitive/api";
+import { useUnmount } from "ahooks";
 import { use100vh } from "react-div-100vh";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { ChatMessageList } from "./components/chat/chat-message-list";
 import { ChatContent } from "./content";
 import { useChatContext } from "./store";
-import { ClearMemoryButton } from "./components/clear-memory";
 import { InputForm } from "./components/input-form";
 import { Actions } from "./actions";
+import { useAgentSetup } from "./hooks/use-agent-setup";
+import { useChatMemory } from "./hooks/use-chat-memory";
+import { useChatGreeting } from "./hooks/use-chat-greeting";
 
 export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   const agentId = nft.agentId;
 
-  const [isAgentSetup, setIsAgentSetup] = useState(false);
-  const hasTriggered = useRef(false);
-  const { messages, scrollToBottom, setMessages, initializingMemory } =
-    useChatContext();
-  const triggerAgentSetup = useMemoizedFn(async () => {
-    try {
-      await api.v1.post(`/agent`, {
-        nftId: nft.id,
-        chain: "solana",
-      });
-      hasTriggered.current = true;
-    } catch (error) {
-      console.error(error);
-    }
-  });
+  const { messages, setMessages } = useChatContext();
   // check if agent is setup
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | null = null;
-    const checkAgentSetup = () => {
-      api.agent
-        .get<{
-          id: string;
-          character: Character;
-        }>(`/agents/${agentId}`)
-        .then(() => {
-          setIsAgentSetup(true);
-          interval && clearInterval(interval);
-        })
-        .catch(() => {
-          setIsAgentSetup(false);
-          if (!hasTriggered.current) {
-            triggerAgentSetup();
-          }
-        });
-    };
-    checkAgentSetup();
-    interval = setInterval(() => {
-      checkAgentSetup();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // greeting
-  const getGreeting = useMemoizedFn(async () => {
-    const promptSuggestion = `Here are some example prompts if you want to trade: 
-- Buy: 
-  *Buy [$symbol(CA)] with [amount] SOL
-- Sell: 
-  *Sell [amount] [$symbol(CA)] for SOL
-- Swap: 
-  *swap [amount] SOL for [$symbol(CA)]
-  *Swap [amount][$symbol(CA)] for [$symbol(CA)]
-_ Transfer:
-  *Transfer [amount] [$symbol(CA)] to [wallet address]
-- Limit Order: 
-  *Create an automatic task to buy [$symbol(CA)] with [amount] SOL when the token price is under $xx
-  *Create an automatic task to sell [amount][$symbol(CA)] for SOL when the token price is above $xx`;
-    const greet = await api.v1.get<{ prologue: string }>("/agent/prologue", {
-      nftId: nft.id,
-      chain: "solana",
-    });
-    const newMessages = [
-      {
-        text: greet.prologue,
-        user: nft.name,
-        id: "greeting",
-        createdAt: Date.now(),
-      },
-      {
-        text: promptSuggestion,
-        user: nft.name,
-        id: "prompt",
-        createdAt: Date.now(),
-      },
-    ];
-    setMessages((old) => {
-      if (!old || old?.length === 0) {
-        return newMessages;
-      } else {
-        return old ?? [];
-      }
-    });
+  const { isAgentSetup } = useAgentSetup({
+    nft,
+    agentId,
   });
-  useEffect(() => {
-    scrollToBottom();
-    if (!((messages?.length ?? 0) > 0) && !initializingMemory) {
-      getGreeting();
-    }
-  }, [initializingMemory]);
+  // after agent is setup, fetch memory
+  const { initializingMemory } = useChatMemory(isAgentSetup);
+
+  // if memory is empty, show greeting
+  useChatGreeting({
+    nft,
+    initializingMemory,
+  });
   useUnmount(() => {
     setMessages((messages) => {
       return (

@@ -481,7 +481,7 @@ export function IssueToken({
               addAndSendMessage(
                 `Create a new token called ${
                   form.tokenName.value
-                } with symbol ${form.symbol.value}${
+                } with symbol $${form.symbol.value}${
                   form.twitter.value
                     ? `, with twitter ${form.twitter.value}`
                     : ""

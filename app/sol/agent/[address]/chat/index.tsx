@@ -64,15 +64,17 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   const getGreeting = useMemoizedFn(async () => {
     const promptSuggestion = `Here are some example prompts if you want to trade: 
 - Buy: 
-  *Buy [symbol] [ca] with [amount] SOL
+  *Buy [$symbol(CA)] with [amount] SOL
 - Sell: 
-  *Sell [amount] [symbol] [ca] for SOL
+  *Sell [amount] [$symbol(CA)] for SOL
 - Swap: 
-  *swap [amount] SOL for [symbol] [ca]
-  *swap [amount][symbol] [ca] for [symbol] [ca]
+  *swap [amount] SOL for [$symbol(CA)]
+  *Swap [amount][$symbol(CA)] for [$symbol(CA)]
+_ Transfer:
+  *Transfer [amount] [$symbol(CA)] to [wallet address]
 - Limit Order: 
-  *Create an automatic task to buy [symbol] [ca] with [amount] SOL when the token price is under $xx
-  *Create an automatic task to sell [amount][symbol] [ca] for SOL when the token price is above $xx`;
+  *Create an automatic task to buy [$symbol(CA)] with [amount] SOL when the token price is under $xx
+  *Create an automatic task to sell [amount][$symbol(CA)] for SOL when the token price is above $xx`;
     const greet = await api.v1.get<{ prologue: string }>("/agent/prologue", {
       nftId: nft.id,
       chain: "solana",

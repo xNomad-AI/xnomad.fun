@@ -15,7 +15,7 @@ import { useAgentSetup } from "./hooks/use-agent-setup";
 import { useChatMemory } from "./hooks/use-chat-memory";
 import { useChatGreeting } from "./hooks/use-chat-greeting";
 
-export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
+export function ChatPage({ nft }: { nft: NFT }) {
   const agentId = nft.agentId;
 
   const { messages, setMessages } = useChatContext();
@@ -63,10 +63,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
           breakpoint === "mobile" && height ? height - 80 - 64 - 72 : undefined,
       }}
       className={clsx(
-        "relative flex flex-col w-full max-w-[720px] h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-80px-64px-72px)] gap-32",
-        {
-          hidden: !show,
-        }
+        "relative flex flex-col w-full max-w-[720px] h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-80px-64px-72px)] gap-32"
       )}
     >
       {!isAgentSetup ? (

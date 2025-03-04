@@ -1,6 +1,5 @@
 import { Card } from "@/primitive/components";
 import { NFT } from "@/types";
-import { DepositContainer } from "../container";
 import { useEffect, useState } from "react";
 import { Activity, getActivities, getTransferActivity } from "./network";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
@@ -10,7 +9,17 @@ import { useTimeStore } from "@/primitive/hooks/time";
 import { ActionContent, ActionTag, Skeleton } from "./components";
 import { getActionType } from "./utils";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
-export function Analytics({ nft }: { nft: NFT }) {
+export function Analytics({
+  nft,
+  itemHeight,
+  skeletonNumber = 10,
+  variant,
+}: {
+  nft: NFT;
+  itemHeight?: number;
+  skeletonNumber?: number;
+  variant?: "normal" | "widget";
+}) {
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [isInitializing, setIsInitializing] = useState(true);
@@ -97,52 +106,58 @@ export function Analytics({ nft }: { nft: NFT }) {
   useTimeStore();
   const { breakpoint } = useBreakpoint();
   return (
-    <DepositContainer nft={nft}>
-      <div className='flex mt-16 flex-col w-full'>
-        {activity?.length > 0 ? (
-          <InfiniteScrollList
-            items={activity}
-            itemSize={breakpoint === "mobile" ? 89 : 60}
-            renderItem={(item) => {
-              const actionType = getActionType({
-                data: item,
-                agentAccount: nft.agentAccount.solana,
-              });
-              return (
-                <Card
-                  key={item.tx_hash}
-                  className='p-16 flex items-center gap-8 flex-wrap'
+    <div className='flex flex-col w-full'>
+      {activity?.length > 0 ? (
+        <InfiniteScrollList
+          items={activity}
+          gutterSize={variant === "widget" ? 0 : undefined}
+          itemSize={itemHeight ?? (breakpoint === "mobile" ? 89 : 60)}
+          renderItem={(item) => {
+            const actionType = getActionType({
+              data: item,
+              agentAccount: nft.agentAccount.solana,
+            });
+            return (
+              <Card
+                key={item.tx_hash}
+                style={{
+                  height: variant === "widget" ? "fit-content" : undefined,
+                  fontSize: variant === "widget" ? "12px" : "14px",
+                  border: variant === "widget" ? "none" : undefined,
+                  padding: variant === "widget" ? "0px" : undefined,
+                  gap: variant === "widget" ? "4px" : undefined,
+                }}
+                className='p-16 flex items-center gap-8 flex-wrap'
+              >
+                <ActionTag type={actionType} />
+                <ActionContent data={item} type={actionType} />
+                <div className='flex-1'></div>
+                <a
+                  href={`https://explorer.solana.com/tx/${item.tx_hash}`}
+                  target='_blank'
+                  rel='noreferrer'
+                  className='underline'
                 >
-                  <ActionTag type={actionType} />
-                  <ActionContent data={item} type={actionType} />
-                  <div className='flex-1'></div>
-                  <a
-                    href={`https://explorer.solana.com/tx/${item.tx_hash}`}
-                    target='_blank'
-                    rel='noreferrer'
-                    className='underline'
-                  >
-                    {beautifyTimeV2(item.block_unix_time * 1000)}
-                  </a>
-                </Card>
-              );
-            }}
-            hasNextPage={hasNextPage}
-            isNextPageLoading={loading}
-            loadNextPage={run}
-          />
-        ) : isInitializing ? (
-          <div className='w-full flex flex-col gap-16'>
-            {new Array(10).fill(0).map((_, index) => {
-              return <Skeleton key={index} />;
-            })}
-          </div>
-        ) : (
-          <div className='flex justify-center w-full p-16 h-[200px] items-center text-text2'>
-            No Activities
-          </div>
-        )}
-      </div>
-    </DepositContainer>
+                  {beautifyTimeV2(item.block_unix_time * 1000)}
+                </a>
+              </Card>
+            );
+          }}
+          hasNextPage={hasNextPage}
+          isNextPageLoading={loading}
+          loadNextPage={run}
+        />
+      ) : isInitializing ? (
+        <div className='w-full flex flex-col gap-16'>
+          {new Array(skeletonNumber).fill(0).map((_, index) => {
+            return <Skeleton key={index} />;
+          })}
+        </div>
+      ) : (
+        <div className='flex justify-center w-full p-16 h-[200px] items-center text-text2'>
+          No Activities
+        </div>
+      )}
+    </div>
   );
 }

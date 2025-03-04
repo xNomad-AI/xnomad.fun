@@ -16,9 +16,11 @@ import { Tasks } from "./tasks";
 import { ChatProvider } from "../chat/store";
 import { useAgentStore } from "../store";
 import { getPortfolio } from "./container/network";
+import { SideWallet } from "./portfolio/side-wallet";
+import clsx from "clsx";
 const tabs = ["chat", "tasks", "portfolio", "activity", "features"] as const;
 const mobileTabs = ["chat", "tasks", "asset"] as const;
-type Tab = (typeof tabs)[number];
+export type Tab = (typeof tabs)[number];
 type MobileTab = (typeof mobileTabs)[number];
 export function Content({ nft }: { nft: NFT }) {
   const { publicKey } = useWallet();
@@ -38,13 +40,18 @@ export function Content({ nft }: { nft: NFT }) {
   });
   const [mobileTab, setMobileTab] = useState<MobileTab | null>(null);
   const { breakpoint } = useBreakpoint();
-  const { setPortfolio, refreshCount } = useAgentStore();
+  const { setPortfolio, refreshCount, setIsRefreshing } = useAgentStore();
   const getPortfolioData = useMemoizedFn(async (address: string) => {
+    setIsRefreshing(true);
     getPortfolio({
       address,
-    }).then((data) => {
-      setPortfolio(data);
-    });
+    })
+      .then((data) => {
+        setPortfolio(data);
+      })
+      .finally(() => {
+        setIsRefreshing(false);
+      });
   });
   const agentAccountSol = useMemo(
     () => nft?.agentAccount.solana ?? "",
@@ -101,7 +108,18 @@ export function Content({ nft }: { nft: NFT }) {
 
       {nft.agentId && (
         <ChatProvider agentId={nft.agentId}>
-          <ChatPage nft={nft} show={tab === "chat" || mobileTab === "chat"} />
+          <div
+            className={clsx(
+              "w-full flex gap-32 mobile:flex-col mobile:gap-16",
+              {
+                hidden: !(tab === "chat" || mobileTab === "chat"),
+              }
+            )}
+          >
+            <ChatPage nft={nft} />
+
+            <SideWallet changeTab={setTab} nft={nft} />
+          </div>
         </ChatProvider>
       )}
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&

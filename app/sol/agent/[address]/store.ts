@@ -6,6 +6,8 @@ export const useAgentStore = create(
   immer<{
     portfolio?: AgentPortfolio;
     refreshCount: number;
+    isRefreshing: boolean;
+    setIsRefreshing: (isRefreshing: boolean) => void;
     triggerRefresh: () => void;
     setPortfolio: (portfolio: AgentPortfolio) => void;
   }>((set) => ({
@@ -15,6 +17,12 @@ export const useAgentStore = create(
       });
     },
     refreshCount: 0,
+    isRefreshing: false,
+    setIsRefreshing: (isRefreshing) => {
+      set((state) => {
+        state.isRefreshing = isRefreshing;
+      });
+    },
     triggerRefresh: () => {
       set((state) => {
         state.refreshCount++;

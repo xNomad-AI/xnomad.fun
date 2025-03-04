@@ -151,13 +151,21 @@ export function Review({
             </div>
             <Toggle value={issueToken} onChange={setIssueToken} />
           </div>
+
           {issueToken && (
-            <IssueTokenForm
-              account={publicKey as PublicKey}
-              form={issueTokenForm}
-              nftImage={form.image.value as File}
-              setForm={setIssueTokenForm}
-            />
+            <>
+              <p className='text-text2'>
+                This token will be bound to the agent and{" "}
+                <span className='text-red'>cannot be unbound once created</span>
+                . You can also launch tokens after the AI NFT launches.
+              </p>
+              <IssueTokenForm
+                account={publicKey as PublicKey}
+                form={issueTokenForm}
+                nftImage={form.image.value as File}
+                setForm={setIssueTokenForm}
+              />
+            </>
           )}
         </Card>
         <div className='w-full flex flex-col gap-16'>

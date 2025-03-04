@@ -7,6 +7,7 @@ import {
   IconClose,
   Checkbox,
   message,
+  Divider,
 } from "@/primitive/components";
 import { useMemoizedFn } from "ahooks";
 import clsx from "clsx";
@@ -247,6 +248,7 @@ export function IssueTokenForm({
           <span>Or use AI-NFT image</span>
         </button>
       </FormItem>
+      <Divider horizontal className='w-full' />
       <FormItem label={"Description"} {...form.description}>
         <TextField
           className='!bg-background'
@@ -277,29 +279,7 @@ export function IssueTokenForm({
           }}
         />
       </FormItem>
-      <FormItem label={"Buy(SOL)"} {...form.amount}>
-        <TextField
-          className='!bg-background'
-          value={form.amount.value}
-          placeholder='Initial Buy Amount'
-          onChange={(event) => {
-            const value = validNumberInput(event.target.value, true);
-            setForm({
-              ...form,
-              amount: {
-                ...form.amount,
-                value,
-                isInValid: false,
-              },
-            });
-          }}
-        />
-        <div className='text-size-12'>
-          Balance:&nbsp;
-          <TokenNumber number={balance} />
-          &nbsp;SOL
-        </div>
-      </FormItem>
+
       <FormItem label={"X(Twitter)"} {...form.twitter}>
         <TextField
           className='!bg-background'
@@ -350,6 +330,36 @@ export function IssueTokenForm({
             });
           }}
         />
+      </FormItem>
+      <Divider horizontal className='w-full' />
+      <FormItem
+        label={"Buy(SOL)"}
+        desc={
+          "Purchasing a small amount of your token is optional but can help protect your coin from snipers."
+        }
+        {...form.amount}
+      >
+        <TextField
+          className='!bg-background'
+          value={form.amount.value}
+          placeholder='Initial Buy Amount'
+          onChange={(event) => {
+            const value = validNumberInput(event.target.value, true);
+            setForm({
+              ...form,
+              amount: {
+                ...form.amount,
+                value,
+                isInValid: false,
+              },
+            });
+          }}
+        />
+        <div className='text-size-12'>
+          Balance:&nbsp;
+          <TokenNumber number={balance} />
+          &nbsp;SOL
+        </div>
       </FormItem>
     </>
   );

@@ -37,5 +37,4 @@ export interface CreatePreCheck {
   fee: number;
   feeAfterDiscount: number;
   discountPercentage: number;
-  tx: string;
 }

@@ -32,7 +32,8 @@ export function Address({
       )}
       {enableCopy && (
         <IconFileCopy
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             copy(address);
           }}
           className='cursor-pointer text-inherit'

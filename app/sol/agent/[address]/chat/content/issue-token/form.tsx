@@ -21,17 +21,19 @@ import { useSolana } from "@/lib/hooks/use-solana";
 export function IssueTokenForm({
   form,
   setForm,
-  nft,
+  nftImage,
+  account,
 }: {
   form: IssueTokenFormType;
   setForm: (form: IssueTokenFormType) => void;
-  nft: NFT;
+  account: PublicKey;
+  nftImage: string | File;
 }) {
   const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
   const { getSolBalance } = useSolana();
 
   useEffect(() => {
-    getSolBalance(new PublicKey(nft.agentAccount.solana)).then((balance) => {
+    getSolBalance(account).then((balance) => {
       setBalance(balance);
     });
   }, []);
@@ -198,23 +200,35 @@ export function IssueTokenForm({
             setUseAgentImage(result);
             if (result) {
               const img = document.getElementById(IMAGE_ID) as HTMLImageElement;
-              img.src = nft.image;
-              // file from image url
-              fetch(nft.image)
-                .then((res) => res.blob())
-                .then((blob) => {
-                  const file = new File([blob], "image.png", {
-                    type: blob.type,
+              if (typeof nftImage === "string") {
+                img.src = nftImage;
+                // file from image url
+                fetch(nftImage)
+                  .then((res) => res.blob())
+                  .then((blob) => {
+                    const file = new File([blob], "image.png", {
+                      type: blob.type,
+                    });
+                    setForm({
+                      ...form,
+                      image: {
+                        ...form.image,
+                        value: file,
+                        isInValid: false,
+                      },
+                    });
                   });
-                  setForm({
-                    ...form,
-                    image: {
-                      ...form.image,
-                      value: file,
-                      isInValid: false,
-                    },
-                  });
+              } else {
+                img.src = URL.createObjectURL(nftImage);
+                setForm({
+                  ...form,
+                  image: {
+                    ...form.image,
+                    value: nftImage,
+                    isInValid: false,
+                  },
                 });
+              }
             } else {
               const img = document.getElementById(IMAGE_ID) as HTMLImageElement;
               img.src = "";

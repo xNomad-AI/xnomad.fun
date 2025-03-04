@@ -1,24 +1,7 @@
-import { validNumberInput } from "@/lib/utils/input-helper";
-import {
-  ActionButton,
-  Button,
-  Checkbox,
-  FormItem,
-  FormValue,
-  IconClose,
-  TextField,
-  message as toast,
-} from "@/primitive/components";
-import { useEffect, useState } from "react";
-import { TokenNumber } from "@/components/token-number";
-import BigNumber from "bignumber.js";
+import { Button } from "@/primitive/components";
+import { useState } from "react";
 import { ChatContentContainer } from "../container";
-import { ContentWithUser, IAttachment } from "../../types";
-import { useSolana } from "@/lib/hooks/use-solana";
-import { useWallet } from "@solana/wallet-adapter-react";
-import clsx from "clsx";
-import { FILE_SIZE_IN_BYTE, FILE_SIZE_IN_MB, IMAGE_ID } from "./constants";
-import { useMemoizedFn } from "ahooks";
+import { ContentWithUser } from "../../types";
 import { useChatContext } from "../../store";
 import { PublicKey } from "@solana/web3.js";
 import { NFT } from "@/types";
@@ -45,7 +28,12 @@ export function IssueToken({
           <span className='font-bold text-size-16'>Issue Token</span>
           <PoweredBy />
         </div>
-        <IssueTokenForm form={form} setForm={setForm} nft={nft} />
+        <IssueTokenForm
+          form={form}
+          setForm={setForm}
+          account={new PublicKey(nft.agentAccount.solana)}
+          nftImage={nft.image}
+        />
         <div className='w-full flex justify-end items-center gap-16'>
           <CancelButton
             onClick={() => {

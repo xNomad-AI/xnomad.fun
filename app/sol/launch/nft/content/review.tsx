@@ -35,7 +35,7 @@ export function Review({
   setStep: (step: Step) => void;
 }) {
   const router = useRouter();
-  const { publicKey, signTransaction, sendTransaction } = useWallet();
+  const { publicKey, signTransaction } = useWallet();
   const { form, resetAll } = useLaunchStore();
   const [issueToken, setIssueToken] = useState(false);
   const [issueTokenForm, setIssueTokenForm] = useState<IssueTokenFormType>(
@@ -208,7 +208,16 @@ export function Review({
           </div>
         </div>
         <div></div>
-        <div className='w-full flex items-center justify-center'>
+        <div className='w-full flex flex-col gap-16 items-center justify-center'>
+          <Button
+            className='!w-full max-w-[400px]'
+            variant='secondary'
+            onClick={() => {
+              setStep("base");
+            }}
+          >
+            Last Step
+          </Button>
           <Button
             loading={submitting}
             onClick={() => {

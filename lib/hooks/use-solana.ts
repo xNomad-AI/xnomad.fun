@@ -25,7 +25,7 @@ export function useSolana() {
       const status = await connection.getSignatureStatus(signature, {
         searchTransactionHistory: true,
       });
-      // 检查是否有状态信息
+      // check if the transaction is finalized
       if (status.value) {
         if (status.value.confirmationStatus === "finalized") {
           return true;

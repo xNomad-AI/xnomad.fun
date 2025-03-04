@@ -18,6 +18,7 @@ import { NFT } from "@/types";
 import BigNumber from "bignumber.js";
 import { PublicKey } from "@solana/web3.js";
 import { useSolana } from "@/lib/hooks/use-solana";
+import { urlValidation } from "@/primitive/utils/url";
 
 export function IssueTokenForm({
   form,
@@ -286,12 +287,15 @@ export function IssueTokenForm({
           value={form.twitter.value}
           placeholder='e.g. https://twitter.com/username'
           onChange={(event) => {
+            const value = event.target.value;
+            const isValid = urlValidation(value);
             setForm({
               ...form,
               twitter: {
                 ...form.twitter,
-                value: event.target.value,
-                isInValid: false,
+                value,
+                isInValid: !isValid,
+                errorMsg: isValid ? "" : "Invalid URL",
               },
             });
           }}
@@ -303,12 +307,15 @@ export function IssueTokenForm({
           value={form.telegram.value}
           placeholder='e.g. https://t.me/username'
           onChange={(event) => {
+            const value = event.target.value;
+            const isValid = urlValidation(value);
             setForm({
               ...form,
               telegram: {
                 ...form.telegram,
-                value: event.target.value,
-                isInValid: false,
+                value,
+                isInValid: !isValid,
+                errorMsg: isValid ? "" : "Invalid URL",
               },
             });
           }}
@@ -320,12 +327,15 @@ export function IssueTokenForm({
           value={form.website.value}
           placeholder='e.g. https://example.com'
           onChange={(event) => {
+            const value = event.target.value;
+            const isValid = urlValidation(value);
             setForm({
               ...form,
               website: {
                 ...form.website,
-                value: event.target.value,
-                isInValid: false,
+                value,
+                isInValid: !isValid,
+                errorMsg: isValid ? "" : "Invalid URL",
               },
             });
           }}

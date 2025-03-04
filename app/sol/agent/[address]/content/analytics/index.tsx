@@ -9,16 +9,19 @@ import { useTimeStore } from "@/primitive/hooks/time";
 import { ActionContent, ActionTag, Skeleton } from "./components";
 import { getActionType } from "./utils";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
+import clsx from "clsx";
 export function Analytics({
   nft,
   itemHeight,
   skeletonNumber = 10,
   variant,
+  show,
 }: {
   nft: NFT;
   itemHeight?: number;
   skeletonNumber?: number;
   variant?: "normal" | "widget";
+  show: boolean;
 }) {
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -99,14 +102,18 @@ export function Analytics({
     },
     {
       pollingInterval: 10000,
-      ready: !!nft.agentAccount.solana && isInitialized,
+      ready: !!nft.agentAccount.solana && isInitialized && show,
     }
   );
   // use time tick to update time every second
   useTimeStore();
   const { breakpoint } = useBreakpoint();
   return (
-    <div className='flex flex-col w-full'>
+    <div
+      className={clsx("flex flex-col w-full", {
+        hidden: !show,
+      })}
+    >
       {activity?.length > 0 ? (
         <InfiniteScrollList
           items={activity}

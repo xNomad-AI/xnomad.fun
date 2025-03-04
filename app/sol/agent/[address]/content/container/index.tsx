@@ -24,11 +24,13 @@ import { NFT } from "@/types";
 import { onError } from "@/lib/utils/error";
 import { TokenNumber } from "@/components/token-number";
 import { isOwner } from "@/lib/user/ownership";
+import clsx from "clsx";
 
 export function DepositContainer({
   nft,
   children,
-}: PropsWithChildren<{ nft?: NFT }>) {
+  hidden,
+}: PropsWithChildren<{ nft?: NFT; hidden?: boolean }>) {
   const { publicKey } = useWallet();
   const { portfolio, triggerRefresh } = useAgentStore();
   const solItem = useMemo(
@@ -45,7 +47,11 @@ export function DepositContainer({
     [nft?.owner, publicKey]
   );
   return (
-    <div className='w-full flex flex-col gap-16'>
+    <div
+      className={clsx("w-full flex flex-col gap-16", {
+        hidden: hidden,
+      })}
+    >
       <Card className='flex items-center justify-between gap-16 p-16'>
         <div className='flex flex-col gap-4 min-w-0'>
           <span className='text-size-12'>Agent Wallet</span>

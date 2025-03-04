@@ -18,7 +18,7 @@ import { useAgentStore } from "../store";
 import { getPortfolio } from "./container/network";
 import { SideWallet } from "./portfolio/side-wallet";
 import clsx from "clsx";
-const tabs = ["chat", "tasks", "portfolio", "activity", "features"] as const;
+const tabs = ["chat", "wallet", "tasks", "features"] as const;
 const mobileTabs = ["chat", "tasks", "asset"] as const;
 export type Tab = (typeof tabs)[number];
 type MobileTab = (typeof mobileTabs)[number];
@@ -124,9 +124,8 @@ export function Content({ nft }: { nft: NFT }) {
       )}
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
         mobileTab === "asset" && <InfoSection nft={nft} />}
-      {tab === "portfolio" && <Portfolio nft={nft} />}
+      <Portfolio nft={nft} show={tab === "wallet"} />
       {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
-      {tab === "activity" && <Analytics nft={nft} />}
       {tab === "features" && <Features nft={nft} />}
     </div>
   );

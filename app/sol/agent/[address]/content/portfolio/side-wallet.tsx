@@ -33,7 +33,7 @@ export function SideWallet({
     <div className='flex flex-col gap-16 w-full max-w-[240px] flex-shrink-0'>
       <button
         onClick={() => {
-          changeTab("portfolio");
+          changeTab("wallet");
         }}
       >
         <Card className='p-12 flex items-center gap-4'>
@@ -65,19 +65,21 @@ export function SideWallet({
         >
           Activities
         </button>
-        <div className='flex-1 flex items-center justify-end'>
-          <button
-            onClick={() => {
-              triggerRefresh();
-            }}
-          >
-            <IconReset
-              className={clsx("text-size-16", {
-                "animate-spin": isRefreshing,
-              })}
-            />
-          </button>
-        </div>
+        {tab === "holder" && (
+          <div className='flex-1 flex items-center justify-end'>
+            <button
+              onClick={() => {
+                triggerRefresh();
+              }}
+            >
+              <IconReset
+                className={clsx("text-size-16", {
+                  "animate-spin": isRefreshing,
+                })}
+              />
+            </button>
+          </div>
+        )}
       </div>
       {tab === "holder" && (
         <div className='flex flex-col gap-12 w-full'>
@@ -135,14 +137,14 @@ export function SideWallet({
           )}
         </div>
       )}
-      {tab === "activity" && (
-        <Analytics
-          skeletonNumber={5}
-          nft={nft}
-          itemHeight={68}
-          variant='widget'
-        />
-      )}
+
+      <Analytics
+        skeletonNumber={5}
+        nft={nft}
+        itemHeight={68}
+        variant='widget'
+        show={tab === "activity"}
+      />
     </div>
   );
 }

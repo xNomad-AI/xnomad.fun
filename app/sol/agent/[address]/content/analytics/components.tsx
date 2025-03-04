@@ -118,7 +118,7 @@ export function TokenItem({
 export function Skeleton() {
   return (
     <Card className='p-16 flex items-center gap-8 bg-surface w-full h-60'>
-      <div className='w-32 h-32 bg-background rounded-full'></div>
+      <div className='w-32 h-32 bg-background rounded-full flex-shrink-0'></div>
       <div className='w-[200px] h-32 bg-background rounded-8'></div>
       <div className='flex-1'></div>
       <div className='w-[98px] h-32 bg-background rounded-8'></div>

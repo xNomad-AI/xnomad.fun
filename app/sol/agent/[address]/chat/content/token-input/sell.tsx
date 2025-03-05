@@ -3,7 +3,7 @@ import { TokenNumber } from "@/components/token-number";
 import { SelectOption } from "@/primitive/components";
 import { useMemo, useState } from "react";
 import { TokenValue } from ".";
-import { WalletItem } from "../../../content/container/network";
+import { WalletItem } from "../../../content/deposit-container/network";
 import { CommonInput } from "./common";
 type InnerData = TokenValue &
   Pick<Partial<WalletItem>, "priceUsd" | "uiAmount">;

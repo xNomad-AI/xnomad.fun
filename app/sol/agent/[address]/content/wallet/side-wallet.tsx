@@ -9,7 +9,7 @@ import { PublicKey } from "@solana/web3.js";
 import { Tab } from "..";
 import clsx from "clsx";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
-import { Analytics } from "../analytics";
+import { Analytics } from "./activity";
 import { NFT } from "@/types";
 
 export function SideWallet({

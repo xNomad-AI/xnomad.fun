@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { AgentPortfolio } from "./content/container/network";
+import { AgentPortfolio } from "./content/deposit-container/network";
 
 export const useAgentStore = create(
   immer<{

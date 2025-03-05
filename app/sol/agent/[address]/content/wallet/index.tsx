@@ -1,13 +1,13 @@
 import { Card, IconReset } from "@/primitive/components";
 import { NFT } from "@/types";
 import BigNumber from "bignumber.js";
-import { DepositContainer } from "../container";
+import { DepositContainer } from "../deposit-container";
 import { useAgentStore } from "../../store";
 import { Address } from "@/components/address";
 import { TokenNumber } from "@/components/token-number";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import { Analytics } from "../analytics";
+import { Analytics } from "./activity";
 
 export function Portfolio({ nft, show }: { nft: NFT; show: boolean }) {
   const { portfolio, triggerRefresh, isRefreshing } = useAgentStore();

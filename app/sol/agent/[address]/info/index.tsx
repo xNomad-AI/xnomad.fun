@@ -17,11 +17,13 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { marked } from "marked";
+import { useAgentStore } from "../store";
 async function parseMarkdownText(text: string) {
   const markedText = await marked.parse(text);
   return markedText;
 }
-export function InfoSection({ nft }: { nft: NFT }) {
+export function InfoSection() {
+  const { nft } = useAgentStore();
   const style = useRarity({
     rank: nft.rarity.rank,
     total: nft.collectionId === XNOMAD_ID ? 5000 : Infinity,

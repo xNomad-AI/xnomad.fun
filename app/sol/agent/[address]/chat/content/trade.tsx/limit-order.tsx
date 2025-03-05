@@ -59,14 +59,8 @@ const initForm = {
     errorMsg: "",
   },
 } satisfies LimitOrderForm;
-export function LimitOrder({
-  message,
-  nft,
-}: {
-  message: ContentWithUser;
-  nft: NFT;
-}) {
-  const { portfolio } = useAgentStore();
+export function LimitOrder({ message }: { message: ContentWithUser }) {
+  const { portfolio, nft } = useAgentStore();
   const { deleteMessageById, addAndSendMessage } = useChatContext();
   const [type, _setType] = useState<"buy" | "sell">("buy");
   const [form, setForm] = useState<LimitOrderForm>(initForm);

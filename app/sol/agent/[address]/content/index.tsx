@@ -21,8 +21,10 @@ const tabs = ["chat", "wallet", "Agent Token", "tasks", "features"] as const;
 const mobileTabs = ["chat", "tasks", "asset"] as const;
 export type Tab = (typeof tabs)[number];
 type MobileTab = (typeof mobileTabs)[number];
-export function Content({ nft }: { nft: NFT }) {
+export function Content() {
   const { publicKey } = useWallet();
+  const { setPortfolio, refreshCount, setIsRefreshing, nft } = useAgentStore();
+
   const [tab, _setTab] = useState<Tab | null>("chat");
   const setTab = useMemoizedFn((tab: Tab | null) => {
     if (
@@ -39,7 +41,6 @@ export function Content({ nft }: { nft: NFT }) {
   });
   const [mobileTab, setMobileTab] = useState<MobileTab | null>(null);
   const { breakpoint } = useBreakpoint();
-  const { setPortfolio, refreshCount, setIsRefreshing } = useAgentStore();
   const getPortfolioData = useMemoizedFn(async (address: string) => {
     setIsRefreshing(true);
     getPortfolio({
@@ -108,19 +109,22 @@ export function Content({ nft }: { nft: NFT }) {
       {nft.agentId && (
         <ChatProvider agentId={nft.agentId}>
           <div
-            className={clsx("flex gap-32 mobile:flex-col mobile:gap-16", {
-              hidden: !(tab === "chat" || mobileTab === "chat"),
-            })}
+            className={clsx(
+              "flex gap-32 mobile:flex-col mobile:gap-16 w-full justify-center",
+              {
+                hidden: !(tab === "chat" || mobileTab === "chat"),
+              }
+            )}
           >
             <ChatPage nft={nft} />
 
-            <SideWallet changeTab={setTab} nft={nft} />
+            <SideWallet changeTab={setTab} />
           </div>
         </ChatProvider>
       )}
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
-        mobileTab === "asset" && <InfoSection nft={nft} />}
-      <Portfolio nft={nft} show={tab === "wallet"} />
+        mobileTab === "asset" && <InfoSection />}
+      <Portfolio show={tab === "wallet"} />
       {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
       {tab === "features" && <Features nft={nft} />}
     </div>

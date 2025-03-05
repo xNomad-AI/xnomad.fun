@@ -27,12 +27,11 @@ import { isOwner } from "@/lib/user/ownership";
 import clsx from "clsx";
 
 export function DepositContainer({
-  nft,
   children,
   hidden,
-}: PropsWithChildren<{ nft?: NFT; hidden?: boolean }>) {
+}: PropsWithChildren<{ hidden?: boolean }>) {
   const { publicKey } = useWallet();
-  const { portfolio, triggerRefresh } = useAgentStore();
+  const { portfolio, triggerRefresh, nft } = useAgentStore();
   const solItem = useMemo(
     () => portfolio?.items.filter((item) => item.symbol === "SOL")?.[0],
     [portfolio]

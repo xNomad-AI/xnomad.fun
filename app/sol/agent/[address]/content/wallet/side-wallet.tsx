@@ -12,14 +12,8 @@ import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { Analytics } from "./activity";
 import { NFT } from "@/types";
 
-export function SideWallet({
-  changeTab,
-  nft,
-}: {
-  changeTab: (tab: Tab) => void;
-  nft: NFT;
-}) {
-  const { portfolio, triggerRefresh, isRefreshing } = useAgentStore();
+export function SideWallet({ changeTab }: { changeTab: (tab: Tab) => void }) {
+  const { portfolio, triggerRefresh, isRefreshing, nft } = useAgentStore();
   const { getSolBalance } = useSolana();
   const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
   useEffect(() => {

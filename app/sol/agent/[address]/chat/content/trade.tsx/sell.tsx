@@ -12,9 +12,9 @@ import { useRequest } from "ahooks";
 import { NFT } from "@/types";
 import { CancelButton } from "../cancel-button";
 
-export function Sell({ message, nft }: { message: ContentWithUser; nft: NFT }) {
+export function Sell({ message }: { message: ContentWithUser }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
-  const { portfolio } = useAgentStore();
+  const { portfolio, nft } = useAgentStore();
   const [form, setForm] = useState<{
     token: FormValue<TokenValue>;
     amount: FormValue<string>;

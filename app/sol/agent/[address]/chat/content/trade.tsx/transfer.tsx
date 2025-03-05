@@ -12,15 +12,9 @@ import { PublicKey, TokenAmount } from "@solana/web3.js";
 import { useRequest } from "ahooks";
 import { CancelButton } from "../cancel-button";
 
-export function Transfer({
-  message,
-  nft,
-}: {
-  message: ContentWithUser;
-  nft: NFT;
-}) {
+export function Transfer({ message }: { message: ContentWithUser }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
-  const { portfolio } = useAgentStore();
+  const { portfolio, nft } = useAgentStore();
   const [form, setForm] = useState<{
     token: FormValue<TokenValue>;
     amount: FormValue<string>;

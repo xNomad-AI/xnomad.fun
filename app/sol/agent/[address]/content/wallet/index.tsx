@@ -9,12 +9,12 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { Analytics } from "./activity";
 
-export function Portfolio({ nft, show }: { nft: NFT; show: boolean }) {
-  const { portfolio, triggerRefresh, isRefreshing } = useAgentStore();
+export function Portfolio({ show }: { show: boolean }) {
+  const { portfolio, triggerRefresh, isRefreshing, nft } = useAgentStore();
   const [tab, setTab] = useState<"holder" | "activity">("holder");
 
   return (
-    <DepositContainer nft={nft} hidden={!show}>
+    <DepositContainer hidden={!show}>
       <div className='grid grid-cols-3 gap-16'>
         <Card className='flex flex-col p-16'>
           <span className='text-size-12'>Net Worth</span>

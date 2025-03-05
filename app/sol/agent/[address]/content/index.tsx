@@ -109,12 +109,9 @@ export function Content({ nft }: { nft: NFT }) {
       {nft.agentId && (
         <ChatProvider agentId={nft.agentId}>
           <div
-            className={clsx(
-              "w-full flex gap-32 mobile:flex-col mobile:gap-16",
-              {
-                hidden: !(tab === "chat" || mobileTab === "chat"),
-              }
-            )}
+            className={clsx("flex gap-32 mobile:flex-col mobile:gap-16", {
+              hidden: !(tab === "chat" || mobileTab === "chat"),
+            })}
           >
             <ChatPage nft={nft} />
 

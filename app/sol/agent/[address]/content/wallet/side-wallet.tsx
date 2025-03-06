@@ -89,6 +89,7 @@ export function SideWallet({ changeTab }: { changeTab: (tab: Tab) => void }) {
             <InfiniteScrollList
               items={portfolio?.items ?? []}
               itemSize={56}
+              height={360}
               renderItem={(item) => {
                 return (
                   <div

@@ -68,10 +68,25 @@ export function Review({
       const imageUrl =
         imageMetadata || (await uploadMetaData(form.image.value as File));
       setImageMetadata(imageUrl);
-      const tokenImage =
-        tokenImageMetadata ||
-        (await uploadMetaData(issueTokenForm.image.value as File));
-      setTokenImageMetadata(tokenImage);
+      let createToken;
+      if (issueToken) {
+        const tokenImage =
+          tokenImageMetadata ||
+          (await uploadMetaData(issueTokenForm.image.value as File));
+        setTokenImageMetadata(tokenImage);
+        createToken = {
+          tokenInfo: {
+            name: issueTokenForm.tokenName.value,
+            symbol: issueTokenForm.symbol.value,
+            file: tokenImage,
+            description: issueTokenForm.description.value,
+            twitter: issueTokenForm.twitter.value,
+            telegram: issueTokenForm.telegram.value,
+            website: issueTokenForm.website.value,
+          },
+          buyAmountSol: parseFloat(issueTokenForm.amount.value),
+        };
+      }
       const createInfo = await api.v1.post<{ tx: string }>(
         "/launchpad/solana/create-common-collection-nft",
         {
@@ -86,18 +101,7 @@ export function Review({
             personality: form.personality.value.split(","),
             style: form.style.value.split(","),
           },
-          createToken: {
-            tokenInfo: {
-              name: issueTokenForm.tokenName.value,
-              symbol: issueTokenForm.symbol.value,
-              file: tokenImage,
-              description: issueTokenForm.description.value,
-              twitter: issueTokenForm.twitter.value,
-              telegram: issueTokenForm.telegram.value,
-              website: issueTokenForm.website.value,
-            },
-            buyAmountSol: parseFloat(issueTokenForm.amount.value),
-          },
+          createToken,
           userAddress: publicKey?.toBase58(),
         }
       );

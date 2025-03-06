@@ -89,6 +89,22 @@ export const apiAgentEndpoint: (
     return config;
   };
 };
+export const apiTSEndpoint: (
+  version: number
+) => ApiServiceRequestInterceptor = (version) => {
+  return (config) => {
+    config.baseURL = `${process.env.TOKEN_STORY_API_HOST}/api/v${version}`;
+    return config;
+  };
+};
+export const apiTSForwardEndpoint: (
+  version: number
+) => ApiServiceRequestInterceptor = (version) => {
+  return (config) => {
+    config.baseURL = `${process.env.TOKEN_STORY_API_HOST}/api/v${version}/forward`;
+    return config;
+  };
+};
 export const apiAirdropEndpoint: (
   version: number
 ) => ApiServiceRequestInterceptor = () => {

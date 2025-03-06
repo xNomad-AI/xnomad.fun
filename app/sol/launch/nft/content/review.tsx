@@ -44,6 +44,9 @@ export function Review({
   const [mintFee, setMintFee] = useState<CreatePreCheck | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [imageMetadata, setImageMetadata] = useState<string | null>(null);
+  const [tokenImageMetadata, setTokenImageMetadata] = useState<string | null>(
+    null
+  );
   const getMintFee = useMemoizedFn(async () => {
     const res = await api.v1.get<CreatePreCheck>(
       "/launchpad/solana/common-collection-nft-fee",
@@ -65,6 +68,10 @@ export function Review({
       const imageUrl =
         imageMetadata || (await uploadMetaData(form.image.value as File));
       setImageMetadata(imageUrl);
+      const tokenImage =
+        tokenImageMetadata ||
+        (await uploadMetaData(issueTokenForm.image.value as File));
+      setTokenImageMetadata(tokenImage);
       const createInfo = await api.v1.post<{ tx: string }>(
         "/launchpad/solana/create-common-collection-nft",
         {
@@ -83,8 +90,7 @@ export function Review({
             tokenInfo: {
               name: issueTokenForm.tokenName.value,
               symbol: issueTokenForm.symbol.value,
-              // base64
-              file: URL.createObjectURL(issueTokenForm.image.value as File),
+              file: tokenImage,
               description: issueTokenForm.description.value,
               twitter: issueTokenForm.twitter.value,
               telegram: issueTokenForm.telegram.value,

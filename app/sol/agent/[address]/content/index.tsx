@@ -17,6 +17,7 @@ import { useAgentStore } from "../store";
 import { getPortfolio } from "./deposit-container/network";
 import { SideWallet } from "./wallet/side-wallet";
 import clsx from "clsx";
+import { AgentToken } from "./agent-token";
 const tabs = ["chat", "wallet", "Agent Token", "tasks", "features"] as const;
 const mobileTabs = ["chat", "tasks", "asset"] as const;
 export type Tab = (typeof tabs)[number];
@@ -125,6 +126,7 @@ export function Content() {
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
         mobileTab === "asset" && <InfoSection />}
       <Portfolio show={tab === "wallet"} />
+      {tab === "Agent Token" && <AgentToken />}
       {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
       {tab === "features" && <Features nft={nft} />}
     </div>

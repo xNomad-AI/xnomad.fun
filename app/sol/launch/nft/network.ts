@@ -26,9 +26,8 @@ export async function uploadMetaData(file: File) {
   const space = await client.addSpace(delegation.ok);
   client.setCurrentSpace(space.did());
 
-  //上传文件
   const metadataCid = await client.uploadFile(file as FileLike);
-  const gateway = "https://ipfs.io/ipfs/"; // 或者其他网关
+  const gateway = "https://ipfs.io/ipfs/";
   const imageUrl = `${gateway}${metadataCid.toString()}`;
   return imageUrl;
 }

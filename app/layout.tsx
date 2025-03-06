@@ -14,6 +14,7 @@ import { PAGE_VIEW_ID } from "@/lib/page-view";
 import { InitStore } from "./layout/init-store";
 import { PageLoadingProgressBar } from "./layout/page-loading-progress";
 import { Suspense } from "react";
+import Script from "next/script";
 
 const ibm = IBM_Plex_Mono({
   variable: "--ibm-plex-mono",
@@ -47,6 +48,12 @@ export default function RootLayout({
         content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'
       />
       <link rel='icon' href='/logo.svg' type='image/x-icon' />
+      <Script
+        type='text/javascript'
+        defer
+        src='/charting-library/charting_library/charting_library.js'
+      />
+
       <ThemeProvider defaultTheme={"dark"}>
         <body
           id={PAGE_VIEW_ID}

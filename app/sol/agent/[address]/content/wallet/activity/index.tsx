@@ -116,6 +116,7 @@ export function Analytics({
     >
       {activity?.length > 0 ? (
         <InfiniteScrollList
+          height={360}
           items={activity}
           gutterSize={variant === "widget" ? 0 : undefined}
           itemSize={itemHeight ?? (breakpoint === "mobile" ? 89 : 60)}

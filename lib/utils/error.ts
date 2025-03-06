@@ -4,7 +4,6 @@ import { message } from "@/primitive/components";
 export function onError(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _error: any,
-  isSell = false,
   fallbackMessage = "trade failed"
 ) {
   const error = _error.error ? _error.error : _error;
@@ -19,13 +18,12 @@ export function onError(
   } else if (typeof error === "string") {
     message(error, { type: "error" });
   } else {
-    const errorMsg = isSell
-      ? "Please increase your slippage and try again!"
-      : error?.msg ||
-        error?.data?.msg ||
-        error?.message ||
-        error.toString() ||
-        fallbackMessage;
+    const errorMsg =
+      error?.msg ||
+      error?.data?.msg ||
+      error?.message ||
+      error.toString() ||
+      fallbackMessage;
     const hasReason = errorMsg?.toLowerCase().includes("reason:");
     const hasContractCall = errorMsg?.toLowerCase().includes("contract call");
     if (hasReason && hasContractCall) {

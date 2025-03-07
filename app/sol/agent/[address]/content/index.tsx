@@ -19,6 +19,7 @@ import { SideWallet } from "./wallet/side-wallet";
 import clsx from "clsx";
 import { AgentToken } from "./agent-token";
 import { useSearchParams } from "next/navigation";
+import { isOwner } from "@/lib/user/ownership";
 const tabs = ["chat", "wallet", "agent-token", "tasks", "features"] as const;
 const tabMap = {
   chat: "Chat",
@@ -135,7 +136,7 @@ export function Content() {
           >
             <ChatPage nft={nft} />
 
-            <SideWallet changeTab={setTab} />
+            {isOwner(nft.owner, publicKey?.toBase58()) && <SideWallet />}
           </div>
         </ChatProvider>
       )}

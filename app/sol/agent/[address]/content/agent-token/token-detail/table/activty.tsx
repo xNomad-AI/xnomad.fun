@@ -6,6 +6,7 @@ import { Spin } from "@/primitive/components";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { TokenNumber } from "@/components/token-number";
 import { Address } from "@/components/address";
+import BigNumber from "bignumber.js";
 
 export function Activity({ show }: { show: boolean }) {
   const {
@@ -59,7 +60,13 @@ export function Activity({ show }: { show: boolean }) {
                   <TokenNumber number={item.amount} />
                 </div>
                 <div className='flex w-[100px] justify-end'>
-                  <TokenNumber prefix={"$"} number={item.priceUsd} />
+                  <TokenNumber
+                    prefix={"$"}
+                    number={
+                      item.priceUsd ??
+                      BigNumber(item.amountUsd).div(item.amount).toNumber()
+                    }
+                  />
                 </div>
                 <div className='flex w-[120px] justify-end'>
                   <Address address={item.maker} />

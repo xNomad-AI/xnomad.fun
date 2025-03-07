@@ -101,7 +101,7 @@ export function Analytics({
       });
     },
     {
-      pollingInterval: 10000,
+      pollingInterval: 5000,
       ready: !!nft.agentAccount.solana && isInitialized && show,
     }
   );

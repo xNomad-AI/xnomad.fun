@@ -14,8 +14,9 @@ export function Holders({ show }: { show: boolean }) {
     async () => {
       const res = await getHolders({
         address: nft.primaryCoin?.address as string,
+        asc: 0,
       });
-      return res;
+      return res.sort((a, b) => b.amount - a.amount);
     },
     {
       ready: show && !!nft.primaryCoin?.address,

@@ -100,7 +100,7 @@ export function DepositContainer({
   );
 }
 
-function DepositModal({
+export function DepositModal({
   address,
   onClose,
   open,
@@ -115,8 +115,7 @@ function DepositModal({
   const { setVisible } = useConnectModalStore();
   const { publicKey, signTransaction, sendTransaction } = useWallet();
   const { connection } = useSolana();
-  const account = useMemo(() => new PublicKey(address), [address]);
-  const { balance } = useSolBalance(account);
+  const { balance } = useSolBalance(publicKey);
   const [depositing, setDepositing] = useState(false);
   const deposit = useMemoizedFn(async () => {
     if (!publicKey || !signTransaction || !sendTransaction) {

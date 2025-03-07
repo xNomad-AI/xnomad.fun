@@ -5,8 +5,8 @@ import {
   PublicKey,
   TokenAmount,
 } from "@solana/web3.js";
-import { useMemoizedFn } from "ahooks";
-import { useMemo } from "react";
+import { useMemoizedFn, useRequest } from "ahooks";
+import { useMemo, useState } from "react";
 import {
   getAssociatedTokenAddressSync,
   TOKEN_PROGRAM_ID,
@@ -95,4 +95,52 @@ export function useSolana() {
     getSolBalance,
     getSPLBalance,
   };
+}
+interface BalanceConfig {
+  disablePooling: boolean;
+  pollingInterval?: number;
+}
+export function useSolBalance(
+  account?: PublicKey | null,
+  config?: BalanceConfig
+) {
+  const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
+  const { getSolBalance } = useSolana();
+  const { refreshAsync } = useRequest(
+    async () => {
+      if (!account) return;
+      getSolBalance(account).then((balance) => {
+        setBalance(balance);
+      });
+    },
+    {
+      refreshDeps: [account, config?.disablePooling],
+      pollingInterval: config?.pollingInterval ?? 5000,
+      ready: Boolean(account) && !config?.disablePooling,
+    }
+  );
+  return { balance, refreshAsync };
+}
+
+export function useSPLBalance(
+  address: string,
+  account?: PublicKey | null,
+  config?: BalanceConfig
+) {
+  const [balance, setBalance] = useState<TokenAmount>();
+  const { getSPLBalance } = useSolana();
+  const { refreshAsync } = useRequest(
+    async () => {
+      if (!account) return;
+      getSPLBalance(address, account).then((balance) => {
+        setBalance(balance);
+      });
+    },
+    {
+      refreshDeps: [address, account, config?.disablePooling],
+      pollingInterval: config?.pollingInterval ?? 5000,
+      ready: Boolean(address) && Boolean(account) && !config?.disablePooling,
+    }
+  );
+  return { balance, refreshAsync };
 }

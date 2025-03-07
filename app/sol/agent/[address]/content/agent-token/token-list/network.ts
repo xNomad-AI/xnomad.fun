@@ -2,7 +2,7 @@ import { api } from "@/primitive/api";
 
 // only creatorAddress take effect, other params are not used
 export interface Params {
-  creatorAddress: string;
+  creatorAddress?: string;
   limit?: number;
   offset?: number;
   sortBy?: string;

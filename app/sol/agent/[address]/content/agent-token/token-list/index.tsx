@@ -78,7 +78,7 @@ export function TokenList({ show }: { show: boolean }) {
                 <div className='flex flex-col gap-4'>
                   <div className='flex items-end gap-4'>
                     <span className='font-bold'>{item.name}</span>
-                    <span className='text-text2'>{item.symbol}</span>
+                    <span className='text-text2'>${item.symbol}</span>
                   </div>
                   <div className='flex items-center gap-4'>
                     <Address
@@ -88,17 +88,17 @@ export function TokenList({ show }: { show: boolean }) {
                     />
                     {item.twitter && (
                       <a href={item.twitter} target='_blank'>
-                        <IconTwitterX className='text-size-12' />
+                        <IconTwitterX className='text-size-12 text-text2' />
                       </a>
                     )}
                     {item.telegram && (
                       <a href={item.telegram} target='_blank'>
-                        <IconTelegram className='text-size-12' />
+                        <IconTelegram className='text-size-12 text-text2' />
                       </a>
                     )}
                     {item.website && (
                       <a href={item.website} target='_blank'>
-                        <IconWebsite className='text-size-12' />
+                        <IconWebsite className='text-size-12 text-text2' />
                       </a>
                     )}
                   </div>

@@ -114,7 +114,7 @@ export function BaseTemplate({
       <Divider className='w-full' horizontal />
       <div className='flex items-center justify-between'>
         <span>You Receive</span>
-        <TokenNumber number={received ?? ""} suffix={quoteSymbol} />
+        <TokenNumber number={received ?? 0} suffix={quoteSymbol} />
       </div>
       {confirmNode}
     </>

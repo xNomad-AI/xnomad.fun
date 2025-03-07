@@ -74,7 +74,7 @@ export function TradeSettingModal() {
                 onChange={() => setInnerTradeMode("ANTI-MEV")}
               >
                 <div className='flex items-center gap-8'>
-                  Fast{" "}
+                  Anti-MEV{" "}
                   <Tooltip content='Send with MEV protection, which effectively prevents transactions from sandwich attacks'>
                     <IconInfo className='text-size-16' />
                   </Tooltip>

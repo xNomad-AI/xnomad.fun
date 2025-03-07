@@ -37,17 +37,35 @@ export function TokenCell({
             className='text-size-12 text-text2'
           />
           {item.twitter && variant !== "simple" && (
-            <a href={item.twitter} target='_blank'>
+            <a
+              href={item.twitter}
+              target='_blank'
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
               <IconTwitterX className='text-size-12 text-text2' />
             </a>
           )}
           {item.telegram && variant !== "simple" && (
-            <a href={item.telegram} target='_blank'>
+            <a
+              href={item.telegram}
+              target='_blank'
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
               <IconTelegram className='text-size-12 text-text2' />
             </a>
           )}
           {item.website && variant !== "simple" && (
-            <a href={item.website} target='_blank'>
+            <a
+              href={item.website}
+              target='_blank'
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
               <IconWebsite className='text-size-12 text-text2' />
             </a>
           )}

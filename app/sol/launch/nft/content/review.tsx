@@ -26,6 +26,7 @@ import { api } from "@/primitive/api";
 import { useSolana } from "@/lib/hooks/use-solana";
 import { onError } from "@/lib/utils/error";
 import { useRouter } from "next/navigation";
+import { TokenNumber } from "@/components/token-number";
 
 export function Review({
   step,
@@ -216,6 +217,17 @@ export function Review({
               <span>0</span>
             )}
           </div>
+          {issueToken && (
+            <div className='flex items-center justify-between w-full'>
+              <span>Buy ${issueTokenForm.symbol.value}</span>
+
+              <TokenNumber
+                className='font-bold'
+                number={issueTokenForm.amount.value}
+                suffix='SOL'
+              />
+            </div>
+          )}
         </div>
         <div></div>
         <div className='w-full flex flex-col gap-16 items-center justify-center'>
@@ -242,27 +254,22 @@ export function Review({
                   return;
                 }
                 let allValid = true;
-                Object.keys(issueTokenForm).forEach((_key) => {
-                  const key = _key as keyof typeof issueTokenForm;
-                  if (typeof issueTokenForm[key].value === "boolean") {
+                const newForm = { ...issueTokenForm };
+                Object.keys(newForm).forEach((_key) => {
+                  const key = _key as keyof typeof newForm;
+                  if (typeof newForm[key].value === "boolean") {
                     return;
                   }
-                  if (
-                    issueTokenForm[key].required &&
-                    !issueTokenForm[key].value
-                  ) {
-                    setIssueTokenForm({
-                      ...issueTokenForm,
-                      [key]: {
-                        ...issueTokenForm[key],
-                        isInValid: true,
-                        errorMsg: "This field is required",
-                      },
-                    });
+                  if (newForm[key].required && !newForm[key].value) {
+                    newForm[key].isInValid = true;
+                    newForm[key].errorMsg = "Required";
                     allValid = false;
                   }
                 });
-                if (!allValid) return;
+                if (!allValid) {
+                  setIssueTokenForm(newForm);
+                  return;
+                }
               }
               create();
             }}

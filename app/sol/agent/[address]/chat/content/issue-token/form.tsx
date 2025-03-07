@@ -9,10 +9,14 @@ import {
   message,
   Divider,
 } from "@/primitive/components";
-import { useMemoizedFn } from "ahooks";
+import { useMemoizedFn, useMount } from "ahooks";
 import clsx from "clsx";
 import { useState } from "react";
-import { FILE_SIZE_IN_BYTE, FILE_SIZE_IN_MB, IMAGE_ID } from "./constants";
+import {
+  FILE_SIZE_IN_BYTE,
+  FILE_SIZE_IN_MB,
+  TOKEN_IMAGE_ID,
+} from "./constants";
 import { IssueTokenFormType } from "./types";
 import { PublicKey } from "@solana/web3.js";
 import { useSolBalance } from "@/lib/hooks/use-solana";
@@ -30,7 +34,7 @@ export function IssueTokenForm({
   nftImage: string | File;
 }) {
   const { balance } = useSolBalance(account);
-  const [useAgentImage, setUseAgentImage] = useState(false);
+  const [useAgentImage, setUseAgentImage] = useState(true);
   const onLogoFileChange = useMemoizedFn((file?: File) => {
     if (!file) {
       return;
@@ -44,7 +48,7 @@ export function IssueTokenForm({
 
     const reader = new FileReader();
     reader.onload = function (e) {
-      const img = document.getElementById(IMAGE_ID) as HTMLImageElement;
+      const img = document.getElementById(TOKEN_IMAGE_ID) as HTMLImageElement;
       img.src = e.target?.result as string;
     };
     setForm({
@@ -57,6 +61,43 @@ export function IssueTokenForm({
     });
     setUseAgentImage(false);
     reader.readAsDataURL(file);
+  });
+  const setNFTImageAsTokenImage = useMemoizedFn(() => {
+    const img = document.getElementById(TOKEN_IMAGE_ID) as HTMLImageElement;
+    if (typeof nftImage === "string") {
+      img.src = nftImage;
+      // file from image url
+      fetch(nftImage)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const file = new File([blob], "image.png", {
+            type: blob.type,
+          });
+          setForm({
+            ...form,
+            image: {
+              ...form.image,
+              value: file,
+              isInValid: false,
+            },
+          });
+        });
+    } else {
+      img.src = URL.createObjectURL(nftImage);
+      setForm({
+        ...form,
+        image: {
+          ...form.image,
+          value: nftImage,
+          isInValid: false,
+        },
+      });
+    }
+  });
+  useMount(() => {
+    if (useAgentImage) {
+      setNFTImageAsTokenImage();
+    }
   });
   return (
     <>
@@ -95,12 +136,26 @@ export function IssueTokenForm({
           className='!bg-background'
           value={form.symbol.value}
           prefixNode={<span className='text-text2'>$</span>}
+          placeholder='Less than 20 character'
           onChange={(event) => {
+            const value = event.target.value;
+            if (value.length > 20) {
+              setForm({
+                ...form,
+                symbol: {
+                  ...form.symbol,
+                  value,
+                  isInValid: true,
+                  errorMsg: "Less than 20 characters",
+                },
+              });
+              return;
+            }
             setForm({
               ...form,
               symbol: {
                 ...form.symbol,
-                value: event.target.value,
+                value: value,
                 isInValid: false,
               },
             });
@@ -110,7 +165,7 @@ export function IssueTokenForm({
       <FormItem label='Image' {...form.image}>
         <div className='flex flex-col gap-4'>
           <label
-            htmlFor='nft-image'
+            htmlFor='token-image'
             onDragOver={(e) => {
               e.preventDefault();
             }}
@@ -126,7 +181,7 @@ export function IssueTokenForm({
                 e.stopPropagation();
                 e.preventDefault();
                 const img = document.getElementById(
-                  IMAGE_ID
+                  TOKEN_IMAGE_ID
                 ) as HTMLImageElement;
                 img.src = "";
                 setUseAgentImage(false);
@@ -148,8 +203,8 @@ export function IssueTokenForm({
               <IconClose />
             </ActionButton>
             <img
-              id={IMAGE_ID}
-              alt='nft-image'
+              id={TOKEN_IMAGE_ID}
+              alt='token-image'
               src={""}
               width={120}
               height={120}
@@ -176,14 +231,14 @@ export function IssueTokenForm({
             onLogoFileChange(file);
             e.currentTarget.value = "";
           }}
-          id='nft-image'
-          name='nft-image'
+          id='token-image'
+          name='token-image'
           className='hidden'
           accept='.jpg,.png,.gif,.svg,.jpeg,.webp'
           size={5000}
         />
-        <p className='text-text2'>
-          Upload a images in JPEG/PNG/GIF formats, with a size limit of 10MB.
+        <p className='text-text2 text-size-12'>
+          Upload a image in JPEG/PNG/GIF formats, with a size limit of 10MB.
         </p>
 
         <button
@@ -192,38 +247,11 @@ export function IssueTokenForm({
             const result = !useAgentImage;
             setUseAgentImage(result);
             if (result) {
-              const img = document.getElementById(IMAGE_ID) as HTMLImageElement;
-              if (typeof nftImage === "string") {
-                img.src = nftImage;
-                // file from image url
-                fetch(nftImage)
-                  .then((res) => res.blob())
-                  .then((blob) => {
-                    const file = new File([blob], "image.png", {
-                      type: blob.type,
-                    });
-                    setForm({
-                      ...form,
-                      image: {
-                        ...form.image,
-                        value: file,
-                        isInValid: false,
-                      },
-                    });
-                  });
-              } else {
-                img.src = URL.createObjectURL(nftImage);
-                setForm({
-                  ...form,
-                  image: {
-                    ...form.image,
-                    value: nftImage,
-                    isInValid: false,
-                  },
-                });
-              }
+              setNFTImageAsTokenImage();
             } else {
-              const img = document.getElementById(IMAGE_ID) as HTMLImageElement;
+              const img = document.getElementById(
+                TOKEN_IMAGE_ID
+              ) as HTMLImageElement;
               img.src = "";
               setForm({
                 ...form,
@@ -237,10 +265,14 @@ export function IssueTokenForm({
           }}
         >
           <Checkbox value={useAgentImage} />
-          <span>Or use AI-NFT image</span>
+          <span>Use AI-NFT image</span>
         </button>
       </FormItem>
       <Divider horizontal className='w-full' />
+      <p className='text-size-12 text-text2'>
+        You are allowed to modify the following information after the launch,
+        for a fee of 1 SOL.
+      </p>
       <FormItem label={"Description"} {...form.description}>
         <TextField
           className='!bg-background'
@@ -344,6 +376,18 @@ export function IssueTokenForm({
           className='!bg-background'
           value={form.amount.value}
           placeholder='>0.01 SOL'
+          onBlur={() => {
+            if (parseFloat(form.amount.value) < 0.01) {
+              setForm({
+                ...form,
+                amount: {
+                  ...form.amount,
+                  isInValid: true,
+                  errorMsg: "Amount should be more than 0.01 SOL",
+                },
+              });
+            }
+          }}
           onChange={(event) => {
             let value = validNumberInput(event.target.value, true);
             // > 0.01

@@ -11,13 +11,11 @@ import {
 } from "@/primitive/components";
 import { useMemoizedFn } from "ahooks";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FILE_SIZE_IN_BYTE, FILE_SIZE_IN_MB, IMAGE_ID } from "./constants";
 import { IssueTokenFormType } from "./types";
-import { NFT } from "@/types";
-import BigNumber from "bignumber.js";
 import { PublicKey } from "@solana/web3.js";
-import { useSolana } from "@/lib/hooks/use-solana";
+import { useSolBalance } from "@/lib/hooks/use-solana";
 import { urlValidation } from "@/primitive/utils/url";
 
 export function IssueTokenForm({
@@ -31,14 +29,7 @@ export function IssueTokenForm({
   account: PublicKey;
   nftImage: string | File;
 }) {
-  const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
-  const { getSolBalance } = useSolana();
-
-  useEffect(() => {
-    getSolBalance(account).then((balance) => {
-      setBalance(balance);
-    });
-  }, []);
+  const { balance } = useSolBalance(account);
   const [useAgentImage, setUseAgentImage] = useState(false);
   const onLogoFileChange = useMemoizedFn((file?: File) => {
     if (!file) {
@@ -352,9 +343,13 @@ export function IssueTokenForm({
         <TextField
           className='!bg-background'
           value={form.amount.value}
-          placeholder='Initial Buy Amount'
+          placeholder='>0.01 SOL'
           onChange={(event) => {
-            const value = validNumberInput(event.target.value, true);
+            let value = validNumberInput(event.target.value, true);
+            // > 0.01
+            if (parseFloat(value) > 0 && parseFloat(value) < 0.01) {
+              value = "0.01";
+            }
             setForm({
               ...form,
               amount: {

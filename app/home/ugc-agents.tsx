@@ -1,0 +1,41 @@
+"use client";
+import { api } from "@/primitive/api";
+import { NFT } from "@/types";
+import { useState } from "react";
+import { NOMADS_SOCIETY_ID } from "../sol/ugc-agents/constants";
+import { useRequest } from "ahooks";
+import { Spin } from "@/primitive/components";
+import { Empty } from "@/components/empty";
+import { NFTCard } from "../sol/components/collection-nfts";
+
+export function UGCAgents() {
+  const [agents, setAgents] = useState<NFT[]>([]);
+
+  const { loading } = useRequest(async () => {
+    const res = await api.v1.get<NFT[]>(
+      `/nft/solana/collection/${NOMADS_SOCIETY_ID}/nfts`,
+      {
+        offset: 0,
+        limit: 5,
+        sortBy: "numberDesc",
+      }
+    );
+
+    setAgents(res);
+  });
+  return loading ? (
+    <div className='w-full h-[200px] flex items-center justify-center'>
+      <Spin />
+    </div>
+  ) : agents.length > 0 ? (
+    <div className='w-full grid grid-cols-5 portrait-tablet:grid-cols-3 mobile:grid-cols-2 gap-32 mobile:gap-16 '>
+      {agents.map((agent) => (
+        <NFTCard nft={agent} isHome />
+      ))}
+    </div>
+  ) : (
+    <div className='w-full h-[200px] flex items-center justify-center'>
+      <Empty />
+    </div>
+  );
+}

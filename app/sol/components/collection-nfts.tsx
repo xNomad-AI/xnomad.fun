@@ -10,6 +10,8 @@ import { bungee, bungeeInline } from "@/app/layout/font";
 import Link from "next/link";
 import { useRarity } from "@/lib/utils/rarity/use-rarity";
 import clsx from "clsx";
+import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
+import { useTimeStore } from "@/primitive/hooks/time";
 export function CollectionNFTs({
   collection,
   isSociety,
@@ -96,15 +98,17 @@ export function NFTCard({
   collectionName,
   total,
   isSociety,
+  isHome,
 }: {
   nft: NFT;
-  collectionName: string;
-  total: number;
+  collectionName?: string;
+  total?: number;
   isSociety?: boolean;
+  isHome?: boolean;
 }) {
   const style = useRarity({
     rank: nft.rarity.rank,
-    total,
+    total: total ?? 1,
   });
   return (
     <Link
@@ -133,14 +137,16 @@ export function NFTCard({
         className='w-full group-hover:scale-110 transition-all duration-300 ease-in-out aspect-square object-contain bg-surface rounded-12'
       />
       <div className='flex flex-col w-full items-center'>
-        <span
-          style={bungeeInline.style}
-          className='text-size-12 text-text2 scale-90'
-        >
-          {collectionName}
-        </span>
+        {!isHome && (
+          <span
+            style={bungeeInline.style}
+            className='text-size-12 text-text2 scale-90'
+          >
+            {collectionName}
+          </span>
+        )}
         <span style={bungee.style}>{nft.name}</span>
-        {!isSociety && (
+        {!isSociety && !isHome && (
           <div
             className={clsx(
               "mt-4 rounded-4 px-4 h-18 border border-white-40 flex items-center text-white-40 text-size-12",
@@ -150,7 +156,17 @@ export function NFTCard({
             #{nft.rarity.rank}
           </div>
         )}
+        {isHome && <Age time={new Date(nft.createdAt).getTime()} />}
       </div>
     </Link>
+  );
+}
+
+function Age({ time }: { time: number }) {
+  useTimeStore();
+  return (
+    <span className='text-text2'>
+      Age: {beautifyTimeV2(time, true, false, "")}
+    </span>
   );
 }

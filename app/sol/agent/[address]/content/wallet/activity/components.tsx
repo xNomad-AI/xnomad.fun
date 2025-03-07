@@ -32,9 +32,11 @@ export function ActionTag({ type }: { type: ActionType }) {
 export function ActionContent({
   data,
   type,
+  simple,
 }: {
   data: Activity;
   type: ActionType;
+  simple?: boolean;
 }) {
   if (type === "buy" || type === "sell") {
     const toToken = data.quote.type_swap === "to" ? data.quote : data.base;
@@ -44,10 +46,14 @@ export function ActionContent({
         <TokenItem
           data={type === "sell" ? fromToken : toToken}
           isRed={type === "sell"}
+          noPrice={simple}
         />
         <span className='text-size-12 text-text2'>with</span>
 
-        <TokenItem data={type === "sell" ? toToken : fromToken} />
+        <TokenItem
+          data={type === "sell" ? toToken : fromToken}
+          noPrice={simple}
+        />
       </>
     );
   } else if (type === "swap") {
@@ -55,9 +61,9 @@ export function ActionContent({
     const fromToken = data.quote.type_swap === "from" ? data.quote : data.base;
     return (
       <>
-        <TokenItem data={toToken} isRed />
+        <TokenItem data={toToken} isRed noPrice={simple} />
         <span className='text-size-12 text-text2'>to</span>
-        <TokenItem data={fromToken} />
+        <TokenItem data={fromToken} noPrice={simple} />
       </>
     );
   } else {

@@ -138,7 +138,11 @@ export function Analytics({
                 className='p-16 flex items-center gap-8 flex-wrap'
               >
                 <ActionTag type={actionType} />
-                <ActionContent data={item} type={actionType} />
+                <ActionContent
+                  simple={variant === "widget"}
+                  data={item}
+                  type={actionType}
+                />
                 <div className='flex-1'></div>
                 <a
                   href={`https://explorer.solana.com/tx/${item.tx_hash}`}

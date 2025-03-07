@@ -17,6 +17,8 @@ import {
   TokenInfo,
   getAgentTokenList,
 } from "../agent/[address]/content/agent-token/token-list/network";
+import { InfiniteScrollList } from "@/components/infinit-scroll";
+import { use100vh } from "react-div-100vh";
 const sortByList = ["volume24h", "deployedTime", "marketcap"] as const;
 type SortBy = (typeof sortByList)[number];
 const sortMap = {
@@ -51,6 +53,7 @@ export function Content() {
       ready: !loading,
     }
   );
+  const height = use100vh();
   return (
     <>
       <div className='flex items-center gap-8 mt-16'>
@@ -110,77 +113,87 @@ export function Content() {
             <Spin />
           </div>
         ) : (tokens?.length ?? 0) > 0 ? (
-          tokens?.map((item, index) => (
-            <div
-              key={item.symbol}
-              className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8'
-            >
-              <div className='flex w-[240px] items-center'>
-                <div className='text-text2 w-40'>{index + 1}</div>
-                <div className='flex w-[200px] gap-4 items-center'>
-                  <img
-                    height={32}
-                    width={32}
-                    className='w-32 h-32 aspect-square rounded-full flex-shrink-0 mobile:hidden'
-                    src={item.logo}
-                    alt=''
-                  />
-                  <div className='flex flex-col gap-4'>
-                    <div className='flex items-end gap-4'>
-                      <span className='font-bold'>{item.name}</span>
-                      <span className='text-text2'>${item.symbol}</span>
-                    </div>
-                    <div className='flex items-center gap-4'>
-                      <Address
-                        address={item.address}
-                        enableCopy
-                        className='text-size-12 text-text2'
+          <InfiniteScrollList
+            items={tokens}
+            itemSize={60}
+            height={height ? height - 275 : 0}
+            renderItem={(item: TokenInfo, index) => {
+              return (
+                <div
+                  key={item.symbol}
+                  className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8'
+                >
+                  <div className='flex w-[240px] items-center'>
+                    <div className='text-text2 w-40'>{index + 1}</div>
+                    <div className='flex w-[200px] gap-4 items-center'>
+                      <img
+                        height={32}
+                        width={32}
+                        className='w-32 h-32 aspect-square rounded-full flex-shrink-0 mobile:hidden'
+                        src={item.logo}
+                        alt=''
                       />
-                      {item.twitter && (
-                        <a href={item.twitter} target='_blank'>
-                          <IconTwitterX className='text-size-12 text-text2' />
-                        </a>
-                      )}
-                      {item.telegram && (
-                        <a href={item.telegram} target='_blank'>
-                          <IconTelegram className='text-size-12 text-text2' />
-                        </a>
-                      )}
-                      {item.website && (
-                        <a href={item.website} target='_blank'>
-                          <IconWebsite className='text-size-12 text-text2' />
-                        </a>
-                      )}
+                      <div className='flex flex-col gap-4'>
+                        <div className='flex items-end gap-4'>
+                          <span className='font-bold'>{item.name}</span>
+                          <span className='text-text2'>${item.symbol}</span>
+                        </div>
+                        <div className='flex items-center gap-4'>
+                          <Address
+                            address={item.address}
+                            enableCopy
+                            className='text-size-12 text-text2'
+                          />
+                          {item.twitter && (
+                            <a href={item.twitter} target='_blank'>
+                              <IconTwitterX className='text-size-12 text-text2' />
+                            </a>
+                          )}
+                          {item.telegram && (
+                            <a href={item.telegram} target='_blank'>
+                              <IconTelegram className='text-size-12 text-text2' />
+                            </a>
+                          )}
+                          {item.website && (
+                            <a href={item.website} target='_blank'>
+                              <IconWebsite className='text-size-12 text-text2' />
+                            </a>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  <div className='flex w-[120px] flex-col items-end'>
+                    <TokenNumber prefix={"$"} number={item.price} />
+                    <RateNum num={item.priceChange24h} />
+                  </div>
+                  <div className='flex w-[120px] justify-end'>
+                    <TokenNumber number={item.marketCap} prefix={"$"} />
+                  </div>
+                  <div className='flex w-[120px] justify-end'>
+                    <TokenNumber prefix={"$"} number={item.volume24h} />
+                  </div>
+                  <div className='flex w-[120px] justify-end'>
+                    <TokenNumber prefix={"$"} number={item.liquidity} />
+                  </div>
+                  <div className='flex w-[120px] justify-end'>
+                    <TokenNumber number={item.holdersCount} />
+                  </div>
+                  <div className='flex w-[120px] justify-end'>
+                    {beautifyTimeV2(
+                      new Date(item.deployedTime).getTime(),
+                      true,
+                      false,
+                      ""
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className='flex w-[120px] flex-col items-end'>
-                <TokenNumber prefix={"$"} number={item.price} />
-                <RateNum num={item.priceChange24h} />
-              </div>
-              <div className='flex w-[120px] justify-end'>
-                <TokenNumber number={item.marketCap} prefix={"$"} />
-              </div>
-              <div className='flex w-[120px] justify-end'>
-                <TokenNumber prefix={"$"} number={item.volume24h} />
-              </div>
-              <div className='flex w-[120px] justify-end'>
-                <TokenNumber prefix={"$"} number={item.liquidity} />
-              </div>
-              <div className='flex w-[120px] justify-end'>
-                <TokenNumber number={item.holdersCount} />
-              </div>
-              <div className='flex w-[120px] justify-end'>
-                {beautifyTimeV2(
-                  new Date(item.deployedTime).getTime(),
-                  true,
-                  false,
-                  ""
-                )}
-              </div>
-            </div>
-          ))
+              );
+            }}
+            hasNextPage={false}
+            isNextPageLoading={false}
+            loadNextPage={() => {}}
+          />
         ) : (
           <div className='flex justify-center w-full p-16 h-[200px] items-center text-text2'>
             No Tokens

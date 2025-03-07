@@ -77,8 +77,8 @@ export function Content() {
             <div className='w-40'>#</div>
             Agent Token
           </div>
-          <div className='flex w-[120px] justify-end text-text2'>Price</div>
           <div className='flex w-[120px] justify-end text-text2'>AI-NFT</div>
+          <div className='flex w-[120px] justify-end text-text2'>Price</div>
           <div
             className={clsx(
               "flex w-[120px] justify-end items-center gap-4 text-text2",

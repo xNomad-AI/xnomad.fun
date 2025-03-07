@@ -12,7 +12,9 @@ import { Analytics } from "./activity";
 
 export function SideWallet({ changeTab }: { changeTab: (tab: Tab) => void }) {
   const { portfolio, triggerRefresh, isRefreshing, nft } = useAgentStore();
-  const { balance } = useSolBalance(new PublicKey(portfolio?.wallet ?? ""));
+  const { balance } = useSolBalance(
+    portfolio?.wallet ? new PublicKey(portfolio.wallet) : null
+  );
   const [tab, setTab] = useState<"holder" | "activity">("holder");
   return (
     <div className='flex flex-col gap-16 w-full max-w-[240px] flex-shrink-0'>

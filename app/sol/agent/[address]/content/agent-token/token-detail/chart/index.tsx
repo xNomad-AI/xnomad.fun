@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { TokenPriceChart } from "./trading-view";
 import { Card, IconMenu } from "@/primitive/components";
 import { TokenInfo } from "../../token-list/network";
@@ -19,13 +19,19 @@ type Props = {
 };
 function BaseChart(props: Props) {
   const { ca, tokenInfo } = props;
-  const zeroCount =
-    tokenInfo.price
-      ?.toString()
-      ?.split(".")[1]
-      ?.split("")
-      .filter((item) => item === "0").length || 0;
-  const precision = zeroCount > 0 ? zeroCount + 2 : 2;
+  const zeroCount = useMemo(
+    () =>
+      tokenInfo.price
+        ?.toString()
+        ?.split(".")[1]
+        ?.split("")
+        .filter((item) => item === "0").length || 0,
+    [tokenInfo.price]
+  );
+  const precision = useMemo(
+    () => (zeroCount > 0 ? zeroCount + 2 : 2),
+    [zeroCount]
+  );
   const [height, setHeight] = useState(getHeight);
   const resizableRef = useRef<HTMLDivElement | null>(null);
   const container = useRef<HTMLDivElement | null>(null);

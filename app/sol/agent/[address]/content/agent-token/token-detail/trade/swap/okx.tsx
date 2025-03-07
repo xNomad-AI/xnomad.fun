@@ -126,7 +126,7 @@ export class OKXSwap {
     if (!this.wallet.publicKey || !this.wallet.signTransaction) {
       throw new Error("Wallet not connected");
     }
-    const swapTransaction = swapData?.data?.[0]?.tx?.data;
+    const swapTransaction = swapData?.[0]?.tx?.data;
 
     if (!swapTransaction) {
       throw new Error(swapData?.msg || "No swap transaction found");

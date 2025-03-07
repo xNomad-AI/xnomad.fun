@@ -6,6 +6,7 @@ import { useTradeConfigStore } from "../store/trade-config";
 import { isNumber } from "@/lib/utils/number/is-number";
 import { Button, IconSol } from "@/primitive/components";
 import { toDecimal } from "@/lib/utils/number/to-decimal";
+import { useMemoizedFn } from "ahooks";
 
 export function BuySection() {
   const [value, setValue] = useState("");
@@ -20,11 +21,11 @@ export function BuySection() {
   const { tokenPrice } = useTokenPagePriceStore();
   const { tradeMode, setTradeMode, setPriorityFeeType } = useTradeConfigStore();
 
-  const buy = async () => {
+  const buy = useMemoizedFn(async () => {
     await handleBuy(+value);
     setValue("");
     updateBalance();
-  };
+  });
 
   useEffect(() => {
     if (isNumber(+value) && +value >= 2 && tradeMode !== "ANTI-MEV") {

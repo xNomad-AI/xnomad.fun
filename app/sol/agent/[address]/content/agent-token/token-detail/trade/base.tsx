@@ -87,7 +87,10 @@ export function BaseTemplate({
         <div className='flex flex-col gap-8 flex-wrap text-size-12 text-text2'>
           <div className='flex items-center justify-between w-full'>
             <span>Slippage: {slippage * 100}%</span>
-            <span>Priority: {toCardNum(priorityFee)}</span>
+            <span>
+              Priority:{" "}
+              <TokenNumber className='inline-flex' number={priorityFee} />
+            </span>
           </div>
           <div className='flex items-center justify-between gap-16'>
             <div>

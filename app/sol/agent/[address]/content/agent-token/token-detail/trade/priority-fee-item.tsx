@@ -15,7 +15,7 @@ export function PriorityFeeItem(props: Props) {
       onClick={onClick}
       className={clsx(
         "flex h-24 items-center justify-center text-text2 text-size-12 gap-4 rounded-6 bg-surface",
-        { "bg-background text-text1": active }
+        { "!text-text1": active }
       )}
     >
       {icon}

@@ -116,7 +116,8 @@ export class Datafeed {
         .split(SPLIT_SYMBOL)
         ?.forEach((item: string) => paramsArray.push(item));
     }
-    const precision = paramsArray[3];
+    const precision = parseFloat(paramsArray[3]);
+    const priceScale = Math.pow(10, precision);
     const symbolInfo = {
       ticker: paramsArray[0],
       currency: paramsArray[2],
@@ -126,8 +127,7 @@ export class Datafeed {
       type: "crypto",
       session: "24x7",
       minmov: 1,
-      // pricescale: precision === 2 ? 100 : 10000,
-      pricescale: 10 ** precision,
+      pricescale: 100000,
 
       priceScaleMode: 1,
       has_intraday: true,

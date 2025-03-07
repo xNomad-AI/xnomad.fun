@@ -1,0 +1,295 @@
+import { useSolana } from "@/lib/hooks/use-solana";
+import {
+  Button,
+  FormItem,
+  FormValue,
+  Modal,
+  ModalContent,
+  ModalTitleWithBorder,
+  TextField,
+} from "@/primitive/components";
+import { urlValidation } from "@/primitive/utils/url";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useEffect, useMemo, useState } from "react";
+import { TokenInfo } from "../../token-list/network";
+import { useMemoizedFn } from "ahooks";
+import { EditInfoConfig, editTokenInfo, getEditInfoConfig } from "./network";
+import { NFT } from "@/types";
+import { toCardNum } from "@/lib/utils/number";
+import { onError } from "@/lib/utils/error";
+import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import BigNumber from "bignumber.js";
+const emptyForm = {
+  description: {
+    value: "",
+    required: true,
+    isInValid: false,
+    errorMsg: "",
+  },
+  twitter: {
+    value: "",
+    required: true,
+    isInValid: false,
+    errorMsg: "",
+  },
+  telegram: {
+    value: "",
+    required: true,
+    isInValid: false,
+    errorMsg: "",
+  },
+  website: {
+    value: "",
+    required: true,
+    isInValid: false,
+    errorMsg: "",
+  },
+  amount: {
+    value: "",
+    required: true,
+    isInValid: false,
+    errorMsg: "",
+  },
+};
+export function EditInfoModal({
+  onClose,
+  open,
+  tokenInfo,
+  nft,
+}: {
+  onClose: () => void;
+  open: boolean;
+  tokenInfo: TokenInfo;
+  nft: NFT;
+}) {
+  const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useSolana();
+  const [form, setForm] = useState<{
+    description: FormValue<string>;
+    twitter: FormValue<string>;
+    telegram: FormValue<string>;
+    website: FormValue<string>;
+  }>(emptyForm);
+  useEffect(() => {
+    setForm({
+      description: {
+        ...form.description,
+        value: tokenInfo.description,
+      },
+      twitter: {
+        ...form.twitter,
+        value: tokenInfo.twitter ?? "",
+      },
+      telegram: {
+        ...form.telegram,
+        value: tokenInfo.telegram ?? "",
+      },
+      website: {
+        ...form.website,
+        value: tokenInfo.website ?? "",
+      },
+    });
+  }, [tokenInfo]);
+  const isEmpty = useMemo(
+    () => Object.values(form).some((item) => item.value === ""),
+    [form]
+  );
+  const nothingChange = useMemo(() => {
+    if (form.description.value !== tokenInfo.description) {
+      return false;
+    }
+    if (form.twitter.value !== tokenInfo.twitter) {
+      return false;
+    }
+    if (form.telegram.value !== tokenInfo.telegram) {
+      return false;
+    }
+    if (form.website.value !== tokenInfo.website) {
+      return false;
+    }
+    return true;
+  }, [form, tokenInfo]);
+  const [editConfig, setEditConfig] = useState<EditInfoConfig>();
+  useEffect(() => {
+    getEditInfoConfig(nft.id).then(setEditConfig);
+  }, [nft.id]);
+  const [isEditing, setIsEditing] = useState(false);
+  const submit = useMemoizedFn(async () => {
+    if (!editConfig || !publicKey) return;
+    setIsEditing(true);
+    try {
+      const transaction = new Transaction({
+        recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+        feePayer: publicKey,
+      }).add(
+        SystemProgram.transfer({
+          fromPubkey: publicKey,
+          toPubkey: new PublicKey(editConfig.recipient),
+          lamports: new BigNumber(editConfig.solAmount ?? 1)
+            .multipliedBy(10 ** 9)
+            .toNumber(),
+        })
+      );
+
+      const tx = await sendTransaction(transaction, connection);
+      const res = await connection.confirmTransaction(tx, "processed");
+      if (res.value.err) {
+        throw res.value.err;
+      }
+      await editTokenInfo(nft.id, tx, {
+        description: form.description.value,
+        twitter: form.twitter.value,
+        telegram: form.telegram.value,
+        website: form.website.value,
+      });
+      onClose();
+    } catch (error) {
+      onError(error);
+    } finally {
+      setIsEditing(false);
+    }
+  });
+  return (
+    <Modal onMaskClick={onClose} open={open} size='m'>
+      <ModalTitleWithBorder closable onClose={onClose}>
+        Edit Token Info
+      </ModalTitleWithBorder>
+      <ModalContent className='!gap-16'>
+        <p className='text-size-12 text-text2'>
+          An update of the on-chain information is required, please pay 1 SOL to
+          complete.
+        </p>
+        <FormItem label={"Description"} {...form.description}>
+          <TextField
+            className='!bg-background'
+            value={form.description.value}
+            placeholder='Less than 200 characters'
+            onChange={(event) => {
+              const value = event.target.value;
+              if (value.length > 200) {
+                setForm({
+                  ...form,
+                  description: {
+                    ...form.description,
+                    value,
+                    isInValid: true,
+                    errorMsg: "Less than 200 characters",
+                  },
+                });
+                return;
+              }
+              setForm({
+                ...form,
+                description: {
+                  ...form.description,
+                  value: event.target.value,
+                  isInValid: false,
+                },
+              });
+            }}
+          />
+        </FormItem>
+
+        <FormItem label={"X(Twitter)"} {...form.twitter}>
+          <TextField
+            className='!bg-background'
+            value={form.twitter.value}
+            placeholder='e.g. https://twitter.com/username'
+            onChange={(event) => {
+              const value = event.target.value;
+              const isValid = urlValidation(value);
+              setForm({
+                ...form,
+                twitter: {
+                  ...form.twitter,
+                  value,
+                  isInValid: !isValid,
+                  errorMsg: isValid ? "" : "Invalid URL",
+                },
+              });
+            }}
+          />
+        </FormItem>
+        <FormItem label={"Telegram"} {...form.telegram}>
+          <TextField
+            className='!bg-background'
+            value={form.telegram.value}
+            placeholder='e.g. https://t.me/username'
+            onChange={(event) => {
+              const value = event.target.value;
+              const isValid = urlValidation(value);
+              setForm({
+                ...form,
+                telegram: {
+                  ...form.telegram,
+                  value,
+                  isInValid: !isValid,
+                  errorMsg: isValid ? "" : "Invalid URL",
+                },
+              });
+            }}
+          />
+        </FormItem>
+        <FormItem label={"Website"} {...form.website}>
+          <TextField
+            className='!bg-background'
+            value={form.website.value}
+            placeholder='e.g. https://example.com'
+            onChange={(event) => {
+              const value = event.target.value;
+              const isValid = urlValidation(value);
+              setForm({
+                ...form,
+                website: {
+                  ...form.website,
+                  value,
+                  isInValid: !isValid,
+                  errorMsg: isValid ? "" : "Invalid URL",
+                },
+              });
+            }}
+          />
+        </FormItem>
+        <div className='w-full flex items-center gap-16'>
+          <Button variant='secondary' stretch onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            disabled={isEmpty || nothingChange}
+            variant='secondary'
+            stretch
+            loading={isEditing}
+            onClick={() => {
+              if (Object.values(form).some((item) => item.isInValid)) {
+                return;
+              }
+              let allValid = true;
+              const newForm = { ...form };
+              Object.keys(newForm).forEach((_key) => {
+                const key = _key as keyof typeof newForm;
+                if (newForm[key].required) {
+                  if (
+                    !newForm[key].value ||
+                    (typeof newForm[key].value === "object" &&
+                      Object.values(newForm[key].value).some((item) => !item))
+                  ) {
+                    allValid = false;
+                    newForm[key].isInValid = true;
+                    newForm[key].errorMsg = "Required";
+                  }
+                }
+              });
+              if (!allValid) {
+                setForm(newForm);
+                return;
+              }
+              submit();
+            }}
+          >
+            Pay {toCardNum(editConfig?.solAmount ?? 1)} SOL to Submit
+          </Button>
+        </div>
+      </ModalContent>
+    </Modal>
+  );
+}

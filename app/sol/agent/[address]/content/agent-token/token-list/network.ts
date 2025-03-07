@@ -1,4 +1,5 @@
 import { api } from "@/primitive/api";
+import { NFT } from "@/types";
 
 // only creatorAddress take effect, other params are not used
 export interface Params {
@@ -28,6 +29,7 @@ export interface TokenInfo {
   updatedAt: string;
   volume24h: number;
   website?: string;
+  nft: NFT;
 }
 export function getAgentTokenList({
   creatorAddress,
@@ -36,7 +38,7 @@ export function getAgentTokenList({
   sortBy = "deployedTime",
   sortOrder = "desc",
 }: Params) {
-  return api.v1.get<{ list: TokenInfo[] }>("/launchpad/agent-created-tokens", {
+  return api.v1.get<{ list: TokenInfo[] }>("/nft/agent-created-tokens", {
     creatorAddress,
     limit,
     offset,

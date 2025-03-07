@@ -1,0 +1,58 @@
+import { Address } from "@/components/address";
+import {
+  IconTwitterX,
+  IconTelegram,
+  IconWebsite,
+} from "@/primitive/components";
+import { TokenInfo } from "./network";
+import { TextWithEllipsis } from "@/components/text-with-ellipsis";
+
+export function TokenCell({
+  item,
+  variant = "normal",
+}: {
+  item: TokenInfo;
+  variant?: "normal" | "simple";
+}) {
+  return (
+    <div className='flex w-full gap-4 items-center'>
+      <img
+        height={32}
+        width={32}
+        className='w-32 h-32 aspect-square rounded-full flex-shrink-0 mobile:hidden'
+        src={item.logo}
+        alt=''
+      />
+      <div className='flex flex-col gap-4 min-w-0'>
+        <div className='flex items-end gap-4'>
+          <span className='font-bold'>{item.symbol}</span>
+          <TextWithEllipsis className='text-text2'>
+            {item.name}
+          </TextWithEllipsis>
+        </div>
+        <div className='flex items-center gap-4'>
+          <Address
+            address={item.address}
+            enableCopy
+            className='text-size-12 text-text2'
+          />
+          {item.twitter && variant !== "simple" && (
+            <a href={item.twitter} target='_blank'>
+              <IconTwitterX className='text-size-12 text-text2' />
+            </a>
+          )}
+          {item.telegram && variant !== "simple" && (
+            <a href={item.telegram} target='_blank'>
+              <IconTelegram className='text-size-12 text-text2' />
+            </a>
+          )}
+          {item.website && variant !== "simple" && (
+            <a href={item.website} target='_blank'>
+              <IconWebsite className='text-size-12 text-text2' />
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

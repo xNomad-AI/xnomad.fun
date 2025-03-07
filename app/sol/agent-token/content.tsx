@@ -19,6 +19,9 @@ import {
 } from "../agent/[address]/content/agent-token/token-list/network";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { use100vh } from "react-div-100vh";
+import Link from "next/link";
+import { TokenCell } from "../agent/[address]/content/agent-token/token-list/token-cell";
+import { NFTCell } from "../agent/[address]/content/agent-token/token-list/nft-cell";
 const sortByList = ["volume24h", "deployedTime", "marketcap"] as const;
 type SortBy = (typeof sortByList)[number];
 const sortMap = {
@@ -75,6 +78,7 @@ export function Content() {
             Agent Token
           </div>
           <div className='flex w-[120px] justify-end text-text2'>Price</div>
+          <div className='flex w-[120px] justify-end text-text2'>AI-NFT</div>
           <div
             className={clsx(
               "flex w-[120px] justify-end items-center gap-4 text-text2",
@@ -119,49 +123,19 @@ export function Content() {
             height={height ? height - 275 : 0}
             renderItem={(item: TokenInfo, index) => {
               return (
-                <div
+                <Link
+                  href={`/sol/agent/${item.nft.id}?tab=agent-token`}
                   key={item.symbol}
                   className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8'
                 >
                   <div className='flex w-[240px] items-center'>
                     <div className='text-text2 w-40'>{index + 1}</div>
                     <div className='flex w-[200px] gap-4 items-center'>
-                      <img
-                        height={32}
-                        width={32}
-                        className='w-32 h-32 aspect-square rounded-full flex-shrink-0 mobile:hidden'
-                        src={item.logo}
-                        alt=''
-                      />
-                      <div className='flex flex-col gap-4'>
-                        <div className='flex items-end gap-4'>
-                          <span className='font-bold'>{item.name}</span>
-                          <span className='text-text2'>${item.symbol}</span>
-                        </div>
-                        <div className='flex items-center gap-4'>
-                          <Address
-                            address={item.address}
-                            enableCopy
-                            className='text-size-12 text-text2'
-                          />
-                          {item.twitter && (
-                            <a href={item.twitter} target='_blank'>
-                              <IconTwitterX className='text-size-12 text-text2' />
-                            </a>
-                          )}
-                          {item.telegram && (
-                            <a href={item.telegram} target='_blank'>
-                              <IconTelegram className='text-size-12 text-text2' />
-                            </a>
-                          )}
-                          {item.website && (
-                            <a href={item.website} target='_blank'>
-                              <IconWebsite className='text-size-12 text-text2' />
-                            </a>
-                          )}
-                        </div>
-                      </div>
+                      <TokenCell item={item} />
                     </div>
+                  </div>
+                  <div className='flex w-[120px] justify-end items-center gap-4'>
+                    <NFTCell item={item} />
                   </div>
                   <div className='flex w-[120px] flex-col items-end'>
                     <TokenNumber prefix={"$"} number={item.price} />
@@ -187,7 +161,7 @@ export function Content() {
                       ""
                     )}
                   </div>
-                </div>
+                </Link>
               );
             }}
             hasNextPage={false}

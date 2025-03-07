@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChatPage } from "../chat";
 import { NFT } from "@/types";
 import { message, RadioButton, RadioButtonGroup } from "@/primitive/components";
@@ -8,7 +8,7 @@ import { upperFirstLetter } from "@/lib/utils/string";
 import { Portfolio } from "./wallet";
 import { Features } from "./features";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useMemoizedFn, useRequest, useWhyDidYouUpdate } from "ahooks";
+import { useMemoizedFn, useMount, useRequest } from "ahooks";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { InfoSection } from "../info";
 import { Tasks } from "./tasks";
@@ -18,7 +18,16 @@ import { getPortfolio } from "./deposit-container/network";
 import { SideWallet } from "./wallet/side-wallet";
 import clsx from "clsx";
 import { AgentToken } from "./agent-token";
-const tabs = ["chat", "wallet", "Agent Token", "tasks", "features"] as const;
+import { useSearchParams } from "next/navigation";
+const tabs = ["chat", "wallet", "agent-token", "tasks", "features"] as const;
+const tabMap = {
+  chat: "Chat",
+  wallet: "Wallet",
+  "agent-token": "Agent Token",
+  tasks: "Tasks",
+  features: "Features",
+  asset: "Asset",
+};
 const mobileTabs = ["chat", "tasks", "asset"] as const;
 export type Tab = (typeof tabs)[number];
 type MobileTab = (typeof mobileTabs)[number];
@@ -39,6 +48,13 @@ export function Content() {
       return;
     }
     _setTab(tab);
+  });
+  const searchParams = useSearchParams();
+  useMount(() => {
+    const tab = searchParams.get("tab") as Tab;
+    if (tabs.includes(tab)) {
+      setTab(tab);
+    }
   });
   const [mobileTab, setMobileTab] = useState<MobileTab | null>(null);
   const { breakpoint } = useBreakpoint();
@@ -80,7 +96,7 @@ export function Content() {
       >
         {mobileTabs.map((t) => (
           <RadioButton key={t} value={t}>
-            {upperFirstLetter(t)}
+            {tabMap[t]}
           </RadioButton>
         ))}
       </RadioButtonGroup>
@@ -101,7 +117,7 @@ export function Content() {
           }
           return (
             <RadioButton key={t} value={t}>
-              {upperFirstLetter(t)}
+              {tabMap[t]}
             </RadioButton>
           );
         })}
@@ -126,7 +142,7 @@ export function Content() {
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
         mobileTab === "asset" && <InfoSection />}
       <Portfolio show={tab === "wallet"} />
-      {tab === "Agent Token" && <AgentToken />}
+      {tab === "agent-token" && <AgentToken />}
       {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
       {tab === "features" && <Features nft={nft} />}
     </div>

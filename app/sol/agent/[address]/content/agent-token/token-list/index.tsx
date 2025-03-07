@@ -15,6 +15,7 @@ import { TokenNumber } from "@/components/token-number";
 import { RateNum } from "@/components/rate-number";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import clsx from "clsx";
+import { TokenCell } from "./token-cell";
 
 export function TokenList({ show }: { show: boolean }) {
   const { nft } = useAgentStore();
@@ -68,41 +69,7 @@ export function TokenList({ show }: { show: boolean }) {
               className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8'
             >
               <div className='flex w-[200px] gap-4 items-center'>
-                <img
-                  height={32}
-                  width={32}
-                  className='w-32 h-32 aspect-square rounded-full flex-shrink-0 mobile:hidden'
-                  src={item.logo}
-                  alt=''
-                />
-                <div className='flex flex-col gap-4'>
-                  <div className='flex items-end gap-4'>
-                    <span className='font-bold'>{item.name}</span>
-                    <span className='text-text2'>${item.symbol}</span>
-                  </div>
-                  <div className='flex items-center gap-4'>
-                    <Address
-                      address={item.address}
-                      enableCopy
-                      className='text-size-12 text-text2'
-                    />
-                    {item.twitter && (
-                      <a href={item.twitter} target='_blank'>
-                        <IconTwitterX className='text-size-12 text-text2' />
-                      </a>
-                    )}
-                    {item.telegram && (
-                      <a href={item.telegram} target='_blank'>
-                        <IconTelegram className='text-size-12 text-text2' />
-                      </a>
-                    )}
-                    {item.website && (
-                      <a href={item.website} target='_blank'>
-                        <IconWebsite className='text-size-12 text-text2' />
-                      </a>
-                    )}
-                  </div>
-                </div>
+                <TokenCell item={item} />
               </div>
               <div className='flex w-[120px] flex-col items-end'>
                 <TokenNumber prefix={"$"} number={item.price} />

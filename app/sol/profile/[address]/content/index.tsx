@@ -7,15 +7,16 @@ import { api } from "@/primitive/api";
 import { Select } from "@/primitive/components";
 import { NFT } from "@/types";
 import { useRequest } from "ahooks";
-import { useState } from "react";
-const tabs = ["xnomad", "ugc-agents"] as const;
+import { useMemo, useState } from "react";
+const tabs = ["xnomad", "ugc-agents", "all"] as const;
 type Tab = (typeof tabs)[number];
 const tabMap = {
   xnomad: "xNomad",
   "ugc-agents": "UGC Agents",
+  all: "All",
 };
 export function Content({ address }: { address: string }) {
-  const [tab, setTab] = useState<Tab>("xnomad");
+  const [tab, setTab] = useState<Tab>("all");
   const [xnomads, setXnomads] = useState<NFT[]>([]);
   const [society, setSociety] = useState<NFT[]>([]);
   const { loading } = useRequest(async () => {
@@ -52,6 +53,32 @@ export function Content({ address }: { address: string }) {
       setSociety(res[NOMADS_SOCIETY_ID]?.nfts ?? []);
     }
   });
+  const count = useMemo(() => {
+    switch (tab) {
+      case "all":
+        return xnomads.length + society.length;
+      case "xnomad":
+        return xnomads.length;
+      case "ugc-agents":
+        return society.length;
+
+      default:
+        return xnomads.length;
+    }
+  }, [tab, xnomads, society]);
+  const data = useMemo(() => {
+    switch (tab) {
+      case "all":
+        return [...xnomads, ...society];
+      case "xnomad":
+        return xnomads;
+      case "ugc-agents":
+        return society;
+
+      default:
+        return xnomads;
+    }
+  }, [tab, xnomads, society]);
   return (
     <div className='w-full flex flex-col gap-32'>
       <Select
@@ -65,12 +92,8 @@ export function Content({ address }: { address: string }) {
       >
         {tabMap[tab]}
       </Select>
-      <CardViewGallery
-        loading={loading}
-        loadingMore={false}
-        count={tab === "ugc-agents" ? society?.length : xnomads?.length}
-      >
-        {(tab === "ugc-agents" ? society : xnomads)?.map((nft) => (
+      <CardViewGallery loading={loading} loadingMore={false} count={count}>
+        {data?.map((nft) => (
           <NFTCard
             nft={nft}
             collectionName={nft.collectionName}

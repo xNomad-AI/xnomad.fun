@@ -10,6 +10,7 @@ export interface Params {
 }
 export interface TokenInfo {
   address: string;
+  description: string;
   chain: string;
   createdAt: string;
   creatorAddress: string;

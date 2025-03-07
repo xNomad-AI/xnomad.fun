@@ -79,7 +79,7 @@ export function Review({
           tokenInfo: {
             name: issueTokenForm.tokenName.value,
             symbol: issueTokenForm.symbol.value,
-            file: tokenImage,
+            image: tokenImage,
             description: issueTokenForm.description.value,
             twitter: issueTokenForm.twitter.value,
             telegram: issueTokenForm.telegram.value,

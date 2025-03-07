@@ -75,10 +75,13 @@ export function SellSection() {
                   `Sell ${value} $${nft.primaryCoin?.symbol}(${nft.primaryCoin?.address}) for SOL`
                 );
                 message(
-                  "Copied successfully. You can send it to your agent to trade tokens."
+                  "Copied successfully. You can send it to your agent to trade tokens.",
+                  { type: "success" }
                 );
               } else {
-                message("Please enter a valid amount to generate buy prompt");
+                message("Please enter a valid amount to generate buy prompt", {
+                  type: "error",
+                });
               }
             }}
           >

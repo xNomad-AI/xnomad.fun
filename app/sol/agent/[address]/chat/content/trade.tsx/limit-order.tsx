@@ -9,7 +9,6 @@ import {
   TextField,
 } from "@/primitive/components";
 import { useState } from "react";
-import BigNumber from "bignumber.js";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";

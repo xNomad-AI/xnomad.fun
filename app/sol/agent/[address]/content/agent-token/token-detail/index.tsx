@@ -10,7 +10,7 @@ import { RateNum } from "@/components/rate-number";
 import { Chart } from "./chart";
 import { NFT } from "@/types";
 import clsx from "clsx";
-import { TokenInfo } from "../token-list/network";
+import { TokenInfo as TokenInfoType } from "../token-list/network";
 import { Table } from "./table";
 import { TokenPageSocketProvider } from "./store/socket";
 import { TradeSection } from "./trade";
@@ -19,8 +19,10 @@ import { TradeConfigProvider } from "./store/trade-config";
 import { TradeStoreProvider } from "./store/trade";
 import { TradeSettingModal } from "./trade/setting-modal";
 
-export function TokenDetail({ nft, show }: { nft: NFT; show: boolean }) {
-  const [primaryToken, setPrimaryToken] = useState<TokenInfo>();
+import { Info } from "./token-info";
+
+export function Detail({ nft, show }: { nft: NFT; show: boolean }) {
+  const [primaryToken, setPrimaryToken] = useState<TokenInfoType>();
   useRequest(
     async () => {
       if (nft.id) {
@@ -124,8 +126,10 @@ export function TokenDetail({ nft, show }: { nft: NFT; show: boolean }) {
                     />
                     <Table tokenInfo={primaryToken} />
                   </div>
-                  <div className='w-full max-w-[20rem] portrait-tablet:max-w-[unset]'>
+                  <div className='w-full max-w-[20rem] portrait-tablet:max-w-[unset] flex flex-col gap-16'>
                     <TradeSection />
+
+                    <Info tokenInfo={primaryToken} />
                     <TradeSettingModal />
                   </div>
                 </div>

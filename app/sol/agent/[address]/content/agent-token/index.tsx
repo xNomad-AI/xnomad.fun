@@ -1,6 +1,5 @@
 import { useAgentStore } from "../../store";
-import { TokenDetail } from "./token-detail";
-import { TokenPageSocketProvider } from "./token-detail/store/socket";
+import { Detail } from "./token-detail";
 import { TokenList } from "./token-list";
 
 export function AgentToken() {
@@ -8,7 +7,7 @@ export function AgentToken() {
   return (
     <>
       <TokenList show={!Boolean(nft.primaryCoin)} />
-      <TokenDetail show={Boolean(nft.primaryCoin)} nft={nft} />
+      <Detail show={Boolean(nft.primaryCoin)} nft={nft} />
     </>
   );
 }

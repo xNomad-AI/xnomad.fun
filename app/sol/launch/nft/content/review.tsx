@@ -223,7 +223,7 @@ export function Review({
 
               <TokenNumber
                 className='font-bold'
-                number={issueTokenForm.amount.value}
+                number={issueTokenForm.amount.value ?? 0}
                 suffix='SOL'
               />
             </div>

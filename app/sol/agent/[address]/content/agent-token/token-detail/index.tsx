@@ -1,4 +1,4 @@
-import { Card, Spin } from "@/primitive/components";
+import { Card, Spin, Tooltip } from "@/primitive/components";
 import { useRequest } from "ahooks";
 import { getPrimaryToken } from "./network";
 import { PropsWithChildren, useState } from "react";
@@ -20,6 +20,7 @@ import { TradeSettingModal } from "./trade/setting-modal";
 
 import { Info } from "./token-info";
 import { AgeCell } from "../token-list/age-cell";
+import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 
 export function Detail({ nft, show }: { nft: NFT; show: boolean }) {
   const [primaryToken, setPrimaryToken] = useState<TokenInfoType>();
@@ -57,12 +58,20 @@ export function Detail({ nft, show }: { nft: NFT; show: boolean }) {
                     <div className='flex flex-col'>
                       <div className='flex items-center gap-4'>
                         <span className='text-size-20 font-bold'>
+                          {primaryToken.symbol}
+                        </span>
+                        <TextWithEllipsis className='text-text2'>
                           {primaryToken.name}
-                        </span>
-                        <span className='text-text2'>
-                          ${primaryToken.symbol}
-                        </span>
-                        <IconPump className='text-size-18' />
+                        </TextWithEllipsis>
+                        <Tooltip content='Pumpfun'>
+                          <a
+                            href={`https://pump.fun/coin/${primaryToken.address}`}
+                            target='_blank'
+                            rel='noreferrer'
+                          >
+                            <IconPump className='text-size-18' />
+                          </a>
+                        </Tooltip>
                       </div>
                       <div className='flex items-center gap-4'>
                         <Address

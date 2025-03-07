@@ -111,8 +111,19 @@ export function NFTCard({
       prefetch
       href={`/sol/agent/${nft.id}`}
       key={nft.id}
-      className='flex-col group rounded-12 flex gap-12 min-w-[180px] mobile:min-w-[unset] max-w-[240px]'
+      className='flex-col relative group rounded-12 flex gap-12 min-w-[180px] mobile:min-w-[unset] max-w-[240px]'
     >
+      {nft.primaryCoin && (
+        <div className='absolute top-8 right-8 z-1 p-4 rounded-4 bg-yellow flex items-center gap-4'>
+          {nft.primaryCoin.image && (
+            <img
+              src={nft.primaryCoin.image}
+              className='size-16 rounded-full object-contain'
+            />
+          )}
+          <span>${nft.primaryCoin.symbol}</span>
+        </div>
+      )}
       <img
         src={nft.image}
         width={240}

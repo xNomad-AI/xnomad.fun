@@ -63,7 +63,7 @@ export function Content({ address }: { address: string }) {
           }`}
           onClick={() => setTab("society")}
         >
-          Society({society?.length})
+          UGC Agents({society?.length})
         </button>
       </div>
       <CardViewGallery

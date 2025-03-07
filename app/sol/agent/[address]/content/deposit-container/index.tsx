@@ -10,17 +10,15 @@ import {
   Tooltip,
 } from "@/primitive/components";
 import BigNumber from "bignumber.js";
-import { useMemo, useEffect, PropsWithChildren, useState } from "react";
-import { getPortfolio } from "./network";
+import { useMemo, PropsWithChildren, useState } from "react";
 import { useAgentStore } from "../../store";
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useSolana } from "@/lib/hooks/use-solana";
+import { useSolana, useSolBalance } from "@/lib/hooks/use-solana";
 import { toCardNum } from "@/lib/utils/number";
-import { useMemoizedFn, useRequest } from "ahooks";
+import { useMemoizedFn } from "ahooks";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { useConnectModalStore } from "@/components/connect-modal/store";
-import { NFT } from "@/types";
 import { onError } from "@/lib/utils/error";
 import { TokenNumber } from "@/components/token-number";
 import { isOwner } from "@/lib/user/ownership";
@@ -116,16 +114,8 @@ function DepositModal({
   const [input, setInput] = useState("");
   const { setVisible } = useConnectModalStore();
   const { publicKey, signTransaction, sendTransaction } = useWallet();
-  const { getSolBalance, connection } = useSolana();
-  const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
-  useEffect(() => {
-    if (!publicKey) {
-      return;
-    }
-    getSolBalance(publicKey).then((data) => {
-      setBalance(data);
-    });
-  }, [publicKey]);
+  const { connection } = useSolana();
+  const { balance } = useSolBalance(new PublicKey(address));
   const [depositing, setDepositing] = useState(false);
   const deposit = useMemoizedFn(async () => {
     if (!publicKey || !signTransaction || !sendTransaction) {

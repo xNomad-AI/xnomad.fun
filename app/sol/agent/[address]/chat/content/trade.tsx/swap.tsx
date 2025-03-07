@@ -11,10 +11,8 @@ import { ContentWithUser } from "../../types";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { useAgentStore } from "../../../store";
 import { AmountInput } from "../amount-input";
-import { PublicKey, TokenAmount } from "@solana/web3.js";
-import { useSolana } from "@/lib/hooks/use-solana";
-import { NFT } from "@/types";
-import { useRequest } from "ahooks";
+import { PublicKey } from "@solana/web3.js";
+import { useSPLBalance } from "@/lib/hooks/use-solana";
 import { CancelButton } from "../cancel-button";
 
 export function Swap({ message }: { message: ContentWithUser }) {
@@ -52,24 +50,9 @@ export function Swap({ message }: { message: ContentWithUser }) {
       errorMsg: "",
     },
   });
-  const step = message.step;
-  const [tokenAmount, setTokenAmount] = useState<TokenAmount>();
-  const { getSPLBalance } = useSolana();
-  useRequest(
-    async () => {
-      if (form.fromToken.value.ca && form.fromToken.value.ca !== "") {
-        getSPLBalance(
-          form.fromToken.value.ca,
-          new PublicKey(nft.agentAccount.solana)
-        ).then((balance) => {
-          setTokenAmount(balance ?? undefined);
-        });
-      }
-    },
-    {
-      refreshDeps: [form.fromToken.value.ca, nft.agentAccount.solana],
-      pollingInterval: 10000,
-    }
+  const { balance: tokenAmount } = useSPLBalance(
+    form.fromToken.value.ca,
+    new PublicKey(nft.agentAccount.solana)
   );
   return (
     <ChatContentContainer message={message}>

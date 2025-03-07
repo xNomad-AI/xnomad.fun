@@ -1,9 +1,9 @@
 import constate from "constate";
 import { useState } from "react";
 import { useTradeConfigStore } from "./trade-config";
-import { useSolana } from "@/lib/hooks/use-solana";
-import { useInterval, useMemoizedFn, useRequest } from "ahooks";
-import { useSwap } from "../swap/swap";
+import { useSolBalance, useSPLBalance } from "@/lib/hooks/use-solana";
+import { useMemoizedFn, useRequest } from "ahooks";
+import { useSwap } from "../trade/swap/swap";
 import { useAgentStore } from "../../../../store";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { getGasPrice } from "../network/gas-price";
@@ -13,25 +13,16 @@ function useStore() {
   const { nft } = useAgentStore();
   const address = nft.primaryCoin?.address ?? "";
   const { publicKey } = useWallet();
-  const { getSolBalance, getSPLBalance } = useSolana();
-
-  const { data: solBalance, refresh: updateSolBalance } = useRequest(
-    async () => {
-      if (publicKey) {
-        const balance = await getSolBalance(publicKey);
-        return balance;
-      }
-    }
+  const { balance: solBalance, refreshAsync: updateSol } =
+    useSolBalance(publicKey);
+  const { balance: tokenBalance, refreshAsync: updateToken } = useSPLBalance(
+    address,
+    publicKey
   );
-  const { data: tokenBalance, refresh: updateTokenBalance } = useRequest(
-    async () => {
-      if (publicKey) {
-        const balance = await getSPLBalance(address, publicKey);
-        return balance;
-      }
-    }
-  );
-
+  const updateBalance = useMemoizedFn(() => {
+    updateSol();
+    updateToken();
+  });
   const { data: solGasData } = useRequest(
     async () => {
       return await getGasPrice();
@@ -85,21 +76,12 @@ function useStore() {
     }
   });
 
-  const updateBalance = useMemoizedFn(() => {
-    updateSolBalance();
-    updateTokenBalance();
-  });
-
   const ensureLargeAmountMEV = useMemoizedFn((value: number) => {
     if (value >= 2 && tradeMode !== "ANTI-MEV") {
       setTradeMode("ANTI-MEV");
       setPriorityFeeType("veryHigh");
     }
   });
-
-  useInterval(() => {
-    updateBalance();
-  }, 1500);
 
   return {
     handleBuy,
@@ -108,10 +90,10 @@ function useStore() {
     sellLoading,
     handleSell,
     tokenDecimal: tokenBalance?.decimals,
-    updateBalance,
     solBalance,
     solGasData,
     ensureLargeAmountMEV,
+    updateBalance,
   };
 }
 

@@ -1,12 +1,11 @@
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { Button, FormItem, FormValue, TextField } from "@/primitive/components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TokenNumber } from "@/components/token-number";
-import BigNumber from "bignumber.js";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
-import { useSolana } from "@/lib/hooks/use-solana";
+import { useSolBalance } from "@/lib/hooks/use-solana";
 import { NFT } from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import { TokenInputBuy, TokenValue } from "../token-input";
@@ -14,13 +13,7 @@ import { CancelButton } from "../cancel-button";
 
 export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
-  const { getSolBalance } = useSolana();
-  const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
-  useEffect(() => {
-    getSolBalance(new PublicKey(nft.agentAccount.solana)).then((balance) => {
-      setBalance(balance);
-    });
-  }, []);
+  const { balance } = useSolBalance(new PublicKey(nft.agentAccount.solana));
   const [form, setForm] = useState<{
     token: FormValue<TokenValue>;
     amount: FormValue<string>;

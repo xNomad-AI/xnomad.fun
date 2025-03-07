@@ -14,7 +14,6 @@ import { Address } from "@/components/address";
 import { TokenNumber } from "@/components/token-number";
 import { RateNum } from "@/components/rate-number";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
-import { TokenDetail } from "../token-detail";
 import clsx from "clsx";
 
 export function TokenList({ show }: { show: boolean }) {

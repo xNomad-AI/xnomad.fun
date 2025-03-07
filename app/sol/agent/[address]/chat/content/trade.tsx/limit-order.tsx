@@ -8,7 +8,7 @@ import {
   RadioGroup,
   TextField,
 } from "@/primitive/components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import BigNumber from "bignumber.js";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
@@ -16,12 +16,11 @@ import { ContentWithUser } from "../../types";
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { useAgentStore } from "../../../store";
 import { TokenNumber } from "@/components/token-number";
-import { useSolana } from "@/lib/hooks/use-solana";
-import { PublicKey, TokenAmount } from "@solana/web3.js";
-import { NFT } from "@/types";
+import { useSolBalance, useSPLBalance } from "@/lib/hooks/use-solana";
+import { PublicKey } from "@solana/web3.js";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { AmountInput } from "../amount-input";
-import { useMemoizedFn, useRequest } from "ahooks";
+import { useMemoizedFn } from "ahooks";
 import { CancelButton } from "../cancel-button";
 type LimitOrderForm = {
   token: FormValue<TokenValue>;
@@ -68,30 +67,12 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
     _setType(value);
     setForm(initForm);
   });
-  const { getSolBalance, getSPLBalance } = useSolana();
-  const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
-  useEffect(() => {
-    getSolBalance(new PublicKey(nft.agentAccount.solana)).then((balance) => {
-      setBalance(balance);
-    });
-  }, []);
-  const step = message.step;
-  const [tokenAmount, setTokenAmount] = useState<TokenAmount>();
-  useRequest(
-    async () => {
-      if (form.token.value.ca && form.token.value.ca !== "") {
-        getSPLBalance(
-          form.token.value.ca,
-          new PublicKey(nft.agentAccount.solana)
-        ).then((balance) => {
-          setTokenAmount(balance ?? undefined);
-        });
-      }
-    },
+  const { balance } = useSolBalance(new PublicKey(nft.agentAccount.solana));
+  const { balance: tokenAmount } = useSPLBalance(
+    form.token.value.ca,
+    new PublicKey(nft.agentAccount.solana),
     {
-      refreshDeps: [form.token.value.ca, nft.agentAccount.solana, type],
-      ready: type === "sell",
-      pollingInterval: 10000,
+      disablePooling: type !== "sell",
     }
   );
   return (

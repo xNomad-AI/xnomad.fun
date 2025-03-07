@@ -2,26 +2,17 @@ import { Address } from "@/components/address";
 import { Card, IconReset, IconWallet, Spin } from "@/primitive/components";
 import { useAgentStore } from "../../store";
 import { TokenNumber } from "@/components/token-number";
-import { useSolana } from "@/lib/hooks/use-solana";
-import { useEffect, useState } from "react";
-import BigNumber from "bignumber.js";
+import { useSolBalance } from "@/lib/hooks/use-solana";
+import { useState } from "react";
 import { PublicKey } from "@solana/web3.js";
 import { Tab } from "..";
 import clsx from "clsx";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { Analytics } from "./activity";
-import { NFT } from "@/types";
 
 export function SideWallet({ changeTab }: { changeTab: (tab: Tab) => void }) {
   const { portfolio, triggerRefresh, isRefreshing, nft } = useAgentStore();
-  const { getSolBalance } = useSolana();
-  const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
-  useEffect(() => {
-    if (!portfolio) return;
-    getSolBalance(new PublicKey(portfolio?.wallet ?? "")).then((balance) => {
-      setBalance(balance);
-    });
-  }, [portfolio]);
+  const { balance } = useSolBalance(new PublicKey(portfolio?.wallet ?? ""));
   const [tab, setTab] = useState<"holder" | "activity">("holder");
   return (
     <div className='flex flex-col gap-16 w-full max-w-[240px] flex-shrink-0'>

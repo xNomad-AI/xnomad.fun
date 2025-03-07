@@ -19,7 +19,7 @@ function useService({ initialPrice }: { initialPrice: number }) {
     if (socket) {
       socket.on("ohlcData", ({ ohlcData }) => {
         const data = ohlcData?.data;
-        const price = +data.c;
+        const price = +data?.c;
         setTokenPrice(price);
       });
       return () => {

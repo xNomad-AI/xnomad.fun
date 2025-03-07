@@ -69,7 +69,7 @@ export default function Home() {
         <div className='flex flex-col gap-32'>
           <div className='flex items-center justify-between'>
             <h2 className='text-size-20 font-bold'>New Agent Tokens</h2>
-            <Link href={"/sol/agent-token?sortBy=age"} prefetch>
+            <Link href={"/sol/agent-token?sortBy=deployedTime"} prefetch>
               <Button variant='secondary' className='font-bold'>
                 View More
               </Button>

@@ -10,7 +10,7 @@ import {
   IconTelegram,
   IconWebsite,
 } from "@/primitive/components";
-import { useRequest } from "ahooks";
+import { useMount, useRequest } from "ahooks";
 import clsx from "clsx";
 import { PropsWithChildren, useEffect, useState } from "react";
 import {
@@ -22,6 +22,7 @@ import { use100vh } from "react-div-100vh";
 import Link from "next/link";
 import { TokenCell } from "../agent/[address]/content/agent-token/token-list/token-cell";
 import { NFTCell } from "../agent/[address]/content/agent-token/token-list/nft-cell";
+import { useSearchParams } from "next/navigation";
 const sortByList = ["volume24h", "deployedTime", "marketcap"] as const;
 type SortBy = (typeof sortByList)[number];
 const sortMap = {
@@ -32,7 +33,13 @@ const sortMap = {
 export function Content() {
   const [sortBy, setSortBy] = useState<SortBy>("volume24h");
   const [tokens, setTokens] = useState<TokenInfo[]>([]);
-
+  const searchParams = useSearchParams();
+  useMount(() => {
+    const sortBy = searchParams.get("sortBy") as SortBy;
+    if (sortByList.includes(sortBy)) {
+      setSortBy(sortBy);
+    }
+  });
   const { loading } = useRequest(
     async () => {
       const res = await getAgentTokenList({
@@ -124,7 +131,7 @@ export function Content() {
             renderItem={(item: TokenInfo, index) => {
               return (
                 <Link
-                  href={`/sol/agent/${item.nft.id}?tab=agent-token`}
+                  href={`/sol/agent/${item.nft?.id}?tab=agent-token`}
                   key={item.symbol}
                   className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8'
                 >

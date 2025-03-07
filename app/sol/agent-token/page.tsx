@@ -1,6 +1,7 @@
 "use client";
 import { Container } from "@/app/layout/contianer";
 import { Content } from "./content";
+import { Suspense } from "react";
 
 export default function Page() {
   return (
@@ -11,7 +12,9 @@ export default function Page() {
           The following shows the agent tokens of the AI agents.
         </p>
       </div>
-      <Content />
+      <Suspense>
+        <Content />
+      </Suspense>
     </Container>
   );
 }

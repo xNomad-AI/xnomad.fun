@@ -8,9 +8,10 @@ import { RateNum } from "@/components/rate-number";
 import clsx from "clsx";
 import { TokenCell } from "./token-cell";
 import { AgeCell } from "./age-cell";
+import { BindModal } from "./bind-modal";
 
 export function TokenList({ show }: { show: boolean }) {
-  const { nft } = useAgentStore();
+  const { nft, refreshNFT } = useAgentStore();
   const [tokens, setTokens] = useState<TokenInfo[]>([]);
   const { loading } = useRequest(
     async () => {
@@ -23,6 +24,8 @@ export function TokenList({ show }: { show: boolean }) {
       refreshDeps: [nft.agentAccount.solana],
     }
   );
+  const [showModal, setShowModal] = useState(false);
+  const [initToken, setInitToken] = useState<TokenInfo>();
   return (
     <div
       className={clsx("flex flex-col gap-16 w-full", {
@@ -36,7 +39,14 @@ export function TokenList({ show }: { show: boolean }) {
         />
         <div className='w-full h-full -z-1 absolute left-0 top-0 bg-black-60'></div>
         <div className='text-size-16 font-bold'>Agent Token Not Bound</div>
-        <Button>Bind Agent Token</Button>
+        <Button
+          onClick={() => {
+            setInitToken(undefined);
+            setShowModal(true);
+          }}
+        >
+          Bind Agent Token
+        </Button>
       </Card>
       <p className='mt-16 text-text2'>
         The following shows the tokens issued by the AI agent. DYOR.
@@ -58,7 +68,7 @@ export function TokenList({ show }: { show: boolean }) {
           tokens?.map((item) => (
             <div
               key={item.symbol}
-              className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8'
+              className='h-64 group flex items-center justify-between w-full border-b border-white-20 gap-8'
             >
               <div className='flex w-[200px] gap-4 items-center'>
                 <TokenCell item={item} />
@@ -76,8 +86,18 @@ export function TokenList({ show }: { show: boolean }) {
               <div className='flex w-[120px] justify-end'>
                 <TokenNumber prefix={"$"} number={item.liquidity} />
               </div>
-              <div className='flex w-[120px] justify-end'>
+              <div className='flex w-[120px] justify-end group-hover:hidden'>
                 <AgeCell time={item.deployedTime} />
+              </div>
+              <div className='w-[120px] justify-end hidden group-hover:flex'>
+                <Button
+                  onClick={() => {
+                    setInitToken(item);
+                    setShowModal(true);
+                  }}
+                >
+                  Bind
+                </Button>
               </div>
             </div>
           ))
@@ -90,6 +110,18 @@ export function TokenList({ show }: { show: boolean }) {
       <Button variant='secondary' className='!w-[200px] self-center'>
         Issue Token
       </Button>
+      <BindModal
+        onClose={() => {
+          setShowModal(false);
+        }}
+        onSuccess={() => {
+          refreshNFT();
+        }}
+        open={showModal}
+        nft={nft}
+        tokens={tokens}
+        initToken={initToken}
+      />
     </div>
   );
 }

@@ -37,7 +37,7 @@ export function ModalTitleWithBorder(
   return (
     <div
       className={clsx(
-        "flex items-center justify-between shrink-0 p-24 border-b border-solid border-dividing",
+        "flex items-center justify-between shrink-0 p-16 border-b border-solid border-dividing",
         className
       )}
     >

@@ -16,16 +16,22 @@ import Link from "next/link";
 import { PropsWithChildren } from "react";
 import { useLogout } from "@/lib/user/use-logout";
 import { useConnectModalStore } from "@/components/connect-modal/store";
+import { usePathname } from "next/navigation";
 const navs = [
   {
     href: "/sol/xnomad",
     key: "xnomad",
-    label: "xNomad Gallery",
+    label: "Swarms",
   },
   {
-    href: `/profile`,
-    key: "my-ai-nfts",
-    label: "My AI-NFTs",
+    href: `/sol/agent-token`,
+    key: "agent-token",
+    label: "Agent Token",
+  },
+  {
+    href: `/sol/ugc-agents`,
+    key: "ugc-agents",
+    label: "UGC Agents",
   },
   {
     href: "/sol/launch",
@@ -163,6 +169,7 @@ function NavItem({
   children,
   onClick,
 }: PropsWithChildren<{ href: string; onClick?: (e: any) => void }>) {
+  const pathName = usePathname();
   return (
     <Link
       href={href}
@@ -177,7 +184,9 @@ function NavItem({
           message("Coming soon");
         }
       }}
-      className='text-white-40 hover:text-text1'
+      className={clsx("text-white-40 hover:text-text1", {
+        "!text-text1": href.includes(pathName),
+      })}
       prefetch
     >
       {children}

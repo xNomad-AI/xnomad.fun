@@ -179,7 +179,7 @@ export function IssueTokenForm({
           id='nft-image'
           name='nft-image'
           className='hidden'
-          accept='.jpg,.png,.svg,.jpeg,.webp,.gif'
+          accept='.jpg,.png,.gif,.svg,.jpeg,.webp'
           size={5000}
         />
         <p className='text-text2'>

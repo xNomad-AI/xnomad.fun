@@ -5,10 +5,13 @@ import { useTradeConfigStore } from "../store/trade-config";
 import { BaseTemplate } from "./base";
 import { useEffect, useMemo, useState } from "react";
 import { isNumber } from "@/lib/utils/number/is-number";
-import { Button, IconSol } from "@/primitive/components";
+import { Button, IconSol, message } from "@/primitive/components";
 import { toDecimal } from "@/lib/utils/number/to-decimal";
+import { copyToClipboard } from "@/lib/utils/copy";
+import { useAgentStore } from "../../../../store";
 
 export function SellSection() {
+  const { nft } = useAgentStore();
   const [value, setValue] = useState("");
   const { tokenPrice } = useTokenPagePriceStore();
   const {
@@ -48,20 +51,40 @@ export function SellSection() {
   return (
     <BaseTemplate
       confirmNode={
-        <Button
-          stretch
-          variant='danger'
-          disabled={
-            !isNumber(+value) ||
-            tokenBalance === 0 ||
-            tokenBalance < +value ||
-            +value <= 0
-          }
-          onClick={() => sell()}
-          loading={sellLoading}
-        >
-          SELL
-        </Button>
+        <>
+          <Button
+            stretch
+            variant='danger'
+            disabled={
+              !isNumber(+value) ||
+              tokenBalance === 0 ||
+              tokenBalance < +value ||
+              +value <= 0
+            }
+            onClick={() => sell()}
+            loading={sellLoading}
+          >
+            SELL
+          </Button>
+          <Button
+            variant='secondary'
+            stretch
+            onClick={() => {
+              if (+value > 0) {
+                copyToClipboard(
+                  `Sell ${value} $${nft.primaryCoin?.symbol}(${nft.primaryCoin?.address}) for SOL`
+                );
+                message(
+                  "Copied successfully. You can send it to your agent to trade tokens."
+                );
+              } else {
+                message("Please enter a valid amount to generate buy prompt");
+              }
+            }}
+          >
+            Generate Buy Prompt
+          </Button>
+        </>
       }
       value={value}
       mevWarning={isNumber(+received) && +received >= 2}

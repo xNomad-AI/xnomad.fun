@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getAgentTokenList, TokenInfo } from "./network";
 import { useRequest } from "ahooks";
 import { useAgentStore } from "../../../store";
@@ -9,9 +9,13 @@ import clsx from "clsx";
 import { TokenCell } from "./token-cell";
 import { AgeCell } from "./age-cell";
 import { BindModal } from "./bind-modal";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { isOwner } from "@/lib/user/ownership";
+import Link from "next/link";
 
 export function TokenList({ show }: { show: boolean }) {
   const { nft, refreshNFT } = useAgentStore();
+  const { publicKey } = useWallet();
   const [tokens, setTokens] = useState<TokenInfo[]>([]);
   const { loading } = useRequest(
     async () => {
@@ -26,28 +30,34 @@ export function TokenList({ show }: { show: boolean }) {
   );
   const [showModal, setShowModal] = useState(false);
   const [initToken, setInitToken] = useState<TokenInfo>();
+  const ownerShip = useMemo(
+    () => isOwner(nft.owner, publicKey?.toBase58()),
+    [nft.agentAccount.solana, publicKey]
+  );
   return (
     <div
       className={clsx("flex flex-col gap-16 w-full", {
         hidden: !show,
       })}
     >
-      <Card className='flex items-center justify-between p-16 relative'>
-        <img
-          className='w-full h-full object-cover -z-2 absolute left-0 top-0'
-          src={nft.image}
-        />
-        <div className='w-full h-full -z-1 absolute left-0 top-0 bg-black-60'></div>
-        <div className='text-size-16 font-bold'>Agent Token Not Bound</div>
-        <Button
-          onClick={() => {
-            setInitToken(undefined);
-            setShowModal(true);
-          }}
-        >
-          Bind Agent Token
-        </Button>
-      </Card>
+      {ownerShip && (
+        <Card className='flex items-center justify-between p-16 relative'>
+          <img
+            className='w-full h-full object-cover -z-2 absolute left-0 top-0'
+            src={nft.image}
+          />
+          <div className='w-full h-full -z-1 absolute left-0 top-0 bg-black-60'></div>
+          <div className='text-size-16 font-bold'>Agent Token Not Bound</div>
+          <Button
+            onClick={() => {
+              setInitToken(undefined);
+              setShowModal(true);
+            }}
+          >
+            Bind Agent Token
+          </Button>
+        </Card>
+      )}
       <p className='mt-16 text-text2'>
         The following shows the tokens issued by the AI agent. DYOR.
       </p>
@@ -86,10 +96,18 @@ export function TokenList({ show }: { show: boolean }) {
               <div className='flex w-[120px] justify-end'>
                 <TokenNumber prefix={"$"} number={item.liquidity} />
               </div>
-              <div className='flex w-[120px] justify-end group-hover:hidden'>
+              <div
+                className={clsx("flex w-[120px] justify-end", {
+                  "group-hover:hidden": ownerShip,
+                })}
+              >
                 <AgeCell time={item.deployedTime} />
               </div>
-              <div className='w-[120px] justify-end hidden group-hover:flex'>
+              <div
+                className={clsx("w-[120px] justify-end hidden", {
+                  "group-hover:flex": ownerShip,
+                })}
+              >
                 <Button
                   onClick={() => {
                     setInitToken(item);
@@ -107,9 +125,16 @@ export function TokenList({ show }: { show: boolean }) {
           </div>
         )}
       </div>
-      <Button variant='secondary' className='!w-[200px] self-center'>
-        Issue Token
-      </Button>
+      {ownerShip && (
+        <Link
+          className='w-fit self-center'
+          href={`/sol/agent/${nft.id}?tab=chat&action=issue-token`}
+        >
+          <Button variant='secondary' className='!w-[200px]'>
+            Issue Token
+          </Button>
+        </Link>
+      )}
       <BindModal
         onClose={() => {
           setShowModal(false);

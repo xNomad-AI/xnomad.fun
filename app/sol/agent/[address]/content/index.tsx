@@ -51,12 +51,12 @@ export function Content() {
     _setTab(tab);
   });
   const searchParams = useSearchParams();
-  useMount(() => {
+  useEffect(() => {
     const tab = searchParams.get("tab") as Tab;
     if (tabs.includes(tab)) {
       setTab(tab);
     }
-  });
+  }, [searchParams]);
   const [mobileTab, setMobileTab] = useState<MobileTab | null>(null);
   const { breakpoint } = useBreakpoint();
   const getPortfolioData = useMemoizedFn(async (address: string) => {

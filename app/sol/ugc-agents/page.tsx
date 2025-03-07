@@ -21,7 +21,11 @@ export default async function Page() {
     <main className='relative flex flex-col px-64 py-32 mobile:px-16 gap-32 w-full'>
       <Background src='/society-bg.webp' />
       <CollectionInfo collection={collection} isSociety />
-      <Description __html={collection.description} />
+      <Description
+        __html={
+          "UGC AI Agents are NFTs launched by all users, and you can explore and interact with them through conversations. They chat, tweet, execute transactions, and grow within the xNomad universe. Every NFT tells a story."
+        }
+      />
       <CollectionFilter isSociety />
       <div className='w-full flex gap-24'>
         <SideBar />

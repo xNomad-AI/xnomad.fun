@@ -1,6 +1,6 @@
 import { api } from "@/primitive/api";
 import { useMemoizedFn } from "ahooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useChatContext } from "../store";
 import { NFT } from "@/types";
 
@@ -11,10 +11,13 @@ export function useChatGreeting({
   nft: NFT;
   initializingMemory: boolean;
 }) {
+  const [isGreeting, setIsGreeting] = useState(true);
   const { scrollToBottom, setMessages, messages } = useChatContext();
   // greeting
   const getGreeting = useMemoizedFn(async () => {
-    const promptSuggestion = `Here are some example prompts if you want to trade: 
+    setIsGreeting(true);
+    try {
+      const promptSuggestion = `Here are some example prompts if you want to trade: 
 - Buy: 
   *Buy [$symbol(CA)] with [amount] SOL
 - Sell: 
@@ -27,37 +30,45 @@ _ Transfer:
 - Limit Order: 
   *Create an automatic task to buy [$symbol(CA)] with [amount] SOL when the token price is under $xx
   *Create an automatic task to sell [amount][$symbol(CA)] for SOL when the token price is above $xx`;
-    const greet = await api.v1.get<{ prologue: string }>("/agent/prologue", {
-      nftId: nft.id,
-      chain: "solana",
-    });
-    const newMessages = [
-      {
-        text: greet.prologue,
-        user: nft.name,
-        id: "greeting",
-        createdAt: Date.now(),
-      },
-      {
-        text: promptSuggestion,
-        user: nft.name,
-        id: "prompt",
-        createdAt: Date.now(),
-      },
-    ];
-    setMessages((old) => {
-      if (!old || old?.length === 0) {
-        return newMessages;
-      } else {
-        return old ?? [];
-      }
-    });
+      const greet = await api.v1.get<{ prologue: string }>("/agent/prologue", {
+        nftId: nft.id,
+        chain: "solana",
+      });
+      const newMessages = [
+        {
+          text: greet.prologue,
+          user: nft.name,
+          id: "greeting",
+          createdAt: Date.now(),
+        },
+        {
+          text: promptSuggestion,
+          user: nft.name,
+          id: "prompt",
+          createdAt: Date.now(),
+        },
+      ];
+      setMessages((old) => {
+        if (!old || old?.length === 0) {
+          return newMessages;
+        } else {
+          return old ?? [];
+        }
+      });
+    } finally {
+      setIsGreeting(false);
+    }
   });
   useEffect(() => {
     scrollToBottom();
     if (initializingMemory) return;
     if (!((messages?.length ?? 0) > 0)) {
       getGreeting();
+    } else {
+      setIsGreeting(false);
     }
   }, [initializingMemory, messages]);
+  return {
+    isGreeting,
+  };
 }

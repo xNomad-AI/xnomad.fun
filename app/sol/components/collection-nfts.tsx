@@ -10,8 +10,8 @@ import { bungee, bungeeInline } from "@/app/layout/font";
 import Link from "next/link";
 import { useRarity } from "@/lib/utils/rarity/use-rarity";
 import clsx from "clsx";
-import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { useTimeStore } from "@/primitive/hooks/time";
+import { AgeCell } from "../agent/[address]/content/agent-token/token-list/age-cell";
 export function CollectionNFTs({
   collection,
   isSociety,
@@ -166,7 +166,7 @@ function Age({ time }: { time: number }) {
   useTimeStore();
   return (
     <span className='text-text2'>
-      Age: {beautifyTimeV2(time, true, false, "")}
+      Age: <AgeCell time={time} />
     </span>
   );
 }

@@ -2,20 +2,12 @@ import { useState } from "react";
 import { getAgentTokenList, TokenInfo } from "./network";
 import { useRequest } from "ahooks";
 import { useAgentStore } from "../../../store";
-import {
-  Button,
-  Card,
-  IconTelegram,
-  IconTwitterX,
-  IconWebsite,
-  Spin,
-} from "@/primitive/components";
-import { Address } from "@/components/address";
+import { Button, Card, Spin } from "@/primitive/components";
 import { TokenNumber } from "@/components/token-number";
 import { RateNum } from "@/components/rate-number";
-import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import clsx from "clsx";
 import { TokenCell } from "./token-cell";
+import { AgeCell } from "./age-cell";
 
 export function TokenList({ show }: { show: boolean }) {
   const { nft } = useAgentStore();
@@ -85,12 +77,7 @@ export function TokenList({ show }: { show: boolean }) {
                 <TokenNumber prefix={"$"} number={item.liquidity} />
               </div>
               <div className='flex w-[120px] justify-end'>
-                {beautifyTimeV2(
-                  new Date(item.deployedTime).getTime(),
-                  true,
-                  false,
-                  ""
-                )}
+                <AgeCell time={item.deployedTime} />
               </div>
             </div>
           ))

@@ -1,4 +1,4 @@
-import { Button, Card, IconVerified } from "@/primitive/components";
+import { Button, Card } from "@/primitive/components";
 import { useEffect, useState } from "react";
 import { TokenNumber } from "@/components/token-number";
 import { useChatContext } from "../../store";
@@ -9,7 +9,6 @@ import { api } from "@/primitive/api";
 import clsx from "clsx";
 import { RateNum } from "@/components/rate-number";
 import { toCardNum, toThousandNum } from "@/lib/utils/number";
-import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { TextAnchor } from "@/components/text-button";
 import { format } from "date-fns";
 import { Empty } from "@/components/empty";
@@ -20,6 +19,7 @@ import {
   IconTwitterVerified,
   IconViewed,
 } from "./icons";
+import { AgeCell } from "../../../content/agent-token/token-list/age-cell";
 interface TokenInfo {
   address: string;
   aiSummary?: string;
@@ -255,7 +255,7 @@ export function AnalyzeResponse({
           />
           (1H)
           <br />
-          Age: {beautifyTimeV2((tokenInfo?.createTime ?? 0) * 1000)}
+          Age: <AgeCell time={(tokenInfo?.createTime ?? 0) * 1000} />
           <br />
           Market Cap:{" "}
           <TokenNumber number={tokenInfo?.marketCap ?? ""} prefix={"$"} />
@@ -333,7 +333,7 @@ export function AnalyzeResponse({
                     </div>
                   </div>
                   <span className='text-text2'>
-                    {beautifyTimeV2(item.created_time * 1000, true, false, "")}
+                    <AgeCell time={item.created_time * 1000} />
                   </span>
                 </div>
                 <p>{item.text}</p>

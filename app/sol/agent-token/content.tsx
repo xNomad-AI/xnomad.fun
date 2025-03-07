@@ -1,18 +1,10 @@
 "use client";
-import { Address } from "@/components/address";
 import { RateNum } from "@/components/rate-number";
 import { TokenNumber } from "@/components/token-number";
-import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
-import {
-  IconDownFilled,
-  Spin,
-  IconTwitterX,
-  IconTelegram,
-  IconWebsite,
-} from "@/primitive/components";
+import { IconDownFilled, Spin } from "@/primitive/components";
 import { useMount, useRequest } from "ahooks";
 import clsx from "clsx";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import {
   TokenInfo,
   getAgentTokenList,
@@ -23,6 +15,7 @@ import Link from "next/link";
 import { TokenCell } from "../agent/[address]/content/agent-token/token-list/token-cell";
 import { NFTCell } from "../agent/[address]/content/agent-token/token-list/nft-cell";
 import { useSearchParams } from "next/navigation";
+import { AgeCell } from "../agent/[address]/content/agent-token/token-list/age-cell";
 const sortByList = ["volume24h", "deployedTime", "marketcap"] as const;
 type SortBy = (typeof sortByList)[number];
 const sortMap = {
@@ -161,12 +154,7 @@ export function Content() {
                     <TokenNumber number={item.holdersCount} />
                   </div>
                   <div className='flex w-[120px] justify-end'>
-                    {beautifyTimeV2(
-                      new Date(item.deployedTime).getTime(),
-                      true,
-                      false,
-                      ""
-                    )}
+                    <AgeCell time={item.deployedTime} />
                   </div>
                 </Link>
               );

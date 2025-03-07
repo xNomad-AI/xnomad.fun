@@ -3,10 +3,10 @@ import clsx from "clsx";
 import { TokenTransaction, useActivities } from "./use-activities";
 import { ActionTag } from "../../../wallet/activity/components";
 import { Spin } from "@/primitive/components";
-import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { TokenNumber } from "@/components/token-number";
 import { Address } from "@/components/address";
 import BigNumber from "bignumber.js";
+import { AgeCell } from "../../token-list/age-cell";
 
 export function Activity({ show }: { show: boolean }) {
   const {
@@ -48,7 +48,7 @@ export function Activity({ show }: { show: boolean }) {
                 className='h-58 flex items-center justify-between w-full border-b border-white-20 gap-8'
               >
                 <div className='flex w-[80px] gap-4 items-center'>
-                  {beautifyTimeV2(item.timestamp * 1000, true, false, "")}
+                  <AgeCell time={item.timestamp * 1000} />
                 </div>
                 <div className='flex w-[90px] justify-end'>
                   <ActionTag type={item.event as any} />

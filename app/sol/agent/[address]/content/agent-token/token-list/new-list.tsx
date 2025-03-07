@@ -1,14 +1,12 @@
 "use client";
 import { useRequest } from "ahooks";
 import { getAgentTokenList, TokenInfo } from "./network";
-import { Address } from "@/components/address";
 import { Spin } from "@/primitive/components";
 import { useState } from "react";
-import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import Link from "next/link";
 import { TokenCell } from "./token-cell";
-import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 import { NFTCell } from "./nft-cell";
+import { AgeCell } from "./age-cell";
 
 export function NewAgentTokens() {
   const [tokens, setTokens] = useState<TokenInfo[]>([]);
@@ -46,12 +44,7 @@ export function NewAgentTokens() {
               <NFTCell item={item} />
             </div>
             <div className='flex w-[100px] justify-end'>
-              {beautifyTimeV2(
-                new Date(item.deployedTime).getTime(),
-                true,
-                false,
-                ""
-              )}
+              <AgeCell time={item.deployedTime} />
             </div>
           </Link>
         ))

@@ -4,7 +4,6 @@ import { getPrimaryToken } from "./network";
 import { PropsWithChildren, useState } from "react";
 import { IconPump } from "../../../chat/content/issue-token/icons";
 import { Address } from "@/components/address";
-import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { TokenNumber } from "@/components/token-number";
 import { RateNum } from "@/components/rate-number";
 import { Chart } from "./chart";
@@ -20,6 +19,7 @@ import { TradeStoreProvider } from "./store/trade";
 import { TradeSettingModal } from "./trade/setting-modal";
 
 import { Info } from "./token-info";
+import { AgeCell } from "../token-list/age-cell";
 
 export function Detail({ nft, show }: { nft: NFT; show: boolean }) {
   const [primaryToken, setPrimaryToken] = useState<TokenInfoType>();
@@ -71,12 +71,7 @@ export function Detail({ nft, show }: { nft: NFT; show: boolean }) {
                           className='text-text2 text-size-12'
                         />
                         <span className='text-size-12'>
-                          {beautifyTimeV2(
-                            primaryToken.deployedTime,
-                            true,
-                            false,
-                            ""
-                          )}
+                          <AgeCell time={primaryToken.deployedTime} />
                         </span>
                       </div>
                     </div>

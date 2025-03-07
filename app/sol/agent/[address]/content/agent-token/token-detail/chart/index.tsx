@@ -21,7 +21,7 @@ function BaseChart(props: Props) {
   const { ca, tokenInfo } = props;
   const zeroCount =
     tokenInfo.price
-      .toString()
+      ?.toString()
       ?.split(".")[1]
       ?.split("")
       .filter((item) => item === "0").length || 0;

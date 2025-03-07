@@ -104,14 +104,12 @@ export function useSolBalance(
   account?: PublicKey | null,
   config?: BalanceConfig
 ) {
-  const [balance, setBalance] = useState<BigNumber>(BigNumber(0));
   const { getSolBalance } = useSolana();
-  const { refreshAsync } = useRequest(
+  const { refreshAsync, data: balance } = useRequest(
     async () => {
-      if (!account) return;
-      getSolBalance(account).then((balance) => {
-        setBalance(balance);
-      });
+      if (!account) return BigNumber(0);
+      const res = await getSolBalance(account);
+      return res;
     },
     {
       refreshDeps: [account, config?.disablePooling],
@@ -119,7 +117,7 @@ export function useSolBalance(
       ready: Boolean(account) && !config?.disablePooling,
     }
   );
-  return { balance, refreshAsync };
+  return { balance: balance ?? BigNumber(0), refreshAsync };
 }
 
 export function useSPLBalance(
@@ -127,14 +125,12 @@ export function useSPLBalance(
   account?: PublicKey | null,
   config?: BalanceConfig
 ) {
-  const [balance, setBalance] = useState<TokenAmount>();
   const { getSPLBalance } = useSolana();
-  const { refreshAsync } = useRequest(
+  const { refreshAsync, data: balance } = useRequest(
     async () => {
-      if (!account) return;
-      getSPLBalance(address, account).then((balance) => {
-        setBalance(balance);
-      });
+      if (!account) return undefined;
+      const res = await getSPLBalance(address, account);
+      return res;
     },
     {
       refreshDeps: [address, account, config?.disablePooling],
@@ -142,5 +138,5 @@ export function useSPLBalance(
       ready: Boolean(address) && Boolean(account) && !config?.disablePooling,
     }
   );
-  return { balance, refreshAsync };
+  return { balance: balance ?? undefined, refreshAsync };
 }

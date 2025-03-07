@@ -134,6 +134,7 @@ export function Analytics({
                   border: variant === "widget" ? "none" : undefined,
                   padding: variant === "widget" ? "0px" : undefined,
                   gap: variant === "widget" ? "4px" : undefined,
+                  borderRadius: variant === "widget" ? "0px" : undefined,
                 }}
                 className='p-16 flex items-center gap-8 flex-wrap'
               >

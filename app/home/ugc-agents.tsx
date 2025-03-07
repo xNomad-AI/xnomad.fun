@@ -16,7 +16,7 @@ export function UGCAgents() {
       `/nft/solana/collection/${NOMADS_SOCIETY_ID}/nfts`,
       {
         offset: 0,
-        limit: 5,
+        limit: 10,
         sortBy: "numberDesc",
       }
     );
@@ -28,7 +28,7 @@ export function UGCAgents() {
       <Spin />
     </div>
   ) : agents.length > 0 ? (
-    <div className='w-full grid grid-cols-5 portrait-tablet:grid-cols-3 mobile:grid-cols-2 gap-32 mobile:gap-16 '>
+    <div className='w-full flex gap-16 overflow-auto'>
       {agents.map((agent) => (
         <NFTCard nft={agent} isHome />
       ))}

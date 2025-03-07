@@ -1,6 +1,6 @@
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { Button, FormItem, FormValue, TextField } from "@/primitive/components";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { TokenNumber } from "@/components/token-number";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
@@ -13,7 +13,11 @@ import { CancelButton } from "../cancel-button";
 
 export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
-  const { balance } = useSolBalance(new PublicKey(nft.agentAccount.solana));
+  const account = useMemo(
+    () => new PublicKey(nft.agentAccount.solana),
+    [nft.agentAccount.solana]
+  );
+  const { balance } = useSolBalance(account);
   const [form, setForm] = useState<{
     token: FormValue<TokenValue>;
     amount: FormValue<string>;

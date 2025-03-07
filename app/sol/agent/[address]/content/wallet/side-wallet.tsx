@@ -3,19 +3,23 @@ import { Card, IconReset, IconWallet, Spin } from "@/primitive/components";
 import { useAgentStore } from "../../store";
 import { TokenNumber } from "@/components/token-number";
 import { useSolBalance } from "@/lib/hooks/use-solana";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { PublicKey } from "@solana/web3.js";
 import { Tab } from "..";
 import clsx from "clsx";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { Analytics } from "./activity";
+import { useWhyDidYouUpdate } from "ahooks";
 
 export function SideWallet({ changeTab }: { changeTab: (tab: Tab) => void }) {
   const { portfolio, triggerRefresh, isRefreshing, nft } = useAgentStore();
-  const { balance } = useSolBalance(
-    portfolio?.wallet ? new PublicKey(portfolio.wallet) : null
+  const account = useMemo(
+    () => (portfolio?.wallet ? new PublicKey(portfolio.wallet) : null),
+    [portfolio]
   );
+  const { balance } = useSolBalance(account);
   const [tab, setTab] = useState<"holder" | "activity">("holder");
+
   return (
     <div className='flex flex-col gap-16 w-full max-w-[240px] flex-shrink-0'>
       <button

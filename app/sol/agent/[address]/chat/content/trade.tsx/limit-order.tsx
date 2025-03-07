@@ -8,7 +8,7 @@ import {
   RadioGroup,
   TextField,
 } from "@/primitive/components";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
@@ -66,14 +66,14 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
     _setType(value);
     setForm(initForm);
   });
-  const { balance } = useSolBalance(new PublicKey(nft.agentAccount.solana));
-  const { balance: tokenAmount } = useSPLBalance(
-    form.token.value.ca,
-    new PublicKey(nft.agentAccount.solana),
-    {
-      disablePooling: type !== "sell",
-    }
+  const account = useMemo(
+    () => new PublicKey(nft.agentAccount.solana),
+    [nft.agentAccount.solana]
   );
+  const { balance } = useSolBalance(account);
+  const { balance: tokenAmount } = useSPLBalance(form.token.value.ca, account, {
+    disablePooling: type !== "sell",
+  });
   return (
     <ChatContentContainer message={message}>
       <div className='flex flex-col gap-16 w-full'>

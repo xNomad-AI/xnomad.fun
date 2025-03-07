@@ -1,5 +1,5 @@
 import { Button } from "@/primitive/components";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
 import { useChatContext } from "../../store";
@@ -20,7 +20,10 @@ export function IssueToken({
   const { deleteMessageById, addAndSendMessage } = useChatContext();
 
   const [form, setForm] = useState<IssueTokenFormType>(initialIssueTokenForm);
-
+  const account = useMemo(
+    () => new PublicKey(nft.agentAccount.solana),
+    [nft.agentAccount.solana]
+  );
   return (
     <ChatContentContainer message={message}>
       <div className='flex flex-col gap-16 w-full'>
@@ -31,7 +34,7 @@ export function IssueToken({
         <IssueTokenForm
           form={form}
           setForm={setForm}
-          account={new PublicKey(nft.agentAccount.solana)}
+          account={account}
           nftImage={nft.image}
         />
         <div className='w-full flex justify-end items-center gap-16'>

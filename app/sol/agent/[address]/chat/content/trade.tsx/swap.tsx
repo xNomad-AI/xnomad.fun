@@ -4,7 +4,7 @@ import {
   FormValue,
   IconArrowForwardright,
 } from "@/primitive/components";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
@@ -50,9 +50,13 @@ export function Swap({ message }: { message: ContentWithUser }) {
       errorMsg: "",
     },
   });
+  const account = useMemo(
+    () => new PublicKey(nft.agentAccount.solana),
+    [nft.agentAccount.solana]
+  );
   const { balance: tokenAmount } = useSPLBalance(
     form.fromToken.value.ca,
-    new PublicKey(nft.agentAccount.solana)
+    account
   );
   return (
     <ChatContentContainer message={message}>

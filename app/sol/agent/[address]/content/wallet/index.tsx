@@ -5,7 +5,7 @@ import { DepositContainer } from "../deposit-container";
 import { useAgentStore } from "../../store";
 import { Address } from "@/components/address";
 import { TokenNumber } from "@/components/token-number";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import clsx from "clsx";
 import { Analytics } from "./activity";
 

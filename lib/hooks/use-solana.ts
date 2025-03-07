@@ -5,7 +5,7 @@ import {
   PublicKey,
   TokenAmount,
 } from "@solana/web3.js";
-import { useMemoizedFn, useRequest } from "ahooks";
+import { useMemoizedFn, useRequest, useWhyDidYouUpdate } from "ahooks";
 import { useMemo, useState } from "react";
 import {
   getAssociatedTokenAddressSync,

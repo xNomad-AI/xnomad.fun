@@ -8,7 +8,7 @@ import { upperFirstLetter } from "@/lib/utils/string";
 import { Portfolio } from "./wallet";
 import { Features } from "./features";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useMemoizedFn, useRequest } from "ahooks";
+import { useMemoizedFn, useRequest, useWhyDidYouUpdate } from "ahooks";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { InfoSection } from "../info";
 import { Tasks } from "./tasks";

@@ -4,12 +4,18 @@ import { NFTCard } from "@/app/sol/components/collection-nfts";
 import { NOMADS_SOCIETY_ID } from "@/app/sol/ugc-agents/constants";
 import { XNOMAD_ID } from "@/app/sol/xnomad/constants";
 import { api } from "@/primitive/api";
+import { Select } from "@/primitive/components";
 import { NFT } from "@/types";
 import { useRequest } from "ahooks";
 import { useState } from "react";
-
+const tabs = ["xnomad", "ugc-agents"] as const;
+type Tab = (typeof tabs)[number];
+const tabMap = {
+  xnomad: "xNomad",
+  "ugc-agents": "UGC Agents",
+};
 export function Content({ address }: { address: string }) {
-  const [tab, setTab] = useState<"xnomad" | "society">("xnomad");
+  const [tab, setTab] = useState<Tab>("xnomad");
   const [xnomads, setXnomads] = useState<NFT[]>([]);
   const [society, setSociety] = useState<NFT[]>([]);
   const { loading } = useRequest(async () => {
@@ -48,30 +54,23 @@ export function Content({ address }: { address: string }) {
   });
   return (
     <div className='w-full flex flex-col gap-32'>
-      <div className='flex gap-32'>
-        <button
-          className={`text-size-20 font-bold ${
-            tab === "xnomad" ? "text-text1" : "text-white-60"
-          }`}
-          onClick={() => setTab("xnomad")}
-        >
-          xNomad({xnomads?.length})
-        </button>
-        <button
-          className={`text-size-20 font-bold ${
-            tab === "society" ? "text-text1" : "text-white-60"
-          }`}
-          onClick={() => setTab("society")}
-        >
-          UGC Agents({society?.length})
-        </button>
-      </div>
+      <Select
+        placement='start'
+        onSelect={(value) => setTab(value as Tab)}
+        value={tab}
+        optionConfig={{
+          data: [...tabs],
+          renderer: (tab) => tabMap[tab],
+        }}
+      >
+        {tabMap[tab]}
+      </Select>
       <CardViewGallery
         loading={loading}
         loadingMore={false}
-        count={tab === "society" ? society?.length : xnomads?.length}
+        count={tab === "ugc-agents" ? society?.length : xnomads?.length}
       >
-        {(tab === "society" ? society : xnomads)?.map((nft) => (
+        {(tab === "ugc-agents" ? society : xnomads)?.map((nft) => (
           <NFTCard
             nft={nft}
             collectionName={nft.collectionName}

@@ -19,6 +19,7 @@ import { toCardNum } from "@/lib/utils/number";
 import { onError } from "@/lib/utils/error";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
+import { TokenNumber } from "@/components/token-number";
 const emptyForm = {
   description: {
     value: "",
@@ -286,7 +287,12 @@ export function EditInfoModal({
               submit();
             }}
           >
-            Pay {toCardNum(editConfig?.solAmount ?? 1)} SOL to Submit
+            Pay{" "}
+            <TokenNumber
+              className='inline-flex'
+              number={editConfig?.solAmount ?? 1}
+            />{" "}
+            SOL to Submit
           </Button>
         </div>
       </ModalContent>

@@ -17,7 +17,7 @@ export function TradeSection() {
           BUY
         </RadioButton>
         <RadioButton className='flex-1' value='sell'>
-          Sell
+          SELL
         </RadioButton>
       </RadioButtonGroup>
       {tab === "buy" ? <BuySection /> : null}

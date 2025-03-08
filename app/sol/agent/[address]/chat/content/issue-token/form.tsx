@@ -21,7 +21,9 @@ import { IssueTokenFormType } from "./types";
 import { PublicKey } from "@solana/web3.js";
 import { useSolBalance } from "@/lib/hooks/use-solana";
 import { urlValidation } from "@/primitive/utils/url";
-
+const TICKER_LIMIT = 10;
+const NAME_LIMIT = 20;
+const DESCRIPTION_LIMIT = 200;
 export function IssueTokenForm({
   form,
   setForm,
@@ -105,17 +107,17 @@ export function IssueTokenForm({
         <TextField
           className='!bg-background'
           value={form.tokenName.value}
-          placeholder='Less than 20 characters'
+          placeholder={`Less than ${NAME_LIMIT} characters`}
           onChange={(event) => {
             const value = event.target.value;
-            if (value.length > 20) {
+            if (value.length > NAME_LIMIT) {
               setForm({
                 ...form,
                 tokenName: {
                   ...form.tokenName,
                   value,
                   isInValid: true,
-                  errorMsg: "Less than 20 characters",
+                  errorMsg: `Less than ${NAME_LIMIT} characters`,
                 },
               });
               return;
@@ -136,17 +138,17 @@ export function IssueTokenForm({
           className='!bg-background'
           value={form.symbol.value}
           prefixNode={<span className='text-text2'>$</span>}
-          placeholder='Less than 20 character'
+          placeholder={`Less than ${TICKER_LIMIT} character`}
           onChange={(event) => {
             const value = event.target.value;
-            if (value.length > 20) {
+            if (value.length > TICKER_LIMIT) {
               setForm({
                 ...form,
                 symbol: {
                   ...form.symbol,
                   value,
                   isInValid: true,
-                  errorMsg: "Less than 20 characters",
+                  errorMsg: `Less than ${TICKER_LIMIT} character`,
                 },
               });
               return;
@@ -277,17 +279,17 @@ export function IssueTokenForm({
         <TextField
           className='!bg-background'
           value={form.description.value}
-          placeholder='Less than 200 characters'
+          placeholder={`Less than ${DESCRIPTION_LIMIT} characters`}
           onChange={(event) => {
             const value = event.target.value;
-            if (value.length > 200) {
+            if (value.length > DESCRIPTION_LIMIT) {
               setForm({
                 ...form,
                 description: {
                   ...form.description,
                   value,
                   isInValid: true,
-                  errorMsg: "Less than 200 characters",
+                  errorMsg: `Less than ${DESCRIPTION_LIMIT} characters`,
                 },
               });
               return;

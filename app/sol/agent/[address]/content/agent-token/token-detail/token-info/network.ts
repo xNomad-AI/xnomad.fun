@@ -20,7 +20,7 @@ export function editTokenInfo(
     website: string;
   }
 ) {
-  return api.v1.post<TokenInfo>(`nft/solana/${id}/update-primary-coin-info`, {
+  return api.v1.post<TokenInfo>(`/nft/solana/${id}/update-primary-coin-info`, {
     paymentTxId: txId,
     metadata,
   });

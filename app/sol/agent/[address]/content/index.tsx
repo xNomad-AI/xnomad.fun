@@ -143,7 +143,7 @@ export function Content() {
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
         mobileTab === "asset" && <InfoSection />}
       <Portfolio show={tab === "wallet"} />
-      {tab === "agent-token" && <AgentToken />}
+      <AgentToken show={tab === "agent-token"} />
       {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
       {tab === "features" && <Features nft={nft} />}
     </div>

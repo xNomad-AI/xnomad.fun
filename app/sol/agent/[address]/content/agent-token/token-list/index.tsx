@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { getAgentTokenList, TokenInfo } from "./network";
 import { useRequest } from "ahooks";
 import { useAgentStore } from "../../../store";
-import { Button, Card, Spin } from "@/primitive/components";
+import { Button, Card, message, Spin } from "@/primitive/components";
 import { TokenNumber } from "@/components/token-number";
 import { RateNum } from "@/components/rate-number";
 import clsx from "clsx";
@@ -50,8 +50,14 @@ export function TokenList({ show }: { show: boolean }) {
           <div className='text-size-16 font-bold'>Agent Token Not Bound</div>
           <Button
             onClick={() => {
-              setInitToken(undefined);
-              setShowModal(true);
+              if (tokens.length > 0) {
+                setInitToken(undefined);
+                setShowModal(true);
+              } else {
+                message("Please issue the tokens with the agent first.", {
+                  type: "error",
+                });
+              }
             }}
           >
             Bind Agent Token

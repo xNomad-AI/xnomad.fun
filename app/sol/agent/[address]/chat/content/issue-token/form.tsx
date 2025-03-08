@@ -36,7 +36,9 @@ export function IssueTokenForm({
   nftImage: string | File;
 }) {
   const { balance } = useSolBalance(account);
-  const [useAgentImage, setUseAgentImage] = useState(true);
+  const [useAgentImage, setUseAgentImage] = useState(
+    form.image.value ? false : true
+  );
   const onLogoFileChange = useMemoizedFn((file?: File) => {
     if (!file) {
       return;
@@ -99,6 +101,9 @@ export function IssueTokenForm({
   useMount(() => {
     if (useAgentImage) {
       setNFTImageAsTokenImage();
+    } else if (form.image.value) {
+      const img = document.getElementById(TOKEN_IMAGE_ID) as HTMLImageElement;
+      img.src = URL.createObjectURL(form.image.value);
     }
   });
   return (

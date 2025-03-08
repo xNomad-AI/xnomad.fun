@@ -2,7 +2,7 @@ import { InfiniteScrollList } from "@/components/infinit-scroll";
 import clsx from "clsx";
 import { TokenTransaction, useActivities } from "./use-activities";
 import { ActionTag } from "../../../wallet/activity/components";
-import { Spin } from "@/primitive/components";
+import { Spin, Tooltip } from "@/primitive/components";
 import { TokenNumber } from "@/components/token-number";
 import { Address } from "@/components/address";
 import BigNumber from "bignumber.js";
@@ -48,7 +48,11 @@ export function Activity({ show }: { show: boolean }) {
                 className='h-58 flex items-center justify-between w-full border-b border-white-20 gap-8'
               >
                 <div className='flex w-[80px] gap-4 items-center'>
-                  <AgeCell time={item.timestamp * 1000} />
+                  <Tooltip
+                    content={new Date(item.timestamp * 1000).toLocaleString()}
+                  >
+                    <AgeCell time={item.timestamp * 1000} />
+                  </Tooltip>
                 </div>
                 <div className='flex w-[90px] justify-end'>
                   <ActionTag type={item.event as any} />
@@ -69,7 +73,7 @@ export function Activity({ show }: { show: boolean }) {
                   />
                 </div>
                 <div className='flex w-[120px] justify-end'>
-                  <Address address={item.maker} />
+                  <Address address={item.maker} enableCopy />
                 </div>
               </a>
             );

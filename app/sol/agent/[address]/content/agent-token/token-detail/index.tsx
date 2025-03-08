@@ -130,7 +130,7 @@ export function Detail({ nft, show }: { nft: NFT; show: boolean }) {
                     />
                     <Table tokenInfo={primaryToken} />
                   </div>
-                  <div className='w-full max-w-[20rem] portrait-tablet:max-w-[unset] flex flex-col gap-16'>
+                  <div className='w-full max-w-[20rem] flex-shrink-0 portrait-tablet:max-w-[unset] flex flex-col gap-16'>
                     <TradeSection />
 
                     <Info tokenInfo={primaryToken} />

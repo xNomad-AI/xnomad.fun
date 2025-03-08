@@ -168,7 +168,7 @@ export function Review({
               <p className='text-text2'>
                 This token will be bound to the agent and{" "}
                 <span className='text-red'>cannot be unbound once created</span>
-                . You can also launch tokens after the AI NFT launches.
+                . You can also launch tokens after the AI NFT launched.
               </p>
               <IssueTokenForm
                 account={publicKey as PublicKey}
@@ -219,7 +219,12 @@ export function Review({
           </div>
           {issueToken && (
             <div className='flex items-center justify-between w-full'>
-              <span>Buy ${issueTokenForm.symbol.value}</span>
+              <p>
+                Buy $
+                {issueTokenForm.symbol.value || (
+                  <span className='text-text2'>Ticker</span>
+                )}
+              </p>
 
               <TokenNumber
                 className='font-bold'

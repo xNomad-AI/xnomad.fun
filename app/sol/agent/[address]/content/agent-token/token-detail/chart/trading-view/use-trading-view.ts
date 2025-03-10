@@ -171,7 +171,7 @@ function useTradingViewBase({
                   signPositive ? "" : "-"
                 }0.0${decimalSubscript}${nonZeroString}`;
               }
-              toThousandNum(price);
+              return toThousandNum(price);
             },
           };
         },

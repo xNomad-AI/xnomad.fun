@@ -64,13 +64,13 @@ export function InfoSection() {
             <Card className='p-16 flex flex-col gap-16'>
               <span className='font-bold'>Agent Token</span>
               <div className='flex items-center justify-between gap-16'>
-                <div className='flex items-center gap-8'>
+                <div className='flex items-center gap-8 flex-1 min-w-0'>
                   <img
-                    className='w-48 h-48 rounded-full object-contain'
+                    className='w-32 h-32 rounded-full object-contain'
                     src={primaryToken.logo}
                   />
-                  <div className='flex flex-col'>
-                    <div className='flex items-center gap-4'>
+                  <div className='flex flex-col min-w-0'>
+                    <div className='flex items-center gap-4 min-w-0'>
                       <span className='font-bold'>{primaryToken.symbol}</span>
                       <TextWithEllipsis className='text-text2 text-size-12'>
                         {primaryToken.name}

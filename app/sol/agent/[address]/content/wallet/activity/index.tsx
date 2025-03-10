@@ -133,7 +133,6 @@ export function Analytics({
                   fontSize: variant === "widget" ? "12px" : "14px",
                   border: variant === "widget" ? "none" : undefined,
                   padding: variant === "widget" ? "0px" : undefined,
-                  gap: variant === "widget" ? "4px" : undefined,
                   borderRadius: variant === "widget" ? "0px" : undefined,
                 }}
                 className='p-16 flex items-center gap-8 flex-wrap'
@@ -144,14 +143,19 @@ export function Analytics({
                   data={item}
                   type={actionType}
                 />
-                <div className='flex-1'></div>
+                <div className='flex-1 min-w-16'></div>
                 <a
                   href={`https://explorer.solana.com/tx/${item.tx_hash}`}
                   target='_blank'
                   rel='noreferrer'
                   className='underline'
                 >
-                  {beautifyTimeV2(item.block_unix_time * 1000)}
+                  {beautifyTimeV2(
+                    item.block_unix_time * 1000,
+                    variant === "widget",
+                    false,
+                    variant === "widget" ? "" : undefined
+                  )}
                 </a>
               </Card>
             );

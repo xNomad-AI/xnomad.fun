@@ -15,20 +15,25 @@ import { NFT } from "@/types";
 import { Character } from "@elizaos/core";
 import clsx from "clsx";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { marked } from "marked";
 import { useAgentStore } from "../store";
+import { TokenNumber } from "@/components/token-number";
+import { RateNum } from "@/components/rate-number";
 async function parseMarkdownText(text: string) {
   const markedText = await marked.parse(text);
   return markedText;
 }
 export function InfoSection() {
-  const { nft } = useAgentStore();
+  const { nft, primaryToken } = useAgentStore();
   const style = useRarity({
     rank: nft.rarity.rank,
     total: nft.collectionId === XNOMAD_ID ? 5000 : Infinity,
   });
-  const isXnomad = nft.collectionId === XNOMAD_ID;
+  const isXnomad = useMemo(
+    () => nft.collectionId === XNOMAD_ID,
+    [nft.collectionId]
+  );
   return (
     <div className='flex flex-col w-[280px] portrait-tablet:w-full gap-16 flex-shrink-0'>
       <img
@@ -54,6 +59,43 @@ export function InfoSection() {
           />
           {isXnomad ? "xNomad Genesis" : nft.collectionName}
         </Link>
+        {primaryToken && (
+          <Link href={`/sol/agent/${nft.id}?tab=agent-token`}>
+            <Card className='p-16 flex flex-col gap-16'>
+              <span className='font-bold'>Agent Token</span>
+              <div className='flex items-center justify-between gap-16'>
+                <div className='flex items-center gap-8'>
+                  <img
+                    className='w-48 h-48 rounded-full object-contain'
+                    src={primaryToken.logo}
+                  />
+                  <div className='flex flex-col'>
+                    <div className='flex items-center gap-4'>
+                      <span className='font-bold'>{primaryToken.symbol}</span>
+                      <TextWithEllipsis className='text-text2 text-size-12'>
+                        {primaryToken.name}
+                      </TextWithEllipsis>
+                    </div>
+                    <div className='flex items-center gap-4'>
+                      <Address
+                        address={primaryToken.address ?? ""}
+                        enableCopy
+                        className='text-text2 text-size-12'
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className='flex items-end flex-col'>
+                  <TokenNumber prefix={"$"} number={primaryToken.price} />
+                  <RateNum
+                    className='text-size-12'
+                    num={primaryToken.priceChange24h}
+                  />
+                </div>
+              </div>
+            </Card>
+          </Link>
+        )}
         <Card className='flex flex-col gap-16 p-16 w-full'>
           <div className='flex items-center justify-between'>
             <span className='font-bold'>Asset ID</span>

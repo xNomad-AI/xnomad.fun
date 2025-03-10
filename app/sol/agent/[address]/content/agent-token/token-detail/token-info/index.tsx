@@ -29,6 +29,7 @@ export function Info({ tokenInfo }: { tokenInfo: TokenInfo }) {
         <Divider horizontal className='w-full' />
         <a
           href={tokenInfo.twitter}
+          target='_blank'
           className='flex justify-between items-center w-full'
         >
           X(Twitter)
@@ -36,6 +37,7 @@ export function Info({ tokenInfo }: { tokenInfo: TokenInfo }) {
         </a>
         <a
           href={tokenInfo.twitter}
+          target='_blank'
           className='flex justify-between items-center w-full'
         >
           Telegram
@@ -43,6 +45,7 @@ export function Info({ tokenInfo }: { tokenInfo: TokenInfo }) {
         </a>
         <a
           href={tokenInfo.website}
+          target='_blank'
           className='flex justify-between items-center w-full'
         >
           Website

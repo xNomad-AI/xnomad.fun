@@ -133,7 +133,7 @@ export function EditInfoModal({
       );
 
       const tx = await sendTransaction(transaction, connection);
-      const res = await connection.confirmTransaction(tx, "processed");
+      const res = await connection.confirmTransaction(tx, "confirmed");
       if (res.value.err) {
         throw res.value.err;
       }

@@ -59,7 +59,7 @@ export function InfoSection() {
           />
           {isXnomad ? "xNomad Genesis" : nft.collectionName}
         </Link>
-        {primaryToken && (
+        {primaryToken?.address && (
           <Link href={`/sol/agent/${nft.id}?tab=agent-token`}>
             <Card className='p-16 flex flex-col gap-16'>
               <span className='font-bold'>Agent Token</span>

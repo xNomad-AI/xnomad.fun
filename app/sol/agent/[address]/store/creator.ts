@@ -3,6 +3,7 @@ import { immer } from "zustand/middleware/immer";
 import { AgentPortfolio } from "../content/deposit-container/network";
 import { NFT } from "@/types";
 import { api } from "@/primitive/api";
+import { TokenInfo } from "../content/agent-token/token-list/network";
 export function createAgentStore({ nft }: { nft: NFT }) {
   return createStore(
     immer<{
@@ -14,6 +15,8 @@ export function createAgentStore({ nft }: { nft: NFT }) {
       setPortfolio: (portfolio: AgentPortfolio) => void;
       nft: NFT;
       refreshNFT: () => Promise<void>;
+      primaryToken?: TokenInfo;
+      setPrimaryToken: (token: TokenInfo) => void;
     }>((set) => ({
       setPortfolio: (portfolio) => {
         set((state) => {
@@ -39,6 +42,11 @@ export function createAgentStore({ nft }: { nft: NFT }) {
         });
       },
       nft,
+      setPrimaryToken: (token) => {
+        set((state) => {
+          state.primaryToken = token;
+        });
+      },
     }))
   );
 }

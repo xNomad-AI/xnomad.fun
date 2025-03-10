@@ -20,6 +20,7 @@ import clsx from "clsx";
 import { AgentToken } from "./agent-token";
 import { useSearchParams } from "next/navigation";
 import { isOwner } from "@/lib/user/ownership";
+import { getPrimaryToken } from "./agent-token/token-detail/network";
 const tabs = ["chat", "wallet", "agent-token", "tasks", "features"] as const;
 const tabMap = {
   chat: "Chat",
@@ -34,7 +35,8 @@ export type Tab = (typeof tabs)[number];
 type MobileTab = (typeof mobileTabs)[number];
 export function Content() {
   const { publicKey } = useWallet();
-  const { setPortfolio, refreshCount, setIsRefreshing, nft } = useAgentStore();
+  const { setPortfolio, refreshCount, setIsRefreshing, nft, setPrimaryToken } =
+    useAgentStore();
 
   const [tab, _setTab] = useState<Tab | null>("chat");
   const setTab = useMemoizedFn((tab: Tab | null) => {
@@ -74,6 +76,17 @@ export function Content() {
   const agentAccountSol = useMemo(
     () => nft?.agentAccount.solana ?? "",
     [nft?.agentAccount.solana]
+  );
+  useRequest(
+    async () => {
+      if (nft.id) {
+        const res = await getPrimaryToken(nft.id);
+        setPrimaryToken(res);
+      }
+    },
+    {
+      refreshDeps: [nft.id],
+    }
   );
   useRequest(
     async () => {

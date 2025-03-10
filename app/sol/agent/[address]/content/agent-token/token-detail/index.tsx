@@ -21,20 +21,11 @@ import { TradeSettingModal } from "./trade/setting-modal";
 import { Info } from "./token-info";
 import { AgeCell } from "../token-list/age-cell";
 import { TextWithEllipsis } from "@/components/text-with-ellipsis";
+import { useAgentStore } from "../../../store";
+import { TokenMetrics } from "./metrics";
 
 export function Detail({ nft, show }: { nft: NFT; show: boolean }) {
-  const [primaryToken, setPrimaryToken] = useState<TokenInfoType>();
-  useRequest(
-    async () => {
-      if (nft.id) {
-        const res = await getPrimaryToken(nft.id);
-        setPrimaryToken(res);
-      }
-    },
-    {
-      refreshDeps: [nft.id],
-    }
-  );
+  const { primaryToken } = useAgentStore();
   return (
     <div
       className={clsx("w-full flex flex-col gap-16", {
@@ -85,40 +76,7 @@ export function Detail({ nft, show }: { nft: NFT; show: boolean }) {
                       </div>
                     </div>
                   </div>
-                  <div className='flex items-center gap-24 flex-wrap'>
-                    <MetricsCell title='Price'>
-                      <TokenNumber
-                        number={primaryToken.price ?? ""}
-                        className='text-size-16 font-bold'
-                      />
-                    </MetricsCell>
-                    <MetricsCell title='Price 24h%'>
-                      <RateNum
-                        num={primaryToken.priceChange24h}
-                        className='text-size-16 font-bold'
-                      />
-                    </MetricsCell>
-                    <MetricsCell title='24h Volume'>
-                      <TokenNumber
-                        number={primaryToken.volume24h ?? ""}
-                        prefix={"$"}
-                        className='text-size-16 font-bold'
-                      />
-                    </MetricsCell>
-                    <MetricsCell title='Marketcap'>
-                      <TokenNumber
-                        number={primaryToken.marketCap ?? ""}
-                        prefix={"$"}
-                        className='text-size-16 font-bold'
-                      />
-                    </MetricsCell>
-                    <MetricsCell title='Holders'>
-                      <TokenNumber
-                        number={primaryToken.holdersCount ?? ""}
-                        className='text-size-16 font-bold'
-                      />
-                    </MetricsCell>
-                  </div>
+                  <TokenMetrics />
                 </Card>
                 <div className='flex portrait-tablet:flex-col gap-16'>
                   <div className='flex-1 flex flex-col gap-24'>
@@ -146,18 +104,6 @@ export function Detail({ nft, show }: { nft: NFT; show: boolean }) {
           <Spin />
         </div>
       )}
-    </div>
-  );
-}
-
-function MetricsCell({
-  title,
-  children,
-}: PropsWithChildren<{ title: string }>) {
-  return (
-    <div className='flex flex-col items-end'>
-      <span className='text-size-12 text-text2'>{title}</span>
-      {children}
     </div>
   );
 }

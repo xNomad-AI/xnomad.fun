@@ -85,7 +85,7 @@ export function BindModal({
   });
   const onBind = useMemoizedFn(async () => {
     try {
-      await api.v1.post(`nft/solana/${nft.id}/bind-primary-coin`, {
+      await api.v1.post(`/nft/solana/${nft.id}/bind-primary-coin`, {
         address: token.ca,
       });
       message("Bind success", {

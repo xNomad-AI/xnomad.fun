@@ -2,13 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ChatPage } from "../chat";
-import { NFT } from "@/types";
 import { message, RadioButton, RadioButtonGroup } from "@/primitive/components";
-import { upperFirstLetter } from "@/lib/utils/string";
 import { Portfolio } from "./wallet";
 import { Features } from "./features";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useMemoizedFn, useMount, useRequest } from "ahooks";
+import { useMemoizedFn, useRequest } from "ahooks";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { InfoSection } from "../info";
 import { Tasks } from "./tasks";

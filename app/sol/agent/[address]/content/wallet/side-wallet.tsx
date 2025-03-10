@@ -29,24 +29,28 @@ export function SideWallet() {
   return (
     <>
       <div className='flex flex-col gap-16 w-full max-w-[240px] flex-shrink-0'>
-        <Card className='p-12 flex items-center gap-4'>
-          <div className='flex flex-col gap-4 flex-1'>
-            <Address
-              address={portfolio?.wallet ?? ""}
-              enableCopy
-              className='font-bold'
-            />
-            <TokenNumber number={balance.toNumber()} suffix={"SOL"} />
+        <Card className='p-12 flex flex-col gap-4'>
+          <span className='text-size-12'>Agent Wallet</span>
+          <div className='flex items-center gap-4'>
+            <div className='flex flex-col gap-4 flex-1'>
+              <Address
+                address={portfolio?.wallet ?? ""}
+                enableCopy
+                className='font-bold'
+              />
+              <TokenNumber number={balance.toNumber()} suffix={"SOL"} />
+            </div>
+
+            <Tooltip content='Deposit'>
+              <button
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                <IconWallet className='text-size-20 text-text1' />
+              </button>
+            </Tooltip>
           </div>
-          <Tooltip content='Deposit'>
-            <button
-              onClick={() => {
-                setOpen(true);
-              }}
-            >
-              <IconWallet className='text-size-20 text-text1' />
-            </button>
-          </Tooltip>
         </Card>
 
         <div className='flex items-center gap-16 mt-16'>
@@ -84,7 +88,7 @@ export function SideWallet() {
         </div>
         {tab === "holder" && (
           <div className='flex flex-col gap-12 w-full'>
-            <div className='flex items-center gap-12 justify-between text-size-12'>
+            <div className='flex items-center gap-12 justify-between text-size-12 border-b pb-12 border-white-20'>
               <span>Asset</span>
               <span>Value</span>
             </div>

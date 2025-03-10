@@ -1,4 +1,4 @@
-import { Card, Spin } from "@/primitive/components";
+import { Spin } from "@/primitive/components";
 import "./index.css";
 import { TradingViewGraphProps } from "./types";
 import { useTradingView } from "./use-trading-view";

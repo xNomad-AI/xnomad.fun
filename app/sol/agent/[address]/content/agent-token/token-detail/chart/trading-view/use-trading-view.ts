@@ -6,6 +6,8 @@ import { TokenPriceChartDraw } from ".";
 import { useTheme } from "@/lib/theme";
 import { toThousandNum } from "@/lib/utils/number";
 import { useTokenPageSocketStore } from "../../store/socket";
+import { dealSmallNumber } from "@/components/token-number/utils";
+import BigNumber from "bignumber.js";
 
 export const useTradingView = ({
   pairAddress,
@@ -160,7 +162,16 @@ function useTradingViewBase({
         priceFormatterFactory: (symbolInfo: any, minTick: any) => {
           return {
             format: (price: number, signPositive: boolean) => {
-              return toThousandNum(price);
+              const num = BigNumber(price);
+              const isSmallNumber = num.lt(0.001) && num.gt(0);
+              if (isSmallNumber) {
+                const { nonZeroString, decimalSubscript } =
+                  dealSmallNumber(price);
+                return `${
+                  signPositive ? "" : "-"
+                }0.0${decimalSubscript}${nonZeroString}`;
+              }
+              toThousandNum(price);
             },
           };
         },

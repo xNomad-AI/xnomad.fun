@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
 
 export function dealSmallNumber(_number: number | string) {
+  const SUBSCRIPTS = "₀₁₂₃₄₅₆₇₈₉";
+
   const number = BigNumber(_number);
   if (number.lt(1) && number.gt(0)) {
     const exponential = number.toString().split("e");
@@ -21,8 +23,14 @@ export function dealSmallNumber(_number: number | string) {
         }
       }
       const nonZeroString = nonZeroDecimalArray.join("").slice(0, 4);
-      return { decimal: decimal + 1, nonZeroString };
+      const decimalSubscript = decimal
+        ?.toString()
+        ?.split("")
+        .map((char) => SUBSCRIPTS[parseInt(char)])
+        .join("");
+      return { decimal: decimal + 1, nonZeroString, decimalSubscript };
     }
   }
-  return { decimal: 0, nonZeroString: "" };
+
+  return { decimal: 0, nonZeroString: "", decimalSubscript: SUBSCRIPTS[0] };
 }

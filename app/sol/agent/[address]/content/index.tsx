@@ -146,8 +146,6 @@ export function Content() {
             )}
           >
             <ChatPage nft={nft} />
-
-            {isOwner(nft.owner, publicKey?.toBase58()) && <SideWallet />}
           </div>
         </ChatProvider>
       )}

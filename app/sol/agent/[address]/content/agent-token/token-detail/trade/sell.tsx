@@ -85,7 +85,7 @@ export function SellSection() {
               }
             }}
           >
-            Generate Buy Prompt
+            Generate Sell Prompt
           </Button>
         </>
       }

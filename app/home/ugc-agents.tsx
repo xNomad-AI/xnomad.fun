@@ -30,7 +30,7 @@ export function UGCAgents() {
   ) : agents.length > 0 ? (
     <div className='w-full flex gap-16 overflow-auto'>
       {agents.map((agent) => (
-        <NFTCard nft={agent} isHome />
+        <NFTCard nft={agent} isHome collectionName={"UGC AI Agents"} />
       ))}
     </div>
   ) : (

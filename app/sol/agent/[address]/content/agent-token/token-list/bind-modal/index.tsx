@@ -104,7 +104,7 @@ export function BindModal({
       <ModalContent>
         <p className='text-text2'>
           Each AI-NFT agent can only have one agent token, which will be
-          recommended to the token page and{" "}
+          recommended to the token marketplace and{" "}
           <span className='text-red'>cannot be unbound</span>.
         </p>
         <div className='flex flex-col gap-4 w-full'>

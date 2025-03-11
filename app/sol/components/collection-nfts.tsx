@@ -156,7 +156,9 @@ export function NFTCard({
             #{nft.rarity.rank}
           </div>
         )}
-        {isHome && <Age time={new Date(nft.createdAt).getTime()} />}
+        {isHome && (
+          <Age time={new Date((nft.mint?.timestamp ?? 0) * 1000).getTime()} />
+        )}
       </div>
     </Link>
   );

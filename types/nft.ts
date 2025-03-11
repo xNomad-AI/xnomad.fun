@@ -38,4 +38,10 @@ export interface NFT {
     image: string;
     address: string;
   };
+  mint?: {
+    to: string;
+    timestamp: number;
+    blockNumber: number;
+    txHash: string;
+  };
 }

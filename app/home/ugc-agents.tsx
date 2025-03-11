@@ -17,7 +17,7 @@ export function UGCAgents() {
       {
         offset: 0,
         limit: 10,
-        sortBy: "numberDesc",
+        sortBy: "mintTimeDesc",
       }
     );
 

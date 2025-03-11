@@ -1,25 +1,10 @@
-import {
-  Button,
-  Checkbox,
-  FormItem,
-  FormValue,
-  IconInfo,
-  Radio,
-  RadioGroup,
-  TextField,
-  Tooltip,
-} from "@/primitive/components";
-import { useMemo, useState } from "react";
+import { Button, FormValue, IconInfo, Tooltip } from "@/primitive/components";
+import { useState } from "react";
 import { useChatContext } from "../../../store";
 import { ChatContentContainer } from "../../container";
 import { ContentWithUser } from "../../../types";
-import { validNumberInput } from "@/lib/utils/input-helper";
 import { useAgentStore } from "../../../../store";
-import { TokenNumber } from "@/components/token-number";
-import { useSolBalance } from "@/lib/hooks/use-solana";
-import { PublicKey } from "@solana/web3.js";
 import { CancelButton } from "../../cancel-button";
-import { isValidSolanaAddress } from "@/lib/utils/address";
 import { CopyTradeForm } from "./form";
 export type CopyTradeFormType = {
   name: FormValue<string>;
@@ -28,7 +13,7 @@ export type CopyTradeFormType = {
   mode: FormValue<"amount" | "percentage">;
   isCopySell: FormValue<boolean>;
 };
-const initForm = {
+export const initCopyTradeForm = {
   name: {
     value: "",
     required: true,
@@ -63,7 +48,7 @@ const initForm = {
 export function CopyTrade({ message }: { message: ContentWithUser }) {
   const { nft } = useAgentStore();
   const { deleteMessageById, addAndSendMessage } = useChatContext();
-  const [form, setForm] = useState<CopyTradeFormType>(initForm);
+  const [form, setForm] = useState<CopyTradeFormType>(initCopyTradeForm);
 
   return (
     <ChatContentContainer message={message}>

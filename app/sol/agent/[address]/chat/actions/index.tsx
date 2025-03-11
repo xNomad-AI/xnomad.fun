@@ -17,6 +17,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ClearMemoryButton } from "../components/clear-memory";
 import clsx from "clsx";
+import { TradeSetting } from "./trade-setting";
 
 export function Actions({ nft }: { nft: NFT }) {
   const { publicKey } = useWallet();
@@ -243,6 +244,7 @@ export function Actions({ nft }: { nft: NFT }) {
               {tradeActionConfigs[tradeAction].title}
             </Button>
           ))}
+          <TradeSetting />
         </motion.div>
       </div>
       <ClearMemoryButton

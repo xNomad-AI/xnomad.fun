@@ -8,7 +8,7 @@ import {
 import { NFT } from "@/types";
 import Image from "next/image";
 import { TwitterModal } from "./twitter";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { api } from "@/primitive/api";
 import { Config } from "./types";
 import { useMemoizedFn, useMount } from "ahooks";

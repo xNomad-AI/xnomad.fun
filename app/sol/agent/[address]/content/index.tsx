@@ -6,7 +6,7 @@ import { message, RadioButton, RadioButtonGroup } from "@/primitive/components";
 import { Portfolio } from "./wallet";
 import { Features } from "./features";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useMemoizedFn, useRequest } from "ahooks";
+import { useMemoizedFn, useMount, useRequest } from "ahooks";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { InfoSection } from "../info";
 import { Tasks } from "./tasks";
@@ -19,6 +19,7 @@ import { AgentToken } from "./agent-token";
 import { useSearchParams } from "next/navigation";
 import { isOwner } from "@/lib/user/ownership";
 import { getPrimaryToken } from "./agent-token/token-detail/network";
+import { getAgentConfig } from "./features/network";
 const tabs = ["chat", "wallet", "agent-token", "tasks", "features"] as const;
 const tabMap = {
   chat: "Chat",
@@ -33,8 +34,14 @@ export type Tab = (typeof tabs)[number];
 type MobileTab = (typeof mobileTabs)[number];
 export function Content() {
   const { publicKey } = useWallet();
-  const { setPortfolio, refreshCount, setIsRefreshing, nft, setPrimaryToken } =
-    useAgentStore();
+  const {
+    setPortfolio,
+    refreshCount,
+    setIsRefreshing,
+    nft,
+    setPrimaryToken,
+    setAgentConfig,
+  } = useAgentStore();
 
   const [tab, _setTab] = useState<Tab | null>("chat");
   const setTab = useMemoizedFn((tab: Tab | null) => {
@@ -75,6 +82,11 @@ export function Content() {
     () => nft?.agentAccount.solana ?? "",
     [nft?.agentAccount.solana]
   );
+  useMount(() => {
+    getAgentConfig(nft.id).then((res) => {
+      setAgentConfig(res.characterConfig);
+    });
+  });
   useRequest(
     async () => {
       if (nft.id) {

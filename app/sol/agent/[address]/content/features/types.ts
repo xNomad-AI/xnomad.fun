@@ -22,4 +22,10 @@ export interface Config {
       MAX_LENGTH: number;
     }>;
   };
+  trade: {
+    slippage: number;
+    priorityFee: number;
+    tip: number;
+    mode: "FAST" | "ANTI-MEV";
+  };
 }

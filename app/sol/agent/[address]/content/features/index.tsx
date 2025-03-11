@@ -11,10 +11,12 @@ import { TwitterModal } from "./twitter";
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/primitive/api";
 import { Config } from "./types";
-import { useMemoizedFn } from "ahooks";
+import { useMemoizedFn, useMount } from "ahooks";
 import { TelegramModal } from "./telegram";
 import { VoiceModal } from "./voice";
 import { ConfirmModal } from "./confirm";
+import { editAgentConfig, getAgentConfig } from "./network";
+import { useAgentStore } from "../../store";
 function configTwitter({
   nftId,
   config,
@@ -39,48 +41,37 @@ function deleteTwitter(nftId: string) {
   }>(`/nft/solana/${nftId}/config/twitter`);
 }
 export function Features({ nft }: { nft: NFT }) {
+  const { agentConfig: config, setAgentConfig: setConfig } = useAgentStore();
   const [xOpen, setXOpen] = useState(false);
   const [tgOpen, setTgOpen] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
-  const [config, setConfig] = useState<Config>();
   const [twitterBound, setTwitterBound] = useState(false);
   const [isConfigLoading, setIsConfigLoading] = useState(false);
-  useEffect(() => {
-    api.v1
-      .get<{ characterConfig: Config }>(`/nft/solana/${nft.id}/config`)
-      .then((res) => {
-        setConfig(res.characterConfig);
-        if (res.characterConfig) {
-          // get twitter bound status
-          configTwitter({
-            nftId: nft.id,
-            config: res.characterConfig,
-            testContent: "",
-          }).then((res) => {
-            setTwitterBound(res.isLogin);
-          });
-        }
+  useMount(() => {
+    if (config) {
+      // get twitter bound status
+      configTwitter({
+        nftId: nft.id,
+        config: config,
+        testContent: "",
+      }).then((res) => {
+        setTwitterBound(res.isLogin);
       });
-  }, []);
+    }
+  });
   const onSave = useMemoizedFn(async (config: Partial<Config>) => {
-    const newConfig = await api.v1.post<{ characterConfig: Config }>(
-      `/nft/solana/${nft.id}/config`,
-      {
-        characterConfig: {
-          ...config,
-          settings: {
-            ...config.settings,
-            secrets: {
-              ...config.settings?.secrets,
-              POST_IMMEDIATELY:
-                config.settings?.secrets?.POST_IMMEDIATELY?.toString(),
-              TWITTER_LOGIN_SUSPEND:
-                config.settings?.secrets?.TWITTER_LOGIN_SUSPEND?.toString(),
-            },
-          },
+    const newConfig = await editAgentConfig(nft.id, {
+      ...config,
+      settings: {
+        ...config.settings,
+        secrets: {
+          ...config.settings?.secrets,
+          POST_IMMEDIATELY: config.settings?.secrets?.POST_IMMEDIATELY,
+          TWITTER_LOGIN_SUSPEND:
+            config.settings?.secrets?.TWITTER_LOGIN_SUSPEND,
         },
-      }
-    );
+      },
+    });
     setConfig(newConfig.characterConfig);
   });
   const hasTwitterConfig = useMemo(() => {

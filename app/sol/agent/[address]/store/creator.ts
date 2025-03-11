@@ -4,6 +4,7 @@ import { AgentPortfolio } from "../content/deposit-container/network";
 import { NFT } from "@/types";
 import { api } from "@/primitive/api";
 import { TokenInfo } from "../content/agent-token/token-list/network";
+import { Config } from "../content/features/types";
 export function createAgentStore({ nft }: { nft: NFT }) {
   return createStore(
     immer<{
@@ -14,6 +15,8 @@ export function createAgentStore({ nft }: { nft: NFT }) {
       triggerRefresh: () => void;
       setPortfolio: (portfolio: AgentPortfolio) => void;
       nft: NFT;
+      agentConfig?: Config;
+      setAgentConfig: (config: Config) => void;
       refreshNFT: () => Promise<void>;
       primaryToken?: TokenInfo;
       setPrimaryToken: (token: TokenInfo) => void;
@@ -45,6 +48,11 @@ export function createAgentStore({ nft }: { nft: NFT }) {
       setPrimaryToken: (token) => {
         set((state) => {
           state.primaryToken = token;
+        });
+      },
+      setAgentConfig: (config) => {
+        set((state) => {
+          state.agentConfig = config;
         });
       },
     }))

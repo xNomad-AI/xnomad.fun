@@ -20,7 +20,6 @@ export function TradeSettingModal() {
     innerPriorityFee,
     innerPriorityFeeType,
     innerTip,
-    isCustomPriorityFee,
     setInnerTradeMode,
     setInnerPriorityFee,
     setInnerPriorityFeeType,

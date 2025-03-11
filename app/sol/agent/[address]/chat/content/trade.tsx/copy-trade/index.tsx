@@ -39,7 +39,7 @@ export const initCopyTradeForm = {
     errorMsg: "",
   },
   isCopySell: {
-    value: false,
+    value: true,
     required: false,
     isInValid: false,
     errorMsg: "",

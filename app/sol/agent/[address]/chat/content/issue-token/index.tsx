@@ -66,16 +66,14 @@ export function IssueToken({
               addAndSendMessage(
                 `Create a new token called ${
                   form.tokenName.value
-                } with symbol $${form.symbol.value}${
-                  form.twitter.value
-                    ? `, with twitter ${form.twitter.value}`
-                    : ""
-                } with description "${form.description.value}"${
+                } with symbol $${form.symbol.value}, with description "${
+                  form.description.value
+                }"${
                   form.twitter.value
                     ? `, with twitter ${form.twitter.value}`
                     : ""
                 }${
-                  form.twitter.value
+                  form.website.value
                     ? `, with website ${form.website.value}`
                     : ""
                 }${

@@ -6,6 +6,7 @@ export const tradeActions = [
   "swap",
   "transfer",
   "limit-order",
+  "copy-trade",
 ] as const;
 export type TradeAction = (typeof tradeActions)[number];
 export const actionConfigs = {
@@ -37,5 +38,8 @@ export const tradeActionConfigs = {
   },
   "limit-order": {
     title: "Limit Order",
+  },
+  "copy-trade": {
+    title: "Copy Trade",
   },
 } as { [key in TradeAction]: { title: string; disabled?: boolean } };

@@ -10,6 +10,7 @@ import { Swap } from "./trade.tsx/swap";
 import { LimitOrder } from "./trade.tsx/limit-order";
 import { IssueToken } from "./issue-token";
 import { AnalyzeInput, AnalyzeResponse } from "./analyze";
+import { CopyTrade } from "./trade.tsx/copy-trade";
 
 export function ChatContent({
   message,
@@ -33,8 +34,8 @@ export function ChatContent({
           return <Transfer message={message} />;
         case "limit-order":
           return <LimitOrder message={message} />;
-        // case 'copy-trade':
-        //   return <CopyTrade />
+        case "copy-trade":
+          return <CopyTrade message={message} />;
         default:
           return "Trade action not found";
       }

@@ -168,6 +168,18 @@ export function Actions({ nft }: { nft: NFT }) {
           },
         ];
         break;
+      case "copy-trade":
+        newMessages = [
+          {
+            text: "Copy Trade",
+            webAction: "trade",
+            step: "input",
+            tradeAction: "copy-trade",
+            user: "user",
+            createdAt: Date.now(),
+            id: generateMessageId("copy-trade"),
+          },
+        ];
       default:
         break;
     }

@@ -16,10 +16,10 @@ import { TokenCell } from "../agent/[address]/content/agent-token/token-list/tok
 import { NFTCell } from "../agent/[address]/content/agent-token/token-list/nft-cell";
 import { useSearchParams } from "next/navigation";
 import { AgeCell } from "../agent/[address]/content/agent-token/token-list/age-cell";
-const sortByList = ["volume24h", "deployedTime", "marketcap"] as const;
+const sortByList = ["volume24h", "deployedTime", "marketCap"] as const;
 type SortBy = (typeof sortByList)[number];
 const sortMap = {
-  marketcap: "Marketcap",
+  marketCap: "Marketcap",
   volume24h: "Hot",
   deployedTime: "New",
 };
@@ -83,7 +83,7 @@ export function Content() {
             className={clsx(
               "flex w-[120px] justify-end items-center gap-4 text-text2",
               {
-                "!text-text1": sortBy === "marketcap",
+                "!text-text1": sortBy === "marketCap",
               }
             )}
           >

@@ -5,6 +5,7 @@ import { useAgentStore } from "../../../../store";
 import { TokenInfo } from "../../token-list/network";
 import { EditInfoModal } from "./edit-modal";
 import { useState } from "react";
+import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 
 export function Info({ tokenInfo }: { tokenInfo: TokenInfo }) {
   const { publicKey } = useWallet();
@@ -30,30 +31,34 @@ export function Info({ tokenInfo }: { tokenInfo: TokenInfo }) {
         <a
           href={tokenInfo.twitter}
           target='_blank'
-          className='flex justify-between items-center w-full'
+          className='flex justify-between items-center w-full min-w-0 gap-8'
         >
           X(Twitter)
-          <span>{tokenInfo.twitter?.split("/").slice(-1)[0] ?? "--"}</span>
+          <TextWithEllipsis>
+            {tokenInfo.twitter?.split("/").slice(-1)[0] ?? "--"}
+          </TextWithEllipsis>
         </a>
         <a
           href={tokenInfo.twitter}
           target='_blank'
-          className='flex justify-between items-center w-full'
+          className='flex justify-between items-center w-full min-w-0 gap-8'
         >
           Telegram
-          <span>{tokenInfo.telegram?.split("/").slice(-1)[0] ?? "--"}</span>
+          <TextWithEllipsis>
+            {tokenInfo.telegram?.split("/").slice(-1)[0] ?? "--"}
+          </TextWithEllipsis>
         </a>
         <a
           href={tokenInfo.website}
           target='_blank'
-          className='flex justify-between items-center w-full'
+          className='flex justify-between items-center w-full min-w-0 gap-8'
         >
           Website
-          <span>
+          <TextWithEllipsis>
             {tokenInfo.website
               ?.replace("https://", "")
               .replace("http://", "") ?? "--"}
-          </span>
+          </TextWithEllipsis>
         </a>
       </Card>
       <EditInfoModal

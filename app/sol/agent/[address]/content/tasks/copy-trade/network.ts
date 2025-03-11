@@ -43,3 +43,12 @@ export function setCopyTradeStatus(
     `/agent/copy-trade/status?agentId=${agentId}&id=${id}&status=${status}`
   );
 }
+
+export function editCopyTrade(agentId: string, id: number, task: CopyTrade) {
+  return api.v1.post<CopyTrade>(
+    `/agent/copy-trade?agentId=${agentId}&id=${id}`,
+    {
+      ...task,
+    }
+  );
+}

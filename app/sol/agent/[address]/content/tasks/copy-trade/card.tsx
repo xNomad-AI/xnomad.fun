@@ -8,7 +8,12 @@ import {
   ModalContent,
   ModalTitleWithBorder,
 } from "@/primitive/components";
-import { deleteCopyTradeTask, CopyTrade, setCopyTradeStatus } from "./network";
+import {
+  deleteCopyTradeTask,
+  CopyTrade,
+  setCopyTradeStatus,
+  editCopyTrade,
+} from "./network";
 import { onError } from "@/lib/utils/error";
 import { memo, useEffect, useState } from "react";
 import { Address } from "@/components/address";
@@ -224,7 +229,57 @@ function EditButton({
             setForm={setForm}
             address={nft.agentAccount.solana}
           />
-          <Button loading={isEditing} stretch onClick={() => {}}>
+          <Button
+            loading={isEditing}
+            stretch
+            onClick={() => {
+              if (Object.values(form).some((item) => item.isInValid)) {
+                return;
+              }
+              let allValid = true;
+              const newForm = { ...form };
+              Object.keys(newForm).forEach((_key) => {
+                const key = _key as keyof typeof newForm;
+                if (newForm[key].required) {
+                  if (!newForm[key].value) {
+                    allValid = false;
+                    newForm[key].isInValid = true;
+                    newForm[key].errorMsg = "Required";
+                  }
+                }
+              });
+              if (!allValid) {
+                setForm(newForm);
+                return;
+              }
+              setIsEditing(true);
+              editCopyTrade(agentId, task.id, {
+                ...task,
+                name: form.name.value,
+                targetAddress: form.target.value,
+                fixedAmount:
+                  form.mode.value === "amount"
+                    ? parseFloat(form.amount.value)
+                    : undefined,
+                percentage:
+                  form.mode.value === "percentage"
+                    ? parseFloat(form.amount.value)
+                    : undefined,
+                copySell: form.isCopySell.value,
+              })
+                .then(() => {
+                  message("Task has been updated", { type: "success" });
+                  onEdit?.();
+                  onClose();
+                })
+                .catch((e) => {
+                  onError(e);
+                })
+                .finally(() => {
+                  setIsEditing(false);
+                });
+            }}
+          >
             Confirm
           </Button>
         </ModalContent>

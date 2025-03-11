@@ -68,7 +68,7 @@ function MemoTaskCard({
           <span className='text-text2'>Buy per Trade:</span>{" "}
           {task.fixedAmount
             ? `${task.fixedAmount} SOL`
-            : `${(task.percentage ?? 0) * 100}%`}
+            : `${task.percentage ?? 0}%`}
         </p>
         <p>
           <span className='text-text2'>Copy Sell:</span>{" "}

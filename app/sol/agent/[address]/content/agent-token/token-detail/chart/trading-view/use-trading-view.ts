@@ -167,9 +167,7 @@ function useTradingViewBase({
               if (isSmallNumber) {
                 const { nonZeroString, decimalSubscript } =
                   dealSmallNumber(price);
-                return `${
-                  signPositive ? "" : "-"
-                }0.0${decimalSubscript}${nonZeroString}`;
+                return `0.0${decimalSubscript}${nonZeroString}`;
               }
               return toThousandNum(price);
             },

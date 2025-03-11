@@ -49,7 +49,7 @@ function MemoTaskCard({
       <div className='flex flex-col gap-8'>
         <p>
           <span className='text-text2'>Created:</span>{" "}
-          {format(task.createdAt, "yyyy/mm/dd")}
+          {format(task.createdAt, "yyyy/MM/dd")}
         </p>
         <p>
           <span className='text-text2'>Target:</span>{" "}

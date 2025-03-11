@@ -50,14 +50,16 @@ export function Features({ nft }: { nft: NFT }) {
       .get<{ characterConfig: Config }>(`/nft/solana/${nft.id}/config`)
       .then((res) => {
         setConfig(res.characterConfig);
-        // get twitter bound status
-        configTwitter({
-          nftId: nft.id,
-          config: res.characterConfig,
-          testContent: "",
-        }).then((res) => {
-          setTwitterBound(res.isLogin);
-        });
+        if (res.characterConfig) {
+          // get twitter bound status
+          configTwitter({
+            nftId: nft.id,
+            config: res.characterConfig,
+            testContent: "",
+          }).then((res) => {
+            setTwitterBound(res.isLogin);
+          });
+        }
       });
   }, []);
   const onSave = useMemoizedFn(async (config: Partial<Config>) => {

@@ -131,7 +131,7 @@ export function TokenList({ show }: { show: boolean }) {
           </div>
         )}
       </div>
-      {ownerShip && (
+      {ownerShip && !loading && !tokens?.length && (
         <Link
           className='w-fit self-center'
           href={`/sol/agent/${nft.id}?tab=chat&action=issue-token`}

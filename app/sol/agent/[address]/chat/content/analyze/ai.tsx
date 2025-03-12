@@ -1,4 +1,4 @@
-import { Button, Card } from "@/primitive/components";
+import { Card, RadioButton, RadioButtonGroup } from "@/primitive/components";
 import { useEffect, useState } from "react";
 import { TokenNumber } from "@/components/token-number";
 import { useChatContext } from "../../store";
@@ -185,48 +185,26 @@ export function AnalyzeResponse({
   );
 
   return (
-    <ChatContentContainer
-      message={message}
-      showTimestamp
-      showCopyButton
-      suffixNode={
-        <div className='flex items-center gap-16'>
-          {infoType !== "basic" && (
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                setInfoType("basic");
-              }}
-            >
-              Basic
-            </Button>
-          )}
-          {infoType !== "news" && (
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                setInfoType("news");
-              }}
-            >
-              Twitter News
-            </Button>
-          )}
-          {infoType !== "twitter" && (
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                setInfoType("twitter");
-              }}
-            >
-              Twitter Profile
-            </Button>
-          )}
-        </div>
-      }
-    >
+    <ChatContentContainer message={message} showTimestamp showCopyButton>
+      <div className='w-full justify-between flex items-center mb-16'>
+        <span className='text-size-20 font-bold'>${tokenInfo?.symbol}</span>
+        <RadioButtonGroup
+          className='!h-32 !gap-16'
+          value={infoType}
+          onChange={setInfoType}
+          disableAnimation
+        >
+          <RadioButton className='!px-16 !text-size-12' value='basic'>
+            Basic
+          </RadioButton>
+          <RadioButton className='!px-16 !text-size-12' value='news'>
+            Twitter News
+          </RadioButton>
+          <RadioButton className='!px-16 !text-size-12' value='twitter'>
+            Twitter Profile
+          </RadioButton>
+        </RadioButtonGroup>
+      </div>
       <div
         className={clsx("w-full", {
           hidden: infoType !== "basic",

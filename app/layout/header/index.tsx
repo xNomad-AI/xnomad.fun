@@ -185,7 +185,7 @@ function NavItem({
         }
       }}
       className={clsx("text-white-40 hover:text-text1", {
-        "!text-text1": href.includes(pathName),
+        "!text-text1": href === pathName,
       })}
       prefetch
     >

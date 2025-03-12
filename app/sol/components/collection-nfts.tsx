@@ -99,12 +99,14 @@ export function NFTCard({
   total,
   isSociety,
   isHome,
+  className,
 }: {
   nft: NFT;
   collectionName?: string;
   total?: number;
   isSociety?: boolean;
   isHome?: boolean;
+  className?: string;
 }) {
   const style = useRarity({
     rank: nft.rarity.rank,
@@ -115,7 +117,10 @@ export function NFTCard({
       prefetch
       href={`/sol/agent/${nft.id}`}
       key={nft.id}
-      className='flex-col relative group rounded-12 flex gap-12 min-w-[180px] mobile:min-w-[unset] max-w-[240px]'
+      className={clsx(
+        "flex-col relative group rounded-12 flex gap-12 min-w-[180px] mobile:min-w-[unset] max-w-[240px]",
+        className
+      )}
     >
       {nft.primaryCoin && (
         <div className='absolute top-8 right-8 z-1 p-4 rounded-4 bg-yellow text-black flex items-center gap-4'>

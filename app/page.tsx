@@ -11,7 +11,7 @@ import { Partners } from "./home/partners";
 export default function Home() {
   return (
     <div className='w-full flex flex-col items-center'>
-      <Container className='flex flex-col gap-32 w-full py-64 max-w-[1312px] self-center'>
+      <Container className='flex flex-col gap-32 w-full py-64 max-w-[100rem] self-center'>
         <div className='flex flex-col gap-8 items-center w-full'>
           <h1
             style={{

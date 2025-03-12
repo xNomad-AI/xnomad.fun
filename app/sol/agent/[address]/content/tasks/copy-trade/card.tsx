@@ -189,11 +189,7 @@ function EditButton({
   const [open, setOpen] = useState(false);
   const { nft } = useAgentStore();
   const [form, setForm] = useState<CopyTradeFormType>(initCopyTradeForm);
-  const onClose = useMemoizedFn(() => {
-    setForm(initCopyTradeForm);
-    setOpen(false);
-  });
-  useEffect(() => {
+  const initForm = useMemoizedFn(() => {
     setForm({
       name: { ...form.name, value: task.name },
       mode: { ...form.mode, value: task.fixedAmount ? "amount" : "percentage" },
@@ -205,6 +201,12 @@ function EditButton({
       isCopySell: { ...form.isCopySell, value: task.copySell },
       target: { ...form.target, value: task.targetAddress },
     });
+  });
+  const onClose = useMemoizedFn(() => {
+    setOpen(false);
+  });
+  useEffect(() => {
+    initForm();
   }, [task]);
   return (
     <>

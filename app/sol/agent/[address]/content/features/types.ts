@@ -26,6 +26,6 @@ export interface Config {
     slippage: number;
     priorityFee: number;
     tip: number;
-    mode: "FAST" | "ANTI-MEV";
+    mode: "FAST" | "ANTI_MEV";
   };
 }

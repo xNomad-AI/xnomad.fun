@@ -74,7 +74,7 @@ export function TradeSetting() {
                 <Radio
                   value='ANTI-MEV'
                   checked={!isFastMode}
-                  onChange={() => setInnerTradeMode("ANTI-MEV")}
+                  onChange={() => setInnerTradeMode("ANTI_MEV")}
                 >
                   <div className='flex items-center gap-8'>
                     Anti-MEV{" "}

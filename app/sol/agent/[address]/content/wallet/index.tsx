@@ -50,7 +50,7 @@ export function Portfolio({ show }: { show: boolean }) {
           }`}
           onClick={() => setTab("activity")}
         >
-          Activities
+          Activity
         </button>
         {tab === "holder" && (
           <div className='flex-1 flex items-center justify-end'>

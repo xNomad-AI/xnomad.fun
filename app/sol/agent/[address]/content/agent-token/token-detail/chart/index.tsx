@@ -3,7 +3,7 @@ import { TokenPriceChart } from "./trading-view";
 import { Card, IconMenu } from "@/primitive/components";
 import { TokenInfo } from "../../token-list/network";
 import { isNumber } from "@/lib/utils/number/is-number";
-const minChartHeight = 330;
+const minChartHeight = 400;
 
 function getHeight() {
   const value = localStorage.getItem("token-page-chart-height");

@@ -21,7 +21,7 @@ export function CopyTradeTask({ nft }: { nft: NFT }) {
     ready: !!nft.agentId,
   });
   return tasks?.length > 0 ? (
-    <div className='w-full grid grid-cols-3 landscape-tablet:grid-cols-2 portrait-tablet:grid-cols-1'>
+    <div className='w-full grid grid-cols-3 gap-16 landscape-tablet:grid-cols-2 portrait-tablet:grid-cols-1'>
       {tasks.map((task) => {
         return (
           <TaskCard

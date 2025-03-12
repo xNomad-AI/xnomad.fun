@@ -22,7 +22,9 @@ export function NewAgentTokens() {
       <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40'>
         <div className='flex w-[200px]'>Agent Token</div>
 
-        <div className='flex w-[100px] justify-end'>AI-NFT</div>
+        <div className='flex min-w-[100px] flex-1 max-w-[200px] justify-end'>
+          AI-NFT
+        </div>
         <div className='flex w-[100px] justify-end'>Age</div>
       </div>
       {loading ? (
@@ -40,7 +42,7 @@ export function NewAgentTokens() {
               <TokenCell item={item} variant='simple' />
             </div>
 
-            <div className='flex w-[100px] justify-end items-center gap-4'>
+            <div className='flex min-w-[100px] flex-1 max-w-[200px] justify-end items-center gap-4'>
               <NFTCell item={item} />
             </div>
             <div className='flex w-[100px] justify-end'>

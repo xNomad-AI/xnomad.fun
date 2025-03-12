@@ -1,7 +1,6 @@
 "use client";
 import { useRequest } from "ahooks";
 import { getAgentTokenList, TokenInfo } from "./network";
-import { Address } from "@/components/address";
 import { TokenNumber } from "@/components/token-number";
 import { Spin } from "@/primitive/components";
 import { useState } from "react";

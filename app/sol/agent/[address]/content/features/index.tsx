@@ -15,7 +15,7 @@ import { useMemoizedFn, useMount } from "ahooks";
 import { TelegramModal } from "./telegram";
 import { VoiceModal } from "./voice";
 import { ConfirmModal } from "./confirm";
-import { editAgentConfig, getAgentConfig } from "./network";
+import { editAgentConfig } from "./network";
 import { useAgentStore } from "../../store";
 function configTwitter({
   nftId,

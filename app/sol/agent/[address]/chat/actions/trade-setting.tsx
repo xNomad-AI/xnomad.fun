@@ -1,6 +1,7 @@
 import {
   Button,
   IconInfo,
+  message,
   Modal,
   ModalContent,
   ModalTitleWithBorder,
@@ -130,6 +131,7 @@ export function TradeSetting() {
                     mode: innerTradeMode,
                   })
                   .then(() => {
+                    message("Trade setting updated", { type: "success" });
                     getAgentConfig(nft.agentId).then((config) => {
                       setAgentConfig(config.characterConfig);
                       onClose();
@@ -140,7 +142,7 @@ export function TradeSetting() {
                   });
               }}
             >
-              Generate Prompt
+              Confirm
             </Button>
           </div>
         </ModalContent>

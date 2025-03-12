@@ -156,21 +156,19 @@ function CancelButton({
           setOpen(false);
         }}
         onConfirm={() => {
-          () => {
-            setIsDeleting(true);
-            deleteCopyTradeTask(task.id, agentId)
-              .then(() => {
-                message("Task has been canceled", { type: "success" });
-                onDelete?.();
-                setOpen(false);
-              })
-              .catch((e) => {
-                onError(e);
-              })
-              .finally(() => {
-                setIsDeleting(false);
-              });
-          };
+          setIsDeleting(true);
+          deleteCopyTradeTask(task.id, agentId)
+            .then(() => {
+              message("Task has been canceled", { type: "success" });
+              onDelete?.();
+              setOpen(false);
+            })
+            .catch((e) => {
+              onError(e);
+            })
+            .finally(() => {
+              setIsDeleting(false);
+            });
         }}
       />
     </>

@@ -20,7 +20,6 @@ export function CopyTradeTask({ nft }: { nft: NFT }) {
     pollingInterval: 5000,
     ready: !!nft.agentId,
   });
-  const height = use100vh();
   return tasks?.length > 0 ? (
     <div className='w-full grid grid-cols-3 landscape-tablet:grid-cols-2 portrait-tablet:grid-cols-1'>
       {tasks.map((task) => {

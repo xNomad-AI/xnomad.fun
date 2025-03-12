@@ -23,13 +23,13 @@ export function TradeSetting() {
   const [isSetting, setIsSetting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [innerPriorityFee, setInnerPriorityFee] = useState(
-    agentConfig?.trade.priorityFee ?? ""
+    agentConfig?.trade?.priorityFee ?? ""
   );
   const [innerSlippage, setInnerSlippage] = useState(
-    ((agentConfig?.trade.slippage ?? 0) * 100).toString()
+    ((agentConfig?.trade?.slippage ?? 0) * 100).toString()
   );
   const [innerTradeMode, setInnerTradeMode] = useState<Config["trade"]["mode"]>(
-    agentConfig?.trade.mode ?? "FAST"
+    agentConfig?.trade?.mode ?? "FAST"
   );
   const isFastMode = useMemo(() => innerTradeMode === "FAST", [innerTradeMode]);
   const onClose = useMemoizedFn(() => {

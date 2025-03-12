@@ -104,14 +104,14 @@ export function CopyTrade({ message }: { message: ContentWithUser }) {
                     }, invest a fixed amount of ${
                       form.amount.value
                     } SOL per trade, and ${
-                      form.isCopySell ? "enable" : "disable"
+                      form.isCopySell.value ? "enable" : "disable"
                     } copy selling.`
                   : `Copy trade the ${form.target.value} wallet, named ${
                       form.name.value
                     }, invest a fixed percentage of ${
                       form.amount.value
                     }% of the target per trade, and ${
-                      form.isCopySell ? "enable" : "disable"
+                      form.isCopySell.value ? "enable" : "disable"
                     } copy selling.`
               );
               deleteMessageById(message.id);

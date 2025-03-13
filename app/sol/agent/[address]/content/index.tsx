@@ -84,7 +84,7 @@ export function Content() {
   );
   useMount(() => {
     getAgentConfig(nft.id).then((res) => {
-      setAgentConfig(res.characterConfig);
+      setAgentConfig(res);
     });
   });
   useRequest(

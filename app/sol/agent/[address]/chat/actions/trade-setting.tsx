@@ -31,11 +31,13 @@ export function TradeSetting() {
   const [innerTradeMode, setInnerTradeMode] = useState<Config["trade"]["mode"]>(
     agentConfig?.trade?.mode ?? "FAST"
   );
+  const [innerTip, setInnerTip] = useState(agentConfig?.trade.tip ?? "0.001");
+
   useEffect(() => {
     setInnerPriorityFee(agentConfig?.trade?.priorityFee ?? "");
     setInnerSlippage(((agentConfig?.trade?.slippage ?? 0) * 100).toString());
     setInnerTradeMode(agentConfig?.trade?.mode ?? "FAST");
-  }, [agentConfig]);
+  }, [agentConfig?.trade]);
   const isFastMode = useMemo(() => innerTradeMode === "FAST", [innerTradeMode]);
   const onClose = useMemoizedFn(() => {
     setIsModalOpen(false);
@@ -121,6 +123,17 @@ export function TradeSetting() {
               }}
             />
           </div>
+          {/* <div className='flex flex-col gap-8 w-full'>
+            <span>Tip</span>
+            <TextField
+              placeholder='Custom'
+              value={innerTip}
+              onChange={(e) => {
+                const value = toDecimal(e.target.value);
+                setInnerTip(value);
+              }}
+            />
+          </div> */}
           <div className='flex w-full items-center justify-end gap-8'>
             <Button variant='secondary' onClick={onClose}>
               Cancel
@@ -134,13 +147,14 @@ export function TradeSetting() {
                     slippage: +innerSlippage / 100,
                     priorityFee: +innerPriorityFee,
                     mode: innerTradeMode,
+                    tip: innerTip,
                   })
                   .then(() => {
                     message("Trade setting updated", { type: "success" });
-                    getAgentConfig(nft.agentId).then((config) => {
-                      setAgentConfig(config.characterConfig);
-                      onClose();
+                    getAgentConfig(nft.id).then((config) => {
+                      setAgentConfig(config);
                     });
+                    onClose();
                   })
                   .finally(() => {
                     setIsSetting(false);

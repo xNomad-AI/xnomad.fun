@@ -15,7 +15,7 @@ import {
 } from "@/primitive/components";
 import { POST_INTERVAL_MIN, POST_MAX_LENGTH, useTwitterStore } from "./store";
 import clsx from "clsx";
-import { Config } from "../types";
+import { CharacterConfig } from "../types";
 import { useEffect, useRef, useState } from "react";
 import { useMemoizedFn } from "ahooks";
 import { onError } from "@/lib/utils/error";
@@ -30,8 +30,11 @@ export function TwitterModal({
 }: {
   open: boolean;
   onClose: () => void;
-  config?: Config;
-  onSave: (config: Partial<Config>, testContent?: string) => Promise<void>;
+  config?: CharacterConfig;
+  onSave: (
+    config: Partial<CharacterConfig>,
+    testContent?: string
+  ) => Promise<void>;
 }) {
   const { form, updateForm } = useTwitterStore();
   const [saving, setSaving] = useState(false);

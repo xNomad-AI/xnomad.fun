@@ -10,7 +10,7 @@ import Image from "next/image";
 import { TwitterModal } from "./twitter";
 import { useMemo, useState } from "react";
 import { api } from "@/primitive/api";
-import { Config } from "./types";
+import { CharacterConfig, Config } from "./types";
 import { useMemoizedFn, useMount } from "ahooks";
 import { TelegramModal } from "./telegram";
 import { VoiceModal } from "./voice";
@@ -23,7 +23,7 @@ function configTwitter({
   testContent,
 }: {
   nftId: string;
-  config: Partial<Config>;
+  config: Partial<CharacterConfig>;
   testContent?: string;
 }) {
   return api.v1.post<{
@@ -52,41 +52,46 @@ export function Features({ nft }: { nft: NFT }) {
       // get twitter bound status
       configTwitter({
         nftId: nft.id,
-        config: config,
+        config: config.characterConfig,
         testContent: "",
       }).then((res) => {
         setTwitterBound(res.isLogin);
       });
     }
   });
-  const onSave = useMemoizedFn(async (config: Partial<Config>) => {
+  const onSave = useMemoizedFn(async (_config: Partial<CharacterConfig>) => {
     const newConfig = await editAgentConfig(nft.id, {
       ...config,
       settings: {
-        ...config.settings,
+        ..._config.settings,
         secrets: {
-          ...config.settings?.secrets,
-          POST_IMMEDIATELY: config.settings?.secrets?.POST_IMMEDIATELY,
+          ..._config.settings?.secrets,
+          POST_IMMEDIATELY: _config.settings?.secrets?.POST_IMMEDIATELY,
           TWITTER_LOGIN_SUSPEND:
-            config.settings?.secrets?.TWITTER_LOGIN_SUSPEND,
+            _config.settings?.secrets?.TWITTER_LOGIN_SUSPEND,
         },
       },
     });
-    setConfig(newConfig.characterConfig);
+    setConfig({
+      ...(config as Config),
+      characterConfig: newConfig.characterConfig,
+    });
   });
   const hasTwitterConfig = useMemo(() => {
     return Boolean(
-      config?.settings.secrets?.TWITTER_USERNAME ||
-        config?.settings.secrets?.TWITTER_PASSWORD ||
-        config?.settings.secrets?.TWITTER_EMAIL ||
-        config?.settings.secrets?.TWITTER_2FA_SECRET ||
-        config?.templates?.twitterPostTemplate ||
-        ((config?.postExamples?.length ?? 0) > 0 &&
-          Boolean(config?.postExamples?.[0]))
+      config?.characterConfig?.settings.secrets?.TWITTER_USERNAME ||
+        config?.characterConfig?.settings.secrets?.TWITTER_PASSWORD ||
+        config?.characterConfig?.settings.secrets?.TWITTER_EMAIL ||
+        config?.characterConfig?.settings.secrets?.TWITTER_2FA_SECRET ||
+        config?.characterConfig?.templates?.twitterPostTemplate ||
+        ((config?.characterConfig?.postExamples?.length ?? 0) > 0 &&
+          Boolean(config?.characterConfig?.postExamples?.[0]))
     );
   }, [config]);
   const hasTgConfig = useMemo(() => {
-    return Boolean(config?.settings.secrets?.TELEGRAM_BOT_TOKEN);
+    return Boolean(
+      config?.characterConfig?.settings.secrets?.TELEGRAM_BOT_TOKEN
+    );
   }, [config]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const twitterEnabled = process.env.TWITTER_ENABLED === "true";
@@ -113,7 +118,8 @@ export function Features({ nft }: { nft: NFT }) {
                 Suspend Post
                 <Toggle
                   value={
-                    config?.settings.secrets?.TWITTER_LOGIN_SUSPEND === "true"
+                    config?.characterConfig?.settings.secrets
+                      ?.TWITTER_LOGIN_SUSPEND === "true"
                   }
                   disable={isConfigLoading}
                   onChange={() => {
@@ -123,8 +129,8 @@ export function Features({ nft }: { nft: NFT }) {
                       settings: {
                         secrets: {
                           TWITTER_LOGIN_SUSPEND:
-                            config?.settings.secrets?.TWITTER_LOGIN_SUSPEND ===
-                            "true"
+                            config?.characterConfig?.settings.secrets
+                              ?.TWITTER_LOGIN_SUSPEND === "true"
                               ? "false"
                               : "true",
                         },
@@ -204,7 +210,7 @@ export function Features({ nft }: { nft: NFT }) {
           }
           setTwitterBound(true);
         }}
-        config={config}
+        config={config?.characterConfig}
         onClose={() => {
           setXOpen(false);
         }}
@@ -212,7 +218,7 @@ export function Features({ nft }: { nft: NFT }) {
       <TelegramModal
         open={tgOpen}
         onSave={onSave}
-        config={config}
+        config={config?.characterConfig}
         onClose={() => {
           setTgOpen(false);
         }}
@@ -220,7 +226,7 @@ export function Features({ nft }: { nft: NFT }) {
       <VoiceModal
         open={voiceOpen}
         onSave={onSave}
-        config={config}
+        config={config?.characterConfig}
         onClose={() => {
           setVoiceOpen(false);
         }}

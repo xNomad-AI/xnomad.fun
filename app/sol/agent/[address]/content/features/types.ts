@@ -1,4 +1,4 @@
-export interface Config {
+export interface CharacterConfig {
   postExamples?: string[];
   templates?: {
     twitterPostTemplate: string;
@@ -22,6 +22,10 @@ export interface Config {
       MAX_LENGTH: number;
     }>;
   };
+}
+
+export interface Config {
+  characterConfig: CharacterConfig;
   trade: {
     slippage: number;
     priorityFee: number;

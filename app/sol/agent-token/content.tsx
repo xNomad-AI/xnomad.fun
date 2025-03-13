@@ -83,7 +83,7 @@ export function Content() {
           <div className='flex w-[120px] justify-end text-text2'>Price</div>
           <button
             onClick={() => {
-              setSortBy("marketcap");
+              setSortBy("marketCap");
             }}
             className={clsx(
               "flex w-[120px] justify-end items-center gap-4 text-text2",

@@ -77,7 +77,9 @@ export function Content() {
             <div className='w-40'>#</div>
             Agent Token
           </div>
-          <div className='flex w-[120px] justify-end text-text2'>AI-NFT</div>
+          <div className='flex min-w-[120px] max-w-[200px] flex-1 justify-end text-text2'>
+            AI-NFT
+          </div>
           <div className='flex w-[120px] justify-end text-text2'>Price</div>
           <div
             className={clsx(
@@ -134,7 +136,7 @@ export function Content() {
                       <TokenCell item={item} />
                     </div>
                   </div>
-                  <div className='flex w-[120px] justify-end items-center gap-4'>
+                  <div className='flex min-w-[120px] max-w-[200px] flex-1 justify-end items-center gap-4'>
                     <NFTCell item={item} />
                   </div>
                   <div className='flex w-[120px] flex-col items-end'>

@@ -81,7 +81,10 @@ export function Content() {
             AI-NFT
           </div>
           <div className='flex w-[120px] justify-end text-text2'>Price</div>
-          <div
+          <button
+            onClick={() => {
+              setSortBy("marketcap");
+            }}
             className={clsx(
               "flex w-[120px] justify-end items-center gap-4 text-text2",
               {
@@ -90,8 +93,11 @@ export function Content() {
             )}
           >
             Marketcap <IconDownFilled className='text-size-16' />
-          </div>
-          <div
+          </button>
+          <button
+            onClick={() => {
+              setSortBy("volume24h");
+            }}
             className={clsx(
               "flex w-[120px] justify-end items-center gap-4 text-text2",
               {
@@ -100,10 +106,13 @@ export function Content() {
             )}
           >
             24h Volume <IconDownFilled className='text-size-16' />
-          </div>
+          </button>
           <div className='flex w-[120px] justify-end text-text2'>Liquidity</div>
           <div className='flex w-[120px] justify-end text-text2'>Holders</div>
-          <div
+          <button
+            onClick={() => {
+              setSortBy("deployedTime");
+            }}
             className={clsx(
               "flex w-[120px] justify-end items-center gap-4 text-text2",
               {
@@ -112,7 +121,7 @@ export function Content() {
             )}
           >
             Age <IconDownFilled className='text-size-16' />
-          </div>
+          </button>
         </div>
         {loading ? (
           <div className='h-[100px] w-full flex items-center justify-center'>
@@ -128,7 +137,7 @@ export function Content() {
                 <Link
                   href={`/sol/agent/${item.nft?.id}?tab=agent-token`}
                   key={item.symbol}
-                  className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8'
+                  className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8 hover:opacity-80'
                 >
                   <div className='flex w-[240px] items-center'>
                     <div className='text-text2 w-40'>{index + 1}</div>

@@ -37,7 +37,7 @@ export function Address({
             e.preventDefault();
             copy(address);
           }}
-          className='cursor-pointer text-inherit'
+          className='cursor-pointer text-inherit not-mobile:hover:text-text1'
         />
       )}
     </Tooltip>

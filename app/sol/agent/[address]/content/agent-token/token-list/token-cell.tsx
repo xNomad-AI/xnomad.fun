@@ -44,7 +44,7 @@ export function TokenCell({
                 e.stopPropagation();
               }}
             >
-              <IconTwitterX className='text-size-12 text-text2' />
+              <IconTwitterX className='text-size-12 text-text2 not-mobile:hover:text-text1' />
             </a>
           )}
           {item.telegram && variant !== "simple" && (
@@ -55,7 +55,7 @@ export function TokenCell({
                 e.stopPropagation();
               }}
             >
-              <IconTelegram className='text-size-12 text-text2' />
+              <IconTelegram className='text-size-12 text-text2 not-mobile:hover:text-text1' />
             </a>
           )}
           {item.website && variant !== "simple" && (
@@ -66,7 +66,7 @@ export function TokenCell({
                 e.stopPropagation();
               }}
             >
-              <IconWebsite className='text-size-12 text-text2' />
+              <IconWebsite className='text-size-12 text-text2 not-mobile:hover:text-text1' />
             </a>
           )}
         </div>

@@ -267,7 +267,7 @@ function EditButton({
                     : undefined,
                 percentage:
                   form.mode.value === "percentage"
-                    ? parseFloat(form.amount.value)
+                    ? parseFloat(form.amount.value) / 100
                     : undefined,
                 copySell: form.isCopySell.value,
               })

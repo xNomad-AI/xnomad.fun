@@ -17,6 +17,7 @@ import { Config } from "../../content/features/types";
 import { useMemoizedFn } from "ahooks";
 import { api } from "@/primitive/api";
 import { getAgentConfig } from "../../content/features/network";
+import { onError } from "@/lib/utils/error";
 
 export function TradeSetting() {
   const { agentConfig, setAgentConfig, nft } = useAgentStore();
@@ -115,7 +116,7 @@ export function TradeSetting() {
           <div className='flex flex-col gap-8 w-full'>
             <span>Priority Fee(SOL)</span>
             <TextField
-              placeholder='Custom'
+              placeholder={isFastMode ? "Custom" : ">0.018"}
               value={innerPriorityFee}
               onChange={(e) => {
                 const value = toDecimal(e.target.value);
@@ -123,17 +124,22 @@ export function TradeSetting() {
               }}
             />
           </div>
-          {/* <div className='flex flex-col gap-8 w-full'>
-            <span>Tip</span>
+          <div className='flex flex-col gap-8 w-full'>
+            <div className='flex items-center gap-8'>
+              <span>Tip(SOL)</span>
+              <Tooltip content={"Tip to get the optimal performance."}>
+                <IconInfo className='text-size-16' />
+              </Tooltip>
+            </div>
             <TextField
-              placeholder='Custom'
+              placeholder={"> 0.001"}
               value={innerTip}
               onChange={(e) => {
                 const value = toDecimal(e.target.value);
                 setInnerTip(value);
               }}
             />
-          </div> */}
+          </div>
           <div className='flex w-full items-center justify-end gap-8'>
             <Button variant='secondary' onClick={onClose}>
               Cancel
@@ -156,6 +162,7 @@ export function TradeSetting() {
                     });
                     onClose();
                   })
+                  .catch(onError)
                   .finally(() => {
                     setIsSetting(false);
                   });

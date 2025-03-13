@@ -10,7 +10,7 @@ import {
   TextField,
   Tooltip,
 } from "@/primitive/components";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toDecimal } from "@/lib/utils/number/to-decimal";
 import { useAgentStore } from "../../store";
 import { Config } from "../../content/features/types";
@@ -31,6 +31,11 @@ export function TradeSetting() {
   const [innerTradeMode, setInnerTradeMode] = useState<Config["trade"]["mode"]>(
     agentConfig?.trade?.mode ?? "FAST"
   );
+  useEffect(() => {
+    setInnerPriorityFee(agentConfig?.trade?.priorityFee ?? "");
+    setInnerSlippage(((agentConfig?.trade?.slippage ?? 0) * 100).toString());
+    setInnerTradeMode(agentConfig?.trade?.mode ?? "FAST");
+  }, [agentConfig]);
   const isFastMode = useMemo(() => innerTradeMode === "FAST", [innerTradeMode]);
   const onClose = useMemoizedFn(() => {
     setIsModalOpen(false);

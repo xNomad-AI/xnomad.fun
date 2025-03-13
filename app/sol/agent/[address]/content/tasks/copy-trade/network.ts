@@ -11,7 +11,7 @@ export interface CopyTrade {
   expiredAt?: string;
   fixedAmount?: number;
   id: number;
-  mode: string;
+  mode: "percentage" | "amount";
   name: string;
   percentage?: number;
   status: CopyTradeStatus;

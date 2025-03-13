@@ -192,11 +192,13 @@ function EditButton({
   const initForm = useMemoizedFn(() => {
     setForm({
       name: { ...form.name, value: task.name },
-      mode: { ...form.mode, value: task.fixedAmount ? "amount" : "percentage" },
+      mode: { ...form.mode, value: task.mode },
       amount: {
         ...form.amount,
         value:
-          task.fixedAmount?.toString() ?? task.percentage?.toString() ?? "",
+          task.mode === "amount"
+            ? task.fixedAmount?.toString() ?? ""
+            : task.percentage?.toString() ?? "",
       },
       isCopySell: { ...form.isCopySell, value: task.copySell },
       target: { ...form.target, value: task.targetAddress },
@@ -257,6 +259,7 @@ function EditButton({
               editCopyTrade(agentId, task.id, {
                 ...task,
                 name: form.name.value,
+                mode: form.mode.value,
                 targetAddress: form.target.value,
                 fixedAmount:
                   form.mode.value === "amount"

@@ -34,7 +34,7 @@ export function onError(
     } else if (hasReason) {
       message(errorMsg.split(".")[0].split("reason:")[1], { type: "error" });
     } else {
-      message(errorMsg.split(".")[0], { type: "error" });
+      message(errorMsg, { type: "error" });
     }
     console.log({ error });
   }

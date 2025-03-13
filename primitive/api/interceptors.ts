@@ -125,8 +125,12 @@ export const response: ApiServiceResponseInterceptor = async (
 ) => {
   try {
     const res = await request;
+    if (res.status === 400) {
+      const body = await (res as Response).json();
+      throw new Error(body.message);
+    }
     if (res.status < 200 || res.status >= 300) {
-      throw new Error(res.statusText);
+      throw new Error(res.statusText || "Unknown error");
     }
     try {
       const body = await (res as Response).json();

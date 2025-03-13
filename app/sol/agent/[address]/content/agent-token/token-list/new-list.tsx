@@ -19,7 +19,7 @@ export function NewAgentTokens() {
   });
   return (
     <div className='flex flex-col w-full'>
-      <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40'>
+      <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40 text-white-40'>
         <div className='flex w-[200px]'>Agent Token</div>
 
         <div className='flex min-w-[100px] flex-1 max-w-[200px] justify-end'>
@@ -36,7 +36,7 @@ export function NewAgentTokens() {
           <Link
             href={`/sol/agent/${item.nft?.id}?tab=agent-token`}
             key={item.symbol}
-            className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8'
+            className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8 hover:opacity-80'
           >
             <div className='flex w-[200px] gap-4 items-center'>
               <TokenCell item={item} variant='simple' />

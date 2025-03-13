@@ -70,7 +70,7 @@ export function Portfolio({ show }: { show: boolean }) {
       </div>
       {tab === "holder" && (
         <div className='flex flex-col w-full'>
-          <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40'>
+          <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40 text-white-40'>
             <div className='flex w-[160px]'>Asset</div>
             <div className='flex w-[120px] justify-end'>Price</div>
             <div className='flex w-[120px] justify-end'>Balance</div>

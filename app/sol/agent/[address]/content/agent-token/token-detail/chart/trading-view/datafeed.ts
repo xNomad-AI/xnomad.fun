@@ -127,7 +127,7 @@ export class Datafeed {
       type: "crypto",
       session: "24x7",
       minmov: 1,
-      pricescale: 100000,
+      pricescale: priceScale,
 
       priceScaleMode: 1,
       has_intraday: true,

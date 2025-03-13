@@ -31,30 +31,30 @@ export function Info({ tokenInfo }: { tokenInfo: TokenInfo }) {
         <a
           href={tokenInfo.twitter}
           target='_blank'
-          className='flex justify-between items-center w-full min-w-0 gap-8'
+          className='group flex justify-between items-center w-full min-w-0 gap-8'
         >
           X(Twitter)
-          <TextWithEllipsis>
+          <TextWithEllipsis className='group-hover:underline'>
             {tokenInfo.twitter?.split("/").slice(-1)[0] ?? "--"}
           </TextWithEllipsis>
         </a>
         <a
           href={tokenInfo.twitter}
           target='_blank'
-          className='flex justify-between items-center w-full min-w-0 gap-8'
+          className='group flex justify-between items-center w-full min-w-0 gap-8'
         >
           Telegram
-          <TextWithEllipsis>
+          <TextWithEllipsis className='group-hover:underline'>
             {tokenInfo.telegram?.split("/").slice(-1)[0] ?? "--"}
           </TextWithEllipsis>
         </a>
         <a
           href={tokenInfo.website}
           target='_blank'
-          className='flex justify-between items-center w-full min-w-0 gap-8'
+          className='group flex justify-between items-center w-full min-w-0 gap-8'
         >
           Website
-          <TextWithEllipsis>
+          <TextWithEllipsis className='group-hover:underline'>
             {tokenInfo.website
               ?.replace("https://", "")
               .replace("http://", "") ?? "--"}

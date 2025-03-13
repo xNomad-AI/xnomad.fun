@@ -28,7 +28,7 @@ export function UGCAgents() {
       <Spin />
     </div>
   ) : agents.length > 0 ? (
-    <div className='w-full flex gap-16 overflow-auto'>
+    <div className='w-full flex gap-24 overflow-auto'>
       {agents.map((agent) => (
         <NFTCard
           nft={agent}

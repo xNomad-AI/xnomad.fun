@@ -226,6 +226,7 @@ function EditButton({
         <ModalContent>
           <CopyTradeForm
             form={form}
+            type='edit'
             setForm={setForm}
             address={nft.agentAccount.solana}
           />

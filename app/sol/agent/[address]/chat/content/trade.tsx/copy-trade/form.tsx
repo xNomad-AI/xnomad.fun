@@ -19,10 +19,12 @@ export function CopyTradeForm({
   form,
   setForm,
   address,
+  type,
 }: {
   form: CopyTradeFormType;
   setForm: (form: CopyTradeFormType) => void;
   address: string;
+  type?: "edit" | "add";
 }) {
   const account = useMemo(() => new PublicKey(address), [address]);
   const { balance } = useSolBalance(account);
@@ -52,6 +54,7 @@ export function CopyTradeForm({
       </FormItem>
       <FormItem label={"Target Wallet Address"} {...form.target}>
         <TextField
+          disabled={type === "edit"}
           value={form.target.value}
           placeholder='Target Wallet Address'
           onChange={(event) => {

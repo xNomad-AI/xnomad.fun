@@ -20,6 +20,7 @@ import { onError } from "@/lib/utils/error";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { TokenNumber } from "@/components/token-number";
+import { useAgentStore } from "../../../../store";
 const emptyForm = {
   description: {
     value: "",
@@ -63,6 +64,7 @@ export function EditInfoModal({
   tokenInfo: TokenInfo;
   nft: NFT;
 }) {
+  const { setPrimaryToken } = useAgentStore();
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useSolana();
   const [form, setForm] = useState<{
@@ -137,12 +139,13 @@ export function EditInfoModal({
       if (res.value.err) {
         throw res.value.err;
       }
-      await editTokenInfo(nft.id, tx, {
+      const newInfo = await editTokenInfo(nft.id, tx, {
         description: form.description.value,
         twitter: form.twitter.value,
         telegram: form.telegram.value,
         website: form.website.value,
       });
+      setPrimaryToken(newInfo);
       onClose();
     } catch (error) {
       onError(error);

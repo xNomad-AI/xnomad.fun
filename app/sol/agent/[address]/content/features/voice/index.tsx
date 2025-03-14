@@ -10,7 +10,7 @@ import {
   IconTrianglePlay,
   IconPause,
 } from "@/primitive/components";
-import { Config } from "../types";
+import { CharacterConfig, Config } from "../types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { onError } from "@/lib/utils/error";
 import { Gender, genders, Voice } from "./type";
@@ -26,8 +26,8 @@ export function VoiceModal({
 }: {
   open: boolean;
   onClose: () => void;
-  config?: Config;
-  onSave: (config: Partial<Config>) => Promise<void>;
+  config?: CharacterConfig;
+  onSave: (config: Partial<CharacterConfig>) => Promise<void>;
 }) {
   const [saving, setSaving] = useState(false);
 

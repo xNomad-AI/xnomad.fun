@@ -10,6 +10,7 @@ import { Swap } from "./trade.tsx/swap";
 import { LimitOrder } from "./trade.tsx/limit-order";
 import { IssueToken } from "./issue-token";
 import { AnalyzeInput, AnalyzeResponse } from "./analyze";
+import { CopyTrade } from "./trade.tsx/copy-trade";
 
 export function ChatContent({
   message,
@@ -26,15 +27,15 @@ export function ChatContent({
         case "buy":
           return <Buy message={message} nft={nft} />;
         case "sell":
-          return <Sell message={message} nft={nft} />;
+          return <Sell message={message} />;
         case "swap":
-          return <Swap message={message} nft={nft} />;
+          return <Swap message={message} />;
         case "transfer":
-          return <Transfer message={message} nft={nft} />;
+          return <Transfer message={message} />;
         case "limit-order":
-          return <LimitOrder message={message} nft={nft} />;
-        // case 'copy-trade':
-        //   return <CopyTrade />
+          return <LimitOrder message={message} />;
+        case "copy-trade":
+          return <CopyTrade message={message} />;
         default:
           return "Trade action not found";
       }

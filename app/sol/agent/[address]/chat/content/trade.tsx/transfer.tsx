@@ -1,26 +1,18 @@
 import { Button, FormItem, FormValue, TextField } from "@/primitive/components";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
-import { NFT } from "@/types";
 import { TokenInputSell, TokenValue } from "../token-input";
 import { useAgentStore } from "../../../store";
 import { AmountInput } from "../amount-input";
-import { useSolana } from "@/lib/hooks/use-solana";
-import { PublicKey, TokenAmount } from "@solana/web3.js";
-import { useRequest } from "ahooks";
+import { useSPLBalance } from "@/lib/hooks/use-solana";
+import { PublicKey } from "@solana/web3.js";
 import { CancelButton } from "../cancel-button";
 
-export function Transfer({
-  message,
-  nft,
-}: {
-  message: ContentWithUser;
-  nft: NFT;
-}) {
+export function Transfer({ message }: { message: ContentWithUser }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
-  const { portfolio } = useAgentStore();
+  const { portfolio, nft } = useAgentStore();
   const [form, setForm] = useState<{
     token: FormValue<TokenValue>;
     amount: FormValue<string>;
@@ -49,25 +41,11 @@ export function Transfer({
       errorMsg: "",
     },
   });
-  const step = message.step;
-  const [tokenAmount, setTokenAmount] = useState<TokenAmount>();
-  const { getSPLBalance } = useSolana();
-  useRequest(
-    async () => {
-      if (form.token.value.ca && form.token.value.ca !== "") {
-        getSPLBalance(
-          form.token.value.ca,
-          new PublicKey(nft.agentAccount.solana)
-        ).then((balance) => {
-          setTokenAmount(balance ?? undefined);
-        });
-      }
-    },
-    {
-      refreshDeps: [form.token.value.ca, nft.agentAccount.solana],
-      pollingInterval: 10000,
-    }
+  const account = useMemo(
+    () => new PublicKey(nft.agentAccount.solana),
+    [nft.agentAccount.solana]
   );
+  const { balance: tokenAmount } = useSPLBalance(form.token.value.ca, account);
   return (
     <ChatContentContainer message={message}>
       <div className='flex flex-col gap-16 w-full'>

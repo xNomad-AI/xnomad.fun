@@ -4,22 +4,20 @@ import {
   FormValue,
   IconArrowForwardright,
 } from "@/primitive/components";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { useAgentStore } from "../../../store";
 import { AmountInput } from "../amount-input";
-import { PublicKey, TokenAmount } from "@solana/web3.js";
-import { useSolana } from "@/lib/hooks/use-solana";
-import { NFT } from "@/types";
-import { useRequest } from "ahooks";
+import { PublicKey } from "@solana/web3.js";
+import { useSPLBalance } from "@/lib/hooks/use-solana";
 import { CancelButton } from "../cancel-button";
 
-export function Swap({ message, nft }: { message: ContentWithUser; nft: NFT }) {
+export function Swap({ message }: { message: ContentWithUser }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
-  const { portfolio } = useAgentStore();
+  const { portfolio, nft } = useAgentStore();
   const [form, setForm] = useState<{
     fromToken: FormValue<TokenValue>;
     amount: FormValue<string>;
@@ -52,24 +50,13 @@ export function Swap({ message, nft }: { message: ContentWithUser; nft: NFT }) {
       errorMsg: "",
     },
   });
-  const step = message.step;
-  const [tokenAmount, setTokenAmount] = useState<TokenAmount>();
-  const { getSPLBalance } = useSolana();
-  useRequest(
-    async () => {
-      if (form.fromToken.value.ca && form.fromToken.value.ca !== "") {
-        getSPLBalance(
-          form.fromToken.value.ca,
-          new PublicKey(nft.agentAccount.solana)
-        ).then((balance) => {
-          setTokenAmount(balance ?? undefined);
-        });
-      }
-    },
-    {
-      refreshDeps: [form.fromToken.value.ca, nft.agentAccount.solana],
-      pollingInterval: 10000,
-    }
+  const account = useMemo(
+    () => new PublicKey(nft.agentAccount.solana),
+    [nft.agentAccount.solana]
+  );
+  const { balance: tokenAmount } = useSPLBalance(
+    form.fromToken.value.ca,
+    account
   );
   return (
     <ChatContentContainer message={message}>

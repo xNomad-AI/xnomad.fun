@@ -3,15 +3,14 @@
 import { upperFirstLetter } from "@/lib/utils/string";
 import { message } from "@/primitive/components";
 import { useState } from "react";
-import { getAutoTasks, Task } from "./limit-order/network";
-import { useRequest } from "ahooks";
-import { TaskCard } from "./limit-order/card";
+
 import { NFT } from "@/types";
 import { LimitOrderTask } from "./limit-order";
+import { CopyTradeTask } from "./copy-trade";
 
 const tabs = ["limit-order", "copy-trade"] as const;
 type Tab = (typeof tabs)[number];
-const comingSoon = ["copy-trade"] as Tab[];
+const comingSoon = [] as Tab[];
 export function Tasks({ nft }: { nft: NFT }) {
   const [tab, setTab] = useState<Tab | null>("limit-order");
 
@@ -40,6 +39,7 @@ export function Tasks({ nft }: { nft: NFT }) {
         ))}
       </div>
       {tab === "limit-order" && <LimitOrderTask nft={nft} />}
+      {tab === "copy-trade" && <CopyTradeTask nft={nft} />}
     </div>
   );
 }

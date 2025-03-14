@@ -89,6 +89,22 @@ export const apiAgentEndpoint: (
     return config;
   };
 };
+export const apiTSEndpoint: (
+  version: number
+) => ApiServiceRequestInterceptor = (version) => {
+  return (config) => {
+    config.baseURL = `${process.env.TOKEN_STORY_API_HOST}/api/v${version}`;
+    return config;
+  };
+};
+export const apiTSForwardEndpoint: (
+  version: number
+) => ApiServiceRequestInterceptor = (version) => {
+  return (config) => {
+    config.baseURL = `${process.env.TOKEN_STORY_API_HOST}/api/v${version}/forward`;
+    return config;
+  };
+};
 export const apiAirdropEndpoint: (
   version: number
 ) => ApiServiceRequestInterceptor = () => {
@@ -109,8 +125,12 @@ export const response: ApiServiceResponseInterceptor = async (
 ) => {
   try {
     const res = await request;
+    if (res.status === 400) {
+      const body = await (res as Response).json();
+      throw new Error(body.message);
+    }
     if (res.status < 200 || res.status >= 300) {
-      throw new Error(res.statusText);
+      throw new Error(res.statusText || "Unknown error");
     }
     try {
       const body = await (res as Response).json();

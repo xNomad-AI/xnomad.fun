@@ -1,13 +1,13 @@
 import { Button, Card, message, Tooltip } from "@/primitive/components";
-import { deleteAutoTask, getAutoTasks, Task } from "./network";
+import { deleteAutoTask, Task } from "./network";
 import { TokenNumber } from "@/components/token-number";
-import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { onError } from "@/lib/utils/error";
 import { upperFirstLetter } from "@/lib/utils/string";
 import clsx from "clsx";
 import { memo, useMemo, useState } from "react";
 import { Address } from "@/components/address";
 import { ConfirmModal } from "../../features/confirm";
+import { AgeCell } from "../../agent-token/token-list/age-cell";
 
 function MemoTaskCard({
   task,
@@ -43,9 +43,7 @@ function MemoTaskCard({
           </p>
           <TokenNumber number={task.priceTarget} prefix={"$"} />
           <span className='text-text2 ml-8'>Expire:</span>
-          <span>
-            {beautifyTimeV2(new Date(task.expireAt).getTime(), true, false, "")}
-          </span>
+          <AgeCell time={task.expireAt} />
         </div>
       </div>
       <CancelButton

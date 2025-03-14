@@ -10,7 +10,7 @@ export function Divider(props: PropsWithClassName<Props>) {
   return (
     <div
       className={clsx(
-        "bg-dividing flex-shrink-0",
+        "bg-white-20 flex-shrink-0",
         horizontal ? "h-1" : "w-1",
         className
       )}

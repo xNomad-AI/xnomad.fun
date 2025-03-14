@@ -29,7 +29,7 @@ function MemoInfiniteScrollList({
   items: any[];
   loadNextPage: () => void;
   props?: any;
-  renderItem: (item: any) => React.ReactNode;
+  renderItem: (item: any, index: number) => React.ReactNode;
   itemSize?: number;
   gutterSize?: number;
   height?: number;
@@ -86,7 +86,7 @@ function MemoInfiniteScrollList({
                 </div>
               );
             } else {
-              content = renderItem(items[index]);
+              content = renderItem(items[index], index);
             }
 
             return (

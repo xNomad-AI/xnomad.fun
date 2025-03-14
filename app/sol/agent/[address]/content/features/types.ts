@@ -1,4 +1,4 @@
-export interface Config {
+export interface CharacterConfig {
   postExamples?: string[];
   templates?: {
     twitterPostTemplate: string;
@@ -21,5 +21,15 @@ export interface Config {
       TWITTER_POLL_INTERVAL: number;
       MAX_LENGTH: number;
     }>;
+  };
+}
+
+export interface Config {
+  characterConfig: CharacterConfig;
+  trade: {
+    slippage: number;
+    priorityFee: number;
+    tip: number;
+    mode: "FAST" | "ANTI_MEV";
   };
 }

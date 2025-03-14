@@ -20,11 +20,12 @@ export function Toggle(props: SwitchProps) {
   return (
     <div
       className={clsx(
-        "flex items-center justify-center w-[2.625em] h-[1.25em] rounded-full text-white overflow-hidden text-size-16",
+        "flex items-center justify-center w-[2.625em] h-[1.25em] rounded-full text-white overflow-hidden text-size-16 bg-brand",
         disable ? "cursor-not-allowed" : "cursor-pointer",
-        !value || disable
-          ? "bg-brand bg-opacity-[0.1]"
-          : "bg-brand bg-opacity-[0.6]",
+        {
+          "bg-opacity-[0.1]": !value || disable,
+          "bg-opacity-1": value && !disable,
+        },
         className
       )}
       onClick={handleClick}
@@ -39,10 +40,11 @@ export function Toggle(props: SwitchProps) {
         initial={false}
       >
         <motion.div
-          className={clsx(
-            "w-[1em] h-[1em] rounded-full",
-            disable ? "bg-text2" : "bg-[white]"
-          )}
+          className={clsx("w-[1em] h-[1em] rounded-full", {
+            "bg-text2": disable,
+            "bg-white": !disable && !value,
+            "bg-[#0D0F10]": !disable && value,
+          })}
         />
       </motion.div>
     </div>

@@ -1,4 +1,4 @@
-import { Button, Card, IconVerified } from "@/primitive/components";
+import { Card, RadioButton, RadioButtonGroup } from "@/primitive/components";
 import { useEffect, useState } from "react";
 import { TokenNumber } from "@/components/token-number";
 import { useChatContext } from "../../store";
@@ -9,7 +9,6 @@ import { api } from "@/primitive/api";
 import clsx from "clsx";
 import { RateNum } from "@/components/rate-number";
 import { toCardNum, toThousandNum } from "@/lib/utils/number";
-import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { TextAnchor } from "@/components/text-button";
 import { format } from "date-fns";
 import { Empty } from "@/components/empty";
@@ -20,6 +19,7 @@ import {
   IconTwitterVerified,
   IconViewed,
 } from "./icons";
+import { AgeCell } from "../../../content/agent-token/token-list/age-cell";
 interface TokenInfo {
   address: string;
   aiSummary?: string;
@@ -185,48 +185,26 @@ export function AnalyzeResponse({
   );
 
   return (
-    <ChatContentContainer
-      message={message}
-      showTimestamp
-      showCopyButton
-      suffixNode={
-        <div className='flex items-center gap-16'>
-          {infoType !== "basic" && (
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                setInfoType("basic");
-              }}
-            >
-              Basic
-            </Button>
-          )}
-          {infoType !== "news" && (
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                setInfoType("news");
-              }}
-            >
-              Twitter News
-            </Button>
-          )}
-          {infoType !== "twitter" && (
-            <Button
-              size='s'
-              variant='secondary'
-              onClick={() => {
-                setInfoType("twitter");
-              }}
-            >
-              Twitter Profile
-            </Button>
-          )}
-        </div>
-      }
-    >
+    <ChatContentContainer message={message} showTimestamp showCopyButton>
+      <div className='w-full justify-between flex items-center mb-16'>
+        <span className='text-size-20 font-bold'>${tokenInfo?.symbol}</span>
+        <RadioButtonGroup
+          className='!h-32 !gap-16'
+          value={infoType}
+          onChange={setInfoType}
+          disableAnimation
+        >
+          <RadioButton className='!px-16 !text-size-12' value='basic'>
+            Basic
+          </RadioButton>
+          <RadioButton className='!px-16 !text-size-12' value='news'>
+            Twitter News
+          </RadioButton>
+          <RadioButton className='!px-16 !text-size-12' value='twitter'>
+            Twitter Profile
+          </RadioButton>
+        </RadioButtonGroup>
+      </div>
       <div
         className={clsx("w-full", {
           hidden: infoType !== "basic",
@@ -255,7 +233,7 @@ export function AnalyzeResponse({
           />
           (1H)
           <br />
-          Age: {beautifyTimeV2((tokenInfo?.createTime ?? 0) * 1000)}
+          Age: <AgeCell time={(tokenInfo?.createTime ?? 0) * 1000} />
           <br />
           Market Cap:{" "}
           <TokenNumber number={tokenInfo?.marketCap ?? ""} prefix={"$"} />
@@ -333,7 +311,7 @@ export function AnalyzeResponse({
                     </div>
                   </div>
                   <span className='text-text2'>
-                    {beautifyTimeV2(item.created_time * 1000, true, false, "")}
+                    <AgeCell time={item.created_time * 1000} />
                   </span>
                 </div>
                 <p>{item.text}</p>

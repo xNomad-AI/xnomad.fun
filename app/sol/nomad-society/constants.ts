@@ -1,1 +1,0 @@
-export const NOMADS_SOCIETY_ID = "fd6f475863723a0a27cae7ec4e2c3468";

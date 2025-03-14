@@ -24,7 +24,7 @@ export function RateNum({
   withBrackets = false,
   placeHolder,
 }: RateNumProps) {
-  const _num = useMemo(() => Math.round((num ?? 0) * 10000) / 100, [num]);
+  const _num = useMemo(() => Math.ceil((num ?? 0) * 10000) / 100, [num]);
   return (
     <div
       className={clsx(className, {

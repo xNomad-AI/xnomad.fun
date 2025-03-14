@@ -11,14 +11,14 @@ export const colors: Record<
     error: "",
     warning: "",
     colorful: clsx(
-      "bg-[linear-gradient(167deg,#00EF8B_23.63%,#BFFA52_85.18%)]"
+      "bg-[linear-gradient(127deg,#FCD116_21.25%,#EAC112_84.35%)]"
     ),
   },
   background: {
-    primary: clsx("bg-dividing"),
-    success: clsx("bg-green-20"),
+    primary: clsx("bg-white-20"),
+    success: clsx("bg-white-20"),
     error: "",
     warning: "",
-    colorful: clsx("bg-[#F8FBF8]"),
+    colorful: clsx("bg-white-20"),
   },
 };

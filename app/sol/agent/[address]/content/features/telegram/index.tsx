@@ -8,7 +8,7 @@ import {
   FormValue,
   message,
 } from "@/primitive/components";
-import { Config } from "../types";
+import { CharacterConfig } from "../types";
 import { useEffect, useState } from "react";
 import { onError } from "@/lib/utils/error";
 
@@ -20,8 +20,8 @@ export function TelegramModal({
 }: {
   open: boolean;
   onClose: () => void;
-  config?: Config;
-  onSave: (config: Partial<Config>) => Promise<void>;
+  config?: CharacterConfig;
+  onSave: (config: Partial<CharacterConfig>) => Promise<void>;
 }) {
   const [saving, setSaving] = useState(false);
 

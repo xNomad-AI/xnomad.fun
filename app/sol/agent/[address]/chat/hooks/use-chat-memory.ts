@@ -39,6 +39,7 @@ export function useChatMemory(isAgentSetup: boolean) {
             text: string;
             action: string;
             webAction?: Action;
+            data?: unknown;
           };
           roomId: string;
           unique: boolean;
@@ -57,6 +58,7 @@ export function useChatMemory(isAgentSetup: boolean) {
               user: msg.userId === agentId ? "system" : "user",
               createdAt: msg.createdAt,
               id: msg.id,
+              data: msg.content.data,
               webAction:
                 msg.content.webAction ||
                 convertMessageActionToWebAction(msg.content.action),

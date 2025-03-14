@@ -3,7 +3,7 @@ import { useTransition, animated } from "@react-spring/web";
 import { Spin } from "@/primitive/components";
 import clsx from "clsx";
 import { NFT } from "@/types";
-import { useUnmount } from "ahooks";
+import { useMount, useUnmount } from "ahooks";
 import { use100vh } from "react-div-100vh";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { ChatMessageList } from "./components/chat/chat-message-list";
@@ -14,11 +14,14 @@ import { Actions } from "./actions";
 import { useAgentSetup } from "./hooks/use-agent-setup";
 import { useChatMemory } from "./hooks/use-chat-memory";
 import { useChatGreeting } from "./hooks/use-chat-greeting";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { Action } from "./content/types";
 
-export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
+export function ChatPage({ nft }: { nft: NFT }) {
   const agentId = nft.agentId;
-
-  const { messages, setMessages } = useChatContext();
+  const { messages, setMessages, addMessage, generateMessageId } =
+    useChatContext();
   // check if agent is setup
   const { isAgentSetup } = useAgentSetup({
     nft,
@@ -28,10 +31,28 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   const { initializingMemory } = useChatMemory(isAgentSetup);
 
   // if memory is empty, show greeting
-  useChatGreeting({
+  const { isGreeting } = useChatGreeting({
     nft,
     initializingMemory,
   });
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (!initializingMemory && isAgentSetup && !isGreeting) {
+      const action = searchParams.get("action") as Action;
+      if (action === "issue-token") {
+        addMessage([
+          {
+            text: "issue token",
+            webAction: "issue-token",
+            step: "input",
+            user: "user",
+            createdAt: Date.now(),
+            id: generateMessageId("issue-token"),
+          },
+        ]);
+      }
+    }
+  }, [initializingMemory, isAgentSetup, isGreeting, searchParams]);
   useUnmount(() => {
     setMessages((messages) => {
       return (
@@ -56,6 +77,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
   });
   const height = use100vh();
   const { breakpoint } = useBreakpoint();
+
   return (
     <div
       style={{
@@ -63,10 +85,7 @@ export function ChatPage({ nft, show }: { nft: NFT; show: boolean }) {
           breakpoint === "mobile" && height ? height - 80 - 64 - 72 : undefined,
       }}
       className={clsx(
-        "relative flex flex-col w-full max-w-[720px] h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-80px-64px-72px)] gap-32",
-        {
-          hidden: !show,
-        }
+        "relative flex flex-col w-full max-w-[720px] h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-80px-64px-72px)] gap-32"
       )}
     >
       {!isAgentSetup ? (

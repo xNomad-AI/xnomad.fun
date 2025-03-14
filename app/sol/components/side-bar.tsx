@@ -150,6 +150,7 @@ function TraitFilter({
           height={320}
           items={showData}
           itemSize={48}
+          key={nftSearchParams.traitsQuery.length}
           gutterSize={0}
           renderItem={(trait) => {
             const checkedTrait = nftSearchParams.traitsQuery.find(

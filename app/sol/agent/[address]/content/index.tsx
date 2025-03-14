@@ -1,27 +1,49 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChatPage } from "../chat";
-import { NFT } from "@/types";
 import { message, RadioButton, RadioButtonGroup } from "@/primitive/components";
-import { upperFirstLetter } from "@/lib/utils/string";
-import { Portfolio } from "./portfolio";
-import { Analytics } from "./analytics";
+import { Portfolio } from "./wallet";
 import { Features } from "./features";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useMemoizedFn, useRequest } from "ahooks";
+import { useMemoizedFn, useMount, useRequest } from "ahooks";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { InfoSection } from "../info";
 import { Tasks } from "./tasks";
 import { ChatProvider } from "../chat/store";
 import { useAgentStore } from "../store";
-import { getPortfolio } from "./container/network";
-const tabs = ["chat", "tasks", "portfolio", "activity", "features"] as const;
+import { getPortfolio } from "./deposit-container/network";
+import clsx from "clsx";
+import { AgentToken } from "./agent-token";
+import { useSearchParams } from "next/navigation";
+import {
+  getPrimaryToken,
+  getTokenDetail,
+} from "./agent-token/token-detail/network";
+import { getAgentConfig } from "./features/network";
+const tabs = ["chat", "wallet", "agent-token", "tasks", "features"] as const;
+const tabMap = {
+  chat: "Chat",
+  wallet: "Wallet",
+  "agent-token": "Agent Token",
+  tasks: "Tasks",
+  features: "Features",
+  asset: "Asset",
+};
 const mobileTabs = ["chat", "tasks", "asset"] as const;
-type Tab = (typeof tabs)[number];
+export type Tab = (typeof tabs)[number];
 type MobileTab = (typeof mobileTabs)[number];
-export function Content({ nft }: { nft: NFT }) {
+export function Content() {
   const { publicKey } = useWallet();
+  const {
+    setPortfolio,
+    refreshCount,
+    setIsRefreshing,
+    nft,
+    setPrimaryToken,
+    setAgentConfig,
+  } = useAgentStore();
+
   const [tab, _setTab] = useState<Tab | null>("chat");
   const setTab = useMemoizedFn((tab: Tab | null) => {
     if (
@@ -36,19 +58,56 @@ export function Content({ nft }: { nft: NFT }) {
     }
     _setTab(tab);
   });
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const tab = searchParams.get("tab") as Tab;
+    if (tabs.includes(tab)) {
+      setTab(tab);
+    }
+  }, [searchParams]);
   const [mobileTab, setMobileTab] = useState<MobileTab | null>(null);
   const { breakpoint } = useBreakpoint();
-  const { setPortfolio, refreshCount } = useAgentStore();
   const getPortfolioData = useMemoizedFn(async (address: string) => {
+    setIsRefreshing(true);
     getPortfolio({
       address,
-    }).then((data) => {
-      setPortfolio(data);
-    });
+    })
+      .then((data) => {
+        setPortfolio(data);
+      })
+      .finally(() => {
+        setIsRefreshing(false);
+      });
   });
   const agentAccountSol = useMemo(
     () => nft?.agentAccount.solana ?? "",
     [nft?.agentAccount.solana]
+  );
+  useMount(() => {
+    getAgentConfig(nft.id).then((res) => {
+      setAgentConfig(res);
+    });
+  });
+  useRequest(
+    async () => {
+      if (nft.id) {
+        const [res, tokenDetail] = await Promise.all([
+          getPrimaryToken(nft.id),
+          getTokenDetail(nft.primaryCoin?.address ?? ""),
+        ]);
+        setPrimaryToken({
+          ...res,
+          price: parseFloat(tokenDetail.price),
+          priceChange24h: parseFloat(tokenDetail.price24h),
+          volume24h: parseFloat(tokenDetail.volume24h),
+          holdersCount: tokenDetail.holderCount,
+        });
+      }
+    },
+    {
+      refreshDeps: [nft.id],
+      pollingInterval: 1000 * 5,
+    }
   );
   useRequest(
     async () => {
@@ -72,7 +131,7 @@ export function Content({ nft }: { nft: NFT }) {
       >
         {mobileTabs.map((t) => (
           <RadioButton key={t} value={t}>
-            {upperFirstLetter(t)}
+            {tabMap[t]}
           </RadioButton>
         ))}
       </RadioButtonGroup>
@@ -93,7 +152,7 @@ export function Content({ nft }: { nft: NFT }) {
           }
           return (
             <RadioButton key={t} value={t}>
-              {upperFirstLetter(t)}
+              {tabMap[t]}
             </RadioButton>
           );
         })}
@@ -101,14 +160,23 @@ export function Content({ nft }: { nft: NFT }) {
 
       {nft.agentId && (
         <ChatProvider agentId={nft.agentId}>
-          <ChatPage nft={nft} show={tab === "chat" || mobileTab === "chat"} />
+          <div
+            className={clsx(
+              "flex gap-32 mobile:flex-col mobile:gap-16 w-full justify-center",
+              {
+                hidden: !(tab === "chat" || mobileTab === "chat"),
+              }
+            )}
+          >
+            <ChatPage nft={nft} />
+          </div>
         </ChatProvider>
       )}
       {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
-        mobileTab === "asset" && <InfoSection nft={nft} />}
-      {tab === "portfolio" && <Portfolio nft={nft} />}
+        mobileTab === "asset" && <InfoSection />}
+      <Portfolio show={tab === "wallet"} />
+      <AgentToken show={tab === "agent-token"} />
       {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
-      {tab === "activity" && <Analytics nft={nft} />}
       {tab === "features" && <Features nft={nft} />}
     </div>
   );

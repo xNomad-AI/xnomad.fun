@@ -1,15 +1,22 @@
 "use client";
 import { CardViewGallery } from "@/app/sol/components/card-view-gallery";
 import { NFTCard } from "@/app/sol/components/collection-nfts";
-import { NOMADS_SOCIETY_ID } from "@/app/sol/nomad-society/constants";
+import { NOMADS_SOCIETY_ID } from "@/app/sol/ugc-agents/constants";
 import { XNOMAD_ID } from "@/app/sol/xnomad/constants";
 import { api } from "@/primitive/api";
+import { Select } from "@/primitive/components";
 import { NFT } from "@/types";
 import { useRequest } from "ahooks";
-import { useState } from "react";
-
+import { useMemo, useState } from "react";
+const tabs = ["xnomad", "ugc-agents", "all"] as const;
+type Tab = (typeof tabs)[number];
+const tabMap = {
+  xnomad: "xNomad",
+  "ugc-agents": "UGC Agents",
+  all: "All",
+};
 export function Content({ address }: { address: string }) {
-  const [tab, setTab] = useState<"xnomad" | "society">("xnomad");
+  const [tab, setTab] = useState<Tab>("all");
   const [xnomads, setXnomads] = useState<NFT[]>([]);
   const [society, setSociety] = useState<NFT[]>([]);
   const { loading } = useRequest(async () => {
@@ -46,32 +53,47 @@ export function Content({ address }: { address: string }) {
       setSociety(res[NOMADS_SOCIETY_ID]?.nfts ?? []);
     }
   });
+  const count = useMemo(() => {
+    switch (tab) {
+      case "all":
+        return xnomads.length + society.length;
+      case "xnomad":
+        return xnomads.length;
+      case "ugc-agents":
+        return society.length;
+
+      default:
+        return xnomads.length;
+    }
+  }, [tab, xnomads, society]);
+  const data = useMemo(() => {
+    switch (tab) {
+      case "all":
+        return [...xnomads, ...society];
+      case "xnomad":
+        return xnomads;
+      case "ugc-agents":
+        return society;
+
+      default:
+        return xnomads;
+    }
+  }, [tab, xnomads, society]);
   return (
     <div className='w-full flex flex-col gap-32'>
-      <div className='flex gap-32'>
-        <button
-          className={`text-size-20 font-bold ${
-            tab === "xnomad" ? "text-text1" : "text-white-60"
-          }`}
-          onClick={() => setTab("xnomad")}
-        >
-          xNomad({xnomads?.length})
-        </button>
-        <button
-          className={`text-size-20 font-bold ${
-            tab === "society" ? "text-text1" : "text-white-60"
-          }`}
-          onClick={() => setTab("society")}
-        >
-          Society({society?.length})
-        </button>
-      </div>
-      <CardViewGallery
-        loading={loading}
-        loadingMore={false}
-        count={tab === "society" ? society?.length : xnomads?.length}
+      <Select
+        placement='start'
+        onSelect={(value) => setTab(value as Tab)}
+        value={tab}
+        optionConfig={{
+          data: [...tabs],
+          renderer: (tab) => tabMap[tab],
+        }}
       >
-        {(tab === "society" ? society : xnomads)?.map((nft) => (
+        {tabMap[tab]}
+      </Select>
+      <CardViewGallery loading={loading} loadingMore={false} count={count}>
+        {data?.map((nft) => (
           <NFTCard
             nft={nft}
             collectionName={nft.collectionName}

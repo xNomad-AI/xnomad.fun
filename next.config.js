@@ -9,6 +9,11 @@ module.exports = {
     SOLANA_RPC: process.env.SOLANA_RPC,
     DEPLOY_ENV: process.env.DEPLOY_ENV,
     TWITTER_ENABLED: process.env.TWITTER_ENABLED,
+    TOKEN_STORY_API_HOST: process.env.TOKEN_STORY_API_HOST,
+    OKX_SECRET_KEY: process.env.OKX_SECRET_KEY,
+    OKX_ACCESS_KEY: process.env.OKX_ACCESS_KEY,
+    OKX_PROJECT_ID: process.env.OKX_PROJECT_ID,
+    OKX_PASS_PHRASE: process.env.OKX_PASS_PHRASE
   },
   compiler: {
     removeConsole: process.env.DEPLOY_ENV === "prod",

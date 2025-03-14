@@ -17,6 +17,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ClearMemoryButton } from "../components/clear-memory";
 import clsx from "clsx";
+import { TradeSetting } from "./trade-setting";
 
 export function Actions({ nft }: { nft: NFT }) {
   const { publicKey } = useWallet();
@@ -168,6 +169,18 @@ export function Actions({ nft }: { nft: NFT }) {
           },
         ];
         break;
+      case "copy-trade":
+        newMessages = [
+          {
+            text: "Copy Trade",
+            webAction: "trade",
+            step: "input",
+            tradeAction: "copy-trade",
+            user: "user",
+            createdAt: Date.now(),
+            id: generateMessageId("copy-trade"),
+          },
+        ];
       default:
         break;
     }
@@ -231,6 +244,7 @@ export function Actions({ nft }: { nft: NFT }) {
               {tradeActionConfigs[tradeAction].title}
             </Button>
           ))}
+          <TradeSetting />
         </motion.div>
       </div>
       <ClearMemoryButton

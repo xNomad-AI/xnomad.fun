@@ -21,7 +21,7 @@ export function CollectionInfo({
     <div className='flex items-center justify-between'>
       <div className='flex flex-col gap-4'>
         <h1 style={bungee.style} className='text-[40px] mobile:text-size-24'>
-          {collection.name}
+          {isSociety ? "UGC AI Agents" : collection.name}
         </h1>
         <span className=''>{collection?.nftsCount?.toLocaleString()} NFTs</span>
       </div>

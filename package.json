@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@bloxroute/solana-trader-client-ts": "^2.2.3",
     "@elizaos/core": "^0.1.8",
     "@popperjs/core": "^2.11.8",
     "@react-spring/web": "^9.7.5",
@@ -29,6 +30,8 @@
     "bs58": "^6.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "constate": "^3.3.2",
+    "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "delegation": "link:@web3-storage/w3up-client/delegation",
@@ -36,6 +39,7 @@
     "immer": "^10.1.1",
     "js-sha1": "^0.7.0",
     "lodash": "^4.17.21",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.474.0",
     "marked": "^15.0.7",
     "next": "14.2.4",
@@ -47,11 +51,13 @@
     "react-popper": "^2.3.0",
     "react-window": "^1.8.11",
     "react-window-infinite-loader": "^1.0.10",
+    "socket.io-client": "^4.8.1",
     "tw-colors": "^3.3.2",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

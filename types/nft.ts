@@ -1,3 +1,4 @@
+import { TokenInfo } from "@/app/sol/agent/[address]/content/agent-token/token-list/network";
 import { Character, UUID } from "@elizaos/core";
 
 export interface NFT {
@@ -31,5 +32,16 @@ export interface NFT {
   agentAccount: {
     solana: string;
     evm: string;
+  };
+  primaryCoin?: {
+    symbol: string;
+    image: string;
+    address: string;
+  };
+  mint?: {
+    to: string;
+    timestamp: number;
+    blockNumber: number;
+    txHash: string;
   };
 }

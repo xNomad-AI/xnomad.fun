@@ -1,9 +1,10 @@
 "use client";
-import { Spin } from "@/primitive/components";
+import Lottie from "lottie-react";
+import Rocket from "./rocket.json";
 import { useState } from "react";
 import { Container } from "./container";
 import { Base } from "./base";
-import { Review } from "./review";
+import { Review, TOKEN_DEPLOY_TIME } from "./review";
 export type Step = "base" | "review" | "creating" | "success";
 export function Content() {
   const [step, setStep] = useState<Step>("base");
@@ -22,10 +23,14 @@ export function Content() {
         value='creating'
         current={step}
       >
-        <Spin className='!text-[64px]' />
-        <p className='text-center text-size-16 font-bold'>
-          Estimated time is about 3 minutes. Please do not close the page until
-          asset submission is completed.
+        <div className='w-[10rem] h-[10rem]'>
+          <Lottie animationData={Rocket} loop />
+        </div>
+        <p className='text-size-16 font-bold text-center'>
+          Estimated time is about {TOKEN_DEPLOY_TIME / 1000}s. Please do not
+          close the page
+          <br />
+          until asset submission is completed.
         </p>
       </Container>
     </div>

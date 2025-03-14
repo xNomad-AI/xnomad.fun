@@ -27,7 +27,7 @@ import { useSolana } from "@/lib/hooks/use-solana";
 import { onError } from "@/lib/utils/error";
 import { useRouter } from "next/navigation";
 import { TokenNumber } from "@/components/token-number";
-
+export const TOKEN_DEPLOY_TIME = 10 * 1000;
 export function Review({
   step,
   setStep,
@@ -117,14 +117,26 @@ export function Review({
         new Uint8Array(Buffer.from(createInfo.tx, "hex"))
       );
       setStep("creating");
+      const startTime = Date.now();
       const res = await signTransaction(versionTx);
       const tx = await connection.sendTransaction(res, {
         preflightCommitment: "confirmed",
       });
       inspectTransaction(tx).then(() => {
-        setStep("success");
-        resetAll();
-        setIssueTokenForm(initialIssueTokenForm);
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+        const onFinish = () => {
+          setStep("success");
+          resetAll();
+          setIssueTokenForm(initialIssueTokenForm);
+        };
+        if (duration < TOKEN_DEPLOY_TIME) {
+          setTimeout(() => {
+            onFinish();
+          }, TOKEN_DEPLOY_TIME - duration);
+        } else {
+          onFinish();
+        }
       });
     } catch (error) {
       onError(error);

@@ -24,7 +24,7 @@ import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 import { useAgentStore } from "../../../store";
 import { TokenMetrics } from "./metrics";
 
-export function Detail({ nft, show }: { nft: NFT; show: boolean }) {
+export function Detail({ show }: { nft: NFT; show: boolean }) {
   const { primaryToken } = useAgentStore();
   return (
     <div

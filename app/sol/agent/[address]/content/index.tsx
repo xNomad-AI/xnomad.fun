@@ -18,7 +18,10 @@ import clsx from "clsx";
 import { AgentToken } from "./agent-token";
 import { useSearchParams } from "next/navigation";
 import { isOwner } from "@/lib/user/ownership";
-import { getPrimaryToken } from "./agent-token/token-detail/network";
+import {
+  getPrimaryToken,
+  getTokenDetail,
+} from "./agent-token/token-detail/network";
 import { getAgentConfig } from "./features/network";
 const tabs = ["chat", "wallet", "agent-token", "tasks", "features"] as const;
 const tabMap = {
@@ -90,12 +93,22 @@ export function Content() {
   useRequest(
     async () => {
       if (nft.id) {
-        const res = await getPrimaryToken(nft.id);
-        setPrimaryToken(res);
+        const [res, tokenDetail] = await Promise.all([
+          getPrimaryToken(nft.id),
+          getTokenDetail(nft.primaryCoin?.address ?? ""),
+        ]);
+        setPrimaryToken({
+          ...res,
+          price: parseFloat(tokenDetail.price),
+          priceChange24h: parseFloat(tokenDetail.price24h),
+          volume24h: parseFloat(tokenDetail.volume24h),
+          holdersCount: tokenDetail.holderCount,
+        });
       }
     },
     {
       refreshDeps: [nft.id],
+      pollingInterval: 1000 * 5,
     }
   );
   useRequest(

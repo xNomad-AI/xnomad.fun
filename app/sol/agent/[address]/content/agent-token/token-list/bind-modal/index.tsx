@@ -38,6 +38,7 @@ export function BindModal({
   nft: NFT;
   tokens: TokenInfo[];
 }) {
+  const [isBinding, setIsBinding] = useState(false);
   const [token, setToken] = useState<InnerData>({
     ca: initToken?.address ?? "",
     ticker: initToken?.symbol ?? "",
@@ -84,6 +85,7 @@ export function BindModal({
     _onClose();
   });
   const onBind = useMemoizedFn(async () => {
+    setIsBinding(true);
     try {
       await api.v1.post(`/nft/solana/${nft.id}/bind-primary-coin`, {
         address: token.ca,
@@ -92,8 +94,11 @@ export function BindModal({
         type: "success",
       });
       onSuccess?.();
+      onClose();
     } catch (error) {
       onError(error);
+    } finally {
+      setIsBinding(false);
     }
   });
   return (
@@ -134,6 +139,7 @@ export function BindModal({
           </Button>
           <Button
             stretch
+            loading={isBinding}
             onClick={() => {
               onBind();
             }}

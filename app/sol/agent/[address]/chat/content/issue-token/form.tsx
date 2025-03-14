@@ -374,9 +374,7 @@ export function IssueTokenForm({
       <Divider horizontal className='w-full' />
       <FormItem
         label={"Buy(SOL)"}
-        desc={
-          "Purchasing a small amount of your token is optional but can help protect your coin from snipers."
-        }
+        desc={"Purchase at least 0.01 SOL to initiate trading."}
         {...form.amount}
       >
         <TextField

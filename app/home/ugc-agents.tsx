@@ -33,6 +33,7 @@ export function UGCAgents() {
         <NFTCard
           nft={agent}
           isHome
+          key={agent.id}
           className='!min-w-[240px]'
           collectionName={"UGC AI Agents"}
         />

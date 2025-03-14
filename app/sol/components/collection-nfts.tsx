@@ -137,6 +137,7 @@ export function NFTCard({
         src={nft.image}
         width={240}
         height={240}
+        key={nft.image}
         alt={nft.name}
         loading='lazy'
         className='w-full group-hover:scale-110 transition-all duration-300 ease-in-out aspect-square object-contain bg-surface rounded-12'

@@ -13,11 +13,9 @@ import { Tasks } from "./tasks";
 import { ChatProvider } from "../chat/store";
 import { useAgentStore } from "../store";
 import { getPortfolio } from "./deposit-container/network";
-import { SideWallet } from "./wallet/side-wallet";
 import clsx from "clsx";
 import { AgentToken } from "./agent-token";
 import { useSearchParams } from "next/navigation";
-import { isOwner } from "@/lib/user/ownership";
 import {
   getPrimaryToken,
   getTokenDetail,

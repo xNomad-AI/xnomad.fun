@@ -30,7 +30,7 @@ export default function Page() {
             🤖🤖🤖🤖🤖🤖
           </h1>
           <h2 className='text-center max-w-[230px] text-size-24 font-bold'>
-            Create an AI-NFT Collection
+            Create a Swarm
           </h2>
         </Card>
       </Link>

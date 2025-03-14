@@ -7,7 +7,8 @@ import { TokenInputBuy, TokenValue } from "../token-input";
 import { CancelButton } from "../cancel-button";
 
 export function AnalyzeInput({ message }: { message: ContentWithUser }) {
-  const { deleteMessageById, addMessage, generateMessageId } = useChatContext();
+  const { deleteMessageById, addAndSendMessage, generateMessageId } =
+    useChatContext();
   const [form, setForm] = useState<{
     token: FormValue<TokenValue>;
   }>({
@@ -75,22 +76,9 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
                 setForm(newForm);
                 return;
               }
-              addMessage([
-                {
-                  text: `Help me analyze this token: $${form.token.value.ticker}(${form.token.value.ca})`,
-                  user: "user",
-                  createdAt: Date.now(),
-                  id: generateMessageId("analyze-input"),
-                },
-                {
-                  text: `Help me analyze this token: $${form.token.value.ticker}(${form.token.value.ca})`,
-                  user: "system",
-                  isLoading: true,
-                  webAction: "analyze",
-                  createdAt: Date.now(),
-                  id: generateMessageId("analyze-input-loading"),
-                },
-              ]);
+              addAndSendMessage(
+                `Help me analyze this token: $${form.token.value.ticker}(${form.token.value.ca})`
+              );
               deleteMessageById(message.id);
             }}
           >

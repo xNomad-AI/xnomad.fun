@@ -39,7 +39,7 @@ export function createAgentStore({ nft }: { nft: NFT }) {
         });
       },
       refreshNFT: async () => {
-        const newNFT = await api.v1.get<NFT>(`/nft/solana/nfts/${nft.agentId}`);
+        const newNFT = await api.v1.get<NFT>(`/nft/solana/nfts/${nft.id}`);
         set((state) => {
           state.nft = newNFT;
         });

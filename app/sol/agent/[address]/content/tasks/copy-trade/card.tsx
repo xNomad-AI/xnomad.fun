@@ -68,7 +68,7 @@ function MemoTaskCard({
           <span className='text-text2'>Buy per Trade:</span>{" "}
           {task.fixedAmount
             ? `${task.fixedAmount} SOL`
-            : `${task.percentage ?? 0}%`}
+            : `${(task.percentage ?? 0) * 100}%`}
         </p>
         <p>
           <span className='text-text2'>Copy Sell:</span>{" "}
@@ -198,7 +198,7 @@ function EditButton({
         value:
           task.mode === "amount"
             ? task.fixedAmount?.toString() ?? ""
-            : task.percentage?.toString() ?? "",
+            : ((task.percentage ?? 0) * 100)?.toString() ?? "",
       },
       isCopySell: { ...form.isCopySell, value: task.copySell },
       target: { ...form.target, value: task.targetAddress },

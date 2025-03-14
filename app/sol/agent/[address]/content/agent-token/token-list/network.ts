@@ -46,6 +46,6 @@ export function getAgentTokenList({
     offset,
     sortBy,
     sortOrder,
-    onlyBound,
+    onlyBound: onlyBound === 0 ? undefined : onlyBound,
   });
 }

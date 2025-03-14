@@ -21,6 +21,7 @@ export function TokenList({ show }: { show: boolean }) {
     async () => {
       const res = await getAgentTokenList({
         creatorAddress: nft.agentAccount.solana,
+        onlyBound: 0,
       });
       setTokens(res.list);
     },

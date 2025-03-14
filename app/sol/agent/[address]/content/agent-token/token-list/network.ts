@@ -8,6 +8,7 @@ export interface Params {
   offset?: number;
   sortBy?: string;
   sortOrder?: string;
+  onlyBound?: 0 | 1;
 }
 export interface TokenInfo {
   address: string;
@@ -37,6 +38,7 @@ export function getAgentTokenList({
   offset = 0,
   sortBy = "deployedTime",
   sortOrder = "desc",
+  onlyBound = 1,
 }: Params) {
   return api.v1.get<{ list: TokenInfo[] }>("/nft/agent-created-tokens", {
     creatorAddress,
@@ -44,5 +46,6 @@ export function getAgentTokenList({
     offset,
     sortBy,
     sortOrder,
+    onlyBound,
   });
 }

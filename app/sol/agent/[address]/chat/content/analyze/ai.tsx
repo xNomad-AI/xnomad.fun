@@ -198,10 +198,10 @@ export function AnalyzeResponse({
             Basic
           </RadioButton>
           <RadioButton className='!px-16 !text-size-12' value='news'>
-            Twitter News
+            X News
           </RadioButton>
           <RadioButton className='!px-16 !text-size-12' value='twitter'>
-            Twitter Profile
+            X Profile
           </RadioButton>
         </RadioButtonGroup>
       </div>

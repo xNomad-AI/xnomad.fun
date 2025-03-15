@@ -7,6 +7,7 @@ import { useSwap } from "../trade/swap/swap";
 import { useAgentStore } from "../../../../store";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { getGasPrice } from "../network/gas-price";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 function useStore() {
   const { swap } = useSwap();
@@ -46,30 +47,34 @@ function useStore() {
     setBuyLoading(true);
     try {
       await swap({
-        amount: amount * 10 ** 9,
+        amount: amount * LAMPORTS_PER_SOL,
         type: "buy",
-        priorityFee: priorityFee * 10 ** 9,
+        priorityFee: priorityFee * LAMPORTS_PER_SOL,
         tokenAddress: nft.primaryCoin?.address ?? "",
         slippage,
         mode: tradeMode,
-        tip: +tip * 10 ** 9,
+        tip: +tip * LAMPORTS_PER_SOL,
+        agentWalletAddress: nft.agentAccount.solana,
+        solAmount: amount * LAMPORTS_PER_SOL,
       });
     } finally {
       setBuyLoading(false);
     }
   });
 
-  const handleSell = useMemoizedFn(async (amount: number) => {
+  const handleSell = useMemoizedFn(async (amount: number, receive: string) => {
     setSellLoading(true);
     try {
       await swap({
         amount,
         type: "sell",
-        priorityFee: priorityFee * 10 ** 9,
+        priorityFee: priorityFee * LAMPORTS_PER_SOL,
         tokenAddress: address,
         slippage,
         mode: tradeMode,
-        tip: +tip * 10 ** 9,
+        tip: +tip * LAMPORTS_PER_SOL,
+        agentWalletAddress: nft.agentAccount.solana,
+        solAmount: +receive * LAMPORTS_PER_SOL,
       });
     } finally {
       setSellLoading(false);

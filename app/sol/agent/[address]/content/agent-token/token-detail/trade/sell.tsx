@@ -25,12 +25,6 @@ export function SellSection() {
 
   const { tradeMode, setTradeMode, setPriorityFeeType } = useTradeConfigStore();
 
-  const sell = useMemoizedFn(async () => {
-    await handleSell(+value * 10 ** (tokenDecimal ?? 9));
-    setValue("");
-    updateBalance();
-  });
-
   const received = useMemo(() => {
     const amount = +value;
     const sol = solGasData?.eth_usd_price;
@@ -40,6 +34,12 @@ export function SellSection() {
     }
     return "--";
   }, [value, solGasData?.eth_usd_price, tokenPrice]);
+
+  const sell = useMemoizedFn(async () => {
+    await handleSell(+value * 10 ** (tokenDecimal ?? 9), received);
+    setValue("");
+    updateBalance();
+  });
 
   useEffect(() => {
     if (isNumber(+received) && +received >= 2 && tradeMode !== "ANTI-MEV") {

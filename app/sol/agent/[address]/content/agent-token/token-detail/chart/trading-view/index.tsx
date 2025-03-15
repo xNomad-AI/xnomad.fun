@@ -73,7 +73,7 @@ export function TokenPriceChart({
 }) {
   return (
     <TradingViewGraph
-      key={`${pairAddress}-${baseToken}-${quoteToken}-${precision}`}
+      key={`${pairAddress}-${baseToken}-${quoteToken}`}
       pairAddress={pairAddress}
       baseToken={baseToken}
       quoteToken={quoteToken}

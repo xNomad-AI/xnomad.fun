@@ -18,6 +18,7 @@ import { useConnectModalStore } from "@/components/connect-modal/store";
 import { api } from "@/primitive/api";
 import { PublicKey } from "@solana/web3.js";
 import { SystemProgram } from "@solana/web3.js";
+import BigNumber from "bignumber.js";
 const FEE = 0.01;
 const FEE_FOR_AGENT = 0.005;
 const FEE_FOR_XNOMAD = FEE - FEE_FOR_AGENT;
@@ -57,6 +58,7 @@ export type SwapOption = {
   tip: number;
   mode: SwapMode;
   agentWalletAddress: string;
+  solAmount: number;
 };
 function getOKXCallData(params: OKXCallDataRequestParams) {
   return api.ts.get("/okx_forward/swap", params);
@@ -97,8 +99,8 @@ export function useSwap() {
       tip = 0.001 * LAMPORTS_PER_SOL,
       mode = "FAST",
       agentWalletAddress,
+      solAmount,
     } = option;
-
     if (!wallet.connected || !wallet.publicKey) {
       setVisible(true);
       return;
@@ -118,7 +120,10 @@ export function useSwap() {
       computeUnitLimit
     );
     const baseParams: OKXCallDataRequestParams = {
-      amount: (amount * (1 - FEE_FOR_AGENT)).toString(),
+      amount:
+        type === "buy"
+          ? (amount * (1 - FEE_FOR_AGENT)).toString()
+          : amount.toString(),
       slippage: slippage.toString(),
       chainId: "501",
       userWalletAddress,
@@ -140,11 +145,14 @@ export function useSwap() {
       const insForAgent = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: new PublicKey(agentWalletAddress),
-        lamports: amount * FEE_FOR_AGENT, //TODO: why not LAMPORTS_PER_SOL
+        lamports: +BigNumber(solAmount * FEE_FOR_AGENT).toFixed(
+          0,
+          BigNumber.ROUND_DOWN
+        ),
       });
       const [tx, insForTip] = await Promise.all([
         createCalldata(okxParams, okx, priorityFee),
-        provider.makeTransferInstruction(wallet.publicKey, tip), // TODO: why LAMPORTS_PER_SOL
+        provider.makeTransferInstruction(wallet.publicKey, tip),
       ]);
       await appendInstruction(tx, okx.connections, ...insForTip, insForAgent);
       const signedTx = await wallet.signTransaction?.(tx);

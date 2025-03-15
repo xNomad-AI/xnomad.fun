@@ -16,6 +16,11 @@ import { message } from "@/primitive/components";
 import { onError } from "@/lib/utils/error";
 import { useConnectModalStore } from "@/components/connect-modal/store";
 import { api } from "@/primitive/api";
+import { PublicKey } from "@solana/web3.js";
+import { SystemProgram } from "@solana/web3.js";
+const FEE = 0.01;
+const FEE_FOR_AGENT = 0.005;
+const FEE_FOR_XNOMAD = FEE - FEE_FOR_AGENT;
 export interface OKXCallDataRequestParams {
   amount?: string;
   chainId?: string;
@@ -51,6 +56,7 @@ export type SwapOption = {
    */
   tip: number;
   mode: SwapMode;
+  agentWalletAddress: string;
 };
 function getOKXCallData(params: OKXCallDataRequestParams) {
   return api.ts.get("/okx_forward/swap", params);
@@ -90,6 +96,7 @@ export function useSwap() {
       type,
       tip = 0.001 * LAMPORTS_PER_SOL,
       mode = "FAST",
+      agentWalletAddress,
     } = option;
 
     if (!wallet.connected || !wallet.publicKey) {
@@ -110,13 +117,12 @@ export function useSwap() {
       priorityFee,
       computeUnitLimit
     );
-
     const baseParams: OKXCallDataRequestParams = {
-      amount: amount.toString(),
+      amount: (amount * (1 - FEE_FOR_AGENT)).toString(),
       slippage: slippage.toString(),
       chainId: "501",
       userWalletAddress,
-      feePercent: "1",
+      feePercent: (FEE_FOR_XNOMAD * 100).toString(),
       computeUnitPrice: `${computeUnitPrice}`,
       computeUnitLimit: `${computeUnitLimit}`,
     };
@@ -131,11 +137,16 @@ export function useSwap() {
     const provider = mode === "FAST" ? fastModeProvider : mevModeProvider;
 
     try {
-      const [tx, ins] = await Promise.all([
+      const insForAgent = SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        toPubkey: new PublicKey(agentWalletAddress),
+        lamports: amount * FEE_FOR_AGENT, //TODO: why not LAMPORTS_PER_SOL
+      });
+      const [tx, insForTip] = await Promise.all([
         createCalldata(okxParams, okx, priorityFee),
-        provider.makeTransferInstruction(wallet.publicKey, tip),
+        provider.makeTransferInstruction(wallet.publicKey, tip), // TODO: why LAMPORTS_PER_SOL
       ]);
-      await appendInstruction(tx, okx.connections, ...ins);
+      await appendInstruction(tx, okx.connections, ...insForTip, insForAgent);
       const signedTx = await wallet.signTransaction?.(tx);
 
       if (!signedTx) {

@@ -53,6 +53,7 @@ function useStore() {
         slippage,
         mode: tradeMode,
         tip: +tip * 10 ** 9,
+        agentWalletAddress: nft.agentAccount.solana,
       });
     } finally {
       setBuyLoading(false);
@@ -70,6 +71,7 @@ function useStore() {
         slippage,
         mode: tradeMode,
         tip: +tip * 10 ** 9,
+        agentWalletAddress: nft.agentAccount.solana,
       });
     } finally {
       setSellLoading(false);

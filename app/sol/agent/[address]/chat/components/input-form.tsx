@@ -22,7 +22,6 @@ export function InputForm() {
   const {
     input,
     setInput,
-    formRef,
     handleSubmitForm,
     sendMessageMutation,
     selectedFile,
@@ -38,17 +37,17 @@ export function InputForm() {
   }, []);
   const sendMessageDisabled = useMemo(
     () => (!input && !selectedFile) || sendMessageMutation?.isPending,
-    [input, selectedFile, sendMessageMutation]
+    [input, selectedFile, sendMessageMutation?.isPending]
   );
   const handleKeyDown = useMemoizedFn(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter" && !e.shiftKey && !sendMessageDisabled) {
-        handleSubmitForm(e as unknown as React.FormEvent<HTMLFormElement>);
+        handleSubmitForm();
       }
     }
   );
   return (
-    <form
+    <div
       onClick={(e) => {
         if (!publicKey) {
           inputRef.current?.blur();
@@ -57,8 +56,6 @@ export function InputForm() {
           setVisible(true);
         }
       }}
-      ref={formRef}
-      onSubmit={handleSubmitForm}
       className='rounded-12 p-16 bg-surface flex items-center gap-8 border border-white-20'
     >
       <Tooltip
@@ -115,7 +112,11 @@ export function InputForm() {
       ) : null}
       <button
         disabled={sendMessageDisabled}
-        type='submit'
+        onClick={() => {
+          if (!sendMessageDisabled) {
+            handleSubmitForm();
+          }
+        }}
         className={clsx("flex items-center", {
           "cursor-not-allowed": sendMessageDisabled,
         })}
@@ -126,6 +127,6 @@ export function InputForm() {
           <Send className='size-20 rotate-45' />
         )}
       </button>
-    </form>
+    </div>
   );
 }

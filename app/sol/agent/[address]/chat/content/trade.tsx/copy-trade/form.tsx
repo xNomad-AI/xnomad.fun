@@ -148,7 +148,10 @@ export function CopyTradeForm({
             });
           }}
         />
-        <span>Copy Sell</span>
+        <div className='flex items-center gap-4'>
+          <span>Copy Sell</span>
+          <TooltipInfoIcon content='When the target wallet sells, automatically sell the same proportion of holdings.' />
+        </div>
       </div>
     </>
   );

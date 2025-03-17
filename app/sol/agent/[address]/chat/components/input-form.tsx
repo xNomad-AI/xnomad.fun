@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useChatContext } from "../store";
 import { useConnectModalStore } from "@/components/connect-modal/store";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -36,9 +36,13 @@ export function InputForm() {
       inputRef.current.focus();
     }
   }, []);
+  const sendMessageDisabled = useMemo(
+    () => (!input && !selectedFile) || sendMessageMutation?.isPending,
+    [input, selectedFile, sendMessageMutation]
+  );
   const handleKeyDown = useMemoizedFn(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+      if (e.key === "Enter" && !e.shiftKey && !sendMessageDisabled) {
         handleSubmitForm(e as unknown as React.FormEvent<HTMLFormElement>);
       }
     }
@@ -110,11 +114,10 @@ export function InputForm() {
         </div>
       ) : null}
       <button
-        disabled={(!input && !selectedFile) || sendMessageMutation?.isPending}
+        disabled={sendMessageDisabled}
         type='submit'
         className={clsx("flex items-center", {
-          "cursor-not-allowed":
-            (!input && !selectedFile) || sendMessageMutation?.isPending,
+          "cursor-not-allowed": sendMessageDisabled,
         })}
       >
         {sendMessageMutation?.isPending ? (

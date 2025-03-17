@@ -315,23 +315,35 @@ export function AnalyzeResponse({
                   </span>
                 </div>
                 <p>{item.text}</p>
-                <div className='flex items-center gap-24'>
-                  <div className='min-w-[3.75rem] flex items-center text-size-12'>
-                    <IconMessage className='text-size-16' />
-                    {toCardNum(item.reply_count)}
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center gap-24'>
+                    <div className='min-w-[3.75rem] flex items-center text-size-12'>
+                      <IconMessage className='text-size-16' />
+                      {toCardNum(item.reply_count)}
+                    </div>
+                    <div className='min-w-[3.75rem] flex items-center text-size-12'>
+                      <IconRetweet className='text-size-16' />
+                      {toCardNum(item.retweet_count)}
+                    </div>
+                    <div className='min-w-[3.75rem] flex items-center text-size-12'>
+                      <IconHeart className='text-size-16' />
+                      {toCardNum(item.favorite_count)}
+                    </div>
+                    <div className='min-w-[3.75rem] flex items-center text-size-12'>
+                      <IconViewed className='text-size-16' />
+                      {toCardNum(item.views)}
+                    </div>
                   </div>
-                  <div className='min-w-[3.75rem] flex items-center text-size-12'>
-                    <IconRetweet className='text-size-16' />
-                    {toCardNum(item.retweet_count)}
-                  </div>
-                  <div className='min-w-[3.75rem] flex items-center text-size-12'>
-                    <IconHeart className='text-size-16' />
-                    {toCardNum(item.favorite_count)}
-                  </div>
-                  <div className='min-w-[3.75rem] flex items-center text-size-12'>
-                    <IconViewed className='text-size-16' />
-                    {toCardNum(item.views)}
-                  </div>
+                  <TextAnchor
+                    href={
+                      item.link ||
+                      `https://x.com/${item.author}/status/${item.tweet_id}`
+                    }
+                    withDecoration
+                    target='_blank'
+                  >
+                    View in X
+                  </TextAnchor>
                 </div>
               </Card>
             ))

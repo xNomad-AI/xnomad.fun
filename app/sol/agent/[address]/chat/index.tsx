@@ -66,8 +66,7 @@ export function ChatPage({ nft }: { nft: NFT }) {
   });
 
   const transitions = useTransition(messages, {
-    keys: (message) =>
-      `${message?.createdAt}-${message?.user}-${message?.text}`,
+    keys: (message) => `${message?.createdAt}-${message?.user}-${message?.id}`,
     from: { opacity: 0, transform: "translateY(32px)" },
     enter: { opacity: 1, transform: "translateY(0px)" },
     leave: { opacity: 0, transform: "translateY(8px)" },
@@ -103,7 +102,11 @@ export function ChatPage({ nft }: { nft: NFT }) {
                 // FIXME: Fix this any
                 const Comp = animated.div as any;
                 return (
-                  <Comp style={styles} className='flex gap-16'>
+                  <Comp
+                    style={styles}
+                    key={`chat-container-${message?.id}`}
+                    className='flex gap-16'
+                  >
                     {message?.user !== "user" ? (
                       <img
                         className='h-32 w-32 flex-shrink-0 p-1 object-contain border rounded-full select-none'
@@ -115,7 +118,11 @@ export function ChatPage({ nft }: { nft: NFT }) {
                     ) : null}
 
                     {message ? (
-                      <ChatContent message={message} nft={nft} />
+                      <ChatContent
+                        key={`chat-content-${message.id}`}
+                        message={message}
+                        nft={nft}
+                      />
                     ) : null}
                   </Comp>
                 );

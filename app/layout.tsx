@@ -15,7 +15,7 @@ import { InitStore } from "./layout/init-store";
 import { PageLoadingProgressBar } from "./layout/page-loading-progress";
 import { Suspense } from "react";
 import Script from "next/script";
-
+const GA_ID = process.env.GA_ID;
 const ibm = IBM_Plex_Mono({
   variable: "--ibm-plex-mono",
   subsets: ["latin"],
@@ -48,6 +48,20 @@ export default function RootLayout({
         content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'
       />
       <link rel='icon' href='/logo.svg' type='image/x-icon' />
+      <script
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+      ></script>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', '${GA_ID}');`,
+        }}
+      ></script>
       <Script
         type='text/javascript'
         defer

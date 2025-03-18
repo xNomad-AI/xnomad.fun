@@ -16,7 +16,7 @@ export function Table({ tokenInfo }: { tokenInfo: TokenInfo }) {
           }`}
           onClick={() => setTab("activity")}
         >
-          Activities
+          Activity
         </button>
         <button
           className={`text-size-16 font-bold ${

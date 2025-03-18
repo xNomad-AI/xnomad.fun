@@ -21,7 +21,7 @@ import { useAutoScroll } from "./hooks/use-auto-scroll";
 
 const ChatContext = createContext<
   | ({
-      handleSubmitForm: (e: React.FormEvent<HTMLFormElement>) => void;
+      handleSubmitForm: () => void;
       addMessage: (
         newMessages: ContentWithUser[],
         removeInvalidAction?: boolean
@@ -42,7 +42,6 @@ const ChatContext = createContext<
         },
         unknown
       >;
-      formRef: React.RefObject<HTMLFormElement>;
       agentId: UUID;
       deleteLastMessageByLength: (length?: number) => void;
       deleteMessageByIndex: (index: number) => void;
@@ -63,7 +62,6 @@ export function ChatProvider({
 }>) {
   const { publicKey } = useWallet();
 
-  const formRef = useRef<HTMLFormElement>(null);
   const userId = useMemo(() => {
     if (publicKey) {
       return stringToUuid(publicKey.toBase58());
@@ -162,18 +160,14 @@ export function ChatProvider({
       });
     }
   );
-  const handleSubmitForm = useMemoizedFn(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      if (!input && !selectedFile) return;
+  const handleSubmitForm = useMemoizedFn(() => {
+    if (!input && !selectedFile) return;
 
-      addAndSendMessage(input, selectedFile);
+    addAndSendMessage(input, selectedFile);
 
-      setSelectedFile(null);
-      setInput("");
-      formRef.current?.reset();
-    }
-  );
+    setSelectedFile(null);
+    setInput("");
+  });
   const deleteLastMessageByLength = useMemoizedFn((length: number = 2) => {
     setMessages((old) => {
       return old?.slice(0, -length) ?? [];
@@ -220,7 +214,6 @@ export function ChatProvider({
         userId,
         sendMessageMutation,
         scrollToBottom,
-        formRef,
         setMessages,
         agentId,
         deleteLastMessageByLength,

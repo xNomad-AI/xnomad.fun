@@ -93,7 +93,7 @@ export function Content() {
       if (nft.id) {
         const [res, tokenDetail] = await Promise.all([
           getPrimaryToken(nft.id),
-          getTokenDetail(nft.primaryCoin?.address ?? ""),
+          getTokenDetail(nft.primaryCoin?.address),
         ]);
         setPrimaryToken({
           ...res,

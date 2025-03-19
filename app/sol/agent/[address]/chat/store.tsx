@@ -18,7 +18,7 @@ import { apiClient } from "./lib/api";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { stringToUuid } from "./lib/uuid";
 import { useAutoScroll } from "./hooks/use-auto-scroll";
-
+const MessageUpdateSequence = new Map<string, ContentWithUser[]>();
 const ChatContext = createContext<
   | ({
       handleSubmitForm: () => void;
@@ -34,7 +34,8 @@ const ChatContext = createContext<
       setMessages: Dispatch<SetStateAction<ContentWithUser[]>>;
       userId: string;
       sendMessageMutation: UseMutationResult<
-        ContentWithUser[],
+        | ContentWithUser[]
+        | ReadableStreamDefaultReader<Uint8Array<ArrayBufferLike>>,
         Error,
         {
           message: string;
@@ -70,7 +71,52 @@ export function ChatProvider({
     }
   }, [publicKey, agentId]);
   const [messages, setMessages] = useState<ContentWithUser[]>([]);
-
+  const deleteLastMessageByLength = useMemoizedFn((length: number = 2) => {
+    setMessages((old) => {
+      return old?.slice(0, -length) ?? [];
+    });
+  });
+  const deleteMessageByIndex = useMemoizedFn((index: number) => {
+    setMessages((old) => {
+      return old?.filter((_, i) => i !== index) ?? [];
+    });
+  });
+  const deleteMessageById = useMemoizedFn((id: string) => {
+    setMessages((old) => {
+      return old?.filter((msg) => msg.id !== id) ?? [];
+    });
+  });
+  const updateMessage = useMemoizedFn((_message: ContentWithUser) => {
+    setTimeout(() => {
+      let message = _message;
+      let sequence = MessageUpdateSequence.get(message.id) ?? [];
+      const isInSequence = sequence.some((msg) => msg.id === message.id);
+      if (!isInSequence) {
+        sequence = [...sequence, message];
+      }
+      const firstMessage = sequence.shift() as ContentWithUser;
+      MessageUpdateSequence.set(message.id, sequence);
+      setMessages((old) => {
+        return (
+          old?.map((msg) => {
+            if (msg.id === firstMessage.id) {
+              return firstMessage;
+            }
+            return msg;
+          }) ?? []
+        );
+      });
+      if (sequence.length > 0) {
+        updateMessage(sequence[0]);
+      }
+    }, 0);
+  });
+  const getMessageById = useMemoizedFn((id: string) => {
+    return messages.find((msg) => msg.id === id);
+  });
+  const generateMessageId = useMemoizedFn((id?: string) => {
+    return stringToUuid(`web-${Date.now()}-${agentId}-${Math.random()}-${id}`);
+  });
   const {
     scrollRef,
     isAtBottom,
@@ -94,14 +140,67 @@ export function ChatProvider({
     }: {
       message: string;
       selectedFile?: File | null;
-    }) => apiClient.sendMessage(userId, agentId, message, selectedFile),
-    onSuccess: (newMessages: ContentWithUser[]) => {
+    }) => apiClient.sendMessage(userId, agentId, message, selectedFile, true),
+    onSuccess: async (
+      newMessages:
+        | ContentWithUser[]
+        | ReadableStreamDefaultReader<Uint8Array<ArrayBufferLike>>
+    ) => {
+      const messageId = generateMessageId();
+      const messageCreateTime = Date.now();
+      if (newMessages instanceof ReadableStreamDefaultReader) {
+        const decoder = new TextDecoder();
+        while (true) {
+          const { value, done } = await newMessages.read();
+          if (value) {
+            const chunks = decoder
+              .decode(value, { stream: true })
+              .split("\n")
+              .filter(Boolean);
+            const messages = chunks.map(
+              (chunk) => JSON.parse(chunk) as ContentWithUser
+            );
+            const oldMessage = getMessageById(messageId);
+            if (oldMessage) {
+              messages.forEach((message) => {
+                updateMessage({
+                  ...oldMessage,
+                  ...message,
+                  text: `${oldMessage.text}
+                ${message.text ? `\n${message.text}` : ""}`,
+                });
+              });
+            } else {
+              let message = messages.shift() as ContentWithUser;
+              messages.forEach((_message) => {
+                if (!_message.text) return;
+                message = {
+                  ...message,
+                  ..._message,
+                  text: `${message.text}
+                  ${_message.text ? `\n${_message.text}` : ""}`,
+                };
+              });
+              setMessages((old: ContentWithUser[] = []) => [
+                ...old.filter((msg) => !msg.isLoading),
+                {
+                  ...message,
+                  id: messageId,
+                  createdAt: messageCreateTime,
+                },
+              ]);
+            }
+          }
+          if (done) break;
+        }
+        return;
+      }
       setMessages((old: ContentWithUser[] = []) => [
         ...old.filter((msg) => !msg.isLoading),
         ...newMessages.map((msg) => ({
           ...msg,
-          id: generateMessageId(),
-          createdAt: Date.now(),
+          id: messageId,
+          createdAt: messageCreateTime,
         })),
       ]);
     },
@@ -167,38 +266,6 @@ export function ChatProvider({
 
     setSelectedFile(null);
     setInput("");
-  });
-  const deleteLastMessageByLength = useMemoizedFn((length: number = 2) => {
-    setMessages((old) => {
-      return old?.slice(0, -length) ?? [];
-    });
-  });
-  const deleteMessageByIndex = useMemoizedFn((index: number) => {
-    setMessages((old) => {
-      return old?.filter((_, i) => i !== index) ?? [];
-    });
-  });
-  const deleteMessageById = useMemoizedFn((id: string) => {
-    setMessages((old) => {
-      return old?.filter((msg) => msg.id !== id) ?? [];
-    });
-  });
-  const updateMessage = useMemoizedFn((message: ContentWithUser) => {
-    setTimeout(() => {
-      setMessages((old) => {
-        return (
-          old?.map((msg) => {
-            if (msg.id === message.id) {
-              return message;
-            }
-            return msg;
-          }) ?? []
-        );
-      });
-    }, 0);
-  });
-  const generateMessageId = useMemoizedFn((id?: string) => {
-    return stringToUuid(`web-${Date.now()}-${agentId}-${Math.random()}-${id}`);
   });
 
   return (

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { clusterApiUrl, Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import {
   appendInstruction,
-  makeOkxSwapParams,
+  getTokenProgramId,
   prioritizationFee,
   serializeTransaction,
 } from "./utils";
@@ -19,6 +19,13 @@ import { api } from "@/primitive/api";
 import { PublicKey } from "@solana/web3.js";
 import { SystemProgram } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
+import {
+  createAssociatedTokenAccountInstruction,
+  getAccount,
+  getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+} from "@solana/spl-token";
+import { VersionedTransaction } from "@solana/web3.js";
 const FEE = 0.01;
 const FEE_FOR_AGENT = 0.005;
 const FEE_FOR_XNOMAD = FEE - FEE_FOR_AGENT;
@@ -63,6 +70,8 @@ export type SwapOption = {
 function getOKXCallData(params: OKXCallDataRequestParams) {
   return api.ts.get("/okx_forward/swap", params);
 }
+
+const SOL_ADDRESS = "So11111111111111111111111111111111111111112";
 export function useSwap() {
   const wallet = useWallet();
   const { setVisible } = useConnectModalStore();
@@ -112,36 +121,115 @@ export function useSwap() {
     }
 
     if (!okx) return;
-
-    const userWalletAddress = wallet.publicKey.toBase58();
-    const computeUnitLimit = 300_000;
-    const { computeUnitPrice } = prioritizationFee(
-      priorityFee,
-      computeUnitLimit
-    );
-    const baseParams: OKXCallDataRequestParams = {
-      amount:
-        type === "buy"
-          ? (amount * (1 - FEE_FOR_AGENT)).toString()
-          : amount.toString(),
-      slippage: slippage.toString(),
-      chainId: "501",
-      userWalletAddress,
-      feePercent: (FEE_FOR_XNOMAD * 100).toString(),
-      computeUnitPrice: `${computeUnitPrice}`,
-      computeUnitLimit: `${computeUnitLimit}`,
-    };
-
-    const swapParams = makeOkxSwapParams(type, tokenAddress);
-
-    const okxParams = {
-      ...baseParams,
-      ...swapParams,
-    };
-
-    const provider = mode === "FAST" ? fastModeProvider : mevModeProvider;
-
     try {
+      const userWalletAddress = wallet.publicKey.toBase58();
+      const connection = new Connection(
+        process.env.SOLANA_RPC ?? clusterApiUrl("mainnet-beta")
+      );
+
+      const [inputTokenCA, outputTokenCA] =
+        type === "buy"
+          ? [SOL_ADDRESS, tokenAddress]
+          : [tokenAddress, SOL_ADDRESS];
+
+      const outProgramId = await getTokenProgramId(outputTokenCA, connection);
+
+      const inputProgramId = await getTokenProgramId(inputTokenCA, connection);
+
+      // get or create fee token account after check to prevent invalid token account creation
+      // only add fee account if the token is not a 2022 token
+      // https://station.jup.ag/docs/swap-api/add-fees-to-swap#important-notes
+
+      let url = `https://api.jup.ag/swap/v1/quote?inputMint=${inputTokenCA}&outputMint=${outputTokenCA}&amount=${Math.floor(
+        +amount
+      ).toString()}&dynamicSlippage=true&autoSlippage=true&maxAccounts=64&onlyDirectRoutes=false&asLegacyTransaction=false&restrictIntermediateTokens=true`;
+      let needCreateFeeTokenAccount = false;
+      const owner = new PublicKey(process.env.JUP_SWAP_FEE_ACCOUNT!);
+      const mint = new PublicKey(inputTokenCA);
+      const programId = inputProgramId;
+      const allowOwnerOffCurve = true;
+      const commitment = undefined;
+      const tokenFeeAccount = getAssociatedTokenAddressSync(
+        mint,
+        owner,
+        allowOwnerOffCurve,
+        programId
+      );
+      const needFee =
+        !inputProgramId.equals(TOKEN_2022_PROGRAM_ID) &&
+        !outProgramId.equals(TOKEN_2022_PROGRAM_ID);
+      if (needFee) {
+        try {
+          await getAccount(connection, tokenFeeAccount, commitment, programId);
+        } catch (e) {
+          needCreateFeeTokenAccount = true;
+        }
+      }
+      url += `&platformFeeBps=${50}`;
+
+      const quoteResponse = await fetch(url);
+      const quoteData = await quoteResponse.json();
+
+      if (!quoteData || quoteData.error) {
+        throw new Error(
+          `Failed to get quote: ${quoteData?.error || "Unknown error"}`
+        );
+      }
+
+      const swapRequestBody: any = {
+        quoteResponse: quoteData,
+        userPublicKey: userWalletAddress,
+        feeAccount: needFee ? tokenFeeAccount?.toBase58() : undefined,
+      };
+
+      if (mode === "ANTI-MEV") {
+        swapRequestBody.prioritizationFeeLamports = {
+          jitoTipLamports: priorityFee * LAMPORTS_PER_SOL,
+        };
+      } else {
+        swapRequestBody.prioritizationFeeLamports = {
+          priorityLevelWithMaxLamports: {
+            global: false,
+            maxLamports: (priorityFee || 0) * LAMPORTS_PER_SOL,
+            priorityLevel: "veryHigh",
+          },
+        };
+      }
+
+      if (slippage) {
+        swapRequestBody.slippageBps = Math.round(+slippage * 10000);
+      } else {
+        swapRequestBody.dynamicComputeUnitLimit = true;
+        swapRequestBody.dynamicSlippage = true;
+      }
+
+      const swapResponse = await fetch("https://api.jup.ag/swap/v1/swap", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(swapRequestBody),
+      });
+      if (!swapResponse.ok) {
+        throw new Error(
+          `Failed to get swap transaction: ${await swapResponse.text()}`
+        );
+      }
+      const swapData = await swapResponse.json();
+
+      if (!swapData || !swapData.swapTransaction) {
+        throw new Error(
+          `Failed to get swap transaction: ${
+            swapData?.error || "No swap transaction returned"
+          }`
+        );
+      }
+
+      const buffer = Buffer.from(swapData.swapTransaction, "base64");
+      const tx = VersionedTransaction.deserialize(buffer);
+
+      const provider = mode === "FAST" ? fastModeProvider : mevModeProvider;
+
       const insForAgent = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: new PublicKey(agentWalletAddress),
@@ -150,11 +238,25 @@ export function useSwap() {
           BigNumber.ROUND_DOWN
         ),
       });
-      const [tx, insForTip] = await Promise.all([
-        createCalldata(okxParams, okx, priorityFee),
-        provider.makeTransferInstruction(wallet.publicKey, tip),
-      ]);
-      await appendInstruction(tx, okx.connections, ...insForTip, insForAgent);
+      const insForTip = await provider.makeTransferInstruction(
+        wallet.publicKey,
+        tip
+      );
+
+      const ins = [...insForTip, insForAgent];
+      if (needCreateFeeTokenAccount && needFee) {
+        ins.unshift(
+          createAssociatedTokenAccountInstruction(
+            wallet.publicKey,
+            tokenFeeAccount!,
+            owner,
+            mint,
+            programId
+          )
+        );
+      }
+
+      await appendInstruction(tx, okx.connections, ...ins);
       const signedTx = await wallet.signTransaction?.(tx);
 
       if (!signedTx) {

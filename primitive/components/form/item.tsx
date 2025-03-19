@@ -12,7 +12,9 @@ type Props = {
   suffix?: ReactNode;
 };
 
-export function FormItem<T>(props: PropsWithChildren<Props & FormValue<T>>) {
+export function FormItem<T>(
+  props: PropsWithChildren<Props & Partial<FormValue<T>>>
+) {
   return (
     <div
       className={clsx(

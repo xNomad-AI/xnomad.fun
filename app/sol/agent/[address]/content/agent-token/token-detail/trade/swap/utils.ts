@@ -1,11 +1,13 @@
 import {
   AddressLookupTableAccount,
   Connection,
+  PublicKey,
   TransactionMessage,
 } from "@solana/web3.js";
 import { TransactionInstruction } from "@solana/web3.js";
 import { Transaction, VersionedTransaction } from "@solana/web3.js";
 import { OKXCallDataRequestParams } from "./swap";
+import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
 export type SwapTransaction = VersionedTransaction | Transaction;
 
@@ -70,14 +72,14 @@ export async function appendInstruction(
     const message = TransactionMessage.decompile(tx.message, {
       addressLookupTableAccounts,
     });
-    message.instructions.push(...instructions);
+    message.instructions.unshift(...instructions);
     tx.message = message.compileToV0Message(addressLookupTableAccounts);
   } else {
     tx.add(...instructions);
   }
 }
 
-const base64 = {
+export const base64 = {
   decode(buffer: Uint8Array): string {
     // 创建一个ArrayBuffer
     const view = new Uint8Array(buffer);
@@ -96,3 +98,18 @@ const base64 = {
     return base64Data;
   },
 };
+
+export async function getTokenProgramId(
+  mintTokenAddress: string,
+  connection: Connection
+) {
+  const address = new PublicKey(mintTokenAddress);
+  const accountInfo = await connection.getParsedAccountInfo(address);
+  if (accountInfo.value?.owner.equals(TOKEN_2022_PROGRAM_ID))
+    return TOKEN_2022_PROGRAM_ID;
+  if (accountInfo.value?.owner.equals(TOKEN_PROGRAM_ID))
+    return TOKEN_PROGRAM_ID;
+  throw new Error(
+    `Invalid token program ID, mint=${mintTokenAddress}, owner=${accountInfo.value?.owner.toBase58()}`
+  );
+}

@@ -50,7 +50,7 @@ export function ChatContent({
     default:
       return (
         <ChatContentContainer showCopyButton showTimestamp message={message}>
-          <AIWriter>{message?.text}</AIWriter>
+          {message?.text}
         </ChatContentContainer>
       );
   }

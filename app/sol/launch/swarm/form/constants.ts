@@ -1,0 +1,7 @@
+export const LOGO_SIZE_IN_MB = 5;
+export const LOGO_SIZE_IN_BYTE = LOGO_SIZE_IN_MB * 1024 * 1024;
+export const ASSETS_SIZE_IN_GB = 2;
+export const ASSETS_SIZE_IN_MB = ASSETS_SIZE_IN_GB * 1024;
+export const ASSETS_SIZE_IN_BYTE = ASSETS_SIZE_IN_MB * 1024 * 1024;
+export const IMAGE_ID = "NFT-IMAGE_DISPLAY";
+export const DESCRIPTION_LIMIT = 500;

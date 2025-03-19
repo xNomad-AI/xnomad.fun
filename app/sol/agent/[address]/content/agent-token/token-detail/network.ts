@@ -60,7 +60,18 @@ export type TokenDetail = {
   launchpad?: "Pump.fun" | "Moonshot";
 };
 
-export function getTokenDetail(address: string) {
+export function getTokenDetail(address?: string) {
+  if (!address) {
+    return Promise.resolve({
+      price: "0",
+      price24h: "0",
+      volume24h: "0",
+      holderCount: 0,
+      initialBaseReserve: "0",
+      baseReserve: "0",
+      quoteReserve: "0",
+    });
+  }
   return api.ts.get<TokenDetail>(`/addresses/token/detail/${address}`);
 }
 

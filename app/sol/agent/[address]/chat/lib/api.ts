@@ -46,6 +46,12 @@ const fetcher = async ({
       if (contentType === "audio/mpeg") {
         return await resp.blob();
       }
+      if (contentType === "application/octet-stream") {
+        const reader = resp.body?.getReader() as ReadableStreamDefaultReader<
+          Uint8Array<ArrayBufferLike>
+        >;
+        return reader;
+      }
       return resp.json();
     }
 
@@ -69,13 +75,15 @@ export const apiClient = {
     userId: UUID,
     agentId: string,
     message: string,
-    selectedFile?: File | null
+    selectedFile?: File | null,
+    useStream?: boolean
   ) => {
     const formData = new FormData();
     formData.append("text", message);
     formData.append("user", "user");
     formData.append("roomId", userId);
     formData.append("userId", userId);
+    formData.append("stream", useStream ? "true" : "false");
     if (selectedFile) {
       formData.append("file", selectedFile);
     }

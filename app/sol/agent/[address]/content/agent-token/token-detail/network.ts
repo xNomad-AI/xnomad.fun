@@ -67,6 +67,9 @@ export function getTokenDetail(address?: string) {
       price24h: "0",
       volume24h: "0",
       holderCount: 0,
+      initialBaseReserve: "0",
+      baseReserve: "0",
+      quoteReserve: "0",
     });
   }
   return api.ts.get<TokenDetail>(`/addresses/token/detail/${address}`);

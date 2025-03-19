@@ -14,7 +14,7 @@ export function TokenProgress() {
     async () => {
       if (nft.primaryCoin?.address) {
         const res = await getTokenDetail(nft.primaryCoin?.address);
-        setTokenDetail(res);
+        setTokenDetail(res as TokenDetail);
       }
     },
     {

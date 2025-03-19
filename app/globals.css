@@ -16,3 +16,7 @@
     @apply hover:scale-110 duration-300 transition-all ease-in-out;
   }
 }
+
+input {
+  color-scheme: dark;
+}

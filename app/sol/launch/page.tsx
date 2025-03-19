@@ -13,14 +13,7 @@ export default function Page() {
           </h2>
         </Card>
       </Link>
-      <Link
-        href={""}
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          message("Coming Soon");
-        }}
-      >
+      <Link href={"/sol/launch/swarm"}>
         <Card className='bg-surface w-[20rem] h-[20rem] flex flex-col gap-16 items-center justify-center'>
           <h1 className='text-size-24 text-center font-bold'>
             🤖🤖🤖🤖🤖🤖

@@ -13,7 +13,8 @@ module.exports = {
     OKX_SECRET_KEY: process.env.OKX_SECRET_KEY,
     OKX_ACCESS_KEY: process.env.OKX_ACCESS_KEY,
     OKX_PROJECT_ID: process.env.OKX_PROJECT_ID,
-    OKX_PASS_PHRASE: process.env.OKX_PASS_PHRASE
+    OKX_PASS_PHRASE: process.env.OKX_PASS_PHRASE,
+    JUP_SWAP_FEE_ACCOUNT: process.env.JUP_SWAP_FEE_ACCOUNT,
   },
   compiler: {
     removeConsole: process.env.DEPLOY_ENV === "prod",

@@ -5,7 +5,13 @@ import { NFT } from "@/types";
 import { api } from "@/primitive/api";
 import { TokenInfo } from "../content/agent-token/token-list/network";
 import { Config } from "../content/features/types";
-export function createAgentStore({ nft }: { nft: NFT }) {
+export function createAgentStore({
+  nft,
+  agentSideWalletVisible,
+}: {
+  nft: NFT;
+  agentSideWalletVisible: boolean;
+}) {
   return createStore(
     immer<{
       portfolio?: AgentPortfolio;
@@ -20,10 +26,21 @@ export function createAgentStore({ nft }: { nft: NFT }) {
       refreshNFT: () => Promise<void>;
       primaryToken?: TokenInfo;
       setPrimaryToken: (token: TokenInfo) => void;
+      sideWalletVisible: boolean;
+      setSideWalletVisible: (visible: boolean) => void;
     }>((set) => ({
       setPortfolio: (portfolio) => {
         set((state) => {
           state.portfolio = portfolio;
+        });
+      },
+      sideWalletVisible: agentSideWalletVisible,
+      setSideWalletVisible: (visible) => {
+        set((state) => {
+          api.server.post("/preferences", {
+            agentSideWalletVisible: visible ? "true" : "false",
+          });
+          state.sideWalletVisible = visible;
         });
       },
       refreshCount: 0,

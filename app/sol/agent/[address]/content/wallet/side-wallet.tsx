@@ -28,7 +28,7 @@ export function SideWallet() {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <div className='flex flex-col gap-16 w-full max-w-[240px] flex-shrink-0'>
+      <div className='flex flex-col gap-16 w-full flex-shrink-0'>
         <Card className='p-12 flex flex-col gap-4'>
           <span className='text-size-12'>Agent Wallet</span>
           <div className='flex items-center gap-4'>
@@ -68,7 +68,7 @@ export function SideWallet() {
             }`}
             onClick={() => setTab("activity")}
           >
-            Activities
+            Activity
           </button>
           {tab === "holder" && (
             <div className='flex-1 flex items-center justify-end'>
@@ -87,7 +87,7 @@ export function SideWallet() {
           )}
         </div>
         {tab === "holder" && (
-          <div className='flex flex-col gap-12 w-full'>
+          <Card className='flex flex-col gap-12 p-12 w-full'>
             <div className='flex items-center gap-12 justify-between text-size-12 border-b pb-12 border-white-20'>
               <span>Asset</span>
               <span>Value</span>
@@ -141,7 +141,7 @@ export function SideWallet() {
                 No Assets
               </div>
             )}
-          </div>
+          </Card>
         )}
 
         <Analytics

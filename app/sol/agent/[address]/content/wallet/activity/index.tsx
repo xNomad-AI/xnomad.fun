@@ -112,6 +112,7 @@ export function Analytics({
     <div
       className={clsx("flex flex-col w-full", {
         hidden: !show,
+        "border rounded-12 p-12 border-white-20": variant === "widget",
       })}
     >
       {activity?.length > 0 ? (
@@ -125,6 +126,17 @@ export function Analytics({
               data: item,
               agentAccount: nft.agentAccount.solana,
             });
+            const content = (
+              <>
+                <ActionTag type={actionType} />
+                <ActionContent
+                  simple={variant === "widget"}
+                  data={item}
+                  type={actionType}
+                />
+                <div className={clsx("flex-1 min-w-16")}></div>
+              </>
+            );
             return (
               <Card
                 key={item.tx_hash}
@@ -137,18 +149,23 @@ export function Analytics({
                 }}
                 className='p-16 flex items-center gap-8 flex-wrap'
               >
-                <ActionTag type={actionType} />
-                <ActionContent
-                  simple={variant === "widget"}
-                  data={item}
-                  type={actionType}
-                />
-                <div className='flex-1 min-w-16'></div>
+                {variant === "widget" ? (
+                  <>
+                    <div className='flex-1 flex flex-wrap gap-8 items-center'>
+                      {content}
+                    </div>
+                    <div className='min-w-[80px]'></div>
+                  </>
+                ) : (
+                  content
+                )}
                 <a
                   href={`https://explorer.solana.com/tx/${item.tx_hash}`}
                   target='_blank'
                   rel='noreferrer'
-                  className='underline'
+                  className={clsx("underline", {
+                    "self-end": variant === "widget",
+                  })}
                 >
                   {beautifyTimeV2(
                     item.block_unix_time * 1000,

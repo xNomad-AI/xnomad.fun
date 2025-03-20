@@ -21,10 +21,10 @@ import {
   getTokenDetail,
 } from "./agent-token/token-detail/network";
 import { getAgentConfig } from "./features/network";
-const tabs = ["chat", "wallet", "agent-token", "tasks", "features"] as const;
+import { SideWalletButton } from "../info/side-wallet-button";
+const tabs = ["chat", "agent-token", "tasks", "features"] as const;
 const tabMap = {
   chat: "Chat",
-  wallet: "Wallet",
   "agent-token": "Agent Token",
   tasks: "Tasks",
   features: "Features",
@@ -42,6 +42,7 @@ export function Content() {
     nft,
     setPrimaryToken,
     setAgentConfig,
+    sideWalletVisible,
   } = useAgentStore();
 
   const [tab, _setTab] = useState<Tab | null>("chat");
@@ -120,43 +121,53 @@ export function Content() {
   );
   return (
     <div className='w-full flex flex-col items-center gap-32 portrait-tablet:gap-16'>
-      <RadioButtonGroup
-        disableAnimation
-        onChange={(value) => {
-          setMobileTab(value);
-          setTab(null);
-        }}
-        value={tab === "chat" || tab === "tasks" ? tab : mobileTab}
-        className='portrait-tablet:flex hidden'
-      >
-        {mobileTabs.map((t) => (
-          <RadioButton key={t} value={t}>
-            {tabMap[t]}
-          </RadioButton>
-        ))}
-      </RadioButtonGroup>
-      <RadioButtonGroup
-        disableAnimation
-        onChange={(value) => {
-          setTab(value);
-          setMobileTab(null);
-        }}
-        value={mobileTab === "chat" || mobileTab === "tasks" ? mobileTab : tab}
-      >
-        {tabs.map((t) => {
-          if (
-            (breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
-            (t === "chat" || t === "tasks")
-          ) {
-            return null;
-          }
-          return (
+      <div className='w-full flex flex-col gap-16 items-center relative'>
+        <SideWalletButton
+          className={clsx("absolute left-0 top-1/2 -translate-y-1/2", {
+            "opacity-0": sideWalletVisible,
+          })}
+        />
+
+        <RadioButtonGroup
+          disableAnimation
+          onChange={(value) => {
+            setMobileTab(value);
+            setTab(null);
+          }}
+          value={tab === "chat" || tab === "tasks" ? tab : mobileTab}
+          className='portrait-tablet:flex hidden'
+        >
+          {mobileTabs.map((t) => (
             <RadioButton key={t} value={t}>
               {tabMap[t]}
             </RadioButton>
-          );
-        })}
-      </RadioButtonGroup>
+          ))}
+        </RadioButtonGroup>
+        <RadioButtonGroup
+          disableAnimation
+          onChange={(value) => {
+            setTab(value);
+            setMobileTab(null);
+          }}
+          value={
+            mobileTab === "chat" || mobileTab === "tasks" ? mobileTab : tab
+          }
+        >
+          {tabs.map((t) => {
+            if (
+              (breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
+              (t === "chat" || t === "tasks")
+            ) {
+              return null;
+            }
+            return (
+              <RadioButton key={t} value={t}>
+                {tabMap[t]}
+              </RadioButton>
+            );
+          })}
+        </RadioButtonGroup>
+      </div>
 
       {nft.agentId && (
         <ChatProvider agentId={nft.agentId}>
@@ -172,9 +183,7 @@ export function Content() {
           </div>
         </ChatProvider>
       )}
-      {(breakpoint === "portrait-tablet" || breakpoint === "mobile") &&
-        mobileTab === "asset" && <InfoSection />}
-      <Portfolio show={tab === "wallet"} />
+      {mobileTab === "asset" && <InfoSection isMobile />}
       <AgentToken show={tab === "agent-token"} />
       {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
       {tab === "features" && <Features nft={nft} />}

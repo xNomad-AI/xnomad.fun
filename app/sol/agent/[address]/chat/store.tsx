@@ -140,7 +140,7 @@ export function ChatProvider({
     }: {
       message: string;
       selectedFile?: File | null;
-    }) => apiClient.sendMessage(userId, agentId, message, selectedFile, true),
+    }) => apiClient.sendMessage(userId, agentId, message, selectedFile, false),
     onSuccess: async (
       newMessages:
         | ContentWithUser[]

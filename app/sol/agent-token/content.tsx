@@ -72,7 +72,7 @@ export function Content() {
         ))}
       </div>
       <div className='flex flex-col w-full'>
-        <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40'>
+        <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40 text-size-12'>
           <div className='flex w-[240px] text-text2 items-center'>
             <div className='w-40'>#</div>
             Agent Token

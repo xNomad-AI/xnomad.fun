@@ -23,7 +23,7 @@ export function Activity({ show }: { show: boolean }) {
         hidden: !show,
       })}
     >
-      <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40 text-white-40'>
+      <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40 text-white-40 text-size-12'>
         <div className='flex w-[80px]'>Time</div>
         <div className='flex w-[90px] justify-end'>Type</div>
         <div className='flex w-[120px] justify-end'>Total USD</div>

@@ -105,7 +105,7 @@ export function SideWallet() {
               hidden: tab !== "holder",
             })}
           >
-            <div className='flex items-center gap-12 justify-between text-size-12 border-b pb-12 border-white-20'>
+            <div className='flex items-center gap-12 justify-between text-size-12 border-b pb-12 border-white-20 text-text2'>
               <span>Asset</span>
               <span>Value</span>
             </div>
@@ -117,6 +117,7 @@ export function SideWallet() {
               <InfiniteScrollList
                 items={portfolio?.items ?? []}
                 itemSize={56}
+                gutterSize={0}
                 height={scrollHeight}
                 renderItem={(item) => {
                   return (

@@ -19,7 +19,7 @@ export function NewAgentTokens() {
   });
   return (
     <div className='flex flex-col w-full'>
-      <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40 text-white-40'>
+      <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40 text-white-40 text-size-12'>
         <div className='flex w-[200px]'>Agent Token</div>
 
         <div className='flex min-w-[100px] flex-1 max-w-[200px] justify-end'>

@@ -124,7 +124,7 @@ export function Content() {
       <div className='w-full flex flex-col gap-16 items-center relative'>
         <SideWalletButton
           className={clsx("absolute left-0 top-1/2 -translate-y-1/2", {
-            "opacity-0": sideWalletVisible,
+            "opacity-0 pointer-events-none": sideWalletVisible,
           })}
         />
 

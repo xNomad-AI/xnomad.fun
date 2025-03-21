@@ -1,17 +1,10 @@
 import { Address } from "@/components/address";
-import {
-  Card,
-  IconReset,
-  IconWallet,
-  Spin,
-  Tooltip,
-} from "@/primitive/components";
+import { Button, Card, IconReset, Spin } from "@/primitive/components";
 import { useAgentStore } from "../../store";
 import { TokenNumber } from "@/components/token-number";
 import { useSolBalance } from "@/lib/hooks/use-solana";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PublicKey } from "@solana/web3.js";
-import { Tab } from "..";
 import clsx from "clsx";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
 import { Analytics } from "./activity";
@@ -26,34 +19,42 @@ export function SideWallet() {
   const { balance } = useSolBalance(account);
   const [tab, setTab] = useState<"holder" | "activity">("holder");
   const [open, setOpen] = useState(false);
+  const [scrollHeight, setScrollHeight] = useState(360);
+  const cardRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (cardRef.current) {
+      setScrollHeight(cardRef.current.clientHeight - 32);
+    }
+  }, [tab]);
   return (
     <>
-      <div className='flex flex-col gap-16 w-full max-w-[240px] flex-shrink-0'>
-        <Card className='p-12 flex flex-col gap-4'>
-          <span className='text-size-12'>Agent Wallet</span>
-          <div className='flex items-center gap-4'>
-            <div className='flex flex-col gap-4 flex-1'>
-              <Address
-                address={portfolio?.wallet ?? ""}
-                enableCopy
-                className='font-bold'
-              />
-              <TokenNumber number={balance.toNumber()} suffix={"SOL"} />
-            </div>
-
-            <Tooltip content='Deposit'>
-              <button
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                <IconWallet className='text-size-20 text-text1' />
-              </button>
-            </Tooltip>
+      <div className='flex flex-col gap-16 w-full flex-shrink-0 h-full min-h-0'>
+        <Card className='flex items-center gap-4 p-16'>
+          <div className='flex flex-col gap-4 flex-1'>
+            <span className='text-size-12'>Agent Wallet</span>
+            <Address
+              address={portfolio?.wallet ?? ""}
+              enableCopy
+              className='font-bold'
+            />
+            <TokenNumber
+              number={balance.toNumber()}
+              className='text-size-12'
+              suffix={"SOL"}
+            />
           </div>
+
+          <Button
+            variant='secondary'
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            Deposit
+          </Button>
         </Card>
 
-        <div className='flex items-center gap-16 mt-16'>
+        <div className='flex items-center gap-16'>
           <button
             className={`font-bold ${
               tab === "holder" ? "text-text1" : "text-white-60"
@@ -68,7 +69,7 @@ export function SideWallet() {
             }`}
             onClick={() => setTab("activity")}
           >
-            Activities
+            Activity
           </button>
           {tab === "holder" && (
             <div className='flex-1 flex items-center justify-end'>
@@ -86,8 +87,24 @@ export function SideWallet() {
             </div>
           )}
         </div>
-        {tab === "holder" && (
-          <div className='flex flex-col gap-12 w-full'>
+        <Card
+          className={clsx("flex flex-col gap-4 p-12 w-full", {
+            hidden: tab !== "holder",
+          })}
+        >
+          <span className='text-size-12'>Net Worth</span>
+          <TokenNumber
+            number={portfolio?.totalUsd ?? ""}
+            prefix={"$"}
+            className='text-size-20 font-bold'
+          />
+        </Card>
+        <div ref={cardRef} className='w-full flex-1 min-h-0'>
+          <Card
+            className={clsx("flex flex-col gap-12 p-12 w-full h-full", {
+              hidden: tab !== "holder",
+            })}
+          >
             <div className='flex items-center gap-12 justify-between text-size-12 border-b pb-12 border-white-20'>
               <span>Asset</span>
               <span>Value</span>
@@ -100,12 +117,12 @@ export function SideWallet() {
               <InfiniteScrollList
                 items={portfolio?.items ?? []}
                 itemSize={56}
-                height={360}
+                height={scrollHeight}
                 renderItem={(item) => {
                   return (
                     <div
                       key={item.address}
-                      className='flex items-center w-full gap-12 h-56 justify-between'
+                      className='flex items-center w-full gap-12 h-56 justify-between text-size-12'
                     >
                       <div className='flex items-center gap-4'>
                         <img
@@ -141,16 +158,17 @@ export function SideWallet() {
                 No Assets
               </div>
             )}
-          </div>
-        )}
+          </Card>
 
-        <Analytics
-          skeletonNumber={5}
-          nft={nft}
-          itemHeight={68}
-          variant='widget'
-          show={tab === "activity"}
-        />
+          <Analytics
+            height={scrollHeight}
+            skeletonNumber={5}
+            nft={nft}
+            itemHeight={68}
+            variant='widget'
+            show={tab === "activity"}
+          />
+        </div>
       </div>
       <DepositModal
         address={nft.agentAccount.solana}

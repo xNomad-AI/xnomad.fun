@@ -34,7 +34,7 @@ export type ApiServiceConfig = {
 
 export interface ApiResponse<T = unknown> {
   code: "SUCCESS" | string;
-  msg: string; // 报错主要呈现这一部分信息
+  msg: string;
   data: T;
   success: boolean;
   statusCode?: number;

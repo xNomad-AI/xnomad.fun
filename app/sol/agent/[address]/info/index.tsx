@@ -47,7 +47,7 @@ export function InfoSection({ isMobile }: { isMobile?: boolean }) {
         translateX: sideWalletVisible ? 0 : "-100%",
       }}
       className={clsx(
-        "flex-col portrait-tablet:!w-full 20rem gap-16 flex-shrink-0 h-[calc(100vh-64px-64px)] overscroll-scroll",
+        "flex-col w-[20rem] portrait-tablet:!w-full gap-16 flex-shrink-0 h-[calc(100vh-64px-64px)] overscroll-scroll",
         {
           "!hidden portrait-tablet:!flex": isMobile,
           "flex portrait-tablet:!hidden": !isMobile,
@@ -108,7 +108,7 @@ export function InfoSection({ isMobile }: { isMobile?: boolean }) {
             {nft.owner && (
               <div className='flex items-center'>
                 <Address address={nft.owner} />
-                (You)
+                {isOwner(publicKey?.toBase58(), nft.owner) && "(You)"}
               </div>
             )}
           </CardItem>

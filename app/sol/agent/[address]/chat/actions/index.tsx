@@ -187,7 +187,7 @@ export function Actions({ nft }: { nft: NFT }) {
     addActionMessage(newMessages);
   });
   return (
-    <div className='flex items-center justify-between w-full'>
+    <div className='flex items-center justify-between w-full gap-16'>
       <div className='flex gap-16 flex-1 overflow-hidden'>
         <motion.div
           animate={{
@@ -201,7 +201,7 @@ export function Actions({ nft }: { nft: NFT }) {
             return (
               <Button
                 size='s'
-                className='!font-normal'
+                className='!font-normal whitespace-pre'
                 variant='secondary'
                 key={action}
                 onClick={() => {

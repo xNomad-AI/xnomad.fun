@@ -45,7 +45,10 @@ function MemoInfiniteScrollList({
   const isItemLoaded = (index: number) => !hasNextPage || index < items.length;
   const [height, setHeight] = useState(_height ?? 396);
   useEffect(() => {
-    if (_height) return;
+    if (_height) {
+      setHeight(_height);
+      return;
+    }
     const bodyHeight = document.body.clientHeight;
     const headerHeight = 64;
     const liveBarHeight = 40;
@@ -111,6 +114,10 @@ function MemoInfiniteScrollList({
 export const InfiniteScrollList = React.memo(
   MemoInfiniteScrollList,
   (pre, next) => {
-    return pre.items.length === next.items.length;
+    return (
+      pre.items.length === next.items.length &&
+      pre.height === next.height &&
+      pre.itemSize === next.itemSize
+    );
   }
 );

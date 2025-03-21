@@ -114,14 +114,13 @@ export function Analytics({
     <div
       className={clsx("flex flex-col w-full", {
         hidden: !show,
-        "border rounded-12 p-12 border-white-20 flex-1": variant === "widget",
+        "border rounded-12 p-12 border-white-20 h-full": variant === "widget",
       })}
     >
       {activity?.length > 0 ? (
         <InfiniteScrollList
           height={height ?? 360}
           items={activity}
-          key={`activity-${height}`}
           gutterSize={variant === "widget" ? 0 : undefined}
           itemSize={itemHeight ?? (breakpoint === "mobile" ? 89 : 60)}
           renderItem={(item) => {

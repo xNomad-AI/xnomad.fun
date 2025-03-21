@@ -16,12 +16,14 @@ export function Analytics({
   skeletonNumber = 10,
   variant,
   show,
+  height,
 }: {
   nft: NFT;
   itemHeight?: number;
   skeletonNumber?: number;
   variant?: "normal" | "widget";
   show: boolean;
+  height?: number;
 }) {
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -112,13 +114,14 @@ export function Analytics({
     <div
       className={clsx("flex flex-col w-full", {
         hidden: !show,
-        "border rounded-12 p-12 border-white-20": variant === "widget",
+        "border rounded-12 p-12 border-white-20 flex-1": variant === "widget",
       })}
     >
       {activity?.length > 0 ? (
         <InfiniteScrollList
-          height={360}
+          height={height ?? 360}
           items={activity}
+          key={`activity-${height}`}
           gutterSize={variant === "widget" ? 0 : undefined}
           itemSize={itemHeight ?? (breakpoint === "mobile" ? 89 : 60)}
           renderItem={(item) => {

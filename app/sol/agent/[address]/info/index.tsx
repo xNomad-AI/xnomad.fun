@@ -5,8 +5,6 @@ import { Address } from "@/components/address";
 import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 import { useRarity } from "@/lib/utils/rarity/use-rarity";
 import {
-  Card,
-  IconArrowLeft,
   IconContract,
   Modal,
   ModalContent,
@@ -14,28 +12,24 @@ import {
   RadioButton,
   RadioButtonGroup,
 } from "@/primitive/components";
-import { NFT } from "@/types";
 import { Character } from "@elizaos/core";
 import clsx from "clsx";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { marked } from "marked";
 import { useAgentStore } from "../store";
-import { TokenNumber } from "@/components/token-number";
-import { RateNum } from "@/components/rate-number";
 import { motion } from "framer-motion";
-import { useLocalStorage, useWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { isOwner } from "@/lib/user/ownership";
 import { SideWalletButton } from "./side-wallet-button";
 import { SideWallet } from "../content/wallet/side-wallet";
+import { CollapseCard } from "@/primitive/components/card/collapes";
 async function parseMarkdownText(text: string) {
   const markedText = await marked.parse(text);
   return markedText;
 }
 export function InfoSection({ isMobile }: { isMobile?: boolean }) {
   const { publicKey } = useWallet();
-  const { nft, primaryToken, sideWalletVisible, setSideWalletVisible } =
-    useAgentStore();
+  const { nft, sideWalletVisible } = useAgentStore();
   const style = useRarity({
     rank: nft.rarity.rank,
     total: nft.collectionId === XNOMAD_ID ? 5000 : Infinity,
@@ -48,14 +42,17 @@ export function InfoSection({ isMobile }: { isMobile?: boolean }) {
   return (
     <motion.div
       animate={{
-        width: sideWalletVisible ? "20rem" : "0",
         opacity: sideWalletVisible ? 1 : 0,
         display: sideWalletVisible ? "flex" : "none",
+        translateX: sideWalletVisible ? 0 : "-100%",
       }}
-      className={clsx("flex-col portrait-tablet:!w-full gap-16 flex-shrink-0", {
-        "!hidden portrait-tablet:!flex": isMobile,
-        "flex portrait-tablet:!hidden": !isMobile,
-      })}
+      className={clsx(
+        "flex-col portrait-tablet:!w-full 20rem gap-16 flex-shrink-0 h-[calc(100vh-64px-64px)] overscroll-scroll",
+        {
+          "!hidden portrait-tablet:!flex": isMobile,
+          "flex portrait-tablet:!hidden": !isMobile,
+        }
+      )}
     >
       <div className='flex gap-12 w-full'>
         <div className='relative rounded-12 overflow-hidden'>
@@ -95,88 +92,54 @@ export function InfoSection({ isMobile }: { isMobile?: boolean }) {
       </RadioButtonGroup>
       <div
         className={clsx("flex flex-col gap-8 w-full", {
-          hidden: tab !== "wallet",
+          hidden: tab !== "nft",
         })}
       >
-        {primaryToken?.address && (
-          <Link href={`/sol/agent/${nft.id}?tab=agent-token`}>
-            <Card className='p-16 flex flex-col gap-16'>
-              <span className='font-bold'>Agent Token</span>
-              <div className='flex items-center justify-between gap-16'>
-                <div className='flex items-center gap-8 flex-1 min-w-0'>
-                  <img
-                    className='w-32 h-32 rounded-full object-contain'
-                    src={primaryToken.logo}
-                  />
-                  <div className='flex flex-col min-w-0'>
-                    <div className='flex items-center gap-4 min-w-0'>
-                      <span className='font-bold'>{primaryToken.symbol}</span>
-                      <TextWithEllipsis className='text-text2 text-size-12'>
-                        {primaryToken.name}
-                      </TextWithEllipsis>
-                    </div>
-                    <div className='flex items-center gap-4'>
-                      <Address
-                        address={primaryToken.address ?? ""}
-                        enableCopy
-                        className='text-text2 text-size-12'
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className='flex items-end flex-col'>
-                  <TokenNumber prefix={"$"} number={primaryToken.price} />
-                  <RateNum
-                    className='text-size-12'
-                    num={primaryToken.priceChange24h}
-                  />
-                </div>
-              </div>
-            </Card>
-          </Link>
-        )}
-        <Card className='flex flex-col gap-16 p-16 w-full'>
-          <div className='flex items-center justify-between'>
-            <span className='font-bold'>Asset ID</span>
+        <CollapseCard
+          className='flex-shrink-0'
+          title={<span className='font-bold'>Details</span>}
+        >
+          <CardItem>
+            <span>Asset ID</span>
             {<Address address={nft.id} />}
-          </div>
-          <div className='flex items-center justify-between'>
-            <span className='font-bold'>Owner</span>
-            {nft.owner && <Address address={nft.owner} />}
-          </div>
-          <div className='flex items-center justify-between'>
-            <span className='font-bold'>Character Files</span>
+          </CardItem>
+          <CardItem>
+            <span>Owner</span>
+            {nft.owner && (
+              <div className='flex items-center'>
+                <Address address={nft.owner} />
+                (You)
+              </div>
+            )}
+          </CardItem>
+          <CardItem>
+            <span>Character Files</span>
             <CharacterFileModal character={nft.aiAgent.character} />
-          </div>
-        </Card>
+          </CardItem>
+        </CollapseCard>
         {isXnomad && (
-          <Card className='flex flex-col gap-16 p-16 w-full'>
-            <div className='flex items-center justify-between'>
-              <span className='font-bold'>Rarity</span>
+          <CollapseCard
+            className='flex-shrink-0'
+            title={<span className='font-bold'>Traits</span>}
+          >
+            <CardItem>
+              <span>Rarity</span>
               <span className={style.className}>#{nft.rarity.rank}</span>
-            </div>
-          </Card>
-        )}
-        {isXnomad && (
-          <Card className='flex flex-col gap-16 p-16 w-full'>
-            <span className='font-bold'>Traits</span>
+            </CardItem>
             {nft.traits.map((trait) => (
-              <div
-                key={trait.value}
-                className='flex items-center justify-between gap-16'
-              >
+              <CardItem key={trait.value}>
                 <TextWithEllipsis className='max-w-[90px] flex-shrink-0'>
                   {trait.type}
                 </TextWithEllipsis>
                 <TextWithEllipsis>{trait.value}</TextWithEllipsis>
-              </div>
+              </CardItem>
             ))}
-          </Card>
+          </CollapseCard>
         )}
       </div>
       <div
-        className={clsx("flex flex-col gap-8 w-full", {
-          hidden: tab !== "nft",
+        className={clsx("flex flex-col gap-8 w-full flex-1 min-h-0", {
+          hidden: tab !== "wallet",
         })}
       >
         <SideWallet />
@@ -185,30 +148,18 @@ export function InfoSection({ isMobile }: { isMobile?: boolean }) {
   );
 }
 
-function CollectionLogo({
-  size,
+function CardItem({
   className,
-  logo,
-}: {
-  size?: number;
-  className?: string;
-  logo: string;
-}) {
+  children,
+}: PropsWithChildren<{ className?: string }>) {
   return (
     <div
-      style={{
-        width: size,
-        height: size,
-      }}
-      className={clsx(className, "rounded-4 border overflow-hidden")}
+      className={clsx(
+        "flex items-center justify-between gap-16 text-size-12",
+        className
+      )}
     >
-      <img
-        width={size}
-        height={size}
-        alt=''
-        className='object-cover'
-        src={logo}
-      />
+      {children}
     </div>
   );
 }

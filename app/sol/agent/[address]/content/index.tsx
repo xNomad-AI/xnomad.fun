@@ -120,7 +120,7 @@ export function Content() {
     }
   );
   return (
-    <div className='w-full flex flex-col items-center gap-32 portrait-tablet:gap-16'>
+    <div className='w-full flex flex-col items-center gap-32 portrait-tablet:gap-16 transition-all duration-300 ease-in-out'>
       <div className='w-full flex flex-col gap-16 items-center relative'>
         <SideWalletButton
           className={clsx("absolute left-0 top-1/2 -translate-y-1/2", {
@@ -168,25 +168,26 @@ export function Content() {
           })}
         </RadioButtonGroup>
       </div>
-
-      {nft.agentId && (
-        <ChatProvider agentId={nft.agentId}>
-          <div
-            className={clsx(
-              "flex gap-32 mobile:flex-col mobile:gap-16 w-full justify-center",
-              {
-                hidden: !(tab === "chat" || mobileTab === "chat"),
-              }
-            )}
-          >
-            <ChatPage nft={nft} />
-          </div>
-        </ChatProvider>
-      )}
-      {mobileTab === "asset" && <InfoSection isMobile />}
-      <AgentToken show={tab === "agent-token"} />
-      {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
-      {tab === "features" && <Features nft={nft} />}
+      <div className='w-full h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-64px-64px-80px)] overflow-y-scroll'>
+        {nft.agentId && (
+          <ChatProvider agentId={nft.agentId}>
+            <div
+              className={clsx(
+                "flex gap-32 mobile:flex-col mobile:gap-16 w-full justify-center",
+                {
+                  hidden: !(tab === "chat" || mobileTab === "chat"),
+                }
+              )}
+            >
+              <ChatPage nft={nft} />
+            </div>
+          </ChatProvider>
+        )}
+        {mobileTab === "asset" && <InfoSection isMobile />}
+        <AgentToken show={tab === "agent-token"} />
+        {(tab === "tasks" || mobileTab === "tasks") && <Tasks nft={nft} />}
+        {tab === "features" && <Features nft={nft} />}
+      </div>
     </div>
   );
 }

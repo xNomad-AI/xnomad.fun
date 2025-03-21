@@ -43,106 +43,109 @@ export function InfoSection({ isMobile }: { isMobile?: boolean }) {
     <motion.div
       animate={{
         opacity: sideWalletVisible ? 1 : 0,
-        display: sideWalletVisible ? "flex" : "none",
-        translateX: sideWalletVisible ? 0 : "-100%",
+        width: sideWalletVisible ? "20rem" : 0,
       }}
       className={clsx(
-        "flex-col w-[20rem] portrait-tablet:!w-full gap-16 flex-shrink-0 h-[calc(100vh-64px-64px)] overscroll-scroll",
+        "portrait-tablet:!w-full mr-48 flex-shrink-0 h-[calc(100vh-64px-64px)] overflow-visible",
         {
           "!hidden portrait-tablet:!flex": isMobile,
           "flex portrait-tablet:!hidden": !isMobile,
         }
       )}
     >
-      <div className='flex gap-12 w-full'>
-        <div className='relative rounded-12 overflow-hidden'>
-          <img
-            className='aspect-square rounded-12 object-contain bg-surface'
-            width={64}
-            height={64}
-            alt=''
-            src={nft.image}
-          />
-          {isOwner(publicKey?.toBase58(), nft.owner) && (
-            <div className='w-full absolute z-2 bg-white text-black left-0 bottom-0 h-16 flex items-center justify-center font-bold text-size-12'>
-              Owned
-            </div>
-          )}
-        </div>
-        <div className='flex flex-col self-center flex-1 min-w-0'>
-          <TextWithEllipsis className={clsx("text-size-24", bungee.className)}>
-            {nft.name}
-          </TextWithEllipsis>
-          <span>{isXnomad ? "xNomad Genesis" : nft.collectionName}</span>
-        </div>
-        <SideWalletButton />
-      </div>
-      <RadioButtonGroup
-        value={tab}
-        className='!w-full'
-        onChange={setTab}
-        disableAnimation
-      >
-        <RadioButton value='wallet' className='!flex-1'>
-          Wallet
-        </RadioButton>
-        <RadioButton className='!flex-1' value='nft'>
-          AI-NFT
-        </RadioButton>
-      </RadioButtonGroup>
-      <div
-        className={clsx("flex flex-col gap-8 w-full", {
-          hidden: tab !== "nft",
-        })}
-      >
-        <CollapseCard
-          className='flex-shrink-0'
-          title={<span className='font-bold'>Details</span>}
-        >
-          <CardItem>
-            <span>Asset ID</span>
-            {<Address address={nft.id} />}
-          </CardItem>
-          <CardItem>
-            <span>Owner</span>
-            {nft.owner && (
-              <div className='flex items-center'>
-                <Address address={nft.owner} />
-                {isOwner(publicKey?.toBase58(), nft.owner) && "(You)"}
+      <div className='w-[20rem] h-full flex flex-col gap-16 flex-shrink-0'>
+        <div className='flex gap-12 w-full'>
+          <div className='relative rounded-12 overflow-hidden'>
+            <img
+              className='aspect-square rounded-12 object-contain bg-surface'
+              width={64}
+              height={64}
+              alt=''
+              src={nft.image}
+            />
+            {isOwner(publicKey?.toBase58(), nft.owner) && (
+              <div className='w-full absolute z-2 bg-white text-black left-0 bottom-0 h-16 flex items-center justify-center font-bold text-size-12'>
+                Owned
               </div>
             )}
-          </CardItem>
-          <CardItem>
-            <span>Character Files</span>
-            <CharacterFileModal character={nft.aiAgent.character} />
-          </CardItem>
-        </CollapseCard>
-        {isXnomad && (
+          </div>
+          <div className='flex flex-col self-center flex-1 min-w-0'>
+            <TextWithEllipsis
+              className={clsx("text-size-24", bungee.className)}
+            >
+              {nft.name}
+            </TextWithEllipsis>
+            <span>{isXnomad ? "xNomad Genesis" : nft.collectionName}</span>
+          </div>
+          <SideWalletButton />
+        </div>
+        <RadioButtonGroup
+          value={tab}
+          className='!w-full'
+          onChange={setTab}
+          disableAnimation
+        >
+          <RadioButton value='wallet' className='!flex-1'>
+            Wallet
+          </RadioButton>
+          <RadioButton className='!flex-1' value='nft'>
+            AI-NFT
+          </RadioButton>
+        </RadioButtonGroup>
+        <div
+          className={clsx("flex flex-col gap-8 w-full", {
+            hidden: tab !== "nft",
+          })}
+        >
           <CollapseCard
             className='flex-shrink-0'
-            title={<span className='font-bold'>Traits</span>}
+            title={<span className='font-bold'>Details</span>}
           >
             <CardItem>
-              <span>Rarity</span>
-              <span className={style.className}>#{nft.rarity.rank}</span>
+              <span>Asset ID</span>
+              {<Address address={nft.id} />}
             </CardItem>
-            {nft.traits.map((trait) => (
-              <CardItem key={trait.value}>
-                <TextWithEllipsis className='max-w-[90px] flex-shrink-0'>
-                  {trait.type}
-                </TextWithEllipsis>
-                <TextWithEllipsis>{trait.value}</TextWithEllipsis>
-              </CardItem>
-            ))}
+            <CardItem>
+              <span>Owner</span>
+              {nft.owner && (
+                <div className='flex items-center'>
+                  <Address address={nft.owner} />
+                  {isOwner(publicKey?.toBase58(), nft.owner) && "(You)"}
+                </div>
+              )}
+            </CardItem>
+            <CardItem>
+              <span>Character Files</span>
+              <CharacterFileModal character={nft.aiAgent.character} />
+            </CardItem>
           </CollapseCard>
-        )}
-      </div>
-      <div
-        className={clsx("flex flex-col gap-8 w-full flex-1 min-h-0", {
-          hidden: tab !== "wallet",
-        })}
-      >
-        <SideWallet />
+          {isXnomad && (
+            <CollapseCard
+              className='flex-shrink-0'
+              title={<span className='font-bold'>Traits</span>}
+            >
+              <CardItem>
+                <span>Rarity</span>
+                <span className={style.className}>#{nft.rarity.rank}</span>
+              </CardItem>
+              {nft.traits.map((trait) => (
+                <CardItem key={trait.value}>
+                  <TextWithEllipsis className='max-w-[90px] flex-shrink-0'>
+                    {trait.type}
+                  </TextWithEllipsis>
+                  <TextWithEllipsis>{trait.value}</TextWithEllipsis>
+                </CardItem>
+              ))}
+            </CollapseCard>
+          )}
+        </div>
+        <div
+          className={clsx("flex flex-col gap-8 w-full flex-1 min-h-0", {
+            hidden: tab !== "wallet",
+          })}
+        >
+          <SideWallet />
+        </div>
       </div>
     </motion.div>
   );
@@ -175,7 +178,7 @@ function CharacterFileModal({ character }: { character: Character }) {
   return (
     <>
       <IconContract
-        className='cursor-pointer text-size-20'
+        className='cursor-pointer text-size-16'
         onClick={() => {
           setOpen(true);
         }}

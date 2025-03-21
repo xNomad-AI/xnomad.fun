@@ -28,7 +28,7 @@ export default async function Page({
       nft={nft}
       agentSideWalletVisible={agentSideWalletVisible === "true" ? true : false}
     >
-      <Container className='flex gap-48 w-full portrait-tablet:flex-col'>
+      <Container className='flex w-full portrait-tablet:flex-col'>
         <InfoSection />
         <Content />
       </Container>

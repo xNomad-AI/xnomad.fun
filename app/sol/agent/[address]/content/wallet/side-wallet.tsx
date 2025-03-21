@@ -37,7 +37,11 @@ export function SideWallet() {
               enableCopy
               className='font-bold'
             />
-            <TokenNumber number={balance.toNumber()} suffix={"SOL"} />
+            <TokenNumber
+              number={balance.toNumber()}
+              className='text-size-12'
+              suffix={"SOL"}
+            />
           </div>
 
           <Button
@@ -118,7 +122,7 @@ export function SideWallet() {
                   return (
                     <div
                       key={item.address}
-                      className='flex items-center w-full gap-12 h-56 justify-between'
+                      className='flex items-center w-full gap-12 h-56 justify-between text-size-12'
                     >
                       <div className='flex items-center gap-4'>
                         <img

@@ -7,7 +7,7 @@ export function SideWalletButton({ className }: { className?: string }) {
   return (
     <button
       className={clsx(
-        "h-40 w-40 flex items-center justify-center rounded-6 border transition-opacity duration-300 ease-in-out",
+        "h-40 w-40 flex items-center justify-center rounded-6 border border-white-20 transition-opacity duration-300 ease-in-out",
         className
       )}
       onClick={() => setSideWalletVisible(!sideWalletVisible)}

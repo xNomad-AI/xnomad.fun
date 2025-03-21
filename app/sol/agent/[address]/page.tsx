@@ -26,7 +26,7 @@ export default async function Page({
   return (
     <AgentStoreProvider
       nft={nft}
-      agentSideWalletVisible={agentSideWalletVisible === "true" ? true : false}
+      agentSideWalletVisible={agentSideWalletVisible === "false" ? false : true}
     >
       <Container className='flex w-full portrait-tablet:flex-col'>
         <InfoSection />

@@ -7,6 +7,7 @@ import { getHolders, TokenTopHolder } from "./network";
 import { useRequest } from "ahooks";
 import { useAgentStore } from "../../../../store";
 import { RateNum } from "@/components/rate-number";
+import { SupportedChain } from "@/types/preference";
 
 export function Holders({ show }: { show: boolean }) {
   const { nft } = useAgentStore();
@@ -15,6 +16,7 @@ export function Holders({ show }: { show: boolean }) {
       const res = await getHolders({
         address: nft.primaryCoin?.address as string,
         asc: 0,
+        chain: nft.chain as SupportedChain,
       });
       return res.sort((a, b) => b.amount - a.amount);
     },

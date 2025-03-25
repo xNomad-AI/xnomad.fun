@@ -65,7 +65,7 @@ interface TransferActivity {
 }
 function transferToActivity(
   transfer: TransferActivity,
-  chain: SupportedChain
+  chain: string
 ): Activity {
   return {
     quote: {
@@ -84,7 +84,7 @@ function transferToActivity(
       ui_change_amount: 0,
     },
     base: {
-      symbol: getCurrencySymbol(chain),
+      symbol: getCurrencySymbol(chain as SupportedChain),
       decimals: 9,
       address: "",
       amount: 0,
@@ -113,7 +113,7 @@ export async function getTransferActivity({
 }: {
   address: string;
   limit: number;
-  chain: SupportedChain;
+  chain: string;
 }) {
   const res = await api.v1.get<{ items: TransferActivity[] }>(
     "/agent-account/defi/transfer-txs",

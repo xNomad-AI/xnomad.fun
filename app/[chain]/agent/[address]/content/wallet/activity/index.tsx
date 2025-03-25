@@ -58,6 +58,7 @@ export function Analytics({
         getTransferActivity({
           address: nft.agentAccount.solana,
           limit: 10,
+          chain: nft.chain,
         }),
       ]);
       setHasNextPage(swapActivity.has_next);
@@ -91,6 +92,7 @@ export function Analytics({
       const transferActivity = await getTransferActivity({
         address: nft.agentAccount.solana,
         limit: 5,
+        chain: nft.chain,
       });
 
       setActivity((old) => {

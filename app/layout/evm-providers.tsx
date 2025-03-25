@@ -31,7 +31,7 @@ export function EVMProvider({ children }: PropsWithChildren<object>) {
   const config = getDefaultConfig({
     ...baseConfig,
     ...bscConfig,
-    chains: [process.env.DEPLOY_ENV === "prod" ? bsc : bscTestnet],
+    chains: [bsc],
   });
   return (
     <WagmiProvider config={config}>

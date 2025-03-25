@@ -4,7 +4,6 @@ import {
   IconArrowDown,
   message,
   SelectOption,
-  useDropdown,
 } from "@/primitive/components";
 import Image from "next/image";
 import { useChainStore } from "../chain-provider";
@@ -12,7 +11,7 @@ import clsx from "clsx";
 import { useRef, useState } from "react";
 import { useEventListener, useMemoizedFn } from "ahooks";
 import { SupportedChain } from "@/types/preference";
-const UNSUPPORTED_PAGES = ["/agent", "/xnomad"];
+const UNSUPPORTED_PAGES = ["/agent/", "/xnomad"];
 export function ChainSelect() {
   const { chain, setChain } = useChainStore();
   const [opened, setOpened] = useState(false);

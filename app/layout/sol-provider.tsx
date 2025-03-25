@@ -1,0 +1,22 @@
+"use client";
+import {
+  ConnectionProvider,
+  WalletProvider as SolWalletProvider,
+} from "@solana/wallet-adapter-react";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { clusterApiUrl } from "@solana/web3.js";
+import "@solana/wallet-adapter-react-ui/styles.css";
+import { PropsWithChildren, useMemo } from "react";
+
+export function SOLProvider({ children }: PropsWithChildren<object>) {
+  const endpoint = process.env.SOLANA_RPC || clusterApiUrl("mainnet-beta");
+  const wallets = useMemo(() => [], []);
+
+  return (
+    <ConnectionProvider endpoint={endpoint}>
+      <SolWalletProvider wallets={wallets}>
+        <WalletModalProvider>{children}</WalletModalProvider>
+      </SolWalletProvider>
+    </ConnectionProvider>
+  );
+}

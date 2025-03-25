@@ -2,19 +2,12 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import "./globals.css";
-import { WalletProvider } from "./layout/wallet-provider";
-import {
-  FloatLayerProvider,
-  GlobalMessageContainer,
-} from "@/primitive/components";
-import { ThemeProvider } from "../lib/theme";
-import { Header } from "./layout/header";
-import { Portal } from "./layout/portal";
 import { PAGE_VIEW_ID } from "@/lib/page-view";
-import { InitStore } from "./layout/init-store";
-import { PageLoadingProgressBar } from "./layout/page-loading-progress";
-import { Suspense } from "react";
 import Script from "next/script";
+import { SUPPORTED_CHAINS } from "@/types/preference";
+import { redirect } from "next/navigation";
+
+import { ensureChain } from "@/lib/chain";
 const GA_ID = process.env.GA_ID;
 const ibm = IBM_Plex_Mono({
   variable: "--ibm-plex-mono",
@@ -28,12 +21,19 @@ export const metadata: Metadata = {
   description:
     "Discover xNomad.fun, the cutting-edge open-source platform designed to revolutionize AI agent interaction. Create, customize, and engage with AI-NFTs, powered by ElizaOS. Empower your journey in the world of decentralized AI assetization.",
 };
-
 export default function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: {
+    chain: string;
+  };
 }>) {
+  const chain = ensureChain(params.chain);
+  if (!SUPPORTED_CHAINS.includes(chain)) {
+    redirect("/solana");
+  }
   return (
     <html data-theme={"dark"} className='text-size-16 max:text-[0.625vw]'>
       <meta name='author' content='Byterum' />
@@ -68,25 +68,12 @@ export default function RootLayout({
         src='/charting-library/charting_library/charting_library.js'
       />
 
-      <ThemeProvider defaultTheme={"dark"}>
-        <body
-          id={PAGE_VIEW_ID}
-          className={`${ibm.className} bg-background text-text1 text-size-14 bg-[url('/background.webp')] bg-repeat bg-contain`}
-        >
-          <FloatLayerProvider>
-            <WalletProvider>
-              <Suspense>
-                <PageLoadingProgressBar />
-              </Suspense>
-              <Header />
-              <Portal />
-              <InitStore />
-              {children}
-            </WalletProvider>
-            <GlobalMessageContainer />
-          </FloatLayerProvider>
-        </body>
-      </ThemeProvider>
+      <body
+        id={PAGE_VIEW_ID}
+        className={`${ibm.className} bg-background text-text1 text-size-14 bg-[url('/background.webp')] bg-repeat bg-contain`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

@@ -7,15 +7,31 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { api } from "@/primitive/api";
 import bs58 from "bs58";
 import { useRef } from "react";
+import { useAccount, useSignMessage } from "wagmi";
+import { useChainStore } from "@/app/layout/chain-provider";
+import { useLogout } from "./use-logout";
 
 export function useLogin() {
-  const { publicKey, signMessage, disconnect } = useWallet();
+  const { chain } = useChainStore();
+  const { publicKey, signMessage: signMessageSOL } = useWallet();
+  const { address } = useAccount();
   const { setUserInfo } = useUserInfoStore();
   const isLoginRef = useRef(false);
+  const { signMessageAsync: signMessageEVM } = useSignMessage();
+  const logout = useLogout();
   const login = useMemoizedFn(async (onSuccess?: (token?: string) => void) => {
-    if (!publicKey || !signMessage) {
-      return;
+    if (chain === "solana") {
+      if (!publicKey) {
+        return;
+      }
+    } else {
+      if (!address) {
+        return;
+      }
     }
+    const userAddress = (
+      chain === "solana" ? publicKey?.toBase58() : address
+    ) as string;
     if (isLoginRef.current) {
       return;
     }
@@ -24,23 +40,31 @@ export function useLogin() {
       const nonce = await api.v1.get<{
         message: string;
       }>("/address/nonce", {
-        address: publicKey.toBase58(),
-        chain: "solana",
+        address: userAddress,
+        chain: chain,
         type: "login",
       });
-      const signature = await signMessage(
-        new TextEncoder().encode(nonce.message)
-      );
+      let signature;
+      if (chain === "solana" && signMessageSOL) {
+        signature = await signMessageSOL(
+          new TextEncoder().encode(nonce.message)
+        );
+      } else {
+        signature = await signMessageEVM({
+          message: nonce.message,
+        });
+      }
       const token = await api.v1.post<{
         accessToken: string;
         expiresIn: number;
       }>("/address/login", {
-        address: publicKey.toBase58(),
-        chain: "solana",
-        signature: bs58.encode(signature),
+        address: userAddress,
+        chain: chain,
+        signature:
+          chain === "solana" ? bs58.encode(signature as any) : signature,
       });
       setUserInfo({
-        address: publicKey.toBase58(),
+        address: userAddress,
         jwt: token.accessToken,
         expires: token.expiresIn ?? Date.now() + 60 * 60 * 24 * 1000,
       });
@@ -48,7 +72,7 @@ export function useLogin() {
       isLoginRef.current = false;
     } catch (e) {
       onError(e);
-      disconnect();
+      logout();
       isLoginRef.current = false;
     }
   });

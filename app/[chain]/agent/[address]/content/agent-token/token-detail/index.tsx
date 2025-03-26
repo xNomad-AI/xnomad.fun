@@ -1,15 +1,9 @@
 import { Card, Spin, Tooltip } from "@/primitive/components";
-import { useRequest } from "ahooks";
-import { getPrimaryToken } from "./network";
-import { PropsWithChildren, useState } from "react";
 import { IconPump } from "../../../chat/content/issue-token/icons";
 import { Address } from "@/components/address";
-import { TokenNumber } from "@/components/token-number";
-import { RateNum } from "@/components/rate-number";
 import { Chart } from "./chart";
 import { NFT } from "@/types";
 import clsx from "clsx";
-import { TokenInfo as TokenInfoType } from "../token-list/network";
 import { Table } from "./table";
 import { TokenPageSocketProvider } from "./store/socket";
 import { TradeSection } from "./trade";
@@ -23,9 +17,12 @@ import { AgeCell } from "../token-list/age-cell";
 import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 import { useAgentStore } from "../../../store";
 import { TokenMetrics } from "./metrics";
+import { useChainStore } from "@/app/layout/chain-provider";
+import { TextAnchor, TextLink } from "@/components/text-button";
 
 export function Detail({ show }: { nft: NFT; show: boolean }) {
   const { primaryToken } = useAgentStore();
+  const { chain } = useChainStore();
   return (
     <div
       className={clsx("w-full flex flex-col gap-16", {
@@ -54,15 +51,26 @@ export function Detail({ show }: { nft: NFT; show: boolean }) {
                         <TextWithEllipsis className='text-text2'>
                           {primaryToken.name}
                         </TextWithEllipsis>
-                        <Tooltip content='Pumpfun'>
-                          <a
-                            href={`https://pump.fun/coin/${primaryToken.address}`}
+                        {chain === "solana" ? (
+                          <Tooltip content='Pumpfun'>
+                            <a
+                              href={`https://pump.fun/coin/${primaryToken.address}`}
+                              target='_blank'
+                              rel='noreferrer'
+                            >
+                              <IconPump className='text-size-18' />
+                            </a>
+                          </Tooltip>
+                        ) : (
+                          <TextAnchor
+                            href={`https://four.meme/token/${primaryToken.address}`}
                             target='_blank'
                             rel='noreferrer'
+                            withDecoration
                           >
-                            <IconPump className='text-size-18' />
-                          </a>
-                        </Tooltip>
+                            Four.meme
+                          </TextAnchor>
+                        )}
                       </div>
                       <div className='flex items-center gap-4'>
                         <Address

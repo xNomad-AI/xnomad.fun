@@ -23,7 +23,6 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
       errorMsg: "",
     },
   });
-  const step = message.step;
   return (
     <ChatContentContainer message={message}>
       <div className='flex flex-col gap-16 w-full'>
@@ -58,20 +57,14 @@ export function AnalyzeInput({ message }: { message: ContentWithUser }) {
               }
               let allValid = true;
               const newForm = { ...form };
-              Object.keys(newForm).forEach((_key) => {
-                const key = _key as keyof typeof newForm;
-                if (newForm[key].required) {
-                  if (
-                    !newForm[key].value ||
-                    (typeof newForm[key].value === "object" &&
-                      Object.values(newForm[key].value).some((item) => !item))
-                  ) {
-                    allValid = false;
-                    newForm[key].isInValid = true;
-                    newForm[key].errorMsg = "Required";
-                  }
-                }
-              });
+              if (!form.token.value.ca) {
+                allValid = false;
+                newForm.token = {
+                  ...newForm.token,
+                  isInValid: true,
+                  errorMsg: "Token address is required",
+                };
+              }
               if (!allValid) {
                 setForm(newForm);
                 return;

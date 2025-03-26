@@ -268,7 +268,9 @@ export function AnalyzeResponse({
               width='100%'
               id='geckoterminal-embed'
               title='GeckoTerminal Embed'
-              src={`https://www.gmgn.cc/kline/${chain}/${tokenInfo?.address}?theme=dark&interval=15`}
+              src={`https://www.gmgn.cc/kline/${
+                chain === "solana" ? "sol" : chain
+              }/${tokenInfo?.address}?theme=dark&interval=15`}
               frameBorder='0'
               allow='clipboard-write'
               allowFullScreen

@@ -22,9 +22,7 @@ import {
 import { useWallet } from "@solana/wallet-adapter-react";
 import {
   CreatePreCheck,
-  getFourMemeNonce,
-  loginFourMeme,
-  uploadFourMemeTokenImage,
+  uploadFourMemeTokenImageByBack,
   uploadMetaData,
 } from "../network";
 import { useMemoizedFn } from "ahooks";
@@ -42,7 +40,6 @@ import {
   useClient,
   useSendTransaction,
   useSignMessage,
-  useWalletClient,
 } from "wagmi";
 import { waitForTransactionReceipt } from "viem/actions";
 export const TOKEN_DEPLOY_TIME = 10 * 1000;
@@ -78,16 +75,16 @@ export function Review({
     const res = await api.v1.get<CreatePreCheck>(
       `/launchpad/${chain}/common-collection-nft-fee`,
       {
-        userAddress: publicKey?.toBase58(),
+        userAddress: userAddress,
       }
     );
     setMintFee(res);
   });
   useEffect(() => {
-    if (publicKey) {
+    if (userAddress) {
       getMintFee(chain);
     }
-  }, [publicKey, chain]);
+  }, [userAddress, chain]);
   const { connection, inspectTransaction } = useSolana();
   const { sendTransactionAsync } = useSendTransaction();
   const { signMessageAsync } = useSignMessage();
@@ -108,17 +105,7 @@ export function Review({
         let tokenImage = tokenImageMetadata;
         if (!tokenImage) {
           if (chain === "bsc") {
-            const message = await getFourMemeNonce(userAddress as string);
-            const signature = await signMessageAsync({
-              message: message,
-            });
-            const userToken = await loginFourMeme(
-              userAddress as string,
-              signature,
-              connector?.name as string
-            );
-            tokenImage = await uploadFourMemeTokenImage(
-              userToken,
+            tokenImage = await uploadFourMemeTokenImageByBack(
               issueTokenForm.image.value as File
             );
           } else {
@@ -398,7 +385,7 @@ export function Review({
             className='!w-full max-w-[400px]'
             onClick={() => {
               resetAll();
-              router.push(`/${chain}/profile/${publicKey?.toBase58()}`);
+              router.push(`/${chain}/profile/${userAddress}`);
             }}
           >
             View My AI-NFT

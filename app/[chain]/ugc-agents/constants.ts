@@ -7,6 +7,6 @@ export const NOMADS_SOCIETY_ID = {
       : "a98bb836fd790c86e85cf6d158c3d6fd",
   bsc:
     process.env.DEPLOY_ENV === "prod"
-      ? "3717c29588ee0cdf9eb8b281228db61c"
-      : "3717c29588ee0cdf9eb8b281228db61c",
+      ? "dc6c78596874d160275de78a4df42209"
+      : "dc6c78596874d160275de78a4df42209",
 } satisfies Record<SupportedChain, string>;

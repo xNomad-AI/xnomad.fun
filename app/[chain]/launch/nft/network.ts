@@ -118,3 +118,20 @@ export async function uploadFourMemeTokenImage(userToken: string, image: File) {
 
   return data.data as string;
 }
+
+export async function uploadFourMemeTokenImageByBack(image: File) {
+  const formData = new FormData();
+  formData.append("file", image);
+  const res = await fetch(
+    `${process.env.NEXT_CLIENT_API_HOST}/launchpad/upload-fourmeme-image`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+  if (!res.ok) {
+    throw new Error("upload failed");
+  }
+  const data = await res.json();
+  return data.url;
+}

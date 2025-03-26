@@ -20,7 +20,13 @@ import {
   IssueTokenFormType,
 } from "@/app/[chain]/agent/[address]/chat/content/issue-token/types";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { CreatePreCheck, uploadMetaData } from "../network";
+import {
+  CreatePreCheck,
+  getFourMemeNonce,
+  loginFourMeme,
+  uploadFourMemeTokenImage,
+  uploadMetaData,
+} from "../network";
 import { useMemoizedFn } from "ahooks";
 import { api } from "@/primitive/api";
 import { useSolana } from "@/lib/hooks/use-solana";
@@ -30,7 +36,22 @@ import { TokenNumber } from "@/components/token-number";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { SupportedChain } from "@/types/preference";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
+import { useUserStore } from "@/app/layout/chain-provider/hook";
+import {
+  useAccount,
+  useClient,
+  useSendTransaction,
+  useSignMessage,
+  useWalletClient,
+} from "wagmi";
+import { waitForTransactionReceipt } from "viem/actions";
 export const TOKEN_DEPLOY_TIME = 10 * 1000;
+interface EVMTX {
+  from: `0x${string}`;
+  to: `0x${string}`;
+  value: string;
+  data: `0x${string}`;
+}
 export function Review({
   step,
   setStep,
@@ -39,6 +60,7 @@ export function Review({
   setStep: (step: Step) => void;
 }) {
   const { chain } = useChainStore();
+  const { userAddress, openConnectModal } = useUserStore();
   const router = useRouter();
   const { publicKey, signTransaction } = useWallet();
   const { form, resetAll } = useLaunchStore();
@@ -67,7 +89,15 @@ export function Review({
     }
   }, [publicKey, chain]);
   const { connection, inspectTransaction } = useSolana();
+  const { sendTransactionAsync } = useSendTransaction();
+  const { signMessageAsync } = useSignMessage();
+  const { connector } = useAccount();
+  const client = useClient();
   const create = useMemoizedFn(async () => {
+    if (!userAddress) {
+      openConnectModal();
+      return;
+    }
     setSubmitting(true);
     try {
       const imageUrl =
@@ -75,9 +105,28 @@ export function Review({
       setImageMetadata(imageUrl);
       let createToken;
       if (issueToken) {
-        const tokenImage =
-          tokenImageMetadata ||
-          (await uploadMetaData(issueTokenForm.image.value as File));
+        let tokenImage = tokenImageMetadata;
+        if (!tokenImage) {
+          if (chain === "bsc") {
+            const message = await getFourMemeNonce(userAddress as string);
+            const signature = await signMessageAsync({
+              message: message,
+            });
+            const userToken = await loginFourMeme(
+              userAddress as string,
+              signature,
+              connector?.name as string
+            );
+            tokenImage = await uploadFourMemeTokenImage(
+              userToken,
+              issueTokenForm.image.value as File
+            );
+          } else {
+            tokenImage = await uploadMetaData(
+              issueTokenForm.image.value as File
+            );
+          }
+        }
         setTokenImageMetadata(tokenImage);
         createToken = {
           tokenInfo: {
@@ -90,10 +139,11 @@ export function Review({
             website: issueTokenForm.website.value,
           },
           buyAmountSol: parseFloat(issueTokenForm.amount.value),
+          buyAmount: parseFloat(issueTokenForm.amount.value),
         };
       }
       const createInfo = await api.v1.post<{
-        tx: string;
+        tx: string | EVMTX;
         chain: SupportedChain;
       }>(`/launchpad/${chain}/create-common-collection-nft`, {
         nft: {
@@ -108,27 +158,13 @@ export function Review({
           style: form.style.value.split(","),
         },
         createToken,
-        userAddress: publicKey?.toBase58(),
+        userAddress: userAddress,
       });
       setSubmitting(false);
       if (!createInfo.tx) {
         throw new Error("Transaction not found");
       }
-      if (!signTransaction) {
-        throw new Error("Wallet not connected");
-      }
-      const versionTx = VersionedTransaction.deserialize(
-        new Uint8Array(Buffer.from(createInfo.tx, "hex"))
-      );
-      setStep("creating");
-      const startTime = Date.now();
-      const res = await signTransaction(versionTx);
-      const tx = await connection.sendTransaction(res, {
-        preflightCommitment: "confirmed",
-      });
-      inspectTransaction(tx).then(() => {
-        const endTime = Date.now();
-        const duration = endTime - startTime;
+      const processRes = (duration: number) => {
         const onFinish = () => {
           setStep("success");
           resetAll();
@@ -141,7 +177,49 @@ export function Review({
         } else {
           onFinish();
         }
-      });
+      };
+      if (chain === "solana") {
+        if (!signTransaction) {
+          throw new Error("Wallet not connected");
+        }
+        const versionTx = VersionedTransaction.deserialize(
+          new Uint8Array(Buffer.from(createInfo.tx as string, "hex"))
+        );
+        setStep("creating");
+        const startTime = Date.now();
+        const res = await signTransaction(versionTx);
+        const tx = await connection.sendTransaction(res, {
+          preflightCommitment: "confirmed",
+        });
+        inspectTransaction(tx).then(() => {
+          const endTime = Date.now();
+          const duration = endTime - startTime;
+          processRes(duration);
+        });
+      } else {
+        if (!client) {
+          throw new Error("Client not found");
+        }
+        setStep("creating");
+        const startTime = Date.now();
+        const txConfig = createInfo.tx as EVMTX;
+        const tx = await sendTransactionAsync({
+          data: txConfig.data,
+          value: BigInt(txConfig.value),
+          account: txConfig.from,
+          to: txConfig.to,
+        });
+        const res = await waitForTransactionReceipt(client, {
+          hash: tx,
+        });
+        if (res.status === "success") {
+          const endTime = Date.now();
+          const duration = endTime - startTime;
+          processRes(duration);
+        } else {
+          throw new Error("Transaction failed");
+        }
+      }
     } catch (error) {
       onError(error);
       setStep("review");
@@ -205,7 +283,7 @@ export function Review({
                     (mintFee?.discountPercentage ?? 0) > 0,
                 })}
               >
-                {mintFee?.fee} {getCurrencySymbol(chain)}
+                {mintFee?.fee ?? 0} {getCurrencySymbol(chain)}
               </span>
               {(mintFee?.discountPercentage ?? 0) > 0 && (
                 <span>
@@ -243,10 +321,9 @@ export function Review({
                   <span className='text-text2'>Ticker</span>
                 )}
               </p>
-
               <TokenNumber
                 className='font-bold'
-                number={issueTokenForm.amount.value ?? 0}
+                number={issueTokenForm.amount.value || 0}
                 suffix={getCurrencySymbol(chain)}
               />
             </div>

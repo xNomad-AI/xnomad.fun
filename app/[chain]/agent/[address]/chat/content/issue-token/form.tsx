@@ -102,6 +102,15 @@ export function IssueTokenForm({
     }
   });
   useMount(() => {
+    if (chain === "solana") {
+      setForm({
+        ...form,
+        amount: {
+          ...form.amount,
+          required: true,
+        },
+      });
+    }
     if (useAgentImage) {
       setNFTImageAsTokenImage();
     } else if (form.image.value) {
@@ -374,54 +383,59 @@ export function IssueTokenForm({
           }}
         />
       </FormItem>
-      <Divider horizontal className='w-full' />
-      <FormItem
-        label={`Buy(${getCurrencySymbol(chain)})`}
-        desc={`Purchase at least 0.01 ${getCurrencySymbol(
-          chain
-        )} to initiate trading.`}
-        {...form.amount}
-      >
-        <TextField
-          className='!bg-background'
-          value={form.amount.value}
-          placeholder={`>0.01 ${getCurrencySymbol(chain)}`}
-          onBlur={() => {
-            if (parseFloat(form.amount.value) < 0.01) {
-              setForm({
-                ...form,
-                amount: {
-                  ...form.amount,
-                  isInValid: true,
-                  errorMsg: `Amount should be more than 0.01 ${getCurrencySymbol(
-                    chain
-                  )}`,
-                },
-              });
-            }
-          }}
-          onChange={(event) => {
-            let value = validNumberInput(event.target.value, true);
-            // > 0.01
-            if (parseFloat(value) > 0 && parseFloat(value) < 0.01) {
-              value = "0.01";
-            }
-            setForm({
-              ...form,
-              amount: {
-                ...form.amount,
-                value,
-                isInValid: false,
-              },
-            });
-          }}
-        />
-        <div className='text-size-12'>
-          Balance:&nbsp;
-          <TokenNumber number={balance} />
-          &nbsp;{getCurrencySymbol(chain)}
-        </div>
-      </FormItem>
+
+      {chain === "solana" && (
+        <>
+          <Divider horizontal className='w-full' />
+          <FormItem
+            label={`Buy(${getCurrencySymbol(chain)})`}
+            desc={`Purchase at least 0.01 ${getCurrencySymbol(
+              chain
+            )} to initiate trading.`}
+            {...form.amount}
+          >
+            <TextField
+              className='!bg-background'
+              value={form.amount.value}
+              placeholder={`>0.01 ${getCurrencySymbol(chain)}`}
+              onBlur={() => {
+                if (parseFloat(form.amount.value) < 0.01) {
+                  setForm({
+                    ...form,
+                    amount: {
+                      ...form.amount,
+                      isInValid: true,
+                      errorMsg: `Amount should be more than 0.01 ${getCurrencySymbol(
+                        chain
+                      )}`,
+                    },
+                  });
+                }
+              }}
+              onChange={(event) => {
+                let value = validNumberInput(event.target.value, true);
+                // > 0.01
+                if (parseFloat(value) > 0 && parseFloat(value) < 0.01) {
+                  value = "0.01";
+                }
+                setForm({
+                  ...form,
+                  amount: {
+                    ...form.amount,
+                    value,
+                    isInValid: false,
+                  },
+                });
+              }}
+            />
+            <div className='text-size-12'>
+              Balance:&nbsp;
+              <TokenNumber number={balance} />
+              &nbsp;{getCurrencySymbol(chain)}
+            </div>
+          </FormItem>
+        </>
+      )}
     </>
   );
 }

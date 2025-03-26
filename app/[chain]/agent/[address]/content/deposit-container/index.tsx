@@ -131,7 +131,7 @@ export function DepositModal({
   const { sendTransactionAsync } = useSendTransaction();
   const client = useClient();
   const { connection } = useSolana();
-  const { balance } = useBalanceOnChain(publicKey);
+  const { balance } = useBalanceOnChain(userAddress);
   const [depositing, setDepositing] = useState(false);
   const deposit = useMemoizedFn(async () => {
     if (!userAddress) {

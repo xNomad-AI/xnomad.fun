@@ -10,6 +10,7 @@ import { SideBar } from "../components/side-bar";
 import { Background } from "../components/bg";
 import { NOMADS_SOCIETY_ID } from "./constants";
 import { ensureChain } from "@/lib/chain";
+import { useCollectionStore } from "../components/store";
 export default async function Page({
   params,
 }: {
@@ -18,7 +19,6 @@ export default async function Page({
   };
 }) {
   const chain = ensureChain(params.chain);
-
   const { collection } = await api.v1.get<{
     collection: Collection;
     metrics: CollectionMetrics;

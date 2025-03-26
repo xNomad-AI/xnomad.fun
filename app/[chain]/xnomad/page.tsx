@@ -30,7 +30,7 @@ export default async function Page({
   return (
     <main className='relative flex flex-col px-64 py-32 mobile:px-16 gap-32 w-full'>
       <Background src='/xnomad-bg.webp' />
-      <CollectionInfo collection={collection} />
+      <CollectionInfo collection={collection} chain={chain} />
       <Description __html={collection.description} />
       <CollectionFilter />
       <div className='w-full flex gap-24'>

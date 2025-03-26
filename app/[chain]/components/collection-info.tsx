@@ -1,6 +1,7 @@
 "use client";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { bungee } from "@/app/layout/font";
+import { api } from "@/primitive/api";
 import {
   Button,
   createBaseIcon,
@@ -9,16 +10,45 @@ import {
   IconWebsite,
 } from "@/primitive/components";
 import { Collection } from "@/types";
+import { useUpdateEffect } from "ahooks";
 import Link from "next/link";
+import { useCollectionStore } from "./store";
+import { NOMADS_SOCIETY_ID } from "../ugc-agents/constants";
+import { XNOMAD_ID } from "../xnomad/constants";
+import { SupportedChain } from "@/types/preference";
+import { useEffect } from "react";
 
 export function CollectionInfo({
   collection,
   isSociety,
+  chain: initChain,
 }: {
   collection: Collection;
   isSociety?: boolean;
+  chain?: SupportedChain;
 }) {
-  const { chain } = useChainStore();
+  const { setCollection } = useCollectionStore();
+  const { chain, setChain } = useChainStore();
+  useUpdateEffect(() => {
+    api.v1
+      .get<{
+        collection: Collection;
+      }>(
+        `/nft/${chain}/collections/${
+          isSociety ? NOMADS_SOCIETY_ID[chain] : XNOMAD_ID
+        }`,
+        undefined,
+        {
+          cache: "no-store",
+        }
+      )
+      .then(({ collection }) => setCollection(collection));
+  }, [chain]);
+  useEffect(() => {
+    if (initChain && initChain !== chain) {
+      setChain(initChain);
+    }
+  }, []);
   return (
     <div className='flex items-center justify-between'>
       <div className='flex flex-col gap-4'>

@@ -34,7 +34,7 @@ export function getActivities({
   limit = 10,
   afterTime,
 }: {
-  chain?: SupportedChain;
+  chain: string;
   address: string;
   offset?: number;
   limit?: number;

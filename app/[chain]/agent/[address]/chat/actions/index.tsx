@@ -18,8 +18,10 @@ import { ClearMemoryButton } from "../components/clear-memory";
 import clsx from "clsx";
 import { TradeSetting } from "./trade-setting";
 import { useUserStore } from "@/app/layout/chain-provider/hook";
+import { useChainStore } from "@/app/layout/chain-provider";
 export function Actions({ nft }: { nft: NFT }) {
   const { userAddress } = useUserStore();
+  const { chain } = useChainStore();
   const { addMessage, generateMessageId } = useChatContext();
   const [action, setAction] = useState<Action | null>(null);
   const addActionMessage = useMemoizedFn((newMessages: ContentWithUser[]) => {
@@ -44,21 +46,23 @@ export function Actions({ nft }: { nft: NFT }) {
     let newMessages: ContentWithUser[] = [];
     switch (action) {
       case "airdrop":
-        newMessages = [
-          {
-            text: "Claim Airdrop",
-            user: "user",
-            createdAt: Date.now(),
-            id: generateMessageId("airdrop"),
-          },
-          {
-            text: "Claim Airdrop",
-            webAction: "airdrop",
-            user: nft.name,
-            createdAt: Date.now(),
-            id: generateMessageId("airdrop"),
-          },
-        ];
+        if (chain === "solana") {
+          newMessages = [
+            {
+              text: "Claim Airdrop",
+              user: "user",
+              createdAt: Date.now(),
+              id: generateMessageId("airdrop"),
+            },
+            {
+              text: "Claim Airdrop",
+              webAction: "airdrop",
+              user: nft.name,
+              createdAt: Date.now(),
+              id: generateMessageId("airdrop"),
+            },
+          ];
+        }
 
         break;
       case "trade":

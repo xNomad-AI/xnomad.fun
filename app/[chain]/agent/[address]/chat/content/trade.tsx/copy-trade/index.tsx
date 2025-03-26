@@ -8,6 +8,7 @@ import { CancelButton } from "../../cancel-button";
 import { CopyTradeForm } from "./form";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
+import { PublicKey } from "@solana/web3.js";
 export type CopyTradeFormType = {
   name: FormValue<string>;
   amount: FormValue<string>;
@@ -68,7 +69,11 @@ export function CopyTrade({ message }: { message: ContentWithUser }) {
         <CopyTradeForm
           form={form}
           setForm={setForm}
-          address={nft.agentAccount.solana}
+          address={
+            chain === "solana"
+              ? new PublicKey(nft.agentAccount.solana)
+              : nft.agentAccount.evm
+          }
         />
         <div className='w-full flex justify-end items-center gap-16'>
           <CancelButton

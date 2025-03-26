@@ -120,7 +120,11 @@ export function BindModal({
             The creator of the token must be the AI agent wallet(
             <Address
               className='inline-flex'
-              address={nft.agentAccount.solana}
+              address={
+                chain === "solana"
+                  ? nft.agentAccount.solana
+                  : nft.agentAccount.evm
+              }
             />
             ).
           </p>

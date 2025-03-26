@@ -1,6 +1,6 @@
 import { Card } from "@/primitive/components";
 import { NFT } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Activity, getActivities, getTransferActivity } from "./network";
 import { beautifyTimeV2 } from "@/lib/utils/beautify-time";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
@@ -29,13 +29,18 @@ export function Analytics({
   const [hasNextPage, setHasNextPage] = useState(true);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
-
+  const address = useMemo(
+    () =>
+      nft.chain === "solana" ? nft.agentAccount.solana : nft.agentAccount.evm,
+    [nft.agentAccount.solana, nft.agentAccount.evm]
+  );
   const { loading, run } = useRequest(
     async () => {
       getActivities({
-        address: nft.agentAccount.solana,
+        address: address,
         offset: activity.length,
         limit: 20,
+        chain: nft.chain,
       }).then((res) => {
         setActivity([...activity, ...res.items]);
         setHasNextPage(res.has_next);
@@ -51,12 +56,13 @@ export function Analytics({
     try {
       const [swapActivity, transferActivity] = await Promise.all([
         getActivities({
-          address: nft.agentAccount.solana,
+          address: address,
           offset: 0,
           limit: 20,
+          chain: nft.chain,
         }),
         getTransferActivity({
-          address: nft.agentAccount.solana,
+          address: address,
           limit: 10,
           chain: nft.chain,
         }),
@@ -77,20 +83,21 @@ export function Analytics({
     }
   });
   useEffect(() => {
-    if (nft.agentAccount.solana && !isInitialized) {
+    if (address && !isInitialized) {
       initData();
     }
-  }, [nft.agentAccount.solana]);
+  }, [address]);
   useRequest(
     async () => {
       const swapActivity = await getActivities({
-        address: nft.agentAccount.solana,
+        address: address,
         offset: activity.length,
         afterTime: activity[0].block_unix_time,
         limit: 5,
+        chain: nft.chain,
       });
       const transferActivity = await getTransferActivity({
-        address: nft.agentAccount.solana,
+        address: address,
         limit: 5,
         chain: nft.chain,
       });
@@ -106,7 +113,7 @@ export function Analytics({
     },
     {
       pollingInterval: 5000,
-      ready: !!nft.agentAccount.solana && isInitialized && show,
+      ready: !!address && isInitialized && show,
     }
   );
   // use time tick to update time every second
@@ -128,7 +135,7 @@ export function Analytics({
           renderItem={(item) => {
             const actionType = getActionType({
               data: item,
-              agentAccount: nft.agentAccount.solana,
+              agentAccount: address,
             });
             const content = (
               <>

@@ -175,7 +175,9 @@ export function SideWallet() {
         </div>
       </div>
       <DepositModal
-        address={nft.agentAccount.solana}
+        address={
+          chain === "solana" ? nft.agentAccount.solana : nft.agentAccount.evm
+        }
         onClose={() => {
           setOpen(false);
         }}

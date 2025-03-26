@@ -25,12 +25,11 @@ export function CopyTradeForm({
 }: {
   form: CopyTradeFormType;
   setForm: (form: CopyTradeFormType) => void;
-  address: string;
+  address: PublicKey | string;
   type?: "edit" | "add";
 }) {
   const { chain } = useChainStore();
-  const account = useMemo(() => new PublicKey(address), [address]);
-  const { balance } = useBalanceOnChain(account);
+  const { balance } = useBalanceOnChain(address);
   return (
     <>
       <FormItem

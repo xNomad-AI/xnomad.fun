@@ -66,7 +66,7 @@ function useEVMBalance(address?: string, config?: BalanceConfig) {
     }
   );
   return {
-    balance: new BigNumber(data?.value.toString() ?? "0"),
+    balance: new BigNumber(data?.value.toString() ?? "0").div(10 ** 18),
     refreshAsync,
   };
 }
@@ -115,7 +115,7 @@ function useEVMTokenBalance(
 }
 
 export function useBalanceOnChain(
-  account: PublicKey | string | null,
+  account: PublicKey | string | null | undefined,
   config?: BalanceConfig
 ) {
   const { chain } = useChainStore();
@@ -135,7 +135,7 @@ export function useBalanceOnChain(
 
 export function useTokenBalanceOnChain(
   token: string,
-  account: PublicKey | string | null,
+  account: PublicKey | string | null | undefined,
   config?: BalanceConfig
 ) {
   const { chain } = useChainStore();

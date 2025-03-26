@@ -17,8 +17,11 @@ export function Buy({ message, nft }: { message: ContentWithUser; nft: NFT }) {
   const { chain } = useChainStore();
   const { deleteMessageById, addAndSendMessage } = useChatContext();
   const account = useMemo(
-    () => new PublicKey(nft.agentAccount.solana),
-    [nft.agentAccount.solana]
+    () =>
+      chain === "solana"
+        ? new PublicKey(nft.agentAccount.solana)
+        : nft.agentAccount.evm,
+    [nft.agentAccount.solana, chain]
   );
   const { balance } = useBalanceOnChain(account);
   const [form, setForm] = useState<{

@@ -29,6 +29,7 @@ import {
 import { useMemoizedFn } from "ahooks";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
+import { PublicKey } from "@solana/web3.js";
 
 function MemoTaskCard({
   task,
@@ -213,6 +214,7 @@ function EditButton({
   useEffect(() => {
     initForm();
   }, [task]);
+  const { chain } = useChainStore();
   return (
     <>
       <Button
@@ -233,7 +235,11 @@ function EditButton({
             form={form}
             type='edit'
             setForm={setForm}
-            address={nft.agentAccount.solana}
+            address={
+              chain === "solana"
+                ? new PublicKey(nft.agentAccount.solana)
+                : nft.agentAccount.evm
+            }
           />
           <Button
             loading={isEditing}

@@ -16,13 +16,13 @@ import { validNumberInput } from "@/lib/utils/input-helper";
 import { useAgentStore } from "../../../store";
 import { TokenNumber } from "@/components/token-number";
 import { useBalanceOnChain, useTokenBalanceOnChain } from "@/lib/hooks/balance";
-import { PublicKey } from "@solana/web3.js";
 import { TokenInputBuy, TokenInputSell, TokenValue } from "../token-input";
 import { AmountInput } from "../amount-input";
 import { useMemoizedFn } from "ahooks";
 import { CancelButton } from "../cancel-button";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
+import { PublicKey } from "@solana/web3.js";
 type LimitOrderForm = {
   token: FormValue<TokenValue>;
   amount: FormValue<string>;
@@ -70,8 +70,11 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
     setForm(initForm);
   });
   const account = useMemo(
-    () => new PublicKey(nft.agentAccount.solana),
-    [nft.agentAccount.solana]
+    () =>
+      chain === "solana"
+        ? new PublicKey(nft.agentAccount.solana)
+        : nft.agentAccount.evm,
+    [nft.agentAccount.solana, chain]
   );
   const { balance } = useBalanceOnChain(account);
   const { balance: tokenAmount } = useTokenBalanceOnChain(

@@ -11,6 +11,7 @@ import { initialIssueTokenForm, IssueTokenFormType } from "./types";
 import { IssueTokenForm } from "./form";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
+import { useUserStore } from "@/app/layout/chain-provider/hook";
 
 export function IssueToken({
   message,
@@ -24,8 +25,11 @@ export function IssueToken({
 
   const [form, setForm] = useState<IssueTokenFormType>(initialIssueTokenForm);
   const account = useMemo(
-    () => new PublicKey(nft.agentAccount.solana),
-    [nft.agentAccount.solana]
+    () =>
+      chain === "solana"
+        ? new PublicKey(nft.agentAccount.solana)
+        : nft.agentAccount.evm,
+    [nft.agentAccount.solana, chain]
   );
   return (
     <ChatContentContainer message={message}>

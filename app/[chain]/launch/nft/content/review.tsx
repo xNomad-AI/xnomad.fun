@@ -60,6 +60,7 @@ export function Review({
   const { userAddress, openConnectModal } = useUserStore();
   const router = useRouter();
   const { publicKey, signTransaction } = useWallet();
+  const { address } = useAccount();
   const { form, resetAll } = useLaunchStore();
   const [issueToken, setIssueToken] = useState(false);
   const [issueTokenForm, setIssueTokenForm] = useState<IssueTokenFormType>(
@@ -87,8 +88,6 @@ export function Review({
   }, [userAddress, chain]);
   const { connection, inspectTransaction } = useSolana();
   const { sendTransactionAsync } = useSendTransaction();
-  const { signMessageAsync } = useSignMessage();
-  const { connector } = useAccount();
   const client = useClient();
   const create = useMemoizedFn(async () => {
     if (!userAddress) {
@@ -252,7 +251,7 @@ export function Review({
                 . You can also launch tokens after the AI NFT launched.
               </p>
               <IssueTokenForm
-                account={publicKey as PublicKey}
+                account={chain === "solana" ? publicKey : address}
                 form={issueTokenForm}
                 nftImage={form.image.value as File}
                 setForm={setIssueTokenForm}

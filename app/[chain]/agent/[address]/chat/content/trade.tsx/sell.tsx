@@ -36,11 +36,15 @@ export function Sell({ message }: { message: ContentWithUser }) {
       errorMsg: "",
     },
   });
-  const account = useMemo(
-    () => new PublicKey(nft.agentAccount.solana),
-    [nft.agentAccount.solana]
-  );
+
   const { chain } = useChainStore();
+  const account = useMemo(
+    () =>
+      chain === "solana"
+        ? new PublicKey(nft.agentAccount.solana)
+        : nft.agentAccount.evm,
+    [nft.agentAccount.solana, chain]
+  );
   const { balance: tokenAmount } = useTokenBalanceOnChain(
     form.token.value.ca,
     account

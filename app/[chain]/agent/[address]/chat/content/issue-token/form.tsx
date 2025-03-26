@@ -34,7 +34,7 @@ export function IssueTokenForm({
 }: {
   form: IssueTokenFormType;
   setForm: (form: IssueTokenFormType) => void;
-  account: PublicKey;
+  account: PublicKey | string | undefined | null;
   nftImage: string | File;
 }) {
   const { chain } = useChainStore();

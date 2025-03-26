@@ -22,21 +22,22 @@ export function TokenList({ show }: { show: boolean }) {
   const { loading } = useRequest(
     async () => {
       const res = await getAgentTokenList({
-        creatorAddress: nft.agentAccount.solana,
+        creatorAddress:
+          chain === "solana" ? nft.agentAccount.solana : nft.agentAccount.evm,
         onlyBound: 0,
         chain,
       });
       setTokens(res.list);
     },
     {
-      refreshDeps: [nft.agentAccount.solana, chain],
+      refreshDeps: [nft.agentAccount, chain],
     }
   );
   const [showModal, setShowModal] = useState(false);
   const [initToken, setInitToken] = useState<TokenInfo>();
   const ownerShip = useMemo(
     () => isOwner(nft.owner, userAddress),
-    [nft.agentAccount.solana, userAddress]
+    [nft.owner, userAddress]
   );
   return (
     <div

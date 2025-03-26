@@ -9,6 +9,7 @@ import { AmountInput } from "../amount-input";
 import { useTokenBalanceOnChain } from "@/lib/hooks/balance";
 import { PublicKey } from "@solana/web3.js";
 import { CancelButton } from "../cancel-button";
+import { useChainStore } from "@/app/layout/chain-provider";
 
 export function Transfer({ message }: { message: ContentWithUser }) {
   const { deleteMessageById, addAndSendMessage } = useChatContext();
@@ -41,9 +42,13 @@ export function Transfer({ message }: { message: ContentWithUser }) {
       errorMsg: "",
     },
   });
+  const { chain } = useChainStore();
   const account = useMemo(
-    () => new PublicKey(nft.agentAccount.solana),
-    [nft.agentAccount.solana]
+    () =>
+      chain === "solana"
+        ? new PublicKey(nft.agentAccount.solana)
+        : nft.agentAccount.evm,
+    [nft.agentAccount.solana, chain]
   );
   const { balance: tokenAmount } = useTokenBalanceOnChain(
     form.token.value.ca,

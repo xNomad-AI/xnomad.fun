@@ -10,10 +10,13 @@ type TokenPriceChartQuery = QueryParams & {
   interval: string;
   from: number;
   to: number;
+  chain?: string;
 };
 
 const getTokenPriceChartApiPath = (props: TokenPriceChartQuery) => {
-  const url = `/addresses/token/ohlc/${props.address}?interval=${props.interval}&from=${props.from}&to=${props.to}`;
+  const url = `/addresses/token/ohlc/${props.address}?interval=${
+    props.interval
+  }&from=${props.from}&to=${props.to}&chain=${props.chain ?? "solana"}`;
   const baseUrl = `${process.env.TOKEN_STORY_API_HOST}/api/v1`;
   return `${baseUrl}${url}`;
 };
@@ -124,6 +127,7 @@ export class Datafeed {
       pairAddress: paramsArray[1],
       name: paramsArray[0],
       full_name: paramsArray[0],
+      chain: paramsArray[4],
       type: "crypto",
       session: "24x7",
       minmov: 1,
@@ -169,6 +173,7 @@ export class Datafeed {
           interval: timeInterval.timeframe,
           from: endTime - limit * intervalTime,
           to: endTime,
+          chain: symbolInfo.chain,
         })
         // `https://api.geckoterminal.com/api/v2/networks/eth/pools/${symbolInfo.pairAddress}/ohlcv/${timeInterval.timeframe}?aggregate=${timeInterval.aggregate}&limit=${limit}&before_timestamp=${endTime}&currency=${symbolInfo.currency}`
       );

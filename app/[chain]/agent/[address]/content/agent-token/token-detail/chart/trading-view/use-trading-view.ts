@@ -8,6 +8,7 @@ import { toThousandNum } from "@/lib/utils/number";
 import { useTokenPageSocketStore } from "../../store/socket";
 import { dealSmallNumber } from "@/components/token-number/utils";
 import BigNumber from "bignumber.js";
+import { useChainStore } from "@/app/layout/chain-provider";
 
 export const useTradingView = ({
   pairAddress,
@@ -61,6 +62,7 @@ function useTradingViewBase({
   chartType,
   precision,
 }: TradingViewGraphProps) {
+  const { chain } = useChainStore();
   const { colors } = useTheme();
   const tradingViewInstanceArray = useRef<any[]>([]);
 
@@ -77,6 +79,7 @@ function useTradingViewBase({
         pairAddress,
         chartType,
         precision,
+        chain,
       ].join(SPLIT_SYMBOL), // default symbol
       interval:
         localStorage.getItem(

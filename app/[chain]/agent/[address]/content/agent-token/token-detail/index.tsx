@@ -91,7 +91,7 @@ export function Detail({ show }: { nft: NFT; show: boolean }) {
                     <Chart
                       key={primaryToken.address}
                       ca={primaryToken.address}
-                      chain='solana'
+                      chain={chain}
                       tokenInfo={primaryToken}
                     />
                     <Table tokenInfo={primaryToken} />

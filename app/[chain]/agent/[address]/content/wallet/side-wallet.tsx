@@ -16,8 +16,13 @@ export function SideWallet() {
   const { chain } = useChainStore();
   const { portfolio, triggerRefresh, isRefreshing, nft } = useAgentStore();
   const account = useMemo(
-    () => (portfolio?.wallet ? new PublicKey(portfolio.wallet) : null),
-    [portfolio]
+    () =>
+      portfolio?.wallet
+        ? chain === "solana"
+          ? new PublicKey(portfolio.wallet)
+          : portfolio.wallet
+        : null,
+    [portfolio, chain]
   );
   const { balance } = useBalanceOnChain(account);
   const [tab, setTab] = useState<"holder" | "activity">("holder");

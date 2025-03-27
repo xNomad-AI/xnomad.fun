@@ -84,9 +84,11 @@ export function Content() {
         setIsRefreshing(false);
       });
   });
-  const agentAccountSol = useMemo(
-    () => nft?.agentAccount.solana ?? "",
-    [nft?.agentAccount.solana]
+  const agentAccount = useMemo(
+    () =>
+      (chain === "solana" ? nft?.agentAccount.solana : nft?.agentAccount.evm) ??
+      "",
+    [nft?.agentAccount, chain]
   );
   useMount(() => {
     getAgentConfig(nft.id, chain).then((res) => {
@@ -116,11 +118,11 @@ export function Content() {
   );
   useRequest(
     async () => {
-      getPortfolioData(agentAccountSol);
+      getPortfolioData(agentAccount);
     },
     {
-      refreshDeps: [agentAccountSol, refreshCount],
-      ready: !!agentAccountSol,
+      refreshDeps: [agentAccount, refreshCount],
+      ready: !!agentAccount,
     }
   );
   return (

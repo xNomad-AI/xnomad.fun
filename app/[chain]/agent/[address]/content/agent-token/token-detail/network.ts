@@ -73,9 +73,9 @@ export function getTokenDetail(chain: string, address?: string) {
       quoteReserve: "0",
     });
   }
-  return api.ts.get<TokenDetail>(
-    `/addresses/token/detail/${address}?chain=${chain}`
-  );
+  return api.ts.get<TokenDetail>(`/addresses/token/detail/${address}`, {
+    chain,
+  });
 }
 
 export function getPrimaryToken(agentId: string, chain: string) {

@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { useTradeConfigStore } from "../store/trade-config";
 import { Divider, IconSettings, TextField } from "@/primitive/components";
 import { TokenNumber } from "@/components/token-number";
-import { toCardNum } from "@/lib/utils/number";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
 
@@ -21,6 +20,7 @@ interface Props {
   received?: string;
   confirmNode?: ReactNode;
   mevWarning?: boolean;
+  balanceType?: "token" | "quote";
 }
 
 export function BaseTemplate({
@@ -35,15 +35,19 @@ export function BaseTemplate({
   quoteSymbol,
   received,
   confirmNode,
+  balanceType,
 }: Props) {
-  const { tradeSettingModalController, slippage, priorityFee, tradeMode } =
+  const { tradeSettingModalController, slippage, tradeMode } =
     useTradeConfigStore();
   const { chain } = useChainStore();
   return (
     <>
       <div className='flex flex-col gap-8'>
         <div className='flex justify-between items-center'>
-          <div>Amount({getCurrencySymbol(chain)})</div>
+          <div>
+            Amount
+            {balanceType === "quote" ? `(${getCurrencySymbol(chain)})` : ""}
+          </div>
           <div className='flex items-center gap-4 text-size-12'>
             <div>Balance:</div>
             <TokenNumber number={balance ?? ""} />

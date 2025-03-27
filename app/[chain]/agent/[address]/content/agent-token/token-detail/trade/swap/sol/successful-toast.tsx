@@ -1,6 +1,7 @@
 import { TextAnchor } from "@/components/text-button";
+import { SupportedChain } from "@/types/preference";
 import clsx from "clsx";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 export function SuccessfulToast() {
   const [time, setTime] = useState(10);
@@ -28,10 +29,12 @@ export function BuySellSuccessfulToast({
   txid,
   isBuy,
   status,
+  chain,
 }: {
   txid: string;
   isBuy: boolean;
   status: "success" | "failed";
+  chain: SupportedChain;
 }) {
   let errorMsg = "";
   if (isBuy) {
@@ -47,6 +50,16 @@ export function BuySellSuccessfulToast({
       errorMsg = "Sale Failed";
     }
   }
+  const exportUrl = useMemo(() => {
+    switch (chain) {
+      case "solana":
+        return `https://solscan.io/tx/${txid}`;
+      case "bsc":
+        return `https://bscscan.com/tx/${txid}`;
+      default:
+        return "";
+    }
+  }, [chain, txid]);
   return (
     <span>
       <span
@@ -58,7 +71,7 @@ export function BuySellSuccessfulToast({
         {errorMsg}
       </span>
       <br />
-      <TextAnchor target='_blank' href={`https://solscan.io/tx/${txid}`}>
+      <TextAnchor target='_blank' href={exportUrl}>
         View transaction
       </TextAnchor>
     </span>

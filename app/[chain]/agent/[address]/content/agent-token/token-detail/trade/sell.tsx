@@ -18,7 +18,7 @@ export function SellSection() {
   const [value, setValue] = useState("");
   const { tokenPrice } = useTokenPagePriceStore();
   const {
-    solGasData,
+    gasData,
     tokenBalance,
     handleSell,
     sellLoading,
@@ -30,16 +30,16 @@ export function SellSection() {
 
   const received = useMemo(() => {
     const amount = +value;
-    const sol = solGasData?.eth_usd_price;
+    const sol = gasData?.eth_usd_price;
     const token = +tokenPrice;
     if (typeof amount === "number" && !Number.isNaN(amount) && sol && token) {
       return ((amount * token) / sol).toString();
     }
     return "--";
-  }, [value, solGasData?.eth_usd_price, tokenPrice]);
+  }, [value, gasData?.eth_usd_price, tokenPrice]);
 
   const sell = useMemoizedFn(async () => {
-    await handleSell(+value * 10 ** (tokenDecimal ?? 9), received);
+    await handleSell(+value, received, tokenDecimal ?? 9);
     setValue("");
     updateBalance();
   });

@@ -72,7 +72,7 @@ function getOKXCallData(params: OKXCallDataRequestParams) {
 }
 
 const SOL_ADDRESS = "So11111111111111111111111111111111111111112";
-export function useSwap() {
+export function useSolSwap() {
   const wallet = useWallet();
   const { setVisible } = useConnectModalStore();
   const [okx, setOkx] = useState<OKXSwap | null>(null);
@@ -274,6 +274,7 @@ export function useSwap() {
       close();
       message(
         <BuySellSuccessfulToast
+          chain={"solana"}
           isBuy={type === "buy"}
           status={status ? "success" : "failed"}
           txid={txid}

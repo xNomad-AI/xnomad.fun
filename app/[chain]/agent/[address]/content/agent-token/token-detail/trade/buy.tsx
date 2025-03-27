@@ -14,18 +14,19 @@ import { useChainStore } from "@/app/layout/chain-provider";
 
 export function BuySection() {
   const { nft } = useAgentStore();
+  const { chain } = useChainStore();
+
   const [value, setValue] = useState("");
   const {
     buyLoading,
     handleBuy,
     updateBalance,
-    solBalance,
-    solGasData,
+    userBalance,
+    gasData,
     ensureLargeAmountMEV,
   } = useTradeStore();
   const { tokenPrice } = useTokenPagePriceStore();
   const { tradeMode, setTradeMode, setPriorityFeeType } = useTradeConfigStore();
-
   const buy = useMemoizedFn(async () => {
     await handleBuy(+value);
     setValue("");
@@ -41,24 +42,24 @@ export function BuySection() {
 
   const received = useMemo(() => {
     const amount = +value;
-    const sol = solGasData?.eth_usd_price;
+    const price = gasData?.eth_usd_price;
     const token = tokenPrice;
-    if (typeof amount === "number" && !Number.isNaN(amount) && sol && token) {
-      return ((amount * sol) / token).toString();
+    if (typeof amount === "number" && !Number.isNaN(amount) && price && token) {
+      return ((amount * price) / token).toString();
     }
     return "--";
-  }, [value, solGasData?.eth_usd_price, tokenPrice]);
-  const { chain } = useChainStore();
+  }, [value, gasData?.eth_usd_price, tokenPrice]);
   return (
     <BaseTemplate
+      balanceType='quote'
       confirmNode={
         <>
           <Button
             stretch
             disabled={
               !isNumber(+value) ||
-              solBalance?.isZero() ||
-              solBalance?.lt(value) ||
+              userBalance?.isZero() ||
+              userBalance?.lt(value) ||
               +value <= 0
             }
             onClick={() => buy()}
@@ -93,7 +94,7 @@ export function BuySection() {
       }
       received={received}
       mevWarning={isNumber(+value) && +value >= 2}
-      balance={solBalance?.toString()}
+      balance={userBalance?.toString()}
       placeholder='Amount'
       symbol={<IconSol />}
       value={value}
@@ -108,19 +109,19 @@ export function BuySection() {
       quicks={[
         {
           value: 0.01,
-          label: "0.01 Sol",
+          label: `0.01 ${getCurrencySymbol(chain)}`,
         },
         {
           value: 0.1,
-          label: "0.1 Sol",
+          label: `0.1 ${getCurrencySymbol(chain)}`,
         },
         {
           value: 0.5,
-          label: "0.5 Sol",
+          label: `0.5 ${getCurrencySymbol(chain)}`,
         },
         {
           value: 1,
-          label: "1 Sol",
+          label: `1 ${getCurrencySymbol(chain)}`,
         },
       ]}
     />

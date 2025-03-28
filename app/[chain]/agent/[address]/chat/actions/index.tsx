@@ -236,9 +236,6 @@ export function Actions({ nft }: { nft: NFT }) {
             <IconArrowLeft className='text-size-16' />
           </Button>
           {tradeActions.map((tradeAction) => {
-            if (chain === "bsc") {
-              return null;
-            }
             return (
               <Button
                 className='!font-normal whitespace-pre'

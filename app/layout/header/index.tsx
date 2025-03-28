@@ -20,31 +20,38 @@ import { useUserStore } from "../chain-provider/hook";
 import { ChainSelect } from "./chain-select";
 
 export function Header() {
-  const { chain, setChain } = useChainStore();
+  const { chain } = useChainStore();
 
   const navs = useMemo(
-    () => [
-      {
-        href: `/solana/xnomad`,
-        key: "xnomad",
-        label: "Swarms",
-      },
-      {
-        href: `/${chain}/agent-token`,
-        key: "agent-token",
-        label: "Agent Token",
-      },
-      {
-        href: `/${chain}/ugc-agents`,
-        key: "ugc-agents",
-        label: "UGC Agents",
-      },
-      {
-        href: `/${chain}/launch`,
-        key: "create-ai-nft",
-        label: "Create AI-NFT",
-      },
-    ],
+    () =>
+      [
+        chain === "solana"
+          ? {
+              href: `/solana/xnomad`,
+              key: "xnomad",
+              label: "Swarms",
+            }
+          : null,
+        {
+          href: `/${chain}/agent-token`,
+          key: "agent-token",
+          label: "Agent Token",
+        },
+        {
+          href: `/${chain}/ugc-agents`,
+          key: "ugc-agents",
+          label: "UGC Agents",
+        },
+        {
+          href: `/${chain}/launch`,
+          key: "create-ai-nft",
+          label: "Create AI-NFT",
+        },
+      ].filter(Boolean) as {
+        href: string;
+        key: string;
+        label: string;
+      }[],
     [chain]
   );
   const { userAddress, openConnectModal } = useUserStore();

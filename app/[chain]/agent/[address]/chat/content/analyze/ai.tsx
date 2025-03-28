@@ -157,6 +157,7 @@ export function AnalyzeResponse({
       api.v1
         .get<TokenInfo>("/token/info", {
           tokenAddress: ca,
+          chain,
         })
         .then((res) => {
           setTokenInfo(res);
@@ -167,6 +168,7 @@ export function AnalyzeResponse({
       api.v1
         .get<News[]>("/token/news", {
           tokenAddress: ca,
+          chain,
         })
         .then((res) => {
           setNews(res);
@@ -176,12 +178,13 @@ export function AnalyzeResponse({
       api.v1
         .get<Twitter>("/token/twitter-info", {
           tokenAddress: ca,
+          chain,
         })
         .then((res) => {
           setTwitter(res);
         });
     }
-  }, [ca]);
+  }, [ca, chain]);
   const [infoType, setInfoType] = useState<"basic" | "twitter" | "news">(
     "basic"
   );
@@ -272,8 +275,9 @@ export function AnalyzeResponse({
           <div className='w-full h-[338px] overflow-hidden'>
             <iframe
               width='100%'
-              id='geckoterminal-embed'
-              title='GeckoTerminal Embed'
+              id='gmgn-embed'
+              key={tokenInfo?.address}
+              title='gmgn Embed'
               src={`https://www.gmgn.cc/kline/${
                 chain === "solana" ? "sol" : chain
               }/${tokenInfo?.address}?theme=dark&interval=15`}

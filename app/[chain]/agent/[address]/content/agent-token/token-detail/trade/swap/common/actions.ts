@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Client } from "viem";
-import { readContract } from "viem/actions";
+import { readContract, waitForTransactionReceipt } from "viem/actions";
 import { PairAbi } from "../abi/pair";
 import { WrappedTokenAbi } from "../abi/wrapped-token";
 
@@ -246,7 +246,7 @@ export async function approveAssurance({
       getBalance({ account: wallet, contract: token, client }),
     ])) as [bigint];
     if (balance > 0 && tokenAmount.gt(approved.toString())) {
-      await approveERC20Token({
+      const tx = await approveERC20Token({
         contract: token,
         spender,
         amount: balance,
@@ -254,6 +254,14 @@ export async function approveAssurance({
         client,
         writeContractAsync,
       });
+      const res = await waitForTransactionReceipt(client, {
+        hash: tx,
+      });
+      if (res.status === "success") {
+        return true;
+      } else {
+        throw new Error("Approval failed");
+      }
     }
   }
 }

@@ -11,6 +11,7 @@ import { copyToClipboard } from "@/lib/utils/copy";
 import { useAgentStore } from "../../../../store";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
+import BigNumber from "bignumber.js";
 
 export function SellSection() {
   const { chain } = useChainStore();
@@ -39,7 +40,7 @@ export function SellSection() {
   }, [value, gasData?.eth_usd_price, tokenPrice]);
 
   const sell = useMemoizedFn(async () => {
-    await handleSell(+value, received, tokenDecimal ?? 9);
+    await handleSell(BigNumber(value), received, tokenDecimal ?? 9);
     setValue("");
     updateBalance();
   });
@@ -60,8 +61,8 @@ export function SellSection() {
             variant='danger'
             disabled={
               !isNumber(+value) ||
-              tokenBalance === 0 ||
-              tokenBalance < +value ||
+              tokenBalance.isZero() ||
+              tokenBalance.lt(value) ||
               +value <= 0
             }
             onClick={() => sell()}
@@ -105,7 +106,7 @@ export function SellSection() {
       quoteSymbol={<IconSol />}
       balance={tokenBalance?.toString()}
       onQuickActionClick={(value) => {
-        setValue((tokenBalance * value).toString());
+        setValue(tokenBalance.multipliedBy(value).toString());
       }}
       quicks={[
         {

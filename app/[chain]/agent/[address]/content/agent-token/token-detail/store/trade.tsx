@@ -150,12 +150,12 @@ function useStore() {
   });
 
   const handleSell = useMemoizedFn(
-    async (amount: number, receive: string, tokenDecimal: number) => {
+    async (amount: BigNumber, receive: string, tokenDecimal: number) => {
       setSellLoading(true);
       try {
         if (chain === "solana") {
           await swap({
-            amount: amount * 10 ** tokenDecimal,
+            amount: amount.multipliedBy(10 ** tokenDecimal).toNumber(),
             type: "sell",
             priorityFee: priorityFee * LAMPORTS_PER_SOL,
             tokenAddress: address,
@@ -173,14 +173,14 @@ function useStore() {
           let tx;
           if (tokenInfo.liquidityAdded) {
             const [, amountOut] = await getSecureSwapAmountOut({
-              amountIn: BigNumber(amount),
+              amountIn: amount,
               path: [address as `0x${string}`, WrappedTokenContract],
               client: client!,
             });
             const deadline =
               Date.now() + parseInt(txDeadline ?? "1", 10) * 60 * 1000;
             const res = await swapExactTokensForMainToken({
-              amountIn: BigNumber(amount),
+              amountIn: amount,
               amountOut: amountOut.multipliedBy(1 - slippage),
               pathIn: address as `0x${string}`,
               to: userAddress as `0x${string}`,
@@ -239,11 +239,10 @@ function useStore() {
       setPriorityFeeType("veryHigh");
     }
   });
-
   return {
     handleBuy,
     buyLoading,
-    tokenBalance: tokenBalance?.uiAmount ?? 0,
+    tokenBalance: BigNumber(tokenBalance?.uiAmountString ?? "0"),
     sellLoading,
     handleSell,
     tokenDecimal: tokenBalance?.decimals,

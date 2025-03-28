@@ -283,8 +283,12 @@ export function AnalyzeResponse({
               title='gmgn Embed'
               src={
                 chain === "solana"
-                  ? `https://www.gmgn.cc/kline/sol/${ca}?theme=dark&interval=15`
-                  : `https://dexscreener.com/embed/bnb/${ca}?theme=dark&interval=15`
+                  ? `https://www.gmgn.cc/kline/sol/${
+                      ca || tokenInfo?.address
+                    }?theme=dark&interval=15`
+                  : `https://dexscreener.com/embed/bnb/${
+                      ca || tokenInfo?.address
+                    }?theme=dark&interval=15`
               }
               frameBorder='0'
               allow='clipboard-write'

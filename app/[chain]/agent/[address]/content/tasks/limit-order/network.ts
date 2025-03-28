@@ -13,8 +13,8 @@ export interface Task {
   startAt: string;
   expireAt: string;
   priceCondition: "under" | "up";
-  priceTarget: string;
-  tokenTarget: string;
+  targetPrice: string;
+  targetToken: string;
 }
 
 export function getAutoTasks(agentId: string) {

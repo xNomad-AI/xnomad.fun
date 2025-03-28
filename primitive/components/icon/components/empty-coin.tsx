@@ -1,6 +1,6 @@
-import { createSingleColorIcon } from "../helper";
+import { createBaseIcon } from "../helper";
 
-export const IconEmptyCoin = createSingleColorIcon(
+export const IconEmptyCoin = createBaseIcon(
   <svg
     width='32'
     height='32'

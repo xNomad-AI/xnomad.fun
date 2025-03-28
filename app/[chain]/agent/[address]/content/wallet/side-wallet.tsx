@@ -1,5 +1,11 @@
 import { Address } from "@/components/address";
-import { Button, Card, IconReset, Spin } from "@/primitive/components";
+import {
+  Button,
+  Card,
+  IconEmptyCoin,
+  IconReset,
+  Spin,
+} from "@/primitive/components";
 import { useAgentStore } from "../../store";
 import { TokenNumber } from "@/components/token-number";
 import { useBalanceOnChain } from "@/lib/hooks/balance";
@@ -134,11 +140,15 @@ export function SideWallet() {
                       className='flex items-center w-full gap-12 h-56 justify-between text-size-12'
                     >
                       <div className='flex items-center gap-4'>
-                        <img
-                          src={item.logoURI}
-                          alt={item.symbol}
-                          className='w-32 h-32 rounded-full object-contain'
-                        />
+                        {item.logoURI ? (
+                          <img
+                            src={item.logoURI}
+                            alt={item.symbol}
+                            className='w-32 h-32 rounded-full object-contain'
+                          />
+                        ) : (
+                          <IconEmptyCoin className='text-size-32' />
+                        )}
                         <div className='flex flex-col'>
                           <span>{item.symbol}</span>
                           <Address

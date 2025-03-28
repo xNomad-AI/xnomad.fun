@@ -3,12 +3,12 @@ import { Empty } from "@/components/empty";
 import {
   Dropdown,
   DropdownController,
+  IconEmptyCoin,
   Spin,
   TextField,
 } from "@/primitive/components";
 import { useRef, useState } from "react";
 import { TokenValue } from ".";
-import { IconEmptyCoin } from "@/primitive/components/icon/components/empty-coin";
 
 export function CommonInput<T extends TokenValue>({
   data,

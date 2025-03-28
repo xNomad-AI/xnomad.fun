@@ -43,7 +43,7 @@ function MemoTaskCard({
               {upperFirstLetter(task.priceCondition)}
             </span>
           </p>
-          <TokenNumber number={task.priceTarget} prefix={"$"} />
+          <TokenNumber number={task.targetPrice} prefix={"$"} />
           <span className='text-text2 ml-8'>Expire:</span>
           <AgeCell time={task.expireAt} />
         </div>

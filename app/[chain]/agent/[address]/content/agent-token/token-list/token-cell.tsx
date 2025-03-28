@@ -3,10 +3,10 @@ import {
   IconTwitterX,
   IconTelegram,
   IconWebsite,
+  IconEmptyCoin,
 } from "@/primitive/components";
 import { TokenInfo } from "./network";
 import { TextWithEllipsis } from "@/components/text-with-ellipsis";
-import { IconEmptyCoin } from "@/primitive/components/icon/components/empty-coin";
 
 export function TokenCell({
   item,

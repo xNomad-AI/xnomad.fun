@@ -286,14 +286,17 @@ export function AnalyzeResponse({
                   ? `https://www.gmgn.cc/kline/sol/${
                       ca || tokenInfo?.address
                     }?theme=dark&interval=15`
-                  : `https://dexscreener.com/embed/bnb/${
+                  : `https://www.dextools.io/widget-chart/en/bnb/pe-light/${
                       ca || tokenInfo?.address
-                    }?theme=dark&interval=15`
+                    }?theme=dark&chartType=1&chartResolution=30&drawingToolbars=false`
               }
               frameBorder='0'
               allow='clipboard-write'
               allowFullScreen
-              className='mobile:mt-[16px] h-[calc(100%+40px)]'
+              className={clsx({
+                "mobile:mt-[16px] h-[calc(100%+40px)]": chain === "solana",
+                "mobile:-mt-[40px] h-[calc(100%+40px)]": chain === "bsc",
+              })}
             ></iframe>
           </div>
         </p>

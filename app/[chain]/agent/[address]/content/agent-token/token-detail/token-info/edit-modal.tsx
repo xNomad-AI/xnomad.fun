@@ -15,13 +15,12 @@ import { TokenInfo } from "../../token-list/network";
 import { useMemoizedFn } from "ahooks";
 import { EditInfoConfig, editTokenInfo, getEditInfoConfig } from "./network";
 import { NFT } from "@/types";
-import { toCardNum } from "@/lib/utils/number";
 import { onError } from "@/lib/utils/error";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { TokenNumber } from "@/components/token-number";
 import { useAgentStore } from "../../../../store";
-import { useAccount, useClient, useSendTransaction } from "wagmi";
+import { useClient, useSendTransaction } from "wagmi";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { parseEther } from "viem";
 import { waitForTransactionReceipt } from "viem/actions";
@@ -72,7 +71,6 @@ export function EditInfoModal({
   const { chain } = useChainStore();
   const { setPrimaryToken } = useAgentStore();
   const { publicKey, sendTransaction } = useWallet();
-  const { address } = useAccount();
   const { sendTransactionAsync } = useSendTransaction();
   const { connection } = useSolana();
   const [form, setForm] = useState<{
@@ -100,7 +98,12 @@ export function EditInfoModal({
         value: tokenInfo.website ?? "",
       },
     });
-  }, [tokenInfo]);
+  }, [
+    tokenInfo.description,
+    tokenInfo.telegram,
+    tokenInfo.twitter,
+    tokenInfo.website,
+  ]);
   const isEmpty = useMemo(
     () => Object.values(form).some((item) => item.value === ""),
     [form]

@@ -71,7 +71,15 @@ export function useActivities(ready: boolean) {
 
   const data = useMemo(() => {
     const data = txs?.transfers ?? [];
-    const result = [...news, ...data, ...olds];
+    const result = [
+      ...news.filter(
+        (item) => !data.some((data) => data.txHash === item.txHash)
+      ),
+      ...data,
+      ...olds.filter(
+        (item) => !data.some((data) => data.txHash === item.txHash)
+      ),
+    ];
     return result;
   }, [news, txs?.transfers, olds]);
   const loadMore = useMemoizedFn(() => {

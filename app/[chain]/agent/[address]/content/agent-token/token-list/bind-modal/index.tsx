@@ -1,5 +1,6 @@
 import {
   Button,
+  IconEmptyCoin,
   message,
   Modal,
   ModalContent,
@@ -176,12 +177,16 @@ function TokenItem({
         handleSelect(value);
       }}
     >
-      <img
-        src={value.logo}
-        alt='logo'
-        loading='lazy'
-        className='w-32 h-32 rounded-full object-contain'
-      />
+      {value.logo ? (
+        <img
+          src={value.logo}
+          alt='logo'
+          loading='lazy'
+          className='w-32 h-32 rounded-full object-contain'
+        />
+      ) : (
+        <IconEmptyCoin className='text-size-32' />
+      )}
       <div className='flex flex-col'>
         <span className='text-size-14 text-text1 font-bold'>
           {value.ticker}

@@ -143,7 +143,11 @@ export function AnalyzeResponse({
 }) {
   const { chain } = useChainStore();
   const ca =
-    message.text.match(/\((.*?)\)/)?.[1] ?? message.text.split(": ")[1];
+    message.text
+      .split("\n")
+      .slice(-1)[0]
+      .match(/\((.*?)\)/)?.[1] ??
+    message.text.split("\n").slice(-1)[0].split(": ")[1];
   const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(
     message.data?.info ?? null
   );
@@ -277,9 +281,11 @@ export function AnalyzeResponse({
               width='100%'
               id='gmgn-embed'
               title='gmgn Embed'
-              src={`https://www.gmgn.cc/kline/${
-                chain === "solana" ? "sol" : chain
-              }/${ca}?theme=dark&interval=15`}
+              src={
+                chain === "solana"
+                  ? `https://www.gmgn.cc/kline/sol/${ca}?theme=dark&interval=15`
+                  : `https://www.dextools.io/widget-chart/en/bnb/pe-light/${ca}?theme=dark&chartType=2&chartResolution=30&drawingToolbars=false`
+              }
               frameBorder='0'
               allow='clipboard-write'
               allowFullScreen

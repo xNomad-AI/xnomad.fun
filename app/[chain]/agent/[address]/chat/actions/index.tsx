@@ -235,20 +235,25 @@ export function Actions({ nft }: { nft: NFT }) {
           >
             <IconArrowLeft className='text-size-16' />
           </Button>
-          {tradeActions.map((tradeAction) => (
-            <Button
-              className='!font-normal whitespace-pre'
-              variant='secondary'
-              size='s'
-              disabled={tradeActionConfigs[tradeAction].disabled}
-              onClick={() => {
-                onTradeClick(tradeAction);
-              }}
-            >
-              {tradeActionConfigs[tradeAction].title}
-            </Button>
-          ))}
-          <TradeSetting />
+          {tradeActions.map((tradeAction) => {
+            if (chain === "bsc") {
+              return null;
+            }
+            return (
+              <Button
+                className='!font-normal whitespace-pre'
+                variant='secondary'
+                size='s'
+                disabled={tradeActionConfigs[tradeAction].disabled}
+                onClick={() => {
+                  onTradeClick(tradeAction);
+                }}
+              >
+                {tradeActionConfigs[tradeAction].title}
+              </Button>
+            );
+          })}
+          {chain === "solana" && <TradeSetting />}
         </motion.div>
       </div>
       <ClearMemoryButton

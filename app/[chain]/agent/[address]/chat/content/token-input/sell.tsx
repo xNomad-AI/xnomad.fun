@@ -1,6 +1,6 @@
 import { Address } from "@/components/address";
 import { TokenNumber } from "@/components/token-number";
-import { SelectOption } from "@/primitive/components";
+import { IconEmptyCoin, SelectOption } from "@/primitive/components";
 import { useMemo, useState } from "react";
 import { TokenValue } from ".";
 import { WalletItem } from "../../../content/deposit-container/network";
@@ -69,12 +69,16 @@ function TokenItem({
         handleSelect(value);
       }}
     >
-      <img
-        src={value.logo}
-        alt='logo'
-        loading='lazy'
-        className='w-32 h-32 rounded-full object-contain'
-      />
+      {value.logo ? (
+        <img
+          src={value.logo}
+          alt='logo'
+          loading='lazy'
+          className='w-32 h-32 rounded-full object-contain'
+        />
+      ) : (
+        <IconEmptyCoin className='text-size-32' />
+      )}
       <div className='flex flex-col'>
         <span className='text-size-14 text-text1 font-bold'>
           {value.ticker}

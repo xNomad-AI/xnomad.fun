@@ -10,6 +10,8 @@ import { ActionContent, ActionTag, Skeleton } from "./components";
 import { getActionType } from "./utils";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import clsx from "clsx";
+import { useChainStore } from "@/app/layout/chain-provider";
+import { getTxExploreUrl } from "@/lib/chain";
 export function Analytics({
   nft,
   itemHeight,
@@ -25,6 +27,7 @@ export function Analytics({
   show: boolean;
   height?: number;
 }) {
+  const { chain } = useChainStore();
   const [activity, setActivity] = useState<Activity[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [isInitializing, setIsInitializing] = useState(true);
@@ -171,7 +174,7 @@ export function Analytics({
                   content
                 )}
                 <a
-                  href={`https://explorer.solana.com/tx/${item.tx_hash}`}
+                  href={getTxExploreUrl(chain, item.tx_hash)}
                   target='_blank'
                   rel='noreferrer'
                   className={clsx("underline", {

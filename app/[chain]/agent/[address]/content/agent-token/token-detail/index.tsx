@@ -1,5 +1,8 @@
 import { Card, Spin, Tooltip } from "@/primitive/components";
-import { IconPump } from "../../../chat/content/issue-token/icons";
+import {
+  IconFourMeme,
+  IconPump,
+} from "../../../chat/content/issue-token/icons";
 import { Address } from "@/components/address";
 import { Chart } from "./chart";
 import { NFT } from "@/types";
@@ -62,14 +65,15 @@ export function Detail({ show }: { nft: NFT; show: boolean }) {
                             </a>
                           </Tooltip>
                         ) : (
-                          <TextAnchor
-                            href={`https://four.meme/token/${primaryToken.address}`}
-                            target='_blank'
-                            rel='noreferrer'
-                            withDecoration
-                          >
-                            Four.meme
-                          </TextAnchor>
+                          <Tooltip content='Four.meme'>
+                            <a
+                              href={`https://four.meme/token/${primaryToken.address}`}
+                              target='_blank'
+                              rel='noreferrer'
+                            >
+                              <IconFourMeme className='text-size-18' />
+                            </a>
+                          </Tooltip>
                         )}
                       </div>
                       <div className='flex items-center gap-4'>

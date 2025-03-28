@@ -79,7 +79,6 @@ export class OKXSwap {
         maxRetries: 2,
       }
     );
-    console.log(`https://solscan.io/tx/${txid}`);
     return txid;
   };
   public executeSwap = async (swapData: any) => {
@@ -118,7 +117,6 @@ export class OKXSwap {
       }
     );
 
-    console.log(`https://solscan.io/tx/${txid}`);
     return txid;
   };
 

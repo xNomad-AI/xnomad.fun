@@ -8,6 +8,7 @@ import {
 } from "@/primitive/components";
 import { useRef, useState } from "react";
 import { TokenValue } from ".";
+import { IconEmptyCoin } from "@/primitive/components/icon/components/empty-coin";
 
 export function CommonInput<T extends TokenValue>({
   data,
@@ -91,11 +92,15 @@ export function CommonInput<T extends TokenValue>({
             ""
           ) : (
             <div className='flex items-center gap-8'>
-              <img
-                src={value.logo}
-                alt='logo'
-                className='w-20 h-20 rounded-full object-contain'
-              />
+              {value.logo ? (
+                <img
+                  src={value.logo}
+                  alt='logo'
+                  className='w-20 h-20 rounded-full object-contain'
+                />
+              ) : (
+                <IconEmptyCoin className='text-size-20' />
+              )}
               <span className='text-size-14 text-text1'>{value.ticker}</span>
               <Address address={value.ca} className='text-size-12 text-text2' />
             </div>

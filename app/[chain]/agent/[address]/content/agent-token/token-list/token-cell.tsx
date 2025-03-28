@@ -6,6 +6,7 @@ import {
 } from "@/primitive/components";
 import { TokenInfo } from "./network";
 import { TextWithEllipsis } from "@/components/text-with-ellipsis";
+import { IconEmptyCoin } from "@/primitive/components/icon/components/empty-coin";
 
 export function TokenCell({
   item,
@@ -16,13 +17,17 @@ export function TokenCell({
 }) {
   return (
     <div className='flex w-full gap-4 items-center'>
-      <img
-        height={32}
-        width={32}
-        className='w-32 h-32 aspect-square rounded-full flex-shrink-0 mobile:hidden'
-        src={item.logo}
-        alt=''
-      />
+      {item.logo ? (
+        <img
+          height={32}
+          width={32}
+          className='w-32 h-32 aspect-square rounded-full flex-shrink-0 mobile:hidden'
+          src={item.logo}
+          alt=''
+        />
+      ) : (
+        <IconEmptyCoin className='text-size-32' />
+      )}
       <div className='flex flex-col gap-4 min-w-0'>
         <div className='flex items-end gap-4'>
           <span className='font-bold'>{item.symbol}</span>

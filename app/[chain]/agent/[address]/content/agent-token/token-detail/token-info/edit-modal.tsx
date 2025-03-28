@@ -312,7 +312,7 @@ export function EditInfoModal({
                   if (
                     !newForm[key].value ||
                     (typeof newForm[key].value === "object" &&
-                      Object.values(newForm[key].value).some((item) => !item))
+                      Object.values(newForm[key].value).every((item) => !item))
                   ) {
                     allValid = false;
                     newForm[key].isInValid = true;

@@ -276,11 +276,10 @@ export function AnalyzeResponse({
             <iframe
               width='100%'
               id='gmgn-embed'
-              key={tokenInfo?.address}
               title='gmgn Embed'
               src={`https://www.gmgn.cc/kline/${
                 chain === "solana" ? "sol" : chain
-              }/${tokenInfo?.address}?theme=dark&interval=15`}
+              }/${ca}?theme=dark&interval=15`}
               frameBorder='0'
               allow='clipboard-write'
               allowFullScreen

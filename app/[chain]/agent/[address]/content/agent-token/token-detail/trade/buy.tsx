@@ -4,7 +4,7 @@ import { useTradeStore } from "../store/trade";
 import { useTokenPagePriceStore } from "../store/price";
 import { useTradeConfigStore } from "../store/trade-config";
 import { isNumber } from "@/lib/utils/number/is-number";
-import { Button, IconSol, message } from "@/primitive/components";
+import { Button, IconBNB, IconSol, message } from "@/primitive/components";
 import { toDecimal } from "@/lib/utils/number/to-decimal";
 import { useMemoizedFn } from "ahooks";
 import { copyToClipboard } from "@/lib/utils/copy";
@@ -96,7 +96,7 @@ export function BuySection() {
       mevWarning={isNumber(+value) && +value >= 2}
       balance={userBalance?.toString()}
       placeholder='Amount'
-      symbol={<IconSol />}
+      symbol={chain === "solana" ? <IconSol /> : <IconBNB />}
       value={value}
       onChange={(value) => {
         const n = toDecimal(value);

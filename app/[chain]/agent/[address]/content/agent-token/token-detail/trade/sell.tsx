@@ -5,7 +5,7 @@ import { useTradeConfigStore } from "../store/trade-config";
 import { BaseTemplate } from "./base";
 import { useEffect, useMemo, useState } from "react";
 import { isNumber } from "@/lib/utils/number/is-number";
-import { Button, IconSol, message } from "@/primitive/components";
+import { Button, IconBNB, IconSol, message } from "@/primitive/components";
 import { toDecimal } from "@/lib/utils/number/to-decimal";
 import { copyToClipboard } from "@/lib/utils/copy";
 import { useAgentStore } from "../../../../store";
@@ -103,7 +103,7 @@ export function SellSection() {
       }}
       received={received}
       placeholder='Amount'
-      quoteSymbol={<IconSol />}
+      symbol={chain === "solana" ? <IconSol /> : <IconBNB />}
       balance={tokenBalance?.toString()}
       onQuickActionClick={(value) => {
         setValue(tokenBalance.multipliedBy(value).toString());

@@ -16,12 +16,14 @@ import {
   LOGO_SIZE_IN_MB,
   IMAGE_ID,
 } from "./constants";
-import { isValidSolanaAddress } from "@/lib/utils/address";
+import { isValidAddress } from "@/lib/utils/address";
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { checkForm } from "@/app/[chain]/agent/[address]/chat/lib/form";
 import { validateEmail } from "@/primitive/utils/email";
+import { useChainStore } from "@/app/layout/chain-provider";
 
 export function BasicForm() {
+  const { chain } = useChainStore();
   const { form, updateForm, setStep, setForm } = useSwarmStore();
   const onLogoFileChange = useMemoizedFn((file?: File | null) => {
     if (!file) {
@@ -196,7 +198,7 @@ export function BasicForm() {
               value={form.basic.receiver.value}
               onChange={(e) => {
                 const value = e.target.value;
-                const isValid = isValidSolanaAddress(value);
+                const isValid = isValidAddress(value, chain);
                 updateForm("basic", "receiver", {
                   value: value,
                   isInValid: !isValid,

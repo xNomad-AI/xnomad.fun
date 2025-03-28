@@ -11,9 +11,8 @@ import { CopyTradeFormType } from ".";
 import { validNumberInput } from "@/lib/utils/input-helper";
 import { TokenNumber } from "@/components/token-number";
 import { useBalanceOnChain } from "@/lib/hooks/balance";
-import { useMemo } from "react";
 import { PublicKey } from "@solana/web3.js";
-import { isValidSolanaAddress } from "@/lib/utils/address";
+import { isValidAddress } from "@/lib/utils/address";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
 
@@ -60,7 +59,7 @@ export function CopyTradeForm({
           value={form.target.value}
           placeholder='Target Wallet Address'
           onChange={(event) => {
-            const isValid = isValidSolanaAddress(event.target.value);
+            const isValid = isValidAddress(event.target.value, chain);
             setForm({
               ...form,
               target: {

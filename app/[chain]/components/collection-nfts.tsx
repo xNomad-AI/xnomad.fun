@@ -14,27 +14,28 @@ import { useTimeStore } from "@/primitive/hooks/time";
 import { AgeCell } from "../agent/[address]/content/agent-token/token-list/age-cell";
 import { useChainStore } from "@/app/layout/chain-provider";
 export function CollectionNFTs({
-  collection,
+  collection: initCollection,
   isSociety,
 }: {
   collection: Collection;
   isSociety?: boolean;
 }) {
   const { chain } = useChainStore();
-  const { setCollection, nftSearchParams, resetAll } = useCollectionStore();
+  const { setCollection, nftSearchParams, resetAll, collection } =
+    useCollectionStore();
   const elementRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    setCollection(collection);
+    setCollection(initCollection);
     // reset search params
     return () => {
       resetAll();
     };
-  }, [collection]);
+  }, [initCollection]);
   // fetch nfts
   const { data, loading, loadingMore } = useInfiniteScroll(
     async (currentData?: ApiListData<NFT>) => {
       const response = await api.v1.get<NFT[]>(
-        `/nft/${chain}/collection/${collection.id}/nfts`,
+        `/nft/${chain}/collection/${collection?.id}/nfts`,
         {
           offset: currentData?.list.length ?? 0,
           limit: currentData ? 10 : 60,
@@ -54,17 +55,17 @@ export function CollectionNFTs({
       );
       return {
         list: response,
-        total: collection.nftsCount,
+        total: collection?.nftsCount ?? 100,
       };
     },
     {
       target: elementRef.current,
-      reloadDeps: [collection.id, nftSearchParams, chain],
+      reloadDeps: [collection, nftSearchParams, chain],
       isNoMore(data) {
         if (data) {
           return (
             (!nftSearchParams.keyword &&
-              data.list.length >= collection.nftsCount) ||
+              data.list.length >= (collection?.nftsCount ?? 0)) ||
             Boolean(nftSearchParams.keyword)
           );
         }
@@ -86,8 +87,8 @@ export function CollectionNFTs({
           <NFTCard
             isSociety={isSociety}
             nft={nft}
-            collectionName={collection.name}
-            total={collection.nftsCount}
+            collectionName={collection?.name}
+            total={collection?.nftsCount}
           />
         ))}
       </CardViewGallery>

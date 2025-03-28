@@ -278,28 +278,32 @@ export function Review({
               )}
             </p>
           </div>
-          <div className='flex items-center justify-between w-full'>
-            <div className='flex items-center gap-4'>
-              Discount{" "}
-              <Tooltip
-                content={"xNomad holders enjoy a 70% reduction in creating fee"}
-                contentClassName='!w-fit'
-              >
-                <IconInfo />
-              </Tooltip>
-            </div>
-            {(mintFee?.discountPercentage ?? 0) > 0 ? (
-              <div className='flex items-center gap-8'>
-                <div className='h-18 px-4 flex items-center text-black text-size-12 bg-[url(/tag-bg.webp)] bg-no-repeat bg-center bg-cover rounded-4'>
-                  xNomad Holder
-                </div>
-                <span>{mintFee?.discountPercentage ?? 0}% off</span>
+          {chain === "solana" && (
+            <div className='flex items-center justify-between w-full'>
+              <div className='flex items-center gap-4'>
+                Discount{" "}
+                <Tooltip
+                  content={
+                    "xNomad holders enjoy a 70% reduction in creating fee"
+                  }
+                  contentClassName='!w-fit'
+                >
+                  <IconInfo />
+                </Tooltip>
               </div>
-            ) : (
-              <span>0</span>
-            )}
-          </div>
-          {issueToken && (
+              {(mintFee?.discountPercentage ?? 0) > 0 ? (
+                <div className='flex items-center gap-8'>
+                  <div className='h-18 px-4 flex items-center text-black text-size-12 bg-[url(/tag-bg.webp)] bg-no-repeat bg-center bg-cover rounded-4'>
+                    xNomad Holder
+                  </div>
+                  <span>{mintFee?.discountPercentage ?? 0}% off</span>
+                </div>
+              ) : (
+                <span>0</span>
+              )}
+            </div>
+          )}
+          {issueToken && chain !== "bsc" && (
             <div className='flex items-center justify-between w-full'>
               <p>
                 Buy $

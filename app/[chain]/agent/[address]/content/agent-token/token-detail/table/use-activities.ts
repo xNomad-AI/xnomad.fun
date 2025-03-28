@@ -31,7 +31,7 @@ function getTokenTxs({
   address: string;
   asc?: 0 | 1;
   walletAddress?: string;
-  cursor?: string;
+  cursor?: string | null;
   limit?: number;
   chain: string;
 }) {
@@ -76,16 +76,53 @@ export function useActivities(ready: boolean) {
       return;
     }
     setLoadingMore(true);
-    socket.emit(
-      "getTokenTransfers",
-      address,
-      data.slice(-1)[0].timestamp * 1000
-    );
+    if (nft.chain === "solana") {
+      socket.emit(
+        "getTokenTransfers",
+        address,
+        data.slice(-1)[0].timestamp * 1000
+      );
+    } else {
+      getTokenTxs({
+        address,
+        chain: nft.chain,
+        cursor: txs?.nextCursor,
+      }).then((res) => {
+        setOlds((array) => [...array, ...res.transfers]);
+        setLoadingMore(false);
+      });
+    }
   }, [socket, data, address]);
+
+  useRequest(
+    async () => {
+      getTokenTxs({
+        address,
+        chain: nft.chain,
+        limit: 10,
+      }).then((res) => {
+        setNews((news) => {
+          const newTx = res.transfers.filter((item) =>
+            txs?.transfers.every((i) => i.txHash !== item.txHash)
+          );
+          return [...newTx, ...news];
+        });
+      });
+    },
+    {
+      ready:
+        !!address &&
+        ready &&
+        nft.chain !== "solana" &&
+        !loadingMore &&
+        !loading,
+      pollingInterval: 5000,
+    }
+  );
 
   useEffect(() => {
     refresh();
-    if (socket === null) {
+    if (socket === null || nft.chain !== "solana") {
       return;
     }
     socket.on("tokenTransfers", (data: SocketResponse) => {

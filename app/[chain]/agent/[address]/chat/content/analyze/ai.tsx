@@ -239,8 +239,12 @@ export function AnalyzeResponse({
           />
           (1H)
           <br />
-          Age: <AgeCell time={(tokenInfo?.createTime ?? 0) * 1000} />
-          <br />
+          {chain === "solana" && (
+            <>
+              Age: <AgeCell time={(tokenInfo?.createTime ?? 0) * 1000} />
+              <br />
+            </>
+          )}
           Market Cap:{" "}
           <TokenNumber number={tokenInfo?.marketCap ?? ""} prefix={"$"} />
           <br />
@@ -258,10 +262,14 @@ export function AnalyzeResponse({
           <br />
           Holder: {toThousandNum(tokenInfo?.holder ?? 0)}
           <br />
-          Top 10 holders:{" "}
-          {toThousandNum((tokenInfo?.holdPercenttop100 ?? 0) * 100)}%(total
-          position of Top 10 holders)
-          <br />
+          {chain === "solana" && (
+            <>
+              Top 10 holders:{" "}
+              {toThousandNum((tokenInfo?.holdPercenttop100 ?? 0) * 100)}%(total
+              position of Top 10 holders)
+              <br />
+            </>
+          )}
           <br />
           <div className='w-full h-[338px] overflow-hidden'>
             <iframe

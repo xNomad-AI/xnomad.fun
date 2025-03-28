@@ -8,6 +8,7 @@ import { NewAgentTokens } from "./agent/[address]/content/agent-token/token-list
 import { UGCAgents } from "../home/ugc-agents";
 import { Partners } from "../home/partners";
 import { ensureChain } from "@/lib/chain";
+import { SwarmSection } from "../home/swarm-section";
 
 export default function Home({
   params,
@@ -38,29 +39,8 @@ export default function Home({
           </Link>
         </div>
         <div></div>
-        <h2 className='text-size-20 font-bold'>Swarm</h2>
-        <div className='grid grid-cols-2 w-full gap-16 mobile:grid-cols-1'>
-          <Link href={`/${chain}/xnomad`} prefetch>
-            <Card className='hover:border-white-40 relative w-full aspect-[16/9] flex items-center justify-center'>
-              <img
-                src={"/xnomad.webp"}
-                className='hover:scale-110 transition-all ease-in-out duration-300 absolute top-0 left-0 w-full h-full'
-              />
-              <div className='pointer-events-none w-full h-full bg-black-20 absolute left-0 top-0 z-2'></div>
-              <span
-                className='pointer-events-none text-[40px] z-3 text-center'
-                style={{
-                  ...bungee.style,
-                  textShadow: "0px 0px 6px rgba(255, 255, 255, 0.60)",
-                }}
-              >
-                xNomad
-                <br />
-                GENESIS
-              </span>
-            </Card>
-          </Link>
-        </div>
+
+        <SwarmSection />
         <div></div>
         <div className='grid grid-cols-2 w-full gap-32 mobile:grid-cols-1 mobile:gap-16'>
           <div className='flex flex-col gap-32'>

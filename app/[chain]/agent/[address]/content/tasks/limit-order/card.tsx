@@ -20,12 +20,26 @@ function MemoTaskCard({
   agentId: string;
   onDelete?: () => void;
 }) {
+  const { chain } = useChainStore();
   const type = useMemo(() => {
-    if (task.outputTokenSymbol) {
-      return task?.outputTokenSymbol?.toLowerCase() === "sol" ? "sell" : "buy";
-    } else {
-      return task?.inputTokenSymbol?.toLowerCase() === "sol" ? "buy" : "sell";
+    if (chain === "solana") {
+      if (task.outputTokenSymbol) {
+        return task?.outputTokenSymbol?.toLowerCase() === "sol"
+          ? "sell"
+          : "buy";
+      } else {
+        return task?.inputTokenSymbol?.toLowerCase() === "sol" ? "buy" : "sell";
+      }
+    } else if (chain === "bsc") {
+      if (task.inputTokenSymbol) {
+        return task?.inputTokenSymbol?.toLowerCase() === "bnb" ? "buy" : "sell";
+      } else {
+        return task?.outputTokenSymbol?.toLowerCase() === "bnb"
+          ? "sell"
+          : "buy";
+      }
     }
+    return "buy";
   }, [task]);
 
   const [isDeleting, setIsDeleting] = useState(false);

@@ -1,7 +1,6 @@
-import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { useMemoizedFn, useMount } from "ahooks";
 import { processCsvFile } from "./utils";
-import { isValidSolanaAddress } from "@/lib/utils/address";
+import { isValidAddress } from "@/lib/utils/address";
 import {
   FormItem,
   IconArrowDown,
@@ -19,6 +18,7 @@ import { validNumberInput } from "@/lib/utils/input-helper";
 import { useRef } from "react";
 import clsx from "clsx";
 import { CollapseCard } from "@/primitive/components/card/collapes";
+import { useChainStore } from "@/app/layout/chain-provider";
 
 export function StageForm({
   stage,
@@ -29,8 +29,8 @@ export function StageForm({
   index: number;
   isWhiteList?: boolean;
 }) {
+  const { chain } = useChainStore();
   const { form, updateForm } = useSwarmStore();
-  const { breakpoint } = useBreakpoint();
   const updateStage = useMemoizedFn(
     (newStage: Partial<Stage | WhitelistStage>) => {
       const key = isWhiteList ? "whitelistStages" : "publicStages";
@@ -61,7 +61,7 @@ export function StageForm({
       .then((res) => {
         if (
           res.some((address, index) => {
-            const isInvalid = !isValidSolanaAddress(address as any);
+            const isInvalid = !isValidAddress(address as any, chain);
             if (isInvalid) {
               message(`Address at index ${index} is invalid`, {
                 type: "error",

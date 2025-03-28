@@ -46,23 +46,21 @@ export function Actions({ nft }: { nft: NFT }) {
     let newMessages: ContentWithUser[] = [];
     switch (action) {
       case "airdrop":
-        if (chain === "solana") {
-          newMessages = [
-            {
-              text: "Claim Airdrop",
-              user: "user",
-              createdAt: Date.now(),
-              id: generateMessageId("airdrop"),
-            },
-            {
-              text: "Claim Airdrop",
-              webAction: "airdrop",
-              user: nft.name,
-              createdAt: Date.now(),
-              id: generateMessageId("airdrop"),
-            },
-          ];
-        }
+        newMessages = [
+          {
+            text: "Claim Airdrop",
+            user: "user",
+            createdAt: Date.now(),
+            id: generateMessageId("airdrop"),
+          },
+          {
+            text: "Claim Airdrop",
+            webAction: "airdrop",
+            user: nft.name,
+            createdAt: Date.now(),
+            id: generateMessageId("airdrop"),
+          },
+        ];
 
         break;
       case "trade":
@@ -201,6 +199,9 @@ export function Actions({ nft }: { nft: NFT }) {
           className='flex items-center gap-8'
         >
           {actions.map((action) => {
+            if (chain === "bsc" && action === "airdrop") {
+              return null;
+            }
             return (
               <Button
                 size='s'

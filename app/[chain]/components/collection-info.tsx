@@ -19,15 +19,13 @@ import { SupportedChain } from "@/types/preference";
 import { useEffect } from "react";
 
 export function CollectionInfo({
-  collection,
   isSociety,
   chain: initChain,
 }: {
-  collection: Collection;
   isSociety?: boolean;
   chain?: SupportedChain;
 }) {
-  const { setCollection } = useCollectionStore();
+  const { setCollection, collection } = useCollectionStore();
   const { chain, setChain } = useChainStore();
   useUpdateEffect(() => {
     api.v1
@@ -48,12 +46,12 @@ export function CollectionInfo({
     if (initChain && initChain !== chain) {
       setChain(initChain);
     }
-  }, []);
+  }, [initChain]);
   return (
     <div className='flex items-center justify-between'>
       <div className='flex flex-col gap-4'>
         <h1 style={bungee.style} className='text-[40px] mobile:text-size-24'>
-          {isSociety ? "UGC AI Agents" : collection.name}
+          {isSociety ? "UGC AI Agents" : collection?.name}
         </h1>
         <span className=''>{collection?.nftsCount?.toLocaleString()} NFTs</span>
       </div>

@@ -204,11 +204,9 @@ export function AnalyzeResponse({
               X News
             </RadioButton>
           )}
-          {chain === "solana" && (
-            <RadioButton className='!px-16 !text-size-12' value='twitter'>
-              X Profile
-            </RadioButton>
-          )}
+          <RadioButton className='!px-16 !text-size-12' value='twitter'>
+            X Profile
+          </RadioButton>
         </RadioButtonGroup>
       </div>
       <div

@@ -39,6 +39,9 @@ export function Activity({ show }: { show: boolean }) {
           itemSize={58}
           height={400}
           renderItem={(item: TokenTransaction) => {
+            if (!item) {
+              return null;
+            }
             return (
               <a
                 target='_blank'

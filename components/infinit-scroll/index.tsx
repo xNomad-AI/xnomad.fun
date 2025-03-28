@@ -117,7 +117,9 @@ export const InfiniteScrollList = React.memo(
     return (
       pre.items.length === next.items.length &&
       pre.height === next.height &&
-      pre.itemSize === next.itemSize
+      pre.itemSize === next.itemSize &&
+      pre.isNextPageLoading === next.isNextPageLoading &&
+      pre.hasNextPage === next.hasNextPage
     );
   }
 );

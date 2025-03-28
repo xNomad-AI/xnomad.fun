@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useActivities } from "./use-activities";
 import { Activity } from "./activty";
 import { Holders } from "./holders";
 import { TokenInfo } from "../../token-list/network";

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTokenPageSocketStore } from "../store/socket";
 import { useAgentStore } from "../../../../store";
 import { api } from "@/primitive/api";
-import { useRequest } from "ahooks";
+import { useMemoizedFn, useRequest } from "ahooks";
 export type TokenTransaction = {
   maker: string;
   amountUsd: string;
@@ -51,13 +51,17 @@ export function useActivities(ready: boolean) {
   const [news, setNews] = useState<TokenTransaction[]>([]);
   const [olds, setOlds] = useState<TokenTransaction[]>([]);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+
   const {
     data: txs,
     refresh,
     loading,
   } = useRequest(
     async () => {
-      return await getTokenTxs({ address, chain: nft.chain });
+      const res = await getTokenTxs({ address, chain: nft.chain });
+      setNextCursor(res.nextCursor);
+      return res;
     },
     {
       refreshDeps: [address],
@@ -70,9 +74,14 @@ export function useActivities(ready: boolean) {
     const result = [...news, ...data, ...olds];
     return result;
   }, [news, txs?.transfers, olds]);
-
-  const loadMore = useCallback(() => {
-    if (!socket || data.length === 0 || loadingMore) {
+  const loadMore = useMemoizedFn(() => {
+    if (
+      !socket ||
+      data.length === 0 ||
+      loadingMore ||
+      !nextCursor ||
+      nextCursor === "0"
+    ) {
       return;
     }
     setLoadingMore(true);
@@ -86,13 +95,16 @@ export function useActivities(ready: boolean) {
       getTokenTxs({
         address,
         chain: nft.chain,
-        cursor: txs?.nextCursor,
+        cursor: nextCursor,
       }).then((res) => {
-        setOlds((array) => [...array, ...res.transfers]);
+        setNextCursor(res.nextCursor);
+        if (res.transfers.length > 0) {
+          setOlds((array) => [...array, ...res.transfers]);
+        }
         setLoadingMore(false);
       });
     }
-  }, [socket, data, address]);
+  });
 
   useRequest(
     async () => {
@@ -123,6 +135,7 @@ export function useActivities(ready: boolean) {
   useEffect(() => {
     refresh();
     if (socket === null || nft.chain !== "solana") {
+      setLoadingMore(false);
       return;
     }
     socket.on("tokenTransfers", (data: SocketResponse) => {
@@ -149,7 +162,7 @@ export function useActivities(ready: boolean) {
     data,
     loading,
     loadMore,
-    hasMore: Boolean(txs?.nextCursor),
+    hasMore: Boolean(nextCursor) && nextCursor !== "0",
     loadingMore,
   };
 }

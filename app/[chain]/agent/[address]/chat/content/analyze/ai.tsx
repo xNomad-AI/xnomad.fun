@@ -284,7 +284,7 @@ export function AnalyzeResponse({
               src={
                 chain === "solana"
                   ? `https://www.gmgn.cc/kline/sol/${ca}?theme=dark&interval=15`
-                  : `https://www.dextools.io/widget-chart/en/bnb/pe-light/${ca}?theme=dark&chartType=2&chartResolution=30&drawingToolbars=false`
+                  : `https://dexscreener.com/embed/bnb/${ca}?theme=dark&interval=15`
               }
               frameBorder='0'
               allow='clipboard-write'

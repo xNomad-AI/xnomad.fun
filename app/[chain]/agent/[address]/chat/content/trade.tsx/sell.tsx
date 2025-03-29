@@ -45,9 +45,13 @@ export function Sell({ message }: { message: ContentWithUser }) {
         : nft.agentAccount.evm,
     [nft.agentAccount.solana, chain]
   );
-  const { balance: tokenAmount } = useTokenBalanceOnChain(
-    form.token.value.ca,
-    account
+  const tokenAmount = useMemo(
+    () =>
+      portfolio?.items.filter(
+        (item) => item.address === form.token.value.ca
+      )[0],
+
+    [form.token.value.ca, portfolio?.items]
   );
   return (
     <ChatContentContainer message={message}>

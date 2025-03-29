@@ -59,9 +59,13 @@ export function Swap({ message }: { message: ContentWithUser }) {
         : nft.agentAccount.evm,
     [nft.agentAccount.solana, chain]
   );
-  const { balance: tokenAmount } = useTokenBalanceOnChain(
-    form.fromToken.value.ca,
-    account
+  const tokenAmount = useMemo(
+    () =>
+      portfolio?.items.filter(
+        (item) => item.address === form.fromToken.value.ca
+      )[0],
+
+    [form.fromToken.value.ca, portfolio?.items]
   );
   return (
     <ChatContentContainer message={message}>

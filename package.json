@@ -12,6 +12,7 @@
     "@bloxroute/solana-trader-client-ts": "^2.2.3",
     "@elizaos/core": "^0.1.8",
     "@popperjs/core": "^2.11.8",
+    "@rainbow-me/rainbowkit": "^2.2.4",
     "@react-spring/web": "^9.7.5",
     "@solana/spl-token": "^0.4.12",
     "@solana/wallet-adapter-base": "^0.9.23",
@@ -54,6 +55,8 @@
     "react-window-infinite-loader": "^1.0.10",
     "socket.io-client": "^4.8.1",
     "tw-colors": "^3.3.2",
+    "viem": "^2.23.14",
+    "wagmi": "^2.14.15",
     "zustand": "^5.0.2"
   },
   "devDependencies": {

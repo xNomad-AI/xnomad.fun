@@ -2,27 +2,34 @@
 import { api } from "@/primitive/api";
 import { NFT } from "@/types";
 import { useState } from "react";
-import { NOMADS_SOCIETY_ID } from "../sol/ugc-agents/constants";
+import { NOMADS_SOCIETY_ID } from "../[chain]/ugc-agents/constants";
 import { useRequest } from "ahooks";
 import { Spin } from "@/primitive/components";
 import { Empty } from "@/components/empty";
-import { NFTCard } from "../sol/components/collection-nfts";
+import { NFTCard } from "../[chain]/components/collection-nfts";
+import { useChainStore } from "../layout/chain-provider";
 
 export function UGCAgents() {
+  const { chain } = useChainStore();
   const [agents, setAgents] = useState<NFT[]>([]);
 
-  const { loading } = useRequest(async () => {
-    const res = await api.v1.get<NFT[]>(
-      `/nft/solana/collection/${NOMADS_SOCIETY_ID}/nfts`,
-      {
-        offset: 0,
-        limit: 10,
-        sortBy: "mintTimeDesc",
-      }
-    );
+  const { loading } = useRequest(
+    async () => {
+      const res = await api.v1.get<NFT[]>(
+        `/nft/${chain}/collection/${NOMADS_SOCIETY_ID[chain]}/nfts`,
+        {
+          offset: 0,
+          limit: 10,
+          sortBy: "mintTimeDesc",
+        }
+      );
 
-    setAgents(res);
-  });
+      setAgents(res);
+    },
+    {
+      refreshDeps: [chain],
+    }
+  );
   return loading ? (
     <div className='w-full h-[200px] flex items-center justify-center'>
       <Spin />

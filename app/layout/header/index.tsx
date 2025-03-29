@@ -9,40 +9,54 @@ import {
   message,
   SelectOption,
 } from "@/primitive/components";
-import { useWallet } from "@solana/wallet-adapter-react";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import { useLogout } from "@/lib/user/use-logout";
-import { useConnectModalStore } from "@/components/connect-modal/store";
 import { usePathname } from "next/navigation";
-const navs = [
-  {
-    href: "/sol/xnomad",
-    key: "xnomad",
-    label: "Swarms",
-  },
-  {
-    href: `/sol/agent-token`,
-    key: "agent-token",
-    label: "Agent Token",
-  },
-  {
-    href: `/sol/ugc-agents`,
-    key: "ugc-agents",
-    label: "UGC Agents",
-  },
-  {
-    href: "/sol/launch",
-    key: "create-ai-nft",
-    label: "Create AI-NFT",
-  },
-];
+import { useChainStore } from "../chain-provider";
+import { useUserStore } from "../chain-provider/hook";
+import { ChainSelect } from "./chain-select";
+
 export function Header() {
-  const { publicKey } = useWallet();
+  const { chain } = useChainStore();
+
+  const navs = useMemo(
+    () =>
+      [
+        chain === "solana"
+          ? {
+              href: `/solana/xnomad`,
+              key: "xnomad",
+              label: "Swarms",
+            }
+          : null,
+        {
+          href: `/${chain}/agent-token`,
+          key: "agent-token",
+          label: "Agent Token",
+        },
+        {
+          href: `/${chain}/ugc-agents`,
+          key: "ugc-agents",
+          label: "UGC Agents",
+        },
+        {
+          href: `/${chain}/launch`,
+          key: "create-ai-nft",
+          label: "Create AI-NFT",
+        },
+      ].filter(Boolean) as {
+        href: string;
+        key: string;
+        label: string;
+      }[],
+    [chain]
+  );
+  const { userAddress, openConnectModal } = useUserStore();
   const logout = useLogout();
-  const { setVisible } = useConnectModalStore();
+
   return (
     <>
       <header
@@ -71,16 +85,16 @@ export function Header() {
                 key={nav.key}
                 onClick={(e) => {
                   if (nav.key === "my-ai-nfts") {
-                    if (!publicKey) {
+                    if (!userAddress) {
                       e.preventDefault();
                       e.stopPropagation();
-                      setVisible(true);
+                      openConnectModal();
                     }
                   }
                 }}
                 href={
                   nav.key === "my-ai-nfts"
-                    ? `/sol/profile/${publicKey?.toBase58()}`
+                    ? `/${chain}/profile/${userAddress}`
                     : nav.href
                 }
               >
@@ -98,10 +112,10 @@ export function Header() {
                     prefetch
                     onClick={(e) => {
                       if (nav.key === "create-ai-nft") {
-                        if (!publicKey) {
+                        if (!userAddress) {
                           e.preventDefault();
                           e.stopPropagation();
-                          setVisible(true);
+                          openConnectModal();
                         }
                       } else if (!nav.href) {
                         e.preventDefault();
@@ -111,7 +125,7 @@ export function Header() {
                     }}
                     href={
                       nav.key === "my-ai-nfts"
-                        ? `/sol/profile/${publicKey?.toBase58()}`
+                        ? `/${chain}/profile/${userAddress}`
                         : nav.href
                     }
                   >
@@ -125,13 +139,14 @@ export function Header() {
               <IconMenu className='text-size-16 text-white' />
             </button>
           </Dropdown>
-          {!publicKey ? (
+          <ChainSelect />
+          {!userAddress ? (
             <ConnectButton size='s' />
           ) : (
             <Dropdown
               content={
                 <div className='flex flex-col gap-8'>
-                  <Link prefetch href={`/sol/profile/${publicKey.toBase58()}`}>
+                  <Link prefetch href={`/${chain}/profile/${userAddress}`}>
                     <SelectOption selected={false}>My AI-NFTs</SelectOption>
                   </Link>
 
@@ -151,7 +166,7 @@ export function Header() {
                 <Address
                   className='font-bold'
                   disableTooltip
-                  address={publicKey.toBase58() as string}
+                  address={userAddress}
                 />
                 <IconArrowDown />
               </div>

@@ -15,6 +15,8 @@ module.exports = {
     OKX_PROJECT_ID: process.env.OKX_PROJECT_ID,
     OKX_PASS_PHRASE: process.env.OKX_PASS_PHRASE,
     JUP_SWAP_FEE_ACCOUNT: process.env.JUP_SWAP_FEE_ACCOUNT,
+    CHAT_STREAM_ENABLED: process.env.CHAT_STREAM_ENABLED,
+    EVM_FEE_RECIPIENT: process.env.EVM_FEE_RECIPIENT,
   },
   compiler: {
     removeConsole: process.env.DEPLOY_ENV === "prod",

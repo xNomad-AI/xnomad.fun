@@ -311,3 +311,4 @@ export * from "./components/api";
 export * from "./components/safari";
 export * from "./components/sol";
 export * from "./components/pause";
+export * from "./components/empty-coin";

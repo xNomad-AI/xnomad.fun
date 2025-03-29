@@ -212,7 +212,7 @@ export async function sellToken({
       ),
       noExponents(amountOut.toFixed(0, BigNumber.ROUND_DOWN)),
       100,
-      "0xbe3bb8b98be0acef837991a83fcca173ed8491ed",
+      process.env.EVM_FEE_RECIPIENT,
     ],
   });
 }

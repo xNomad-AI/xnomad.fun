@@ -6,14 +6,13 @@ import BigNumber from "bignumber.js";
 import { Client } from "viem";
 import { readContract } from "viem/actions";
 import {
-  SwapFactoryContract,
-  SwapRouteContract,
+  SwapFactoryContractV2,
+  SwapFactoryContractV3,
+  SwapRouteContractV2,
   WrappedTokenContract,
 } from "./constants";
 import { SwapRouteAbi } from "../../abi/swap-route";
-import { WrappedTokenAbi } from "../../abi/wrapped-token";
 import { SwapFactoryAbi } from "../../abi/swap-factory";
-import { PairAbi } from "../../abi/pair";
 import { approveAssurance, getDecimals } from "../../common/actions";
 
 /**
@@ -35,7 +34,33 @@ export async function getPool({
   client: Client;
 }) {
   return await readContract(client, {
-    address: SwapFactoryContract,
+    address: SwapFactoryContractV2,
+    abi: SwapFactoryAbi,
+    functionName: "getPair",
+    args: [tokenA, tokenB],
+  });
+}
+
+/**
+ * Retrieves the pool information for a pair of tokens.
+ *
+ * @param {Object} params - The parameters.
+ * @param {`0x${string}`} params.tokenA - The address of token A.
+ * @param {`0x${string}`} params.tokenB - The address of token B.
+ * @param {Client} params.client - The client instance.
+ * @returns {Promise<`0x${string}`>} The pool address.
+ */
+export async function getPoolV3({
+  tokenA,
+  tokenB,
+  client,
+}: {
+  tokenA: `0x${string}`;
+  tokenB: `0x${string}`;
+  client: Client;
+}) {
+  return await readContract(client, {
+    address: SwapFactoryContractV3,
     abi: SwapFactoryAbi,
     functionName: "getPair",
     args: [tokenA, tokenB],
@@ -63,7 +88,7 @@ export async function getSecureSwapAmountOut({
   const decimal0 = await getDecimals({ contract: path[0], client });
   const decimal1 = await getDecimals({ contract: path[1], client });
   const [out0, out1] = (await readContract(client, {
-    address: SwapRouteContract,
+    address: SwapRouteContractV2,
     abi: SwapRouteAbi,
     functionName: "getAmountsOut",
     args: [
@@ -102,7 +127,7 @@ export async function getSecureSwapAmountIn({
   const decimal0 = await getDecimals({ contract: path[0], client });
   const decimal1 = await getDecimals({ contract: path[1], client });
   const [out0, out1] = (await readContract(client, {
-    address: SwapRouteContract,
+    address: SwapRouteContractV2,
     abi: SwapRouteAbi,
     functionName: "getAmountsIn",
     args: [
@@ -156,7 +181,7 @@ export const swapMainTokenForExactTokens = async ({
     client,
   });
   return writeContractAsync({
-    address: SwapRouteContract,
+    address: SwapRouteContractV2,
     abi: SwapRouteAbi,
     functionName: "swapExactETHForTokens",
     args: [
@@ -209,7 +234,7 @@ export const swapExactTokensForMainToken = async ({
     client,
     writeContractAsync,
     tokenAmount: amountIn,
-    spender: SwapRouteContract,
+    spender: SwapRouteContractV2,
   });
   const inDecimals = await getDecimals({ contract: pathIn, client });
   const outDecimals = await getDecimals({
@@ -217,7 +242,7 @@ export const swapExactTokensForMainToken = async ({
     client,
   });
   const params = {
-    address: SwapRouteContract,
+    address: SwapRouteContractV2,
     abi: SwapRouteAbi,
     functionName: "swapExactTokensForETHSupportingFeeOnTransferTokens",
     args: [

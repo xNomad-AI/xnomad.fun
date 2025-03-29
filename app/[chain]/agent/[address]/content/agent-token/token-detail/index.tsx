@@ -1,4 +1,4 @@
-import { Card, Spin, Tooltip } from "@/primitive/components";
+import { Card, IconEmptyCoin, Spin, Tooltip } from "@/primitive/components";
 import {
   IconFourMeme,
   IconPump,
@@ -42,10 +42,14 @@ export function Detail({ show }: { nft: NFT; show: boolean }) {
               <TradeStoreProvider>
                 <Card className='flex items-center justify-between p-16'>
                   <div className='flex items-center gap-8'>
-                    <img
-                      className='w-48 h-48 rounded-full object-contain'
-                      src={primaryToken.logo}
-                    />
+                    {primaryToken.logo ? (
+                      <img
+                        className='w-48 h-48 rounded-full object-contain'
+                        src={primaryToken.logo}
+                      />
+                    ) : (
+                      <IconEmptyCoin className='text-[48px]' />
+                    )}
                     <div className='flex flex-col'>
                       <div className='flex items-center gap-4'>
                         <span className='text-size-20 font-bold'>

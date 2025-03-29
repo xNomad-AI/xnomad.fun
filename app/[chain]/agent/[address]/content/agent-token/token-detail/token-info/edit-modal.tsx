@@ -165,7 +165,7 @@ export function EditInfoModal({
         }
         tx = await sendTransactionAsync({
           to: editConfig.recipient as `0x${string}`,
-          value: parseEther("0.2"),
+          value: parseEther(editConfig.solAmount.toString()),
         });
         const res = await waitForTransactionReceipt(client, {
           hash: tx,

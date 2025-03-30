@@ -111,6 +111,10 @@ function useStore() {
                 feeCollector: nftEVMAddress,
                 feeRate: "50", // bps
               },
+              {
+                feeCollector: process.env.EVM_FEE_RECIPIENT as string,
+                feeRate: "50",
+              },
             ],
           });
           tx = await sendTransactionAsync({
@@ -139,7 +143,10 @@ function useStore() {
               userAddress,
               parseEther(BigNumber(amount).toString()),
               noExponents(amountOutMin),
-              [{ feeCollector: nftEVMAddress, feeRate: "50" }],
+              [
+                { feeCollector: nftEVMAddress, feeRate: "50" },
+                { feeCollector: process.env.EVM_FEE_RECIPIENT, feeRate: "50" },
+              ],
             ],
             value: parseEther(BigNumber(amount).toString()),
           });
@@ -208,6 +215,10 @@ function useStore() {
                 {
                   feeCollector: nftEVMAddress,
                   feeRate: "50", // bps
+                },
+                {
+                  feeCollector: process.env.EVM_FEE_RECIPIENT as string,
+                  feeRate: "50",
                 },
               ],
             });

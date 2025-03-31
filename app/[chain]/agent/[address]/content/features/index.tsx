@@ -19,6 +19,8 @@ import { editAgentConfig } from "./network";
 import { useAgentStore } from "../../store";
 import { SupportedChain } from "@/types/preference";
 import { useChainStore } from "@/app/layout/chain-provider";
+import { isOwner } from "@/lib/user/ownership";
+import { useUserStore } from "@/app/layout/chain-provider/hook";
 function configTwitter({
   nftId,
   config,
@@ -46,6 +48,7 @@ function deleteTwitter(nftId: string, chain: SupportedChain) {
 }
 export function Features({ nft }: { nft: NFT }) {
   const { chain } = useChainStore();
+  const { userAddress } = useUserStore();
   const { agentConfig: config, setAgentConfig: setConfig } = useAgentStore();
   const [xOpen, setXOpen] = useState(false);
   const [tgOpen, setTgOpen] = useState(false);
@@ -105,6 +108,10 @@ export function Features({ nft }: { nft: NFT }) {
   }, [config]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const twitterEnabled = process.env.TWITTER_ENABLED === "true";
+  const isNFTOwner = useMemo(
+    () => isOwner(nft.owner, userAddress),
+    [nft.owner, userAddress]
+  );
   return (
     <>
       <div className='w-full flex flex-col gap-16'>
@@ -152,22 +159,26 @@ export function Features({ nft }: { nft: NFT }) {
                 />
               </div>
             )}
-            <Tooltip
-              disabled={twitterEnabled}
-              content={
-                "Due to technical limitations of X, this feature is temporarily unavailable."
-              }
-            >
-              <Button
-                className='!w-[7.5rem]'
-                disabled={!twitterEnabled}
-                onClick={() => {
-                  setXOpen(true);
-                }}
+            {isNFTOwner ? (
+              <Tooltip
+                disabled={twitterEnabled}
+                content={
+                  "Due to technical limitations of X, this feature is temporarily unavailable."
+                }
               >
-                {hasTwitterConfig ? "Edit" : "Add"}
-              </Button>
-            </Tooltip>
+                <Button
+                  className='!w-[7.5rem]'
+                  disabled={!twitterEnabled}
+                  onClick={() => {
+                    setXOpen(true);
+                  }}
+                >
+                  {hasTwitterConfig ? "Edit" : "Add"}
+                </Button>
+              </Tooltip>
+            ) : (
+              config?.characterConfig?.settings.secrets?.TWITTER_USERNAME
+            )}
           </div>
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>
@@ -175,14 +186,16 @@ export function Features({ nft }: { nft: NFT }) {
             <Image src={"/telegram.svg"} height={64} width={64} alt='' />
             <span>Telegram Integration</span>
           </div>
-          <Button
-            className='!w-[7.5rem]'
-            onClick={() => {
-              setTgOpen(true);
-            }}
-          >
-            {hasTgConfig ? "Edit" : "Add"}
-          </Button>
+          {isNFTOwner ? (
+            <Button
+              className='!w-[7.5rem]'
+              onClick={() => {
+                setTgOpen(true);
+              }}
+            >
+              {hasTgConfig ? "Edit" : "Add"}
+            </Button>
+          ) : null}
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>
           <div className='flex items-center gap-16'>
@@ -196,15 +209,17 @@ export function Features({ nft }: { nft: NFT }) {
             <Image src={"/voice.png"} height={64} width={64} alt='' />
             <span>Voice Generation</span>
           </div>
-          <Button
-            variant='secondary'
-            className='!w-[7.5rem]'
-            onClick={() => {
-              setVoiceOpen(true);
-            }}
-          >
-            Edit
-          </Button>
+          {isNFTOwner ? (
+            <Button
+              variant='secondary'
+              className='!w-[7.5rem]'
+              onClick={() => {
+                setVoiceOpen(true);
+              }}
+            >
+              Edit
+            </Button>
+          ) : null}
         </Card>
       </div>
       <TwitterModal

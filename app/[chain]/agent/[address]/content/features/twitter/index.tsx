@@ -251,7 +251,7 @@ export function TwitterModal({
             onChange={(e) => {
               const value = validNumberInput(e.target.value);
               updateForm("postIntervalMin", {
-                value: value,
+                value: parseInt(value),
                 isInValid: false,
                 errorMsg: "",
               });
@@ -278,7 +278,7 @@ export function TwitterModal({
             }}
             onChange={(e) => {
               updateForm("postIntervalMax", {
-                value: validNumberInput(e.target.value),
+                value: parseInt(validNumberInput(e.target.value)),
                 isInValid: false,
                 errorMsg: "",
               });
@@ -330,7 +330,7 @@ export function TwitterModal({
             onChange={(e) => {
               const value = validNumberInput(e.target.value);
               updateForm("postMaxLength", {
-                value: value,
+                value: parseInt(value),
                 isInValid: false,
                 errorMsg: "",
               });

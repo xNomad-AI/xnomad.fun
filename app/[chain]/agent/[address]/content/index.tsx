@@ -50,10 +50,7 @@ export function Content() {
 
   const [tab, _setTab] = useState<Tab | null>("chat");
   const setTab = useMemoizedFn((tab: Tab | null) => {
-    if (
-      (tab === "features" || tab === "tasks") &&
-      !isOwner(userAddress, nft.owner)
-    ) {
+    if (tab === "tasks" && !isOwner(userAddress, nft.owner)) {
       message("You must be the owner to access this feature", {
         type: "error",
       });

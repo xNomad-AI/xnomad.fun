@@ -67,7 +67,7 @@ export function Header() {
       >
         <Link
           prefetch
-          href={"/"}
+          href={`/${chain}`}
           className='flex items-center gap-8 mobile:hidden'
         >
           <Image src={"/brand.png"} width={145} height={40} alt='' />

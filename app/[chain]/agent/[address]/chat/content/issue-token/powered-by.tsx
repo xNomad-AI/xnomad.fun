@@ -1,6 +1,6 @@
 "use client";
 import { useChainStore } from "@/app/layout/chain-provider";
-import { IconPump } from "./icons";
+import { IconFourMeme, IconPump } from "./icons";
 
 export function PoweredBy() {
   const { chain } = useChainStore();
@@ -9,7 +9,11 @@ export function PoweredBy() {
       <span className='text-size-12 text-text2'>
         Powered by {chain === "solana" ? "Pump.fun" : "Four.meme"}
       </span>
-      <IconPump className='text-size-16' />
+      {chain === "solana" ? (
+        <IconPump className='text-size-16' />
+      ) : (
+        <IconFourMeme className='text-size-16' />
+      )}
     </div>
   );
 }

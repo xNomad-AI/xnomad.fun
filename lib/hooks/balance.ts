@@ -16,8 +16,10 @@ function useSolBalance(account?: PublicKey | null, config?: BalanceConfig) {
   const { getSolBalance } = useSolana();
   const { refreshAsync, data: balance } = useRequest(
     async () => {
-      if (!account || typeof account === "string") return BigNumber(0);
-      const res = await getSolBalance(account);
+      if (!account) return BigNumber(0);
+      let publicKey =
+        typeof account === "string" ? new PublicKey(account) : account;
+      const res = await getSolBalance(publicKey);
       return res;
     },
     {
@@ -37,8 +39,11 @@ function useSPLBalance(
   const { getSPLBalance } = useSolana();
   const { refreshAsync, data: balance } = useRequest(
     async () => {
-      if (!account || typeof account === "string") return undefined;
-      const res = await getSPLBalance(token, account);
+      if (!account) return undefined;
+      let publicKey =
+        typeof account === "string" ? new PublicKey(account) : account;
+
+      const res = await getSPLBalance(token, publicKey);
       return res;
     },
     {

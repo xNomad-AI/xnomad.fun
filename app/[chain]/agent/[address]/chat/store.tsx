@@ -6,9 +6,10 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
-import { ContentWithUser, IAttachment } from "./types";
+import { ContentWithUser, DisplayType, IAttachment } from "./types";
 import { onError } from "@/lib/utils/error";
 import { UUID } from "@elizaos/core";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
@@ -17,6 +18,7 @@ import { apiClient } from "./lib/api";
 import { stringToUuid } from "./lib/uuid";
 import { useAutoScroll } from "./hooks/use-auto-scroll";
 import { useUserStore } from "@/app/layout/chain-provider/hook";
+const enableStream = process.env.CHAT_STREAM_ENABLED === "true";
 const MessageUpdateSequence = new Map<string, ContentWithUser[]>();
 const ChatContext = createContext<
   | ({
@@ -69,6 +71,7 @@ export function ChatProvider({
       return stringToUuid(`web-${Date.now()}-${agentId}-${Math.random()}`);
     }
   }, [userAddress, agentId]);
+  const currentMessage = useRef<string>();
   const [messages, setMessages] = useState<ContentWithUser[]>([]);
   const deleteLastMessageByLength = useMemoizedFn((length: number = 2) => {
     setMessages((old) => {
@@ -86,29 +89,26 @@ export function ChatProvider({
     });
   });
   const updateMessage = useMemoizedFn((_message: ContentWithUser) => {
-    setTimeout(() => {
-      let message = _message;
-      let sequence = MessageUpdateSequence.get(message.id) ?? [];
-      const isInSequence = sequence.some((msg) => msg.id === message.id);
-      if (!isInSequence) {
-        sequence = [...sequence, message];
-      }
-      const firstMessage = sequence.shift() as ContentWithUser;
-      MessageUpdateSequence.set(message.id, sequence);
-      setMessages((old) => {
-        return (
-          old?.map((msg) => {
-            if (msg.id === firstMessage.id) {
-              return firstMessage;
-            }
-            return msg;
-          }) ?? []
-        );
-      });
-      if (sequence.length > 0) {
-        updateMessage(sequence[0]);
-      }
-    }, 0);
+    let message = _message;
+    let sequence = MessageUpdateSequence.get(message.id) ?? [];
+    const isInSequence = sequence.some((msg) => msg.id === message.id);
+
+    if (!isInSequence) {
+      sequence = [...sequence, message];
+    }
+
+    const firstMessage = sequence.shift() as ContentWithUser;
+    MessageUpdateSequence.set(message.id, sequence);
+
+    setMessages(
+      (old) =>
+        old?.map((msg) => (msg.id === firstMessage.id ? firstMessage : msg)) ??
+        []
+    );
+
+    if (sequence.length > 0) {
+      updateMessage(sequence[0]);
+    }
   });
   const getMessageById = useMemoizedFn((id: string) => {
     return messages.find((msg) => msg.id === id);
@@ -145,14 +145,14 @@ export function ChatProvider({
         agentId,
         message,
         selectedFile,
-        process.env.CHAT_STREAM_ENABLED === "true"
+        enableStream
       ),
     onSuccess: async (
       newMessages:
         | ContentWithUser[]
         | ReadableStreamDefaultReader<Uint8Array<ArrayBufferLike>>
     ) => {
-      const messageId = generateMessageId();
+      const messageId = currentMessage.current ?? generateMessageId();
       const messageCreateTime = Date.now();
       if (newMessages instanceof ReadableStreamDefaultReader) {
         const decoder = new TextDecoder();
@@ -168,23 +168,66 @@ export function ChatProvider({
             );
             const oldMessage = getMessageById(messageId);
             if (oldMessage) {
+              let extraText = oldMessage.extraText ?? [];
+              for (const extra of extraText) {
+                if (extra.text === "Connecting") {
+                  extra.text = "Connected";
+                }
+                extra.status = "success";
+              }
               messages.forEach((message) => {
+                if (message.displayType && message.text !== "Connected") {
+                  extraText.push({
+                    text: message.text.split(":")[0],
+                    status: "loading",
+                    displayType: message.displayType,
+                  });
+                }
+                const newText =
+                  message.displayType === DisplayType.AGENT_RESPONSE
+                    ? `${message.text}`
+                    : "";
                 updateMessage({
                   ...oldMessage,
                   ...message,
-                  text: `${oldMessage.text}
-                ${message.text ? `\n${message.text}` : ""}`,
+                  extraText,
+                  isLoading: false,
+                  text: `${
+                    Boolean(newText) && Boolean(oldMessage.text)
+                      ? `${oldMessage.text}\n`
+                      : oldMessage.text
+                  }${newText}`,
                 });
               });
             } else {
               let message = messages.shift() as ContentWithUser;
+              let extraText = [];
+              if (message.displayType) {
+                extraText.push({
+                  text: message.text.split(":")[0],
+                  status: (message.text === "Connected"
+                    ? "success"
+                    : "loading") as any,
+                  displayType: message.displayType,
+                });
+              }
               messages.forEach((_message) => {
                 if (!_message.text) return;
+                if (_message.displayType) {
+                  extraText.push({
+                    text: _message.text,
+                    status: "loading" as any,
+                    displayType: _message.displayType,
+                  });
+                }
                 message = {
                   ...message,
                   ..._message,
-                  text: `${message.text}
-                  ${_message.text ? `\n${_message.text}` : ""}`,
+                  extraText,
+                  text:
+                    message.displayType === DisplayType.AGENT_RESPONSE
+                      ? message.text
+                      : "",
                 };
               });
               setMessages((old: ContentWithUser[] = []) => [
@@ -218,15 +261,13 @@ export function ChatProvider({
   const [input, setInput] = useState("");
   const addMessage = useMemoizedFn(
     (newMessages: ContentWithUser[], removeInvalidAction?: boolean) => {
-      setMessages((old = []) => [
-        ...old.filter(
-          (msg) =>
-            !removeInvalidAction ||
-            !msg.webAction ||
-            (msg.webAction && !msg.step)
-        ),
-        ...newMessages,
-      ]);
+      setMessages((old = []) => {
+        const filteredOld = removeInvalidAction
+          ? old.filter((msg) => !msg.webAction || (msg.webAction && !msg.step))
+          : old;
+
+        return [...filteredOld, ...newMessages];
+      });
     }
   );
   // add message then send message
@@ -241,6 +282,8 @@ export function ChatProvider({
             },
           ]
         : undefined;
+      const systemMessageId = generateMessageId("system");
+      currentMessage.current = systemMessageId;
       const newMessages: ContentWithUser[] = [
         {
           text: input,
@@ -250,11 +293,20 @@ export function ChatProvider({
           id: generateMessageId("user"),
         },
         {
-          text: input,
+          text: "",
           user: "system",
           isLoading: true,
           createdAt: Date.now(),
-          id: generateMessageId("system"),
+          extraText: enableStream
+            ? [
+                {
+                  text: "Connecting",
+                  status: "loading",
+                  displayType: DisplayType.AGENT_STATUS,
+                },
+              ]
+            : [],
+          id: systemMessageId,
         },
       ];
       addMessage(newMessages);

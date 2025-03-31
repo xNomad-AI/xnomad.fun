@@ -1,7 +1,6 @@
 import { NFT } from "@/types";
 import { ContentWithUser } from "../types";
 import { Airdrop } from "./airdrop";
-import AIWriter from "react-aiwriter";
 import { ChatContentContainer } from "./container";
 import { Buy } from "./trade.tsx/buy";
 import { Sell } from "./trade.tsx/sell";

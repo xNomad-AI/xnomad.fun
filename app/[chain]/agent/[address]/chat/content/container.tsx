@@ -1,14 +1,14 @@
-import { NFT } from "@/types";
 import {
   ChatBubble,
   ChatBubbleMessage,
   ChatBubbleTimestamp,
 } from "../components/chat/chat-bubble";
-import { ContentWithUser } from "../types";
+import { ContentWithUser, DisplayType } from "../types";
 import { PropsWithChildren } from "react";
 import { moment } from "../lib/utils";
 import clsx from "clsx";
 import CopyButton from "../components/copy-button";
+import { IconCheck, Spin } from "@/primitive/components";
 
 function getMessageVariant(role: string) {
   return role !== "user" ? "received" : "sent";
@@ -35,6 +35,35 @@ export function ChatContentContainer({
         })}
       >
         <div className='flex flex-col gap-8 w-full'>
+          {(message.extraText?.length ?? 0) > 0 && (
+            <div className='w-full p-8 bg-surface rounded-6 flex items-center flex-wrap gap-8'>
+              {message.extraText?.map((extraText, index) => {
+                if (extraText.displayType === DisplayType.AGENT_RESPONSE) {
+                  return null;
+                }
+                return (
+                  <div
+                    key={extraText.text}
+                    className={clsx("flex items-center gap-4", {
+                      "text-text2": extraText.status === "success",
+                      "text-red": extraText.status === "error",
+                    })}
+                  >
+                    {index > 0 && (
+                      <div className='h-1 w-20 bg-text2 mr-4'></div>
+                    )}
+                    {extraText.status === "success" && (
+                      <IconCheck className='text-size-16' />
+                    )}
+                    {extraText.status === "loading" && (
+                      <Spin className='text-size-16' />
+                    )}
+                    {extraText.text}
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <ChatBubbleMessage variant={variant} isLoading={message?.isLoading}>
             {children}
             {/* Attachments */}

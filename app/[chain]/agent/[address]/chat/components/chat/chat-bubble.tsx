@@ -102,28 +102,27 @@ const ChatBubbleMessage = React.forwardRef<
   (
     { className, variant, layout, isLoading = false, children, ...props },
     ref
-  ) => (
-    <div
-      className={clsx(
-        chatBubbleMessageVariants({ variant, layout, className }),
-        "max-w-full text-wrap whitespace-break-spaces"
-      )}
-      style={{
-        ...props.style,
-        wordBreak: "break-word",
-      }}
-      ref={ref}
-      {...props}
-    >
-      {isLoading ? (
-        <div className='flex items-center space-x-2'>
-          <MessageLoading />
-        </div>
-      ) : (
-        children
-      )}
-    </div>
-  )
+  ) => {
+    if (isLoading) {
+      return null;
+    }
+    return (
+      <div
+        className={clsx(
+          chatBubbleMessageVariants({ variant, layout, className }),
+          "max-w-full text-wrap whitespace-break-spaces"
+        )}
+        style={{
+          ...props.style,
+          wordBreak: "break-word",
+        }}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
 );
 ChatBubbleMessage.displayName = "ChatBubbleMessage";
 

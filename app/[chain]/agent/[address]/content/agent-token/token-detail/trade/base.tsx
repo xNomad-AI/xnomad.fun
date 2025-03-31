@@ -1,6 +1,11 @@
 import { ReactNode } from "react";
 import { useTradeConfigStore } from "../store/trade-config";
-import { Divider, IconSettings, TextField } from "@/primitive/components";
+import {
+  Divider,
+  IconSettings,
+  TextField,
+  Tooltip,
+} from "@/primitive/components";
 import { TokenNumber } from "@/components/token-number";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
@@ -108,13 +113,20 @@ export function BaseTemplate({
                 <span className='text-text1'>Fast</span>
               )}
             </div>
-            <button
-              onClick={() => {
-                tradeSettingModalController.setTrue();
-              }}
+            <Tooltip
+              disabled={chain === "solana"}
+              content={"Not avaliable currently"}
             >
-              <IconSettings className='text-size-14 text-text1' />
-            </button>
+              <button
+                onClick={() => {
+                  if (chain === "solana") {
+                    tradeSettingModalController.setTrue();
+                  }
+                }}
+              >
+                <IconSettings className='text-size-14 text-text1' />
+              </button>
+            </Tooltip>
           </div>
         </div>
       </div>

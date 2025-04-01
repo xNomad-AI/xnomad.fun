@@ -3,9 +3,7 @@ import { useTransition, animated } from "@react-spring/web";
 import { Spin } from "@/primitive/components";
 import clsx from "clsx";
 import { NFT } from "@/types";
-import { useMount, useUnmount } from "ahooks";
-import { use100vh } from "react-div-100vh";
-import { useBreakpoint } from "@/primitive/hooks/use-screen";
+import { useUnmount } from "ahooks";
 import { ChatMessageList } from "./components/chat/chat-message-list";
 import { ChatContent } from "./content";
 import { useChatContext } from "./store";
@@ -74,19 +72,9 @@ export function ChatPage({ nft }: { nft: NFT }) {
       duration: 200,
     },
   });
-  const height = use100vh();
-  const { breakpoint } = useBreakpoint();
 
   return (
-    <div
-      style={{
-        height:
-          breakpoint === "mobile" && height ? height - 80 - 64 - 72 : undefined,
-      }}
-      className={clsx(
-        "relative flex flex-col w-full max-w-[720px] h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-80px-64px-72px)] gap-32"
-      )}
-    >
+    <div className={clsx("relative flex flex-col w-full max-w-[720px] h-full")}>
       {!isAgentSetup ? (
         <div className='w-full h-full flex items-center justify-center flex-col gap-32'>
           <Spin className='!text-size-32' />
@@ -96,7 +84,7 @@ export function ChatPage({ nft }: { nft: NFT }) {
         </div>
       ) : (
         <>
-          <div className='flex-1 overflow-y-auto'>
+          <div className='w-full flex-1 overflow-y-auto'>
             <ChatMessageList>
               {transitions((styles, message) => {
                 // FIXME: Fix this any
@@ -105,7 +93,7 @@ export function ChatPage({ nft }: { nft: NFT }) {
                   <Comp
                     style={styles}
                     key={`chat-container-${message?.id}`}
-                    className='flex gap-16'
+                    className={clsx("flex gap-16")}
                   >
                     {message?.user !== "user" ? (
                       <img
@@ -129,6 +117,7 @@ export function ChatPage({ nft }: { nft: NFT }) {
               })}
             </ChatMessageList>
           </div>
+
           <div className='w-full flex flex-col gap-8'>
             <Actions nft={nft} />
 

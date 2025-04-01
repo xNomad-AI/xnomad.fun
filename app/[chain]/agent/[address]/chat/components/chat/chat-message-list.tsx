@@ -18,11 +18,27 @@ export function ChatMessageList({
       <div
         className={`flex flex-col w-full h-full p-4 overflow-y-auto ${className}`}
         ref={scrollRef}
+        style={{
+          mask: `linear-gradient(
+                to bottom,
+                transparent,
+                black 32px,
+                black calc(100% - 32px),
+                transparent
+              )`,
+          WebkitMask: `linear-gradient(
+                to bottom,
+                transparent,
+                black 32px,
+                black calc(100% - 32px),
+                transparent
+              )`,
+        }}
         onWheel={disableAutoScroll}
         onTouchMove={disableAutoScroll}
         {...props}
       >
-        <div className='flex flex-col gap-24'>{children}</div>
+        <div className='flex flex-col gap-24 my-32'>{children}</div>
       </div>
 
       {!isAtBottom && (

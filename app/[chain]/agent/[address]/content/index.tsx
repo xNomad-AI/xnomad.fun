@@ -24,6 +24,7 @@ import { SideWalletButton } from "../info/side-wallet-button";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { isOwner } from "@/lib/user/ownership";
 import { useUserStore } from "@/app/layout/chain-provider/hook";
+import { use100vh } from "react-div-100vh";
 const tabs = ["chat", "agent-token", "tasks", "features"] as const;
 const tabMap = {
   chat: "Chat",
@@ -92,6 +93,7 @@ export function Content() {
       setAgentConfig(res);
     });
   });
+  const height = use100vh();
   useRequest(
     async () => {
       if (nft.id) {
@@ -109,7 +111,7 @@ export function Content() {
       }
     },
     {
-      refreshDeps: [nft.id],
+      refreshDeps: [nft.id, nft.primaryCoin?.address, nft.chain],
       pollingInterval: 1000 * 5,
     }
   );
@@ -122,8 +124,9 @@ export function Content() {
       ready: !!agentAccount,
     }
   );
+
   return (
-    <div className='w-full flex flex-col items-center gap-32 portrait-tablet:gap-16 transition-all duration-300 ease-in-out'>
+    <div className='w-full flex flex-col items-center portrait-tablet:gap-16 transition-all duration-300 ease-in-out'>
       <div className='w-full flex flex-col gap-16 items-center relative'>
         <SideWalletButton
           className={clsx("absolute left-0 top-1/2 -translate-y-1/2", {
@@ -171,12 +174,20 @@ export function Content() {
           })}
         </RadioButtonGroup>
       </div>
-      <div className='w-full h-[calc(100vh-64px-64px-72px)] mobile:h-[calc(100vh-64px-64px-80px)] overflow-y-scroll'>
+      <div
+        style={{
+          height:
+            breakpoint === "mobile" && height
+              ? height - 80 - 64 - 72
+              : undefined,
+        }}
+        className='w-full h-[calc(100vh-32px-64px-72px)] mobile:h-[calc(100vh-64px-64px-80px)] overflow-y-scroll'
+      >
         {nft.agentId && (
           <ChatProvider agentId={nft.agentId}>
             <div
               className={clsx(
-                "flex gap-32 mobile:flex-col mobile:gap-16 w-full justify-center",
+                "flex mobile:flex-col mobile:gap-16 w-full h-full justify-center",
                 {
                   hidden: !(tab === "chat" || mobileTab === "chat"),
                 }

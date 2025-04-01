@@ -7,7 +7,7 @@ import clsx from "clsx";
 export function AgentToken({ show }: { show: boolean }) {
   const { nft } = useAgentStore();
   return (
-    <div className={clsx("w-full flex", { hidden: !show })}>
+    <div className={clsx("w-full flex mt-32", { hidden: !show })}>
       <TokenList show={!Boolean(nft.primaryCoin)} />
       <Detail show={Boolean(nft.primaryCoin)} nft={nft} />
     </div>

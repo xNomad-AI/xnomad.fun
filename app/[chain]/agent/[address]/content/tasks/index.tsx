@@ -15,7 +15,7 @@ export function Tasks({ nft }: { nft: NFT }) {
   const [tab, setTab] = useState<Tab | null>("limit-order");
 
   return (
-    <div className='w-full flex flex-col gap-24'>
+    <div className='w-full flex flex-col gap-24 mt-32'>
       <div className='flex items-center gap-24'>
         {tabs.map((t) => (
           <button

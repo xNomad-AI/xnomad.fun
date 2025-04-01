@@ -21,6 +21,7 @@ import { SupportedChain } from "@/types/preference";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { isOwner } from "@/lib/user/ownership";
 import { useUserStore } from "@/app/layout/chain-provider/hook";
+import { TextAnchor } from "@/components/text-button";
 function configTwitter({
   nftId,
   config,
@@ -114,7 +115,7 @@ export function Features({ nft }: { nft: NFT }) {
   );
   return (
     <>
-      <div className='w-full flex flex-col gap-16'>
+      <div className='w-full flex flex-col gap-16 mt-32'>
         <Card className='flex items-center justify-between gap-16 p-16'>
           <div className='flex items-center gap-16'>
             <Image src={"/twitter.svg"} height={64} width={64} alt='' />
@@ -176,9 +177,14 @@ export function Features({ nft }: { nft: NFT }) {
                   {hasTwitterConfig ? "Edit" : "Add"}
                 </Button>
               </Tooltip>
-            ) : (
-              config?.characterConfig?.settings.secrets?.TWITTER_USERNAME
-            )}
+            ) : config?.characterConfig?.settings.secrets?.TWITTER_USERNAME ? (
+              <TextAnchor
+                withDecoration
+                href={`https://twitter.com/${config?.characterConfig?.settings.secrets?.TWITTER_USERNAME}`}
+              >
+                @{config?.characterConfig?.settings.secrets?.TWITTER_USERNAME}
+              </TextAnchor>
+            ) : null}
           </div>
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>

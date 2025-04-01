@@ -3,14 +3,19 @@ import { useAgentStore } from "../../../store";
 import { useTokenPagePriceStore } from "./store/price";
 import { RateNum } from "@/components/rate-number";
 import { PropsWithChildren } from "react";
+import { useChainStore } from "@/app/layout/chain-provider";
 
 export function TokenMetrics() {
+  const { chain } = useChainStore();
   const { tokenPrice } = useTokenPagePriceStore();
   const { primaryToken } = useAgentStore();
   return (
     <div className='flex items-center gap-24 flex-wrap'>
       <MetricsCell title='Price'>
-        <TokenNumber number={tokenPrice} className='text-size-16 font-bold' />
+        <TokenNumber
+          number={chain === "solana" ? tokenPrice : primaryToken?.price ?? 0}
+          className='text-size-16 font-bold'
+        />
       </MetricsCell>
       <MetricsCell title='Price 24h%'>
         <RateNum

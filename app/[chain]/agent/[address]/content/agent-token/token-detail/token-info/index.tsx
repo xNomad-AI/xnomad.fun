@@ -17,6 +17,7 @@ export function Info({ tokenInfo }: { tokenInfo: TokenInfo }) {
           <span className='font-bold'>Token Info</span>
           {isOwner(userAddress, nft.owner) && (
             <button
+              title='Edit'
               onClick={() => {
                 setOpen(true);
               }}

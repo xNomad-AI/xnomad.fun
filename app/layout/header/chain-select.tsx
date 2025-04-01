@@ -75,7 +75,10 @@ export function ChainSelect() {
         </div>
       }
     >
-      <button className='px-8 h-28 flex items-center gap-4 bg-surface rounded-full'>
+      <button
+        title='chain'
+        className='px-8 h-28 flex items-center gap-4 bg-surface rounded-full'
+      >
         <Image
           src={chain === "solana" ? "/chain/solana.svg" : "/chain/bsc.svg"}
           height={20}

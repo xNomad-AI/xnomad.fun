@@ -25,6 +25,7 @@ export function Result() {
       {step === "success" && (
         <div className='w-full h-full flex items-center justify-center flex-col gap-16'>
           <img
+            alt='Swarm Image'
             height={320}
             width={320}
             className='flex-shrink-0 rounded-12 border object-contain border-white-20 w-[20rem] aspect-square'

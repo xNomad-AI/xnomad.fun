@@ -259,6 +259,7 @@ export function IssueTokenForm({
         </p>
 
         <button
+          title='Use AI-NFT image'
           className='flex items-center gap-8 w-fit'
           onClick={() => {
             const result = !useAgentImage;

@@ -15,7 +15,7 @@ import BigNumber from "bignumber.js";
 
 export function SellSection() {
   const { chain } = useChainStore();
-  const { nft } = useAgentStore();
+  const { nft, primaryToken } = useAgentStore();
   const [value, setValue] = useState("");
   const { tokenPrice } = useTokenPagePriceStore();
   const {
@@ -32,7 +32,7 @@ export function SellSection() {
   const received = useMemo(() => {
     const amount = +value;
     const sol = gasData?.eth_usd_price;
-    const token = +tokenPrice;
+    const token = +(tokenPrice ?? primaryToken?.price ?? 0);
     if (typeof amount === "number" && !Number.isNaN(amount) && sol && token) {
       return ((amount * token) / sol).toString();
     }

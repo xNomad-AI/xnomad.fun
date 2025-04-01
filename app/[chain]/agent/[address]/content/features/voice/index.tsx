@@ -78,6 +78,7 @@ export function VoiceModal({
         <div className='w-full max-h-[400px] overflow-auto flex flex-col gap-16'>
           {showVoices.map((voice) => (
             <button
+              title='Select'
               key={voice.voice_id}
               onClick={() => {
                 setVoiceId(voice.voice_id);
@@ -98,6 +99,7 @@ export function VoiceModal({
                   </p>
                 </div>
                 <button
+                  title='Play'
                   className='rounded-6 bg-surface w-40 h-40 flex items-center justify-center'
                   onClick={(e) => {
                     e.stopPropagation();

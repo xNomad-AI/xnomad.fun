@@ -19,6 +19,7 @@ export function Tasks({ nft }: { nft: NFT }) {
       <div className='flex items-center gap-24'>
         {tabs.map((t) => (
           <button
+            title={`Switch to ${t}`}
             key={t}
             onClick={() => {
               if (comingSoon.includes(t)) {

@@ -135,7 +135,10 @@ export function Header() {
               </div>
             }
           >
-            <button className='h-32 w-32 rounded-8 bg-surface flex items-center justify-center'>
+            <button
+              title='menue'
+              className='h-32 w-32 rounded-8 bg-surface flex items-center justify-center'
+            >
               <IconMenu className='text-size-16 text-white' />
             </button>
           </Dropdown>

@@ -15,6 +15,7 @@ const CopyButton = ({ text }: { text: string }) => {
   return (
     <Tooltip content={<p>Copy</p>}>
       <button
+        title='Copy'
         onClick={handleCopy}
         className='flex items-center space-x-2 text-muted-foreground'
       >

@@ -122,6 +122,7 @@ export function Features({ nft }: { nft: NFT }) {
             <span>X(Twitter) Integration</span>
             {hasTwitterConfig && twitterEnabled ? (
               <button
+                title='Disconnect'
                 onClick={() => {
                   setConfirmOpen(true);
                 }}

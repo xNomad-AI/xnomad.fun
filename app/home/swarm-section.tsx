@@ -13,6 +13,7 @@ export function SwarmSection() {
         <Link href={`/${chain}/xnomad`} prefetch>
           <Card className='hover:border-white-40 relative w-full aspect-[16/9] flex items-center justify-center'>
             <img
+              alt='xnomad'
               src={"/xnomad.webp"}
               className='hover:scale-110 transition-all ease-in-out duration-300 absolute top-0 left-0 w-full h-full'
             />

@@ -129,6 +129,7 @@ export function NFTCard({
         <div className='absolute top-8 right-8 z-1 p-4 rounded-4 bg-yellow text-black flex items-center gap-4'>
           {nft.primaryCoin.image && (
             <img
+              alt='Token Logo'
               src={nft.primaryCoin.image}
               className='size-16 rounded-full object-contain'
             />

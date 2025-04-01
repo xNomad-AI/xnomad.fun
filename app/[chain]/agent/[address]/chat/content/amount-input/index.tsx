@@ -59,6 +59,7 @@ function PercentageButton({
 }) {
   return (
     <button
+      title={`Set ${percentage}%`}
       onClick={() => {
         onClick?.(percentage);
       }}

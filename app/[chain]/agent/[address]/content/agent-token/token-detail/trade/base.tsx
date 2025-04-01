@@ -71,6 +71,7 @@ export function BaseTemplate({
         <div className='grid grid-cols-4 gap-8'>
           {quicks?.map(({ label, value }) => (
             <button
+              title={label}
               key={label}
               className='bg-surface rounded-6 text-size-12 flex items-center justify-center text-text2'
               onClick={() => {
@@ -118,6 +119,7 @@ export function BaseTemplate({
               content={"Not avaliable currently"}
             >
               <button
+                title='Trade Setting'
                 onClick={() => {
                   if (chain === "solana") {
                     tradeSettingModalController.setTrue();

@@ -48,6 +48,7 @@ export function TokenList({ show }: { show: boolean }) {
       {ownerShip && (
         <Card className='flex items-center justify-between p-16 relative'>
           <img
+            alt='NFT Image'
             className='w-full h-full object-cover -z-2 absolute left-0 top-0'
             src={nft.image}
           />

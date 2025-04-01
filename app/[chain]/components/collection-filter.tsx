@@ -27,6 +27,7 @@ export function CollectionFilter({ isSociety }: { isSociety?: boolean }) {
       <div className='flex items-center gap-12'>
         {!isSociety && (
           <button
+            title='Filter Traits'
             className='w-40 h-40 rounded-4 border border-white-20 flex items-center justify-center'
             onClick={() => {
               setTraitsFilterOpen(!traitsFilterOpen);

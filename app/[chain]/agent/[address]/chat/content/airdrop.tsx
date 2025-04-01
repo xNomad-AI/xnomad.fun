@@ -37,6 +37,7 @@ export function Airdrop({
               >
                 <div className='flex items-center gap-8'>
                   <img
+                    alt='Airdrop logo'
                     src={airdrop?.issuer?.image}
                     height={20}
                     width={20}

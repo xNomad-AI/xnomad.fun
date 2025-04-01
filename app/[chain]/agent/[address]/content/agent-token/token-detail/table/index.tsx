@@ -10,6 +10,7 @@ export function Table({ tokenInfo }: { tokenInfo: TokenInfo }) {
     <>
       <div className='flex gap-24 items-center'>
         <button
+          title='Activity'
           className={`text-size-16 font-bold ${
             tab === "activity" ? "text-text1" : "text-white-60"
           }`}
@@ -18,6 +19,7 @@ export function Table({ tokenInfo }: { tokenInfo: TokenInfo }) {
           Activity
         </button>
         <button
+          title='Holders'
           className={`text-size-16 font-bold ${
             tab === "holder" ? "text-text1" : "text-white-60"
           }`}

@@ -87,6 +87,7 @@ export function Content() {
           </div>
           <div className='flex w-[120px] justify-end text-text2'>Price</div>
           <button
+            title='Sort by Marketcap'
             onClick={() => {
               setSortBy("marketCap");
             }}
@@ -100,6 +101,7 @@ export function Content() {
             Marketcap <IconDownFilled className='text-size-16' />
           </button>
           <button
+            title='Sort by 24h Volume'
             onClick={() => {
               setSortBy("volume24h");
             }}
@@ -115,6 +117,7 @@ export function Content() {
           <div className='flex w-[120px] justify-end text-text2'>Liquidity</div>
           <div className='flex w-[120px] justify-end text-text2'>Holders</div>
           <button
+            title='Sort by Age'
             onClick={() => {
               setSortBy("deployedTime");
             }}

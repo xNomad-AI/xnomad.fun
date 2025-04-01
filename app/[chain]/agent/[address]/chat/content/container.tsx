@@ -71,6 +71,7 @@ export function ChatContentContainer({
               {message?.attachments?.map((attachment, idx) => (
                 <div className='flex flex-col gap-1 mt-2' key={idx}>
                   <img
+                    alt='attachment'
                     src={attachment.url}
                     width='100%'
                     height='100%'

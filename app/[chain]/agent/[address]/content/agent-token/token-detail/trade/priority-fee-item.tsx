@@ -12,6 +12,7 @@ export function PriorityFeeItem(props: Props) {
   const { active, icon, price, speed, onClick } = props;
   return (
     <button
+      title={`${speed}s`}
       onClick={onClick}
       className={clsx(
         "flex h-24 items-center justify-center text-text2 text-size-12 gap-4 rounded-6 bg-surface",

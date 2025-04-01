@@ -198,7 +198,7 @@ export const AudioRecorder = ({
 
   if (mutation?.isPending) {
     return (
-      <button className='cursor-not-allowed'>
+      <button title='Audio Record' className='cursor-not-allowed'>
         <Ellipsis className='size-16' />
       </button>
     );
@@ -232,6 +232,7 @@ export const AudioRecorder = ({
         {isRecording ? (
           <Tooltip content={<span>Reset</span>}>
             <button
+              title='Reset'
               onClick={resetRecording}
               className='flex items-center justify-center '
             >
@@ -244,6 +245,7 @@ export const AudioRecorder = ({
         <Tooltip content={<span>{!isRecording ? "Start" : "Finish"} </span>}>
           {!isRecording ? (
             <button
+              title='Start Record'
               className='flex items-center justify-center gap-8'
               onClick={() => startRecording()}
             >
@@ -252,6 +254,7 @@ export const AudioRecorder = ({
             </button>
           ) : (
             <button
+              title='Send'
               onClick={handleSubmit}
               className='flex items-center justify-center '
             >

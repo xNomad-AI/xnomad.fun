@@ -43,6 +43,7 @@ export function ChatMessageList({
 
       {!isAtBottom && (
         <button
+          title='Scroll to bottom'
           onClick={() => {
             scrollToBottom();
           }}

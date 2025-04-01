@@ -83,7 +83,11 @@ export default function ChatTtsButton({
         content={<p>{playing ? "Stop" : "Read aloud"}</p>}
         className='flex items-center justify-center'
       >
-        <button onClick={() => execute()} disabled={mutation?.isPending}>
+        <button
+          title={playing ? "Stop" : "Read aloud"}
+          onClick={() => execute()}
+          disabled={mutation?.isPending}
+        >
           {mutation?.isPending ? (
             <Ellipsis className={iconClass} />
           ) : playing ? (

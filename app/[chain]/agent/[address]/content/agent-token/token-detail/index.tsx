@@ -44,6 +44,7 @@ export function Detail({ show }: { nft: NFT; show: boolean }) {
                   <div className='flex items-center gap-8'>
                     {primaryToken.logo ? (
                       <img
+                        alt='logo'
                         className='w-48 h-48 rounded-full object-contain'
                         src={primaryToken.logo}
                       />

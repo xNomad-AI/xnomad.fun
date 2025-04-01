@@ -70,6 +70,7 @@ export function SideWallet() {
 
         <div className='flex items-center gap-16'>
           <button
+            title='Holding'
             className={`font-bold ${
               tab === "holder" ? "text-text1" : "text-white-60"
             }`}
@@ -78,6 +79,7 @@ export function SideWallet() {
             Holding
           </button>
           <button
+            title='Activity'
             className={`font-bold ${
               tab === "activity" ? "text-text1" : "text-white-60"
             }`}
@@ -88,6 +90,7 @@ export function SideWallet() {
           {tab === "holder" && (
             <div className='flex-1 flex items-center justify-end'>
               <button
+                title='Refresh'
                 onClick={() => {
                   triggerRefresh();
                 }}

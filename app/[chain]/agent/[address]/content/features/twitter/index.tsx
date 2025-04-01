@@ -164,6 +164,7 @@ export function TwitterModal({
             suffixNode={
               !seePassword ? (
                 <button
+                  title='Show password'
                   onClick={() => {
                     setSeePassword(true);
                   }}
@@ -172,6 +173,7 @@ export function TwitterModal({
                 </button>
               ) : (
                 <button
+                  title='Hide password'
                   onClick={() => {
                     setSeePassword(false);
                   }}

@@ -60,6 +60,7 @@ export function InputForm() {
         className='flex items-center'
       >
         <button
+          title='Attach file'
           onClick={() => {
             if (fileInputRef.current) {
               fileInputRef.current.click();
@@ -70,6 +71,7 @@ export function InputForm() {
           <span className='sr-only'>Attach file</span>
         </button>
         <input
+          title='Attach file'
           type='file'
           key={`attach-file-${selectedFile?.name}`}
           ref={fileInputRef}
@@ -94,12 +96,14 @@ export function InputForm() {
       {selectedFile ? (
         <div className='relative rounded-8 overflow-hidden border p-4 flex items-center justify-center'>
           <button
+            title='Remove'
             onClick={() => setSelectedFile(null)}
             className='absolute w-full h-full bg-black-80 flex items-center justify-center'
           >
             <IconClose className='text-size-20' />
           </button>
           <img
+            alt=''
             src={URL.createObjectURL(selectedFile)}
             height='100%'
             width='100%'
@@ -108,6 +112,7 @@ export function InputForm() {
         </div>
       ) : null}
       <button
+        title='Send'
         disabled={sendMessageDisabled}
         onClick={() => {
           if (!sendMessageDisabled) {

@@ -2,14 +2,18 @@ import constate from "constate";
 import { useEffect, useMemo, useState } from "react";
 
 import { useTokenPageSocketStore } from "./socket";
+import { useAgentStore } from "../../../../store";
 
 function useService({ initialPrice }: { initialPrice: number }) {
+  const { primaryToken } = useAgentStore();
   const { socket } = useTokenPageSocketStore();
   const [_tokenPrice, setTokenPrice] = useState(initialPrice);
 
   const price = useMemo(() => {
     if (_tokenPrice > 0) {
       return _tokenPrice;
+    } else if (primaryToken?.price) {
+      return primaryToken?.price;
     }
 
     return 0;

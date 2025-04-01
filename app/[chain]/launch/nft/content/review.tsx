@@ -223,6 +223,7 @@ export function Review({
         <h1 className='text-size-24 font-bold'>Confirm Creating</h1>
         <Card className='w-full p-16 flex items-center gap-24'>
           <img
+            alt='NFT Image'
             height={80}
             width={80}
             className='flex-shrink-0 rounded-12 object-contain w-[80px] aspect-square'
@@ -375,6 +376,7 @@ export function Review({
         current={step}
       >
         <img
+          alt='NFT Image'
           height={320}
           width={320}
           className='flex-shrink-0 rounded-12 border object-contain border-white-20 w-[20rem] aspect-square'

@@ -11,7 +11,7 @@ import {
 } from "@/primitive/components";
 import { useMemoizedFn, useMount } from "ahooks";
 import clsx from "clsx";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FILE_SIZE_IN_BYTE,
   FILE_SIZE_IN_MB,
@@ -118,6 +118,13 @@ export function IssueTokenForm({
       img.src = URL.createObjectURL(form.image.value);
     }
   });
+  const minimumInitialBuyAmount = useMemo(() => {
+    if (chain === "solana") {
+      return 0.01;
+    } else {
+      return 0.002;
+    }
+  }, [chain]);
   return (
     <>
       <FormItem label={"Token Name"} {...form.tokenName}>
@@ -387,7 +394,7 @@ export function IssueTokenForm({
       <Divider horizontal className='w-full' />
       <FormItem
         label={`Buy(${getCurrencySymbol(chain)})`}
-        desc={`Purchase at least 0.01 ${getCurrencySymbol(
+        desc={`Purchase at least ${minimumInitialBuyAmount} ${getCurrencySymbol(
           chain
         )} to initiate trading.`}
         {...form.amount}
@@ -395,15 +402,17 @@ export function IssueTokenForm({
         <TextField
           className='!bg-background'
           value={form.amount.value}
-          placeholder={`>0.01 ${getCurrencySymbol(chain)}`}
+          placeholder={`>${minimumInitialBuyAmount} ${getCurrencySymbol(
+            chain
+          )}`}
           onBlur={() => {
-            if (parseFloat(form.amount.value) < 0.01) {
+            if (parseFloat(form.amount.value) < minimumInitialBuyAmount) {
               setForm({
                 ...form,
                 amount: {
                   ...form.amount,
                   isInValid: true,
-                  errorMsg: `Amount should be more than 0.01 ${getCurrencySymbol(
+                  errorMsg: `Amount should be more than ${minimumInitialBuyAmount} ${getCurrencySymbol(
                     chain
                   )}`,
                 },
@@ -412,11 +421,11 @@ export function IssueTokenForm({
           }}
           onChange={(event) => {
             let value = validNumberInput(event.target.value, true);
-            if (chain === "solana") {
-              // > 0.01
-              if (parseFloat(value) > 0 && parseFloat(value) < 0.01) {
-                value = "0.01";
-              }
+            if (
+              parseFloat(value) > 0 &&
+              parseFloat(value) < minimumInitialBuyAmount
+            ) {
+              value = `${minimumInitialBuyAmount}`;
             }
 
             setForm({

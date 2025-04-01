@@ -7,6 +7,8 @@ import { TokenNumber } from "@/components/token-number";
 import { Address } from "@/components/address";
 import BigNumber from "bignumber.js";
 import { AgeCell } from "../../token-list/age-cell";
+import { getTxExploreUrl } from "@/lib/chain";
+import { useChainStore } from "@/app/layout/chain-provider";
 
 export function Activity({ show }: { show: boolean }) {
   const {
@@ -16,7 +18,7 @@ export function Activity({ show }: { show: boolean }) {
     hasMore,
     loadingMore,
   } = useActivities(show);
-
+  const { chain } = useChainStore();
   return (
     <div
       className={clsx("flex flex-col w-full", {
@@ -46,7 +48,7 @@ export function Activity({ show }: { show: boolean }) {
               <a
                 target='_blank'
                 rel='noreferrer'
-                href={`https://explorer.solana.com/tx/${item.txHash}`}
+                href={getTxExploreUrl(chain, item.txHash)}
                 key={item.txHash}
                 className='h-58 flex items-center justify-between w-full border-b border-white-20 gap-8'
               >

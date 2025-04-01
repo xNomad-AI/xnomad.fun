@@ -391,6 +391,7 @@ export function AnalyzeResponse({
         🔗X Profile:{" "}
         <TextAnchor
           className='inline-flex'
+          withDecoration
           href={`https://x.com/${twitter?.screen_name}`}
         >
           https://x.com/{twitter?.screen_name}

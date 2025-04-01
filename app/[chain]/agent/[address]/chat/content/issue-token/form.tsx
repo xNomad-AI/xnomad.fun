@@ -102,15 +102,6 @@ export function IssueTokenForm({
     }
   });
   useMount(() => {
-    if (chain === "solana") {
-      setForm({
-        ...form,
-        amount: {
-          ...form.amount,
-          required: true,
-        },
-      });
-    }
     if (useAgentImage) {
       setNFTImageAsTokenImage();
     } else if (form.image.value) {

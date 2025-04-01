@@ -44,7 +44,7 @@ export const initialIssueTokenForm: IssueTokenFormType = {
   },
   amount: {
     value: "",
-    required: false,
+    required: true,
     isInValid: false,
     errorMsg: "",
   },

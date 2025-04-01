@@ -31,7 +31,7 @@ export function Activity({ show }: { show: boolean }) {
         <div className='flex w-[120px] justify-end'>Total USD</div>
         <div className='flex w-[100px] justify-end'>Amount</div>
         <div className='flex w-[100px] justify-end'>Price</div>
-        <div className='flex w-[120px] justify-end'>Maker</div>
+        <div className='flex w-[144px] justify-end'>Maker</div>
       </div>
 
       {activity?.length > 0 ? (
@@ -77,7 +77,7 @@ export function Activity({ show }: { show: boolean }) {
                     }
                   />
                 </div>
-                <div className='flex w-[120px] justify-end'>
+                <div className='flex w-[144px] flex-shrink-0 justify-end'>
                   <Address address={item.maker} enableCopy />
                 </div>
               </a>

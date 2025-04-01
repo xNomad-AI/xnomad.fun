@@ -120,7 +120,7 @@ export function Features({ nft }: { nft: NFT }) {
           <div className='flex items-center gap-16'>
             <Image src={"/twitter.svg"} height={64} width={64} alt='' />
             <span>X(Twitter) Integration</span>
-            {hasTwitterConfig && twitterEnabled ? (
+            {hasTwitterConfig && twitterEnabled && isNFTOwner ? (
               <button
                 title='Disconnect'
                 onClick={() => {
@@ -132,7 +132,7 @@ export function Features({ nft }: { nft: NFT }) {
             ) : null}
           </div>
           <div className='flex items-center gap-16'>
-            {twitterEnabled && (
+            {twitterEnabled && isNFTOwner && (
               <div className='flex items-center gap-8'>
                 Suspend Post
                 <Toggle

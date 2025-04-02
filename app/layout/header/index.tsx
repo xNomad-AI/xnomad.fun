@@ -71,9 +71,6 @@ export function Header() {
           className='flex items-center gap-8 mobile:hidden'
         >
           <Image src={"/brand.png"} width={145} height={40} alt='' />
-          <div className='bg-white-60 text-black rounded-4 text-size-12 font-bold py-2 px-4'>
-            Beta
-          </div>
         </Link>
         <Link href={"/"} className='hidden mobile:block' prefetch>
           <Image src={"/logo.svg"} width={40} height={40} alt='' />

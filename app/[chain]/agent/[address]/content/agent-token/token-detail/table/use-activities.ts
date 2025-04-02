@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTokenPageSocketStore } from "../store/socket";
 import { useAgentStore } from "../../../../store";
 import { api } from "@/primitive/api";
@@ -93,6 +93,7 @@ export function useActivities(ready: boolean) {
       return;
     }
     setLoadingMore(true);
+
     if (nft.chain === "solana") {
       socket.emit(
         "getTokenTransfers",
@@ -114,35 +115,9 @@ export function useActivities(ready: boolean) {
     }
   });
 
-  useRequest(
-    async () => {
-      getTokenTxs({
-        address,
-        chain: nft.chain,
-        limit: 10,
-      }).then((res) => {
-        setNews((news) => {
-          const newTx = res.transfers.filter((item) =>
-            news.every((i) => i.txHash !== item.txHash)
-          );
-          return [...newTx, ...news];
-        });
-      });
-    },
-    {
-      ready:
-        !!address &&
-        ready &&
-        nft.chain !== "solana" &&
-        !loadingMore &&
-        !loading,
-      pollingInterval: 5000,
-    }
-  );
-
   useEffect(() => {
     refresh();
-    if (socket === null || nft.chain !== "solana") {
+    if (socket === null) {
       setLoadingMore(false);
       return;
     }

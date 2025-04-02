@@ -20,7 +20,7 @@ function useService(props: { ca: string; address?: string }) {
   const [ohlcInterval, setOhlcInterval] = useState<string>("1m");
 
   useEffect(() => {
-    const socket = io(`https://api.tokenstory.ai/token-transfers`, {
+    const socket = io(`${process.env.TOKEN_STORY_API_HOST}/token-transfers`, {
       path: "/transfers",
       transports: ["websocket"],
       upgrade: false,

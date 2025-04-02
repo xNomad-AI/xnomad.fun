@@ -117,7 +117,7 @@ export function useActivities(ready: boolean) {
 
   useEffect(() => {
     refresh();
-    if (socket === null || nft.chain !== "solana") {
+    if (socket === null) {
       setLoadingMore(false);
       return;
     }
@@ -127,12 +127,12 @@ export function useActivities(ready: boolean) {
         return next;
       });
     });
-
-    socket.on("tokenHistoryTransfers", (data: SocketResponse) => {
-      setOlds((array) => [...array, ...data.transfers]);
-      setLoadingMore(false);
-    });
-
+    if (nft.chain === "solana") {
+      socket.on("tokenHistoryTransfers", (data: SocketResponse) => {
+        setOlds((array) => [...array, ...data.transfers]);
+        setLoadingMore(false);
+      });
+    }
     return () => {
       socket.off("tokenTransfers");
       socket.off("tokenHistoryTransfers");

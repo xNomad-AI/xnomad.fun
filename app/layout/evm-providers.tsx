@@ -19,7 +19,6 @@ const baseConfig = {
 const bscConfig = {
   transports: {
     [bsc.id]: fallback([
-      http(bsc.rpcUrls.default.http[0]),
       http(
         "https://radial-late-seed.bsc.quiknode.pro/3064c664f114cf9061a993e9cb859cc54b779b05"
       ),

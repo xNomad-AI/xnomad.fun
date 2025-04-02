@@ -11,14 +11,15 @@ export default function Page({
 }: {
   params: {
     address: string;
+    chain: string;
   };
 }) {
-  const { address } = params;
+  const { address, chain } = params;
   return (
     <Container className='flex flex-col gap-32 w-full'>
       <div className='flex items-center mt-32 gap-16'>
         <Image
-          src={"/solana.png"}
+          src={`/${chain === "bsc" ? "bscscan-light" : "solscan"}.png`}
           className='mobile:h-24 mobile:w-24'
           height={40}
           width={40}

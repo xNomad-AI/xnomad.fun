@@ -117,7 +117,7 @@ export function useActivities(ready: boolean) {
 
   useEffect(() => {
     refresh();
-    if (socket === null) {
+    if (socket === null || nft.chain !== "solana") {
       setLoadingMore(false);
       return;
     }

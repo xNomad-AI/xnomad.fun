@@ -11,6 +11,7 @@ import { copyToClipboard } from "@/lib/utils/copy";
 import { useAgentStore } from "../../../../store";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
+import { onError } from "@/lib/utils/error";
 
 export function BuySection() {
   const { nft } = useAgentStore();
@@ -28,9 +29,13 @@ export function BuySection() {
   const { tokenPrice } = useTokenPagePriceStore();
   const { tradeMode, setTradeMode, setPriorityFeeType } = useTradeConfigStore();
   const buy = useMemoizedFn(async () => {
-    await handleBuy(+value);
-    setValue("");
-    updateBalance();
+    try {
+      await handleBuy(+value);
+      setValue("");
+      updateBalance();
+    } catch (error) {
+      onError(error);
+    }
   });
 
   useEffect(() => {

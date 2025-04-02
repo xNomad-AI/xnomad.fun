@@ -12,6 +12,7 @@ import { useAgentStore } from "../../../../store";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
 import BigNumber from "bignumber.js";
+import { onError } from "@/lib/utils/error";
 
 export function SellSection() {
   const { chain } = useChainStore();
@@ -40,9 +41,13 @@ export function SellSection() {
   }, [value, gasData?.eth_usd_price, tokenPrice]);
 
   const sell = useMemoizedFn(async () => {
-    await handleSell(BigNumber(value), received, tokenDecimal ?? 9);
-    setValue("");
-    updateBalance();
+    try {
+      await handleSell(BigNumber(value), received, tokenDecimal ?? 9);
+      setValue("");
+      updateBalance();
+    } catch (error) {
+      onError(error);
+    }
   });
 
   useEffect(() => {

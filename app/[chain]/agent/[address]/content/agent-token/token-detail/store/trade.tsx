@@ -15,20 +15,26 @@ import {
   trySellWithExactToken,
   sellToken,
 } from "../trade/swap/bsc/four-meme/actions";
-import { useClient, useSendTransaction, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useClient,
+  useSendTransaction,
+  useSwitchChain,
+  useWriteContract,
+} from "wagmi";
 import BigNumber from "bignumber.js";
 import { BNBContract } from "../trade/swap/bsc/pancake/constants";
 import { waitForTransactionReceipt } from "viem/actions";
 import { message } from "@/primitive/components";
 import { BuySellSuccessfulToast } from "../trade/swap/sol/successful-toast";
 import { getAmountOutMin } from "../trade/swap/bsc/four-meme/utils";
-import { onError } from "@/lib/utils/error";
 import { SWAPX_ABI } from "../trade/swap/bsc/swapx/abi";
 import { SWAPX_CONTRACT } from "../trade/swap/bsc/swapx/constant";
 import { parseEther } from "viem";
 import { noExponents } from "@/lib/utils/number/bignumber";
 import { getSwapXCallData } from "../trade/swap/bsc/swapx/network";
 import { approveAssurance } from "../trade/swap/common/actions";
+import { bsc } from "viem/chains";
 const txDeadline = "1"; // minutes
 
 function useStore() {
@@ -36,6 +42,8 @@ function useStore() {
   const { userAddress } = useUserStore();
   const { swap } = useSolSwap();
   const { nft } = useAgentStore();
+  const { isConnected, chain: walletChain } = useAccount();
+  const { switchChainAsync } = useSwitchChain();
   const address = useMemo(
     () => nft.primaryCoin?.address ?? "",
     [nft.primaryCoin?.address]
@@ -94,6 +102,14 @@ function useStore() {
           solAmount: amount * LAMPORTS_PER_SOL,
         });
       } else {
+        if (!isConnected) {
+          throw new Error("Please wait for the wallet to connect");
+        }
+        if (walletChain?.id !== bsc.id) {
+          await switchChainAsync({
+            chainId: bsc.id,
+          });
+        }
         const tokenInfo = await getTokenInfo({
           token: address,
           client: client!,
@@ -168,7 +184,8 @@ function useStore() {
         );
       }
     } catch (e) {
-      onError(e);
+      setBuyLoading(false);
+      throw e;
     } finally {
       setBuyLoading(false);
     }
@@ -191,6 +208,14 @@ function useStore() {
             solAmount: +receive * LAMPORTS_PER_SOL,
           });
         } else {
+          if (!isConnected) {
+            throw new Error("Please wait for the wallet to connect");
+          }
+          if (walletChain?.id !== bsc.id) {
+            await switchChainAsync({
+              chainId: bsc.id,
+            });
+          }
           const tokenInfo = await getTokenInfo({
             token: address,
             client: client!,
@@ -264,7 +289,8 @@ function useStore() {
           );
         }
       } catch (e) {
-        onError(e);
+        setSellLoading(false);
+        throw e;
       } finally {
         setSellLoading(false);
       }

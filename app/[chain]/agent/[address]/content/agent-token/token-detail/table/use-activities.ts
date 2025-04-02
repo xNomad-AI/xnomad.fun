@@ -123,7 +123,7 @@ export function useActivities(ready: boolean) {
       }).then((res) => {
         setNews((news) => {
           const newTx = res.transfers.filter((item) =>
-            txs?.transfers.every((i) => i.txHash !== item.txHash)
+            news.every((i) => i.txHash !== item.txHash)
           );
           return [...newTx, ...news];
         });

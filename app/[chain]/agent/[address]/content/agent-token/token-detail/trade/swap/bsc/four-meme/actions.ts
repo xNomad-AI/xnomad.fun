@@ -208,7 +208,11 @@ export async function sellToken({
       0,
       pathOut,
       noExponents(
-        amount.multipliedBy(10 ** decimals).toFixed(0, BigNumber.ROUND_DOWN)
+        BigNumber(
+          amount
+            .multipliedBy(10 ** (decimals / 2))
+            .toFixed(0, BigNumber.ROUND_DOWN)
+        ).multipliedBy(10 ** (decimals / 2))
       ),
       noExponents(amountOut.toFixed(0, BigNumber.ROUND_DOWN)),
       100,

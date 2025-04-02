@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-import { IBM_Plex_Mono } from "next/font/google";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import "../globals.css";
 import { SOLProvider } from "../layout/sol-provider";

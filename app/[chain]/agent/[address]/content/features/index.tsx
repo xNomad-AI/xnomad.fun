@@ -22,6 +22,7 @@ import { useChainStore } from "@/app/layout/chain-provider";
 import { isOwner } from "@/lib/user/ownership";
 import { useUserStore } from "@/app/layout/chain-provider/hook";
 import { TextAnchor } from "@/components/text-button";
+import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 function configTwitter({
   nftId,
   config,
@@ -56,6 +57,10 @@ export function Features({ nft }: { nft: NFT }) {
   const [voiceOpen, setVoiceOpen] = useState(false);
   const [twitterBound, setTwitterBound] = useState(false);
   const [isConfigLoading, setIsConfigLoading] = useState(false);
+  const [metaInfo, setMetaInfo] = useState<{
+    twitterUsername: string;
+    telegramBotId: string;
+  }>();
   useMount(() => {
     if (config) {
       // get twitter bound status
@@ -68,12 +73,20 @@ export function Features({ nft }: { nft: NFT }) {
         setTwitterBound(res.isLogin);
       });
     }
+    api.v1
+      .get<{
+        twitterUsername: string;
+        telegramBotId: string;
+      }>(`/nft/${chain}/${nft.nftId}/public/config`)
+      .then((res) => {
+        setMetaInfo(res);
+      });
   });
   const onSave = useMemoizedFn(async (_config: Partial<CharacterConfig>) => {
     const newConfig = await editAgentConfig(
       nft.id,
       {
-        ...config,
+        ...config?.characterConfig,
         settings: {
           ..._config.settings,
           secrets: {
@@ -178,12 +191,12 @@ export function Features({ nft }: { nft: NFT }) {
                   {hasTwitterConfig ? "Edit" : "Add"}
                 </Button>
               </Tooltip>
-            ) : config?.characterConfig?.settings.secrets?.TWITTER_USERNAME ? (
+            ) : metaInfo?.twitterUsername ? (
               <TextAnchor
                 withDecoration
-                href={`https://twitter.com/${config?.characterConfig?.settings.secrets?.TWITTER_USERNAME}`}
+                href={`https://twitter.com/${metaInfo?.twitterUsername}`}
               >
-                @{config?.characterConfig?.settings.secrets?.TWITTER_USERNAME}
+                @{metaInfo?.twitterUsername}
               </TextAnchor>
             ) : null}
           </div>
@@ -202,6 +215,15 @@ export function Features({ nft }: { nft: NFT }) {
             >
               {hasTgConfig ? "Edit" : "Add"}
             </Button>
+          ) : metaInfo?.telegramBotId ? (
+            <TextAnchor
+              withDecoration
+              href={`https://t.me/${metaInfo?.telegramBotId}`}
+            >
+              <TextWithEllipsis width={200}>
+                #{metaInfo?.telegramBotId}
+              </TextWithEllipsis>
+            </TextAnchor>
           ) : null}
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>

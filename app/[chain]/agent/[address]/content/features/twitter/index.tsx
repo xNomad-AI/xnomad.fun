@@ -4,8 +4,6 @@ import {
   ModalContent,
   FormItem,
   TextField,
-  IconAdd,
-  IconRemove,
   IconEye,
   IconEyeClosed,
   Button,
@@ -16,7 +14,7 @@ import {
 import { POST_INTERVAL_MIN, POST_MAX_LENGTH, useTwitterStore } from "./store";
 import clsx from "clsx";
 import { CharacterConfig } from "../types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMemoizedFn } from "ahooks";
 import { onError } from "@/lib/utils/error";
 import { TextAnchor } from "@/components/text-button";
@@ -115,7 +113,6 @@ export function TwitterModal({
     setSaving(false);
     initForm();
   }, [open]);
-  const scrollIntoBar = useRef<HTMLDivElement | null>(null);
   const [seePassword, setSeePassword] = useState(false);
   return (
     <Modal open={open} size='m' onMaskClick={onClose}>
@@ -253,7 +250,7 @@ export function TwitterModal({
             onChange={(e) => {
               const value = validNumberInput(e.target.value);
               updateForm("postIntervalMin", {
-                value: parseInt(value),
+                value: e.target.value === "" ? "" : parseInt(value),
                 isInValid: false,
                 errorMsg: "",
               });
@@ -280,7 +277,10 @@ export function TwitterModal({
             }}
             onChange={(e) => {
               updateForm("postIntervalMax", {
-                value: parseInt(validNumberInput(e.target.value)),
+                value:
+                  e.target.value === ""
+                    ? ""
+                    : parseInt(validNumberInput(e.target.value)),
                 isInValid: false,
                 errorMsg: "",
               });
@@ -332,7 +332,7 @@ export function TwitterModal({
             onChange={(e) => {
               const value = validNumberInput(e.target.value);
               updateForm("postMaxLength", {
-                value: parseInt(value),
+                value: e.target.value === "" ? "" : parseInt(value),
                 isInValid: false,
                 errorMsg: "",
               });

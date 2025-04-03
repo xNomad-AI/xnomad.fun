@@ -206,8 +206,12 @@ export function DepositModal({
             }}
           />
           <span className='text-size-12 text-text2'>
-            Connected Wallet Balance: {toCardNum(balance.toNumber())}{" "}
-            {getCurrencySymbol(chain)}
+            Connected Wallet Balance:{" "}
+            <TokenNumber
+              className='inline-flex'
+              number={balance.toNumber()}
+              suffix={getCurrencySymbol(chain)}
+            />
           </span>
         </div>
         <Button loading={depositing} stretch onClick={deposit}>

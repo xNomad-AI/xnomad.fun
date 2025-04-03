@@ -6,7 +6,6 @@ import { ContentWithUser } from "../../types";
 import { useAgentStore } from "../../../store";
 import { TokenInputSell, TokenValue } from "../token-input";
 import { AmountInput } from "../amount-input";
-import { useTokenBalanceOnChain } from "@/lib/hooks/balance";
 import { PublicKey } from "@solana/web3.js";
 import { CancelButton } from "../cancel-button";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";

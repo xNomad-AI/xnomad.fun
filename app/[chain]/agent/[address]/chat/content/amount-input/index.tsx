@@ -35,10 +35,14 @@ export function AmountInput({
               onClick={(percentage) => {
                 onChange(
                   // token length cannot greater than decimals
-                  new BigNumber(amount ?? 0)
-                    .multipliedBy(percentage)
-                    .dividedBy(100)
-                    .decimalPlaces(decimals ?? 9, BigNumber.ROUND_DOWN)
+                  BigNumber(
+                    BigNumber(amount ?? 0)
+                      .multipliedBy(percentage)
+                      .dividedBy(100)
+                      .multipliedBy(10 ** (decimals ?? 9))
+                      .toFixed(0, BigNumber.ROUND_DOWN)
+                  )
+                    .div(10 ** (decimals ?? 9))
                     .toString()
                 );
               }}

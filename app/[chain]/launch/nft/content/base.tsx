@@ -58,12 +58,11 @@ export function Base({
       current={step}
     >
       <h1 className='text-size-24 font-bold'>Create Your Own AI Agent</h1>
-      <p>
-        Customize your own AI agent and launch it as an NFT!
+      <p className='text-size-12 text-text2'>
+        * Customize your own AI agent and launch it as an NFT!
         <br />
-        The AI agent is built on the ElizaOS framework.
-        <br />
-        (Optional) Issue an agent token with your AI-NFT.
+        * The AI agent is built on the ElizaOS framework.
+        <br />* (Optional) Issue an agent token with your AI-NFT.
       </p>
       <RadioButtonGroup disableAnimation onChange={setMode} value={mode}>
         <RadioButton value='simple'>Simple Mode</RadioButton>

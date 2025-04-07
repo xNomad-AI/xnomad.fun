@@ -59,8 +59,9 @@ export function Base({
     >
       <h1 className='text-size-24 font-bold'>Create Your Own AI Agent</h1>
       <p>
-        Customize your own AI agent and launch it as an NFT! (Optional) Issue an
-        agent token with your AI-NFT.
+        Customize your own AI agent and launch it as an NFT!
+        <br />
+        The AI agent is built on the ElizaOS framework.
         <br />
         (Optional) Issue an agent token with your AI-NFT.
       </p>

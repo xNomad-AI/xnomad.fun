@@ -20,23 +20,6 @@ export function useChatGreeting({
   const getGreeting = useMemoizedFn(async () => {
     setIsGreeting(true);
     try {
-      const promptSuggestion = `Here are some example prompts if you want to trade: 
-- Buy: 
-  *Buy [$symbol(CA)] with [amount] ${getCurrencySymbol(chain)}
-- Sell: 
-  *Sell [amount] [$symbol(CA)] for ${getCurrencySymbol(chain)}
-- Swap: 
-  *swap [amount] ${getCurrencySymbol(chain)} for [$symbol(CA)]
-  *Swap [amount][$symbol(CA)] for [$symbol(CA)]
-_ Transfer:
-  *Transfer [amount] [$symbol(CA)] to [wallet address]
-- Limit Order: 
-  *Create an automatic task to buy [$symbol(CA)] with [amount] ${getCurrencySymbol(
-    chain
-  )} when the token price is under $xx
-  *Create an automatic task to sell [amount][$symbol(CA)] for ${getCurrencySymbol(
-    chain
-  )} when the token price is above $xx`;
       const greet = await api.v1.get<{ prologue: string }>("/agent/prologue", {
         nftId: nft.id,
         chain: chain,
@@ -46,12 +29,6 @@ _ Transfer:
           text: greet.prologue,
           user: nft.name,
           id: "greeting",
-          createdAt: Date.now(),
-        },
-        {
-          text: promptSuggestion,
-          user: nft.name,
-          id: "prompt",
           createdAt: Date.now(),
         },
       ];

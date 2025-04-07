@@ -88,13 +88,22 @@ export function Content({ address }: { address: string }) {
         onSelect={(value) => setTab(value as Tab)}
         value={tab}
         optionConfig={{
-          data: [...tabs],
+          data: [...tabs].filter((tab) => {
+            if (chain !== "solana" && tab === "xnomad") {
+              return false;
+            }
+            return true;
+          }),
           renderer: (tab) => tabMap[tab],
         }}
       >
         {tabMap[tab]}
       </Select>
-      <CardViewGallery loading={loading} loadingMore={false} count={count}>
+      <CardViewGallery
+        loading={loading || societyLoading}
+        loadingMore={false}
+        count={count}
+      >
         {data?.map((nft) => (
           <NFTCard
             nft={nft}

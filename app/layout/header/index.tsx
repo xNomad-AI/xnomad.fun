@@ -45,7 +45,7 @@ export function Header() {
         {
           href: `/${chain}/launch`,
           key: "create-ai-nft",
-          label: "Create AI-NFT",
+          label: "Create",
         },
       ].filter(Boolean) as {
         href: string;

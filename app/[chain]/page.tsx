@@ -19,10 +19,10 @@ export default function Home() {
             }}
             className='text-[40px] font-bold text-white'
           >
-            Your AI-NFT Smart Terminal
+            Your Ultimate AI Terminal for Crypto
           </h1>
           <p className='text-size-16 text-white'>
-            Unleash the infinite power of AI agents' possibilities
+            Create your AI agent as NFT. Prompt to trade and earn for you.
           </p>
           <LaunchNFTButton />
         </div>

@@ -37,10 +37,11 @@ export function Modal(props: PropsWithChildren<ModalProps>) {
             opacity: 0,
           }}
           onClick={(e) => {
-            e.stopPropagation();
             if (mask.current === e.target) {
               onMaskClick?.();
             }
+            e.stopPropagation();
+            e.preventDefault();
           }}
         >
           <motion.div

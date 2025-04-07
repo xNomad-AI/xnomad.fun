@@ -57,10 +57,12 @@ export function Base({
       value='base'
       current={step}
     >
-      <h1 className='text-size-24 font-bold'>Create An AI-NFT</h1>
+      <h1 className='text-size-24 font-bold'>Create Your Own AI Agent</h1>
       <p>
-        Notice: The AI-NFTs you create will be in the [Nomad Society]
-        collection.
+        Customize your own AI agent and launch it as an NFT! (Optional) Issue an
+        agent token with your AI-NFT.
+        <br />
+        (Optional) Issue an agent token with your AI-NFT.
       </p>
       <RadioButtonGroup disableAnimation onChange={setMode} value={mode}>
         <RadioButton value='simple'>Simple Mode</RadioButton>

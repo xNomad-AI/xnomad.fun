@@ -250,7 +250,7 @@ export function Actions({ nft }: { nft: NFT }) {
               </Button>
             );
           })}
-          {chain === "solana" && <TradeSetting />}
+          <TradeSetting />
         </motion.div>
       </div>
       <ClearMemoryButton

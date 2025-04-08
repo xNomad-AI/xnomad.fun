@@ -17,6 +17,7 @@ module.exports = {
     JUP_SWAP_FEE_ACCOUNT: process.env.JUP_SWAP_FEE_ACCOUNT,
     CHAT_STREAM_ENABLED: process.env.CHAT_STREAM_ENABLED,
     EVM_FEE_RECIPIENT: process.env.EVM_FEE_RECIPIENT,
+    BSC_ENABLED: process.env.BSC_ENABLED,
   },
   compiler: {
     removeConsole: process.env.DEPLOY_ENV === "prod",

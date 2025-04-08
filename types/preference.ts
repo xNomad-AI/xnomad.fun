@@ -10,5 +10,7 @@ export const preferenceNameMap: Record<keyof UserPreferenceParams, string> = {
   chain: "chain",
 };
 
-export const SUPPORTED_CHAINS = ["bsc", "solana"] as const;
+export const SUPPORTED_CHAINS = process.env.BSC_ENABLED
+  ? ["bsc", "solana"]
+  : ["solana"];
 export type SupportedChain = (typeof SUPPORTED_CHAINS)[number];

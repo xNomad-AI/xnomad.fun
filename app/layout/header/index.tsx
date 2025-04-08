@@ -18,6 +18,7 @@ import { usePathname } from "next/navigation";
 import { useChainStore } from "../chain-provider";
 import { useUserStore } from "../chain-provider/hook";
 import { ChainSelect } from "./chain-select";
+import { SUPPORTED_CHAINS } from "@/types/preference";
 
 export function Header() {
   const { chain } = useChainStore();
@@ -139,7 +140,7 @@ export function Header() {
               <IconMenu className='text-size-16 text-white' />
             </button>
           </Dropdown>
-          <ChainSelect />
+          {SUPPORTED_CHAINS.length > 1 && <ChainSelect />}
           {!userAddress ? (
             <ConnectButton size='s' />
           ) : (

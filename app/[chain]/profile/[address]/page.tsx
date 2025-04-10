@@ -12,7 +12,7 @@ import { TokenPage } from "./content/token";
 const tabs = ["ai-nfts", "agent-tokens"] as const;
 type Tab = (typeof tabs)[number];
 const tabMap = {
-  "ai-nfts": "AI NFTs",
+  "ai-nfts": "AI-NFTs",
   "agent-tokens": "Holdings",
   activity: "Activity",
   "my-swarms": "My Swarms",
@@ -54,7 +54,7 @@ export default function Profile({ params }: Props) {
           <button
             key={tab}
             className={clsx(
-              "pb-12 text-size-20",
+              "pb-12 text-size-20 font-bold",
               activeTab === tab
                 ? "text-text1 border-b-2 border-white"
                 : "text-text2"

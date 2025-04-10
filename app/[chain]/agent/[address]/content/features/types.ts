@@ -20,6 +20,7 @@ export interface CharacterConfig {
       TWITTER_LOGIN_SUSPEND: "true" | "false";
       TWITTER_POLL_INTERVAL: number;
       MAX_LENGTH: number;
+      TELEGRAM_LOGIN_SUSPEND: "true" | "false";
     }>;
   };
 }

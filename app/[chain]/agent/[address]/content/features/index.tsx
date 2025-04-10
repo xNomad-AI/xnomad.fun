@@ -183,6 +183,7 @@ export function Features({ nft }: { nft: NFT }) {
               >
                 <Button
                   className='!w-[7.5rem]'
+                  variant={hasTwitterConfig ? "secondary" : "primary"}
                   disabled={!twitterEnabled}
                   onClick={() => {
                     setXOpen(true);
@@ -206,25 +207,58 @@ export function Features({ nft }: { nft: NFT }) {
             <Image src={"/telegram.svg"} height={64} width={64} alt='' />
             <span>Telegram Integration</span>
           </div>
-          {isNFTOwner ? (
-            <Button
-              className='!w-[7.5rem]'
-              onClick={() => {
-                setTgOpen(true);
-              }}
-            >
-              {hasTgConfig ? "Edit" : "Add"}
-            </Button>
-          ) : metaInfo?.telegramBotId ? (
-            <TextAnchor
-              withDecoration
-              href={`https://t.me/${metaInfo?.telegramBotId}`}
-            >
-              <TextWithEllipsis width={200}>
-                #{metaInfo?.telegramBotId}
-              </TextWithEllipsis>
-            </TextAnchor>
-          ) : null}
+          <div className='flex items-center gap-16'>
+            {isNFTOwner && (
+              <div className='flex items-center gap-8'>
+                Suspend
+                <Toggle
+                  value={
+                    config?.characterConfig?.settings.secrets
+                      ?.TELEGRAM_LOGIN_SUSPEND === "true"
+                  }
+                  disable={isConfigLoading}
+                  onChange={() => {
+                    setIsConfigLoading(true);
+
+                    onSave({
+                      settings: {
+                        secrets: {
+                          TELEGRAM_LOGIN_SUSPEND:
+                            config?.characterConfig?.settings.secrets
+                              ?.TELEGRAM_LOGIN_SUSPEND === "true"
+                              ? "false"
+                              : "true",
+                        },
+                      },
+                    }).finally(() => {
+                      setIsConfigLoading(false);
+                    });
+                  }}
+                />
+              </div>
+            )}
+
+            {isNFTOwner ? (
+              <Button
+                className='!w-[7.5rem]'
+                variant={hasTgConfig ? "secondary" : "primary"}
+                onClick={() => {
+                  setTgOpen(true);
+                }}
+              >
+                {hasTgConfig ? "Edit" : "Add"}
+              </Button>
+            ) : metaInfo?.telegramBotId ? (
+              <TextAnchor
+                withDecoration
+                href={`https://t.me/${metaInfo?.telegramBotId}`}
+              >
+                <TextWithEllipsis width={200}>
+                  #{metaInfo?.telegramBotId}
+                </TextWithEllipsis>
+              </TextAnchor>
+            ) : null}
+          </div>
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>
           <div className='flex items-center gap-16'>

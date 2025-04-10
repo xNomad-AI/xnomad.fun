@@ -15,7 +15,7 @@ import Link from "next/link";
 import { isOwner } from "@/lib/user/ownership";
 import { Address } from "@/components/address";
 import { useUserStore } from "@/app/layout/chain-provider/hook";
-
+import { useRouter } from "next/navigation";
 export function TokenList({
   data,
   loading,
@@ -23,6 +23,7 @@ export function TokenList({
   data: Portfolio[];
   loading: boolean;
 }) {
+  const router = useRouter();
   const { userAddress } = useUserStore();
   const { selectedPortfolio, onlyAgentToken } = useTokenStore();
   const tokens = useMemo(() => {
@@ -142,7 +143,16 @@ export function TokenList({
                 <div className='flex w-[120px] justify-end'>
                   <TokenNumber prefix={"$"} number={item.valueUsd} />
                 </div>
-                <div className='flex w-[120px] justify-end'>
+                <div
+                  onClick={(e) => {
+                    if (Boolean(item.nft?.id)) {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      router.push(`/${item.nft?.chain}/agent/${item.nft?.id}`);
+                    }
+                  }}
+                  className='flex w-[120px] justify-end'
+                >
                   {isTokenOwner ? (
                     <span>My Wallet</span>
                   ) : Boolean(item.nft?.id) ? (

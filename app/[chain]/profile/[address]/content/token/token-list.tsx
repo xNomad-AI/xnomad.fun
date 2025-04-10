@@ -13,8 +13,8 @@ import { NFT } from "@/types";
 import { NFTCell } from "@/app/[chain]/agent/[address]/content/agent-token/token-list/nft-cell";
 import Link from "next/link";
 import { isOwner } from "@/lib/user/ownership";
-import { useAccount } from "wagmi";
 import { Address } from "@/components/address";
+import { useUserStore } from "@/app/layout/chain-provider/hook";
 
 export function TokenList({
   data,
@@ -23,7 +23,7 @@ export function TokenList({
   data: Portfolio[];
   loading: boolean;
 }) {
-  const { address } = useAccount();
+  const { userAddress } = useUserStore();
   const { selectedPortfolio, onlyAgentToken } = useTokenStore();
   const tokens = useMemo(() => {
     return data
@@ -97,7 +97,7 @@ export function TokenList({
           itemSize={58}
           height={400}
           renderItem={(item: Token & { nft: NFT; wallet: string }) => {
-            const isTokenOwner = isOwner(item.wallet, address);
+            const isTokenOwner = isOwner(item.wallet, userAddress);
             return (
               <Link
                 onClick={(e) => {
@@ -148,7 +148,7 @@ export function TokenList({
                   ) : Boolean(item.nft?.id) ? (
                     <Tooltip
                       content={item.wallet}
-                      className='flex w-full items-center'
+                      className='flex max-w-full items-center justify-end gap-8'
                     >
                       <NFTCell item={{ nft: item.nft }} />
                     </Tooltip>

@@ -17,8 +17,8 @@ import { TokenNumber } from "@/components/token-number";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { NFTCell } from "@/app/[chain]/agent/[address]/content/agent-token/token-list/nft-cell";
 import { isOwner } from "@/lib/user/ownership";
-import { useAccount } from "wagmi";
 import { Address } from "@/components/address";
+import { useUserStore } from "@/app/layout/chain-provider/hook";
 
 export function TokenFilter({ data }: { data: Portfolio[] }) {
   const { filterOpen, setFilterOpen, onlyAgentToken, setOnlyAgentToken } =
@@ -67,7 +67,7 @@ export function TokenFilter({ data }: { data: Portfolio[] }) {
   );
 }
 function OwnerFilter({ data }: { data: Portfolio[] }) {
-  const { address } = useAccount();
+  const { userAddress } = useUserStore();
   const [keyword, setKeyword] = useState("");
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
   const { addSelectedPortfolio, removeSelectedPortfolio, selectedPortfolio } =
@@ -115,7 +115,7 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
           const checked = Boolean(
             selectedPortfolio.find((port) => port.wallet === item.wallet)
           );
-          const isTokenOwner = isOwner(item.wallet, address);
+          const isTokenOwner = isOwner(item.wallet, userAddress);
           return (
             <div
               key={item.wallet}
@@ -136,7 +136,7 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
                 ) : Boolean(item.nft?.id) ? (
                   <Tooltip
                     content={item.wallet}
-                    className='flex w-full items-center'
+                    className='flex w-full items-center gap-8'
                   >
                     <NFTCell item={{ nft: item.nft }} />
                   </Tooltip>

@@ -15,7 +15,7 @@ import { useMemoizedFn, useMount } from "ahooks";
 import { TelegramModal } from "./telegram";
 import { VoiceModal } from "./voice";
 import { ConfirmModal } from "./confirm";
-import { editAgentConfig } from "./network";
+import { editAgentConfig, getAgentConfig } from "./network";
 import { useAgentStore } from "../../store";
 import { SupportedChain } from "@/types/preference";
 import { useChainStore } from "@/app/layout/chain-provider";
@@ -94,6 +94,8 @@ export function Features({ nft }: { nft: NFT }) {
             POST_IMMEDIATELY: _config.settings?.secrets?.POST_IMMEDIATELY,
             TWITTER_LOGIN_SUSPEND:
               _config.settings?.secrets?.TWITTER_LOGIN_SUSPEND,
+            TELEGRAM_LOGIN_SUSPEND:
+              _config.settings?.secrets?.TELEGRAM_LOGIN_SUSPEND,
           },
         },
       },
@@ -102,6 +104,11 @@ export function Features({ nft }: { nft: NFT }) {
     setConfig({
       ...(config as Config),
       characterConfig: newConfig.characterConfig,
+    });
+  });
+  const refreshConfig = useMemoizedFn(() => {
+    getAgentConfig(nft.id, chain).then((config) => {
+      setConfig(config);
     });
   });
   const hasTwitterConfig = useMemo(() => {
@@ -294,6 +301,7 @@ export function Features({ nft }: { nft: NFT }) {
             chain,
             testContent,
           });
+          refreshConfig();
           if (!res.isLogin) {
             throw res.message;
           }

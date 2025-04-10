@@ -9,7 +9,7 @@ export function NFTCell({ item }: { item: Pick<TokenInfo, "nft"> }) {
         className='size-24 rounded-4 object-contain'
         src={item.nft?.image}
       />
-      <TextWithEllipsis className='flex-1'>{item.nft?.name}</TextWithEllipsis>
+      <TextWithEllipsis>{item.nft?.name}</TextWithEllipsis>
     </>
   ) : (
     "--"

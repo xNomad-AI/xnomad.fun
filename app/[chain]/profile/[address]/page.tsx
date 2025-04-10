@@ -4,9 +4,11 @@ import { Address } from "@/components/address";
 import clsx from "clsx";
 import Image from "next/image";
 import { Content } from "./content";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "@/app/layout/contianer";
 import { TokenPage } from "./content/token";
+import { useSearchParams } from "next/navigation";
+import { useMemoizedFn } from "ahooks";
 
 // Define tabs
 const tabs = ["ai-nfts", "agent-tokens"] as const;
@@ -26,8 +28,19 @@ interface Props {
 }
 
 export default function Profile({ params }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>("ai-nfts");
   const { address, chain } = params;
+  const [activeTab, _setTab] = useState<Tab | null>("ai-nfts");
+  const setActiveTab = useMemoizedFn((tab: Tab | null) => {
+    _setTab(tab);
+    window.history.pushState(null, "", `?tab=${tab}`);
+  });
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const tab = searchParams.get("tab") as Tab;
+    if (tabs.includes(tab)) {
+      _setTab(tab);
+    }
+  }, [searchParams]);
 
   return (
     <Container className='flex flex-col gap-32 w-full'>

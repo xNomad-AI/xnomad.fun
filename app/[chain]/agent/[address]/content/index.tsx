@@ -64,7 +64,7 @@ export function Content() {
   useEffect(() => {
     const tab = searchParams.get("tab") as Tab;
     if (tabs.includes(tab)) {
-      setTab(tab);
+      _setTab(tab);
     }
   }, [searchParams]);
   const [mobileTab, setMobileTab] = useState<MobileTab | null>(null);

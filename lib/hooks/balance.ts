@@ -17,10 +17,14 @@ function useSolBalance(account?: PublicKey | null, config?: BalanceConfig) {
   const { refreshAsync, data: balance } = useRequest(
     async () => {
       if (!account) return BigNumber(0);
-      let publicKey =
-        typeof account === "string" ? new PublicKey(account) : account;
-      const res = await getSolBalance(publicKey);
-      return res;
+      try {
+        let publicKey =
+          typeof account === "string" ? new PublicKey(account) : account;
+        const res = await getSolBalance(publicKey);
+        return res;
+      } catch (error) {
+        return BigNumber(0);
+      }
     },
     {
       refreshDeps: [account, config?.disablePooling],

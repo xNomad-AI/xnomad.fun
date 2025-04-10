@@ -47,7 +47,7 @@ export function TokenFilter({ data }: { data: Portfolio[] }) {
     <>
       <div
         className={clsx(
-          "mobile:hidden flex flex-col gap-8 w-[240px] h-[calc(100vh-372px)] overflow-auto flex-shrink-0",
+          "mobile:hidden flex flex-col gap-8 w-[240px] h-[calc(100vh-340px)] overflow-auto flex-shrink-0",
           {
             hidden: !filterOpen,
           }

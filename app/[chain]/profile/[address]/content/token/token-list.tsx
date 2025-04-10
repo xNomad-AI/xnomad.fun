@@ -16,6 +16,7 @@ import { isOwner } from "@/lib/user/ownership";
 import { Address } from "@/components/address";
 import { useUserStore } from "@/app/layout/chain-provider/hook";
 import { useRouter } from "next/navigation";
+import { use100vh } from "react-div-100vh";
 export function TokenList({
   data,
   loading,
@@ -58,6 +59,7 @@ export function TokenList({
       return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
     });
   }, [tokens, sortBy, sortDirection]);
+  const vh = use100vh();
   return (
     <div className='flex flex-col w-full'>
       <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40 text-text2 text-size-12'>
@@ -96,7 +98,7 @@ export function TokenList({
           gutterSize={0}
           key={`${sortBy}-${sortDirection}`}
           itemSize={58}
-          height={400}
+          height={vh ? vh - 443 : 400}
           renderItem={(item: Token & { nft: NFT; wallet: string }) => {
             const isTokenOwner = isOwner(item.wallet, userAddress);
             const coinNFT = item.agentCoin;

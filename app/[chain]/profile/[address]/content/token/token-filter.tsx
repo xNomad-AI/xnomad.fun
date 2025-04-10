@@ -74,7 +74,11 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
     useTokenStore();
   const showData = useMemo(() => {
     return data
-      .filter((item) => item.wallet.includes(keyword))
+      .filter(
+        (item) =>
+          item.wallet.toLowerCase().includes(keyword.toLowerCase()) ||
+          item.nft?.name.toLowerCase()?.includes(keyword.toLowerCase())
+      )
       .sort((a, b) => {
         return (a.totalUsd - b.totalUsd) * (direction === "asc" ? 1 : -1);
       });

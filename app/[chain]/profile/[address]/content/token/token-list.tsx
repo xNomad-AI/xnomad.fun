@@ -99,20 +99,22 @@ export function TokenList({
           height={400}
           renderItem={(item: Token & { nft: NFT; wallet: string }) => {
             const isTokenOwner = isOwner(item.wallet, userAddress);
+            const coinNFT = item.agentCoin?.nft;
             return (
               <Link
                 onClick={(e) => {
-                  if (isTokenOwner || !item.nft?.id) {
+                  if (!coinNFT?.id) {
                     e.preventDefault();
                     e.stopPropagation();
                   }
                 }}
-                href={`/${item.nft?.chain}/agent/${item.nft?.id}?tab=agent-token`}
+                href={`/${coinNFT?.chain}/agent/${coinNFT?.id}?tab=agent-token`}
                 key={item.symbol}
                 className={clsx(
                   "h-64 flex items-center justify-between w-full border-b border-white-20 gap-8",
                   {
-                    "hover:bg-[#242424]": !isTokenOwner,
+                    "hover:bg-[#242424]": Boolean(coinNFT?.id),
+                    "cursor-default": !Boolean(coinNFT?.id),
                   }
                 )}
               >
@@ -151,7 +153,9 @@ export function TokenList({
                       router.push(`/${item.nft?.chain}/agent/${item.nft?.id}`);
                     }
                   }}
-                  className='flex w-[120px] justify-end'
+                  className={clsx("flex w-[120px] justify-end", {
+                    "cursor-pointer": Boolean(item.nft?.id),
+                  })}
                 >
                   {isTokenOwner ? (
                     <span>My Wallet</span>

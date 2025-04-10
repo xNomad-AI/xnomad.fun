@@ -1,12 +1,13 @@
 "use client";
 import { IconClose, IconFilterAlt } from "@/primitive/components";
 import { useTokenStore } from "../../store";
-import { Portfolio } from "./type";
-import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 import { Address } from "@/components/address";
 import clsx from "clsx";
-
+import { isOwner } from "@/lib/user/ownership";
+import { useUserStore } from "@/app/layout/chain-provider/hook";
+import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 export function TokenActionBar() {
+  const { userAddress } = useUserStore();
   const {
     removeSelectedPortfolio,
     clearAll,
@@ -37,10 +38,16 @@ export function TokenActionBar() {
             <button
               title='Remove'
               key={item.wallet}
-              className='rounded-4 max-w-[240px] h-32 flex items-center justify-center px-8 bg-white-10'
+              className='rounded-4 max-w-[240px] h-32 flex items-center justify-center px-8 gap-4 bg-white-10'
               onClick={() => removeSelectedPortfolio(item)}
             >
-              <Address address={item.wallet} />
+              {item.nft?.name ? (
+                <TextWithEllipsis>{item.nft.name}</TextWithEllipsis>
+              ) : isOwner(item.wallet, userAddress) ? (
+                "My Wallet"
+              ) : (
+                <Address address={item.wallet} />
+              )}
               <IconClose className='text-size-16' />
             </button>
           ))}

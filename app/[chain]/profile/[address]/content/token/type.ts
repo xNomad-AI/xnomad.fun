@@ -18,5 +18,5 @@ export interface Portfolio {
   wallet: string;
   totalUsd: number;
   items: Token[];
-  nft: NFT;
+  nft?: NFT;
 }

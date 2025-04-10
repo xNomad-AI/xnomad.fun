@@ -7,6 +7,8 @@ export interface TokenState {
   searchKeyword: string;
   selectedPortfolio: Portfolio[];
   filterOpen: boolean;
+  onlyAgentToken: boolean;
+  setOnlyAgentToken: (onlyAgentToken: boolean) => void;
   setFilterOpen: (open: boolean) => void;
   setSelectedPortfolio: (item: Portfolio[]) => void;
   removeSelectedPortfolio: (item: Portfolio) => void;
@@ -21,6 +23,12 @@ export const useTokenStore = create(
     nftList: [],
     selectedPortfolio: [],
     filterOpen: false,
+    onlyAgentToken: false,
+    setOnlyAgentToken: (onlyAgentToken) => {
+      set((state) => {
+        state.onlyAgentToken = onlyAgentToken;
+      });
+    },
     setFilterOpen: (open) => {
       set((state) => {
         state.filterOpen = open;

@@ -4,6 +4,7 @@ import {
   IconDownFilled,
   Modal,
   ModalContent,
+  Toggle,
   Tooltip,
 } from "@/primitive/components";
 import { Portfolio } from "./type";
@@ -12,20 +13,34 @@ import { Checkbox } from "@/primitive/components/checkbox";
 import { useMemo, useState } from "react";
 import { useTokenStore } from "../../store";
 import clsx from "clsx";
-import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 import { TokenNumber } from "@/components/token-number";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
 import { NFTCell } from "@/app/[chain]/agent/[address]/content/agent-token/token-list/nft-cell";
+import { isOwner } from "@/lib/user/ownership";
+import { useAccount } from "wagmi";
+import { Address } from "@/components/address";
 
 export function TokenFilter({ data }: { data: Portfolio[] }) {
-  const { filterOpen, setFilterOpen } = useTokenStore();
+  const { filterOpen, setFilterOpen, onlyAgentToken, setOnlyAgentToken } =
+    useTokenStore();
   const content = (
-    <Collapse
-      defaultValue={true}
-      title={<span className='font-bold'>Owners</span>}
-    >
-      <OwnerFilter data={data} />
-    </Collapse>
+    <>
+      <div className='w-full flex justify-between'>
+        <span className='font-bold'>Only Agent Tokens</span>
+        <Toggle
+          value={onlyAgentToken}
+          onChange={(value) => {
+            setOnlyAgentToken(value);
+          }}
+        />
+      </div>
+      <Collapse
+        defaultValue={true}
+        title={<span className='font-bold'>Owners</span>}
+      >
+        <OwnerFilter data={data} />
+      </Collapse>
+    </>
   );
   const { breakpoint } = useBreakpoint();
   return (
@@ -52,6 +67,7 @@ export function TokenFilter({ data }: { data: Portfolio[] }) {
   );
 }
 function OwnerFilter({ data }: { data: Portfolio[] }) {
+  const { address } = useAccount();
   const [keyword, setKeyword] = useState("");
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
   const { addSelectedPortfolio, removeSelectedPortfolio, selectedPortfolio } =
@@ -73,14 +89,14 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
         className='w-full'
       />
       <div className='w-full flex items-center gap-8 border-b border-white-20 h-32'>
-        <div className='w-[120px] mobile:w-[unset] mobile:flex-1 flex items-center'>
+        <div className='w-[120px] mobile:w-[unset] mobile:flex-1 flex items-center text-size-12 text-text2'>
           Owner
         </div>
         <div
           onClick={() => {
             setDirection(direction === "asc" ? "desc" : "asc");
           }}
-          className='w-[48px] cursor-pointer flex items-center gap-8 justify-end'
+          className='w-[48px] cursor-pointer flex items-center gap-8 justify-end text-size-12'
         >
           <IconDownFilled
             className={clsx(
@@ -99,6 +115,7 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
           const checked = Boolean(
             selectedPortfolio.find((port) => port.wallet === item.wallet)
           );
+          const isTokenOwner = isOwner(item.wallet, address);
           return (
             <div
               key={item.wallet}
@@ -114,9 +131,18 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
               )}
             >
               <div className='w-[120px] flex items-center mobile:w-[unset] mobile:flex-1'>
-                <Tooltip content={item.wallet}>
-                  <NFTCell item={{ nft: item.nft }} />
-                </Tooltip>
+                {isTokenOwner ? (
+                  <span>My Wallet</span>
+                ) : Boolean(item.nft.id) ? (
+                  <Tooltip
+                    content={item.wallet}
+                    className='flex w-full items-center'
+                  >
+                    <NFTCell item={{ nft: item.nft }} />
+                  </Tooltip>
+                ) : (
+                  <Address address={item.wallet} />
+                )}
               </div>
               <div className='w-[48px] flex items-center justify-end'>
                 <TokenNumber number={item.totalUsd} prefix={"$"} />

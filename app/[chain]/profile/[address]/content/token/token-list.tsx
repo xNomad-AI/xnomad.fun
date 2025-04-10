@@ -14,6 +14,7 @@ import { NFTCell } from "@/app/[chain]/agent/[address]/content/agent-token/token
 import Link from "next/link";
 import { isOwner } from "@/lib/user/ownership";
 import { useAccount } from "wagmi";
+import { Address } from "@/components/address";
 
 export function TokenList({
   data,
@@ -23,7 +24,7 @@ export function TokenList({
   loading: boolean;
 }) {
   const { address } = useAccount();
-  const { selectedPortfolio } = useTokenStore();
+  const { selectedPortfolio, onlyAgentToken } = useTokenStore();
   const tokens = useMemo(() => {
     return data
       .filter(
@@ -32,21 +33,27 @@ export function TokenList({
           selectedPortfolio.some((item) => item.wallet === port.wallet)
       )
       .flatMap((portfolio) =>
-        portfolio.items.map((item) => ({
-          ...item,
-          nft: portfolio.nft,
-          wallet: portfolio.wallet,
-        }))
+        portfolio.items
+          .map((item) => ({
+            ...item,
+            nft: portfolio.nft,
+            wallet: portfolio.wallet,
+          }))
+          .filter((item) => (onlyAgentToken ? Boolean(item.agentCoin) : true))
       );
-  }, [data, selectedPortfolio]);
+  }, [data, selectedPortfolio, onlyAgentToken]);
   const [sortBy, setSortBy] = useState<keyof Token>("valueUsd");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const sortedTokens = useMemo(() => {
     return tokens.sort((a, b) => {
       let aValue =
-        typeof a[sortBy] === "number" ? a[sortBy] : parseFloat(a[sortBy]);
+        typeof a[sortBy] === "number"
+          ? a[sortBy]
+          : parseFloat(a[sortBy] as any);
       let bValue =
-        typeof b[sortBy] === "number" ? b[sortBy] : parseFloat(b[sortBy]);
+        typeof b[sortBy] === "number"
+          ? b[sortBy]
+          : parseFloat(b[sortBy] as any);
       return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
     });
   }, [tokens, sortBy, sortDirection]);
@@ -94,7 +101,7 @@ export function TokenList({
             return (
               <Link
                 onClick={(e) => {
-                  if (isTokenOwner) {
+                  if (isTokenOwner || !item.nft.id) {
                     e.preventDefault();
                     e.stopPropagation();
                   }
@@ -138,10 +145,15 @@ export function TokenList({
                 <div className='flex w-[120px] justify-end'>
                   {isTokenOwner ? (
                     <span>My Wallet</span>
-                  ) : (
-                    <Tooltip content={item.wallet}>
+                  ) : Boolean(item.nft.id) ? (
+                    <Tooltip
+                      content={item.wallet}
+                      className='flex w-full items-center'
+                    >
                       <NFTCell item={{ nft: item.nft }} />
                     </Tooltip>
+                  ) : (
+                    <Address address={item.wallet} />
                   )}
                 </div>
               </Link>

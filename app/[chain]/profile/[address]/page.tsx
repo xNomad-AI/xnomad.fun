@@ -13,7 +13,7 @@ const tabs = ["ai-nfts", "agent-tokens"] as const;
 type Tab = (typeof tabs)[number];
 const tabMap = {
   "ai-nfts": "AI NFTs",
-  "agent-tokens": "Agent Tokens",
+  "agent-tokens": "Holdings",
   activity: "Activity",
   "my-swarms": "My Swarms",
 } as const;

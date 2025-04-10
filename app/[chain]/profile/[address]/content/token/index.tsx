@@ -6,8 +6,6 @@ import { api } from "@/primitive/api";
 import { Portfolio } from "./type";
 import { useParams } from "next/navigation";
 import { TokenActionBar } from "./token-action-bar";
-import { XNOMAD_ID } from "@/app/[chain]/xnomad/constants";
-import { NOMADS_SOCIETY_ID } from "@/app/[chain]/ugc-agents/constants";
 
 export function TokenPage() {
   const { chain, address } = useParams();
@@ -16,11 +14,7 @@ export function TokenPage() {
       portfolios: Portfolio[];
     }>("/agent-account/defi/agents/portfolio", {
       chain,
-      address: (address as string).toLowerCase(),
-      collectionIds:
-        chain === "solana"
-          ? [XNOMAD_ID, NOMADS_SOCIETY_ID["solana"]]
-          : NOMADS_SOCIETY_ID["bsc"],
+      address: address as string,
     });
     return tokens;
   });

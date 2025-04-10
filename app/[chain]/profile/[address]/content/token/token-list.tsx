@@ -1,18 +1,19 @@
 "use client";
 import { InfiniteScrollList } from "@/components/infinit-scroll";
-import { IconDownFilled, Spin } from "@/primitive/components";
+import { IconDownFilled, Spin, Tooltip } from "@/primitive/components";
 import { useTokenStore } from "../../store";
 import { useMemo, useState } from "react";
 import { TokenNumber } from "@/components/token-number";
 import { Portfolio, Token } from "./type";
 import { TokenCell } from "@/app/[chain]/agent/[address]/content/agent-token/token-list/token-cell";
-import { Address } from "@/components/address";
 import clsx from "clsx";
-import { parseEther, parseGwei } from "viem";
 import BigNumber from "bignumber.js";
 import { RateNum } from "@/components/rate-number";
 import { NFT } from "@/types";
 import { NFTCell } from "@/app/[chain]/agent/[address]/content/agent-token/token-list/nft-cell";
+import Link from "next/link";
+import { isOwner } from "@/lib/user/ownership";
+import { useAccount } from "wagmi";
 
 export function TokenList({
   data,
@@ -21,6 +22,7 @@ export function TokenList({
   data: Portfolio[];
   loading: boolean;
 }) {
+  const { address } = useAccount();
   const { selectedPortfolio } = useTokenStore();
   const tokens = useMemo(() => {
     return data
@@ -33,6 +35,7 @@ export function TokenList({
         portfolio.items.map((item) => ({
           ...item,
           nft: portfolio.nft,
+          wallet: portfolio.wallet,
         }))
       );
   }, [data, selectedPortfolio]);
@@ -83,13 +86,16 @@ export function TokenList({
         <InfiniteScrollList
           items={sortedTokens}
           gutterSize={0}
+          key={`${sortBy}-${sortDirection}`}
           itemSize={58}
           height={400}
-          renderItem={(item: Token & { nft: NFT }) => {
+          renderItem={(item: Token & { nft: NFT; wallet: string }) => {
+            const isTokenOwner = isOwner(item.wallet, address);
             return (
-              <div
+              <Link
+                href={`/${item.nft.chain}/agent/${item.nft.id}?tab=agent-token`}
                 key={item.symbol}
-                className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8 hover:opacity-80'
+                className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8 hover:bg-[#242424]'
               >
                 <div className='flex w-[200px] gap-4 items-center'>
                   <TokenCell
@@ -119,9 +125,15 @@ export function TokenList({
                   <TokenNumber prefix={"$"} number={item.valueUsd} />
                 </div>
                 <div className='flex w-[120px] justify-end'>
-                  <NFTCell item={{ nft: item.nft }} />
+                  {isTokenOwner ? (
+                    <span>My Wallet</span>
+                  ) : (
+                    <Tooltip content={item.wallet}>
+                      <NFTCell item={{ nft: item.nft }} />
+                    </Tooltip>
+                  )}
                 </div>
-              </div>
+              </Link>
             );
           }}
           hasNextPage={false}

@@ -55,7 +55,6 @@ export default function Profile({ params }: Props) {
             key={tab}
             className={clsx(
               "pb-12 text-size-20",
-              bungee.className,
               activeTab === tab
                 ? "text-text1 border-b-2 border-white"
                 : "text-text2"

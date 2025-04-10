@@ -4,6 +4,7 @@ import {
   IconDownFilled,
   Modal,
   ModalContent,
+  Tooltip,
 } from "@/primitive/components";
 import { Portfolio } from "./type";
 import { TextField } from "@/primitive/components/text-field";
@@ -113,7 +114,9 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
               )}
             >
               <div className='w-[120px] flex items-center mobile:w-[unset] mobile:flex-1'>
-                <NFTCell item={{ nft: item.nft }} />
+                <Tooltip content={item.wallet}>
+                  <NFTCell item={{ nft: item.nft }} />
+                </Tooltip>
               </div>
               <div className='w-[48px] flex items-center justify-end'>
                 <TokenNumber number={item.totalUsd} prefix={"$"} />

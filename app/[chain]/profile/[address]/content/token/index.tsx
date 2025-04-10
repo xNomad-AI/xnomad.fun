@@ -17,10 +17,10 @@ export function TokenPage() {
     }>("/agent-account/defi/agents/portfolio", {
       chain,
       address: (address as string).toLowerCase(),
-      collectionids: [
-        XNOMAD_ID[chain as keyof typeof XNOMAD_ID],
-        NOMADS_SOCIETY_ID[chain as keyof typeof NOMADS_SOCIETY_ID],
-      ],
+      collectionIds:
+        chain === "solana"
+          ? [XNOMAD_ID, NOMADS_SOCIETY_ID["solana"]]
+          : NOMADS_SOCIETY_ID["bsc"],
     });
     return tokens;
   });

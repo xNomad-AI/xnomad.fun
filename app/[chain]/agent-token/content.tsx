@@ -145,7 +145,7 @@ export function Content() {
                 <Link
                   href={`/${chain}/agent/${item.nft?.id}?tab=agent-token`}
                   key={item.symbol}
-                  className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8 hover:opacity-80'
+                  className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8 hover:bg-[#242424]'
                 >
                   <div className='flex w-[240px] items-center'>
                     <div className='text-text2 w-40'>{index + 1}</div>

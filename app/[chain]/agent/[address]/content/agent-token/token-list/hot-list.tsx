@@ -51,7 +51,7 @@ export function HotAgentTokens() {
               <Link
                 href={`/${chain}/agent/${item.nft?.id}?tab=agent-token`}
                 key={item.symbol}
-                className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8 hover:opacity-80'
+                className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8 hover:bg-[#242424]'
               >
                 <div className='flex w-[200px] gap-4 items-center'>
                   <TokenCell item={item} variant='simple' />

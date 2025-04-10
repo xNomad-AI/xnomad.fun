@@ -101,12 +101,12 @@ export function TokenList({
             return (
               <Link
                 onClick={(e) => {
-                  if (isTokenOwner || !item.nft.id) {
+                  if (isTokenOwner || !item.nft?.id) {
                     e.preventDefault();
                     e.stopPropagation();
                   }
                 }}
-                href={`/${item.nft.chain}/agent/${item.nft.id}?tab=agent-token`}
+                href={`/${item.nft?.chain}/agent/${item.nft?.id}?tab=agent-token`}
                 key={item.symbol}
                 className={clsx(
                   "h-64 flex items-center justify-between w-full border-b border-white-20 gap-8",
@@ -145,7 +145,7 @@ export function TokenList({
                 <div className='flex w-[120px] justify-end'>
                   {isTokenOwner ? (
                     <span>My Wallet</span>
-                  ) : Boolean(item.nft.id) ? (
+                  ) : Boolean(item.nft?.id) ? (
                     <Tooltip
                       content={item.wallet}
                       className='flex w-full items-center'

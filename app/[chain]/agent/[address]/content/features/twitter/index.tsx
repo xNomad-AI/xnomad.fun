@@ -44,7 +44,7 @@ export function TwitterModal({
   const generateTestTweet = useMemoizedFn(async () => {
     // Show loading state
     updateForm("testContent", {
-      value: " Generating tweet...",
+      value: " Generating tweet... (~ 5 seconds)",
       isInValid: false,
       errorMsg: "",
     });
@@ -52,17 +52,17 @@ export function TwitterModal({
     // Validate prompt
     if (!form.prompt.value) {
       updateForm("testContent", {
-        value: "Please enter a prompt!!!",
+        value: "Failed to generate the example. Please enter a prompt and try again.",
         isInValid: true,
-        errorMsg: "Please enter a prompt!!!",
+        errorMsg: "Failed to generate the example. Please enter a prompt and try again.",
       });
       return;
     }
     
     try {
       // Template for the tweet generation
-      const twitterPostTemplate = `Please write a X post based on these instructions: ${form.prompt.value}. Do not add commentary or acknowledge this request, just write the post.\n The tweet should be under ${form.postMaxLength.value} characters. Your response should be 1, 2, or 3 sentences (choose the length at random).
-      Your response should not contain any questions. Brief, concise statements only. No emojis.`;
+      const twitterPostTemplate = `Please write a X post based on these instructions: ${form.prompt.value}. Do not add commentary or acknowledge this request, just write the post.\n The total character count MUST be close to and not more than ${form.postMaxLength.value}.
+      Your response should not contain any questions. Brief, concise statements only. No emojis. Ensure it does not start with " and end with ".`;
       
       const payload = {
         twitterUsername: form.userName.value,
@@ -409,10 +409,14 @@ export function TwitterModal({
           </div>
 
           <FormItem label=''>
-          <div className='min-h-[76px] p-12 whitespace-pre-wrap -mt-25'>
-            {form.testContent.value}
-          </div>
-        </FormItem>
+            <div 
+              className={clsx('min-h-[76px] p-12 whitespace-pre-wrap -mt-25', {
+                'text-red': form.testContent.isInValid
+              })}
+            >
+              {form.testContent.value}
+            </div>
+          </FormItem>
 
         <div className='w-full flex items-center gap-16 sticky bottom-0 py-24 -mt-24 bg-background'>
           <Button variant='secondary' stretch onClick={onClose}>

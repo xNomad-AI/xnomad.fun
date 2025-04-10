@@ -10,6 +10,9 @@ import { Address } from "@/components/address";
 import clsx from "clsx";
 import { parseEther, parseGwei } from "viem";
 import BigNumber from "bignumber.js";
+import { RateNum } from "@/components/rate-number";
+import { NFT } from "@/types";
+import { NFTCell } from "@/app/[chain]/agent/[address]/content/agent-token/token-list/nft-cell";
 
 export function TokenList({
   data,
@@ -29,7 +32,7 @@ export function TokenList({
       .flatMap((portfolio) =>
         portfolio.items.map((item) => ({
           ...item,
-          wallet: portfolio.wallet,
+          nft: portfolio.nft,
         }))
       );
   }, [data, selectedPortfolio]);
@@ -64,7 +67,14 @@ export function TokenList({
           })}
         >
           Holding Value
-          <IconDownFilled className='text-size-16' />
+          <IconDownFilled
+            className={clsx(
+              "text-size-16 transition-transform duration-300 ease-in-out",
+              {
+                "rotate-180": sortDirection === "asc",
+              }
+            )}
+          />
         </button>
         <div className='w-[120px] text-right'>Owner</div>
       </div>
@@ -75,7 +85,7 @@ export function TokenList({
           gutterSize={0}
           itemSize={58}
           height={400}
-          renderItem={(item: Token & { wallet: string }) => {
+          renderItem={(item: Token & { nft: NFT }) => {
             return (
               <div
                 key={item.symbol}
@@ -93,6 +103,10 @@ export function TokenList({
                 </div>
                 <div className='flex w-[120px] flex-col items-end'>
                   <TokenNumber prefix={"$"} number={item.priceUsd} />
+                  <RateNum
+                    num={item.usdPrice24hrPercenChange}
+                    className='text-size-12'
+                  />
                 </div>
                 <div className='flex w-[120px] justify-end'>
                   <TokenNumber
@@ -105,7 +119,7 @@ export function TokenList({
                   <TokenNumber prefix={"$"} number={item.valueUsd} />
                 </div>
                 <div className='flex w-[120px] justify-end'>
-                  <Address address={item.wallet} />
+                  <NFTCell item={{ nft: item.nft }} />
                 </div>
               </div>
             );

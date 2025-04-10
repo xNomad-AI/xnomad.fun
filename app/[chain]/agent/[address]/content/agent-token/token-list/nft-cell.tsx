@@ -1,7 +1,7 @@
 import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 import { TokenInfo } from "./network";
 
-export function NFTCell({ item }: { item: TokenInfo }) {
+export function NFTCell({ item }: { item: Pick<TokenInfo, "nft"> }) {
   return item.nft ? (
     <>
       <img

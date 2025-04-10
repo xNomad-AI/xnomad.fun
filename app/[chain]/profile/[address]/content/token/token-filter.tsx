@@ -14,6 +14,7 @@ import clsx from "clsx";
 import { TextWithEllipsis } from "@/components/text-with-ellipsis";
 import { TokenNumber } from "@/components/token-number";
 import { useBreakpoint } from "@/primitive/hooks/use-screen";
+import { NFTCell } from "@/app/[chain]/agent/[address]/content/agent-token/token-list/nft-cell";
 
 export function TokenFilter({ data }: { data: Portfolio[] }) {
   const { filterOpen, setFilterOpen } = useTokenStore();
@@ -94,8 +95,8 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
       </div>
       {showData.length > 0 ? (
         showData.map((item) => {
-          const checked = selectedPortfolio.find(
-            (item) => item.wallet === item.wallet
+          const checked = Boolean(
+            selectedPortfolio.find((port) => port.wallet === item.wallet)
           );
           return (
             <div
@@ -111,9 +112,9 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
                 "w-full cursor-pointer flex items-center gap-8 h-48 hover:bg-white/[0.06]"
               )}
             >
-              <TextWithEllipsis className='w-[120px] mobile:w-[unset] mobile:flex-1'>
-                {item.wallet}
-              </TextWithEllipsis>
+              <div className='w-[120px] flex items-center mobile:w-[unset] mobile:flex-1'>
+                <NFTCell item={{ nft: item.nft }} />
+              </div>
               <div className='w-[48px] flex items-center justify-end'>
                 <TokenNumber number={item.totalUsd} prefix={"$"} />
               </div>

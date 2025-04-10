@@ -93,9 +93,20 @@ export function TokenList({
             const isTokenOwner = isOwner(item.wallet, address);
             return (
               <Link
+                onClick={(e) => {
+                  if (isTokenOwner) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+                }}
                 href={`/${item.nft.chain}/agent/${item.nft.id}?tab=agent-token`}
                 key={item.symbol}
-                className='h-64 flex items-center justify-between w-full border-b border-white-20 gap-8 hover:bg-[#242424]'
+                className={clsx(
+                  "h-64 flex items-center justify-between w-full border-b border-white-20 gap-8",
+                  {
+                    "hover:bg-[#242424]": !isTokenOwner,
+                  }
+                )}
               >
                 <div className='flex w-[200px] gap-4 items-center'>
                   <TokenCell

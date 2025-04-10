@@ -140,7 +140,10 @@ export function Features({ nft }: { nft: NFT }) {
           <div className='flex items-center gap-16'>
             <Image src={"/twitter.svg"} height={64} width={64} alt='' />
             <span>X(Twitter) Integration</span>
-            {hasTwitterConfig && twitterEnabled && isNFTOwner ? (
+            {hasTwitterConfig &&
+            twitterEnabled &&
+            isNFTOwner &&
+            twitterBound ? (
               <button
                 title='Disconnect'
                 onClick={() => {
@@ -349,6 +352,7 @@ export function Features({ nft }: { nft: NFT }) {
           deleteTwitter(nft.id, chain)
             .then(() => {
               setTwitterBound(false);
+              refreshConfig();
               setConfirmOpen(false);
             })
             .finally(() => {

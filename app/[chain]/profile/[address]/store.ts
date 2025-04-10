@@ -22,7 +22,7 @@ export const useTokenStore = create(
     searchKeyword: "",
     nftList: [],
     selectedPortfolio: [],
-    filterOpen: false,
+    filterOpen: true,
     onlyAgentToken: false,
     setOnlyAgentToken: (onlyAgentToken) => {
       set((state) => {

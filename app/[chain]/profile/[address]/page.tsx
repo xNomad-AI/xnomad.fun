@@ -1,22 +1,37 @@
 "use client";
-import { Container } from "@/app/layout/contianer";
 import { bungee } from "@/app/layout/font";
 import { Address } from "@/components/address";
 import clsx from "clsx";
 import Image from "next/image";
 import { Content } from "./content";
+import { useState } from "react";
+import { Container } from "@/app/layout/contianer";
+import { TokenPage } from "./content/token";
 
-export default function Page({
-  params,
-}: {
+// Define tabs
+const tabs = ["ai-nfts", "agent-tokens"] as const;
+type Tab = (typeof tabs)[number];
+const tabMap = {
+  "ai-nfts": "AI NFTs",
+  "agent-tokens": "Agent Tokens",
+  activity: "Activity",
+  "my-swarms": "My Swarms",
+} as const;
+
+interface Props {
   params: {
     address: string;
     chain: string;
   };
-}) {
+}
+
+export default function Profile({ params }: Props) {
+  const [activeTab, setActiveTab] = useState<Tab>("ai-nfts");
   const { address, chain } = params;
+
   return (
     <Container className='flex flex-col gap-32 w-full'>
+      {/* Profile Header */}
       <div className='flex items-center mt-32 gap-16'>
         <Image
           src={`/${chain === "bsc" ? "bscscan-light" : "solscan"}.png`}
@@ -32,7 +47,31 @@ export default function Page({
         />
       </div>
       <div></div>
-      <Content address={address} />
+
+      {/* Tab Navigation */}
+      <div className='flex items-center gap-32'>
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            className={clsx(
+              "pb-12 text-size-20",
+              bungee.className,
+              activeTab === tab
+                ? "text-text1 border-b-2 border-white"
+                : "text-text2"
+            )}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tabMap[tab]}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      <div className='w-full'>
+        {activeTab === "ai-nfts" && <Content address={address} />}
+        {activeTab === "agent-tokens" && <TokenPage />}
+      </div>
     </Container>
   );
 }

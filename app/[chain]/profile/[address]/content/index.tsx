@@ -9,6 +9,7 @@ import { Select } from "@/primitive/components";
 import { NFT } from "@/types";
 import { useRequest } from "ahooks";
 import { useMemo, useState } from "react";
+
 const tabs = ["xnomad", "ugc-agents", "all"] as const;
 type Tab = (typeof tabs)[number];
 const tabMap = {
@@ -16,11 +17,13 @@ const tabMap = {
   "ugc-agents": "UGC Agents",
   all: "All",
 };
+
 export function Content({ address }: { address: string }) {
   const { chain } = useChainStore();
   const [tab, setTab] = useState<Tab>("all");
   const [xnomads, setXnomads] = useState<NFT[]>([]);
   const [society, setSociety] = useState<NFT[]>([]);
+
   const { loading } = useRequest(async () => {
     const res = await api.v1.get<
       Record<
@@ -38,6 +41,7 @@ export function Content({ address }: { address: string }) {
       setXnomads(res[XNOMAD_ID]?.nfts ?? []);
     }
   });
+
   const { loading: societyLoading } = useRequest(async () => {
     const res = await api.v1.get<
       Record<
@@ -55,6 +59,7 @@ export function Content({ address }: { address: string }) {
       setSociety(res[NOMADS_SOCIETY_ID[chain]]?.nfts ?? []);
     }
   });
+
   const count = useMemo(() => {
     switch (tab) {
       case "all":
@@ -63,11 +68,11 @@ export function Content({ address }: { address: string }) {
         return xnomads.length;
       case "ugc-agents":
         return society.length;
-
       default:
         return xnomads.length;
     }
   }, [tab, xnomads, society]);
+
   const data = useMemo(() => {
     switch (tab) {
       case "all":
@@ -76,11 +81,11 @@ export function Content({ address }: { address: string }) {
         return xnomads;
       case "ugc-agents":
         return society;
-
       default:
         return xnomads;
     }
   }, [tab, xnomads, society]);
+
   return (
     <div className='w-full flex flex-col gap-32'>
       <Select
@@ -106,6 +111,7 @@ export function Content({ address }: { address: string }) {
       >
         {data?.map((nft) => (
           <NFTCard
+            key={nft.id}
             nft={nft}
             collectionName={nft.collectionName}
             total={tab === "xnomad" ? 5000 : Infinity}

@@ -12,7 +12,10 @@ export function TokenCell({
   item,
   variant = "normal",
 }: {
-  item: TokenInfo;
+  item: Pick<
+    TokenInfo,
+    "logo" | "symbol" | "name" | "address" | "twitter" | "telegram" | "website"
+  >;
   variant?: "normal" | "simple";
 }) {
   return (

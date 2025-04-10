@@ -214,6 +214,14 @@ export function Features({ nft }: { nft: NFT }) {
             <Image src={"/telegram.svg"} height={64} width={64} alt='' />
             <span>Telegram Integration</span>
           </div>
+          <span>Coming Soon</span>
+        </Card>
+
+        {/* <Card className='flex items-center justify-between gap-16 p-16'>
+          <div className='flex items-center gap-16'>
+            <Image src={"/telegram.svg"} height={64} width={64} alt='' />
+            <span>Telegram Integration</span>
+          </div>
           <div className='flex items-center gap-16'>
             {isNFTOwner && (
               <div className='flex items-center gap-8'>
@@ -266,7 +274,7 @@ export function Features({ nft }: { nft: NFT }) {
               </TextAnchor>
             ) : null}
           </div>
-        </Card>
+        </Card> */}
         <Card className='flex items-center justify-between gap-16 p-16'>
           <div className='flex items-center gap-16'>
             <Image src={"/discord.svg"} height={64} width={64} alt='' />

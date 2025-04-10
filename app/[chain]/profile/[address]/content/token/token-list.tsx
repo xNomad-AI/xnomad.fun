@@ -129,7 +129,7 @@ export function TokenList({
                 <div className='flex w-[120px] flex-col items-end'>
                   <TokenNumber prefix={"$"} number={item.priceUsd} />
                   <RateNum
-                    num={item.usdPrice24hrPercenChange}
+                    num={item.usdPrice24hrPercenChange / 100}
                     className='text-size-12'
                   />
                 </div>

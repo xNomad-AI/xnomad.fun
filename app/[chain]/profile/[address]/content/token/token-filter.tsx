@@ -93,7 +93,7 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
         className='w-full'
       />
       <div className='w-full flex items-center gap-8 border-b border-white-20 h-32'>
-        <div className='w-[120px] mobile:w-[unset] mobile:flex-1 flex items-center text-size-12 text-text2'>
+        <div className='min-w-[120px] flex-1 mobile:w-[unset] mobile:flex-1 flex items-center text-size-12 text-text2'>
           Owner
         </div>
         <div
@@ -112,7 +112,7 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
           />{" "}
           Value
         </div>
-        <div className='w-[50px] flex items-center'></div>
+        <div className='w-[16px] flex-shrink-0 flex items-center'></div>
       </div>
       {showData.length > 0 ? (
         showData.map((item) => {
@@ -131,19 +131,14 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
                 }
               }}
               className={clsx(
-                "w-full cursor-pointer flex items-center gap-8 h-48 hover:bg-white/[0.06]"
+                "w-full cursor-pointer flex items-center gap-16 h-48 hover:bg-white/[0.06]"
               )}
             >
-              <div className='w-[120px] flex items-center mobile:w-[unset] mobile:flex-1'>
+              <div className='min-w-[120px] flex-1 flex items-center gap-8 mobile:w-[unset] mobile:flex-1'>
                 {isTokenOwner ? (
                   <span>My Wallet</span>
                 ) : Boolean(item.nft?.id) ? (
-                  <Tooltip
-                    content={item.wallet}
-                    className='flex w-full items-center gap-8'
-                  >
-                    <NFTCell item={{ nft: item.nft }} />
-                  </Tooltip>
+                  <NFTCell item={{ nft: item.nft }} />
                 ) : (
                   <Address address={item.wallet} />
                 )}
@@ -151,7 +146,7 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
               <div className='w-[48px] flex items-center justify-end'>
                 <TokenNumber number={item.totalUsd} prefix={"$"} />
               </div>
-              <div className='w-[50px] flex items-center justify-end'>
+              <div className='w-[16px] flex items-center justify-end'>
                 <Checkbox className='text-size-16' value={Boolean(checked)} />
               </div>
             </div>

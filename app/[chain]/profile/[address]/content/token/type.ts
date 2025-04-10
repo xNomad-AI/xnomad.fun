@@ -12,7 +12,34 @@ export interface Token {
   decimals: number;
   uiAmount: string;
   usdPrice24hrPercenChange: number;
-  agentCoin?: TokenInfo;
+  agentCoin?: {
+    address: string;
+    chain: string;
+    nftId: string;
+    creatorAddress: string;
+    decimals: number;
+    deployedTime: string;
+    description: string;
+    holdersCount: number;
+    liquidity: number;
+    logo: string;
+    marketCap: number;
+    name: string;
+    price: number;
+    priceChange24h: number;
+    symbol: string;
+    telegram: string;
+    twitter: string;
+    volume24h: number;
+    website: string;
+    bound: boolean;
+    override: {
+      description: string;
+      twitter: string;
+      telegram: string;
+      website: string;
+    };
+  };
 }
 export interface Portfolio {
   wallet: string;

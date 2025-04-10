@@ -148,7 +148,7 @@ export function Header() {
               content={
                 <div className='flex flex-col gap-8'>
                   <Link prefetch href={`/${chain}/profile/${userAddress}`}>
-                    <SelectOption selected={false}>My AI-NFTs</SelectOption>
+                    <SelectOption selected={false}>Profile</SelectOption>
                   </Link>
 
                   <SelectOption

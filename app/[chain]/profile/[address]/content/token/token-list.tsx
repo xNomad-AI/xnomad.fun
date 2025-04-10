@@ -99,22 +99,22 @@ export function TokenList({
           height={400}
           renderItem={(item: Token & { nft: NFT; wallet: string }) => {
             const isTokenOwner = isOwner(item.wallet, userAddress);
-            const coinNFT = item.agentCoin?.nft;
+            const coinNFT = item.agentCoin;
             return (
               <Link
                 onClick={(e) => {
-                  if (!coinNFT?.id) {
+                  if (!coinNFT?.nftId) {
                     e.preventDefault();
                     e.stopPropagation();
                   }
                 }}
-                href={`/${coinNFT?.chain}/agent/${coinNFT?.id}?tab=agent-token`}
+                href={`/${coinNFT?.chain}/agent/${coinNFT?.nftId}?tab=agent-token`}
                 key={item.symbol}
                 className={clsx(
                   "h-64 flex items-center justify-between w-full border-b border-white-20 gap-8",
                   {
-                    "hover:bg-[#242424]": Boolean(coinNFT?.id),
-                    "cursor-default": !Boolean(coinNFT?.id),
+                    "hover:bg-[#242424]": Boolean(coinNFT?.nftId),
+                    "cursor-default": !Boolean(coinNFT?.nftId),
                   }
                 )}
               >
@@ -125,6 +125,9 @@ export function TokenList({
                       symbol: item.symbol,
                       name: item.name,
                       address: item.address,
+                      telegram: coinNFT?.telegram,
+                      twitter: coinNFT?.twitter,
+                      website: coinNFT?.website,
                     }}
                   />
                 </div>
@@ -147,25 +150,20 @@ export function TokenList({
                 </div>
                 <div
                   onClick={(e) => {
-                    if (Boolean(item.nft?.id)) {
+                    if (Boolean(item.nft?.id) && !isTokenOwner) {
                       e.stopPropagation();
                       e.preventDefault();
                       router.push(`/${item.nft?.chain}/agent/${item.nft?.id}`);
                     }
                   }}
-                  className={clsx("flex w-[120px] justify-end", {
+                  className={clsx("flex w-[120px] justify-end gap-8", {
                     "cursor-pointer": Boolean(item.nft?.id),
                   })}
                 >
                   {isTokenOwner ? (
                     <span>My Wallet</span>
                   ) : Boolean(item.nft?.id) ? (
-                    <Tooltip
-                      content={item.wallet}
-                      className='flex max-w-full items-center justify-end gap-8'
-                    >
-                      <NFTCell item={{ nft: item.nft }} />
-                    </Tooltip>
+                    <NFTCell item={{ nft: item.nft }} />
                   ) : (
                     <Address address={item.wallet} />
                   )}

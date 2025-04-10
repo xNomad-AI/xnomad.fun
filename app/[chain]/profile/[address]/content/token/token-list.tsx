@@ -102,10 +102,11 @@ export function TokenList({
           renderItem={(item: Token & { nft: NFT; wallet: string }) => {
             const isTokenOwner = isOwner(item.wallet, userAddress);
             const coinNFT = item.agentCoin;
+            const showLink = Boolean(coinNFT?.nftId) && coinNFT?.bound;
             return (
               <Link
                 onClick={(e) => {
-                  if (!coinNFT?.nftId) {
+                  if (!showLink) {
                     e.preventDefault();
                     e.stopPropagation();
                   }
@@ -115,8 +116,8 @@ export function TokenList({
                 className={clsx(
                   "h-64 flex items-center justify-between w-full border-b border-white-20 gap-8",
                   {
-                    "hover:bg-[#242424]": Boolean(coinNFT?.nftId),
-                    "cursor-default": !Boolean(coinNFT?.nftId),
+                    "hover:bg-[#242424]": showLink,
+                    "cursor-default": !showLink,
                   }
                 )}
               >

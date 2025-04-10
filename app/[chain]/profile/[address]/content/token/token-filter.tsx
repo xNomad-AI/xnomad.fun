@@ -133,7 +133,7 @@ function OwnerFilter({ data }: { data: Portfolio[] }) {
               <div className='w-[120px] flex items-center mobile:w-[unset] mobile:flex-1'>
                 {isTokenOwner ? (
                   <span>My Wallet</span>
-                ) : Boolean(item.nft.id) ? (
+                ) : Boolean(item.nft?.id) ? (
                   <Tooltip
                     content={item.wallet}
                     className='flex w-full items-center'

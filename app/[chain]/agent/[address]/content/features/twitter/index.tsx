@@ -19,6 +19,8 @@ import { useMemoizedFn } from "ahooks";
 import { onError } from "@/lib/utils/error";
 import { TextAnchor } from "@/components/text-button";
 import { validNumberInput } from "@/lib/utils/input-helper";
+import { api } from "@/primitive/api";
+import { useAgentStore } from "../../../store";
 
 export function TwitterModal({
   open,
@@ -36,6 +38,59 @@ export function TwitterModal({
 }) {
   const { form, updateForm } = useTwitterStore();
   const [saving, setSaving] = useState(false);
+  const { nft } = useAgentStore();
+
+  // Extract the API call into a memoized function
+  const generateTestTweet = useMemoizedFn(async () => {
+    // Show loading state
+    updateForm("testContent", {
+      value: " Generating tweet...",
+      isInValid: false,
+      errorMsg: "",
+    });
+
+    // Validate prompt
+    if (!form.prompt.value) {
+      updateForm("testContent", {
+        value: "Please enter a prompt!!!",
+        isInValid: true,
+        errorMsg: "Please enter a prompt!!!",
+      });
+      return;
+    }
+    
+    try {
+      // Template for the tweet generation
+      const twitterPostTemplate = `Please write a X post based on these instructions: ${form.prompt.value}. Do not add commentary or acknowledge this request, just write the post.\n The tweet should be under ${form.postMaxLength.value} characters. Your response should be 1, 2, or 3 sentences (choose the length at random).
+      Your response should not contain any questions. Brief, concise statements only. No emojis.`;
+      
+      const payload = {
+        twitterUsername: form.userName.value,
+        maxTweetLength: form.postMaxLength.value,
+        twitterPostTemplate: twitterPostTemplate
+      };
+
+      const response = await api.v1.post<{ tweet: string }>(
+        `/agent/twitter/test-tweet/${nft.id}`, 
+        payload
+      );
+      
+      // Update the test content with the generated tweet
+      updateForm("testContent", {
+        value: response.tweet,
+        isInValid: false,
+        errorMsg: "",
+      });
+    } catch (error) {
+      updateForm("testContent", {
+        value: "Error generating tweet. Please try again.",
+        isInValid: true,
+        errorMsg: "Failed to generate tweet",
+      });
+      onError(error);
+    }
+  });
+
   const initForm = useMemoizedFn(() => {
     config?.settings.secrets?.TWITTER_USERNAME &&
       updateForm("userName", {
@@ -340,6 +395,23 @@ export function TwitterModal({
             suffixNode={<span>characters</span>}
             variant={form.postMaxLength.isInValid ? "error" : "normal"}
           />
+        </FormItem>
+
+
+       
+          <div className='w-full flex items-center gap-8 sticky bottom-0 py-2 bg-background'>
+            <Button 
+              variant="secondary" 
+              onClick={generateTestTweet}
+            >
+              🌟 Generate An X Example
+            </Button>
+          </div>
+
+          <FormItem label=''>
+          <div className='min-h-[76px] p-12 whitespace-pre-wrap -mt-25'>
+            {form.testContent.value}
+          </div>
         </FormItem>
 
         <div className='w-full flex items-center gap-16 sticky bottom-0 py-24 -mt-24 bg-background'>

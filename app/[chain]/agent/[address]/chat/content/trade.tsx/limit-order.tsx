@@ -274,10 +274,10 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
               </Dropdown>
             }
             onChange={(event) => {
-              const value = validNumberInput(event.target.value, true);
+              const value = validNumberInput(event.target.value);
               setForm({
                 ...form,
-                expireTime: { ...form.expireTime, value: event.target.value },
+                expireTime: { ...form.expireTime, value: value },
               });
             }}
           />
@@ -333,7 +333,7 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
                     } $${form.target.value}${
                       form.expireTime.value
                         ? `, expire at ${new Date(
-                            new Date().getTime() +
+                            Math.ceil(new Date().getTime() / 1000) * 1000 +
                               (expireTimeType === "Days"
                                 ? parseFloat(form.expireTime.value) *
                                   24 *

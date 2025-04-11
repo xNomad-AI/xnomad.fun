@@ -10,9 +10,14 @@ import { LaunchNFTButton } from "../home/luanch-nft-button";
 
 export default function Home() {
   return (
-    <div className='w-full flex flex-col items-center'>
-      <Container className='flex flex-col gap-32 w-full py-64 max-w-[100rem] self-center'>
-        <div className='flex flex-col gap-8 items-center w-full'>
+    <div className='w-full flex flex-col items-center relative'>
+      <img
+        src='/home-bg.webp'
+        alt=''
+        className='absolute top-0 left-0  w-full z-1'
+      />
+      <Container className='flex flex-col gap-32 w-full py-64 max-w-[100rem] self-center z-2'>
+        <div className='flex flex-col gap-8 items-center justify-center w-full h-[300px]'>
           <h1
             style={{
               textShadow: "0px 0px 6px rgba(255, 255, 255, 0.60)",

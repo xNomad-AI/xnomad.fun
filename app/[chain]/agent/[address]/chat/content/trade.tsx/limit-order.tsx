@@ -101,6 +101,7 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
     "Days"
   );
   const [expireTimeDropdownOpen, setExpireTimeDropdownOpen] = useState(false);
+  const expireTimeController = useRef<DropdownController>(null);
   return (
     <ChatContentContainer message={message}>
       <div className='flex flex-col gap-16 w-full'>
@@ -235,17 +236,24 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
               <Dropdown
                 onVisibleChange={setExpireTimeDropdownOpen}
                 trigger={["click"]}
+                ref={expireTimeController}
                 content={
                   <div className='flex flex-col'>
                     <SelectOption
                       selected={expireTimeType === "Days"}
-                      handleSelect={() => setExpireTimeType("Days")}
+                      handleSelect={() => {
+                        setExpireTimeType("Days");
+                        expireTimeController.current?.close();
+                      }}
                     >
                       Days
                     </SelectOption>
                     <SelectOption
                       selected={expireTimeType === "Hours"}
-                      handleSelect={() => setExpireTimeType("Hours")}
+                      handleSelect={() => {
+                        setExpireTimeType("Hours");
+                        expireTimeController.current?.close();
+                      }}
                     >
                       Hours
                     </SelectOption>

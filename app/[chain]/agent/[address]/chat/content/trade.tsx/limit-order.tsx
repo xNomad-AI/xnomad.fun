@@ -314,7 +314,18 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
                 setForm(newForm);
                 return;
               }
-
+              const expireString = form.expireTime.value
+                ? `, expire at ${new Date(
+                    Math.ceil(new Date().getTime() / 1000) * 1000 +
+                      (expireTimeType === "Days"
+                        ? parseFloat(form.expireTime.value) *
+                          24 *
+                          60 *
+                          60 *
+                          1000
+                        : parseFloat(form.expireTime.value) * 60 * 60 * 1000)
+                  ).toISOString()}`
+                : "";
               addAndSendMessage(
                 type === "buy"
                   ? `Create an automatic task to buy $${
@@ -323,30 +334,16 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
                       form.amount.value
                     } ${getCurrencySymbol(chain)} when $${
                       form.token.value.ticker
-                    } price is ${form.direction.value} $${form.target.value}`
+                    } price is ${form.direction.value} $${
+                      form.target.value
+                    }${expireString}`
                   : `Create an automatic task to sell ${form.amount.value} $${
                       form.token.value.ticker
                     }(${form.token.value.ca}) for ${getCurrencySymbol(
                       chain
                     )} when $${form.token.value.ticker} price is ${
                       form.direction.value
-                    } $${form.target.value}${
-                      form.expireTime.value
-                        ? `, expire at ${new Date(
-                            Math.ceil(new Date().getTime() / 1000) * 1000 +
-                              (expireTimeType === "Days"
-                                ? parseFloat(form.expireTime.value) *
-                                  24 *
-                                  60 *
-                                  60 *
-                                  1000
-                                : parseFloat(form.expireTime.value) *
-                                  60 *
-                                  60 *
-                                  1000)
-                          ).toISOString()}`
-                        : ""
-                    }`
+                    } $${form.target.value}${expireString}`
               );
               deleteMessageById(message.id);
             }}

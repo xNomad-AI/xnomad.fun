@@ -38,7 +38,7 @@ export function ChatMessageList({
         onTouchMove={disableAutoScroll}
         {...props}
       >
-        <div className='flex flex-col gap-24 my-32'>{children}</div>
+        <div className='flex flex-col gap-24 my-72'>{children}</div>
       </div>
 
       {!isAtBottom && (

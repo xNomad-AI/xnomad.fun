@@ -127,7 +127,7 @@ export function Content() {
 
   return (
     <div className='w-full flex flex-col items-center portrait-tablet:gap-16 transition-all duration-300 ease-in-out'>
-      <div className='w-full flex flex-col gap-16 items-center relative'>
+      <div className='w-full flex flex-col gap-16 items-center relative z-2'>
         <SideWalletButton
           className={clsx("absolute left-0 top-1/2 -translate-y-1/2", {
             "opacity-0 pointer-events-none": sideWalletVisible,
@@ -155,6 +155,7 @@ export function Content() {
             setTab(value);
             setMobileTab(null);
           }}
+          className='bg-black-10 backdrop-blur-[10px]'
           value={
             mobileTab === "chat" || mobileTab === "tasks" ? mobileTab : tab
           }
@@ -181,7 +182,7 @@ export function Content() {
               ? height - 80 - 64 - 72
               : undefined,
         }}
-        className='w-full h-[calc(100vh-32px-64px-72px)] mobile:h-[calc(100vh-64px-64px-80px)] overflow-y-scroll'
+        className='w-full h-[calc(100vh-32px-64px-72px+40px)] -mt-40 mobile:mt-0 mobile:h-[calc(100vh-64px-64px-80px)] overflow-y-scroll'
       >
         {nft.agentId && (
           <ChatProvider agentId={nft.agentId}>

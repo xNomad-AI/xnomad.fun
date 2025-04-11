@@ -1,15 +1,18 @@
 import {
   Button,
+  Dropdown,
+  DropdownController,
   FormItem,
   FormValue,
-  IconClose,
+  IconArrowDown,
   Radio,
   RadioButton,
   RadioButtonGroup,
   RadioGroup,
+  SelectOption,
   TextField,
 } from "@/primitive/components";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useChatContext } from "../../store";
 import { ChatContentContainer } from "../container";
 import { ContentWithUser } from "../../types";
@@ -24,6 +27,8 @@ import { CancelButton } from "../cancel-button";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { PublicKey } from "@solana/web3.js";
+import clsx from "clsx";
+import { format } from "date-fns";
 type LimitOrderForm = {
   token: FormValue<TokenValue>;
   amount: FormValue<string>;
@@ -92,6 +97,10 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
       disablePooling: type !== "sell",
     }
   );
+  const [expireTimeType, setExpireTimeType] = useState<"Days" | "Hours">(
+    "Days"
+  );
+  const [expireTimeDropdownOpen, setExpireTimeDropdownOpen] = useState(false);
   return (
     <ChatContentContainer message={message}>
       <div className='flex flex-col gap-16 w-full'>
@@ -218,43 +227,52 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
           />
         </FormItem>
         <FormItem label={"Expire Time(Optional)"} {...form.expireTime}>
-          <label>
-            <div className='flex items-center w-full h-40 gap-8 bg-surface border-1 border-white-20 rounded-4'>
-              <input
-                type='datetime-local'
-                value={form.expireTime.value}
-                onChange={(e) => {
-                  console.log(e.target.value);
-                  setForm({
-                    ...form,
-                    expireTime: {
-                      value: e.target.value,
-                      isInValid: false,
-                      errorMsg: "",
-                    },
-                  });
-                }}
-                min={new Date().toISOString().slice(0, 16)}
-                className='bg-transparent focus-visible:outline-none *:focus-visible:!bg-white-10 flex-1 ml-12'
-                aria-label='Time'
-              />
-              {form.expireTime.value && (
-                <IconClose
-                  onClick={() => {
-                    setForm({
-                      ...form,
-                      expireTime: {
-                        value: "",
-                        isInValid: false,
-                        errorMsg: "",
-                      },
-                    });
-                  }}
-                  className='text-text2 shrink-0 mr-12'
-                />
-              )}
-            </div>
-          </label>
+          <TextField
+            value={form.expireTime.value}
+            placeholder='Unlimited'
+            className='!bg-background'
+            suffixNode={
+              <Dropdown
+                onVisibleChange={setExpireTimeDropdownOpen}
+                trigger={["click"]}
+                content={
+                  <div className='flex flex-col'>
+                    <SelectOption
+                      selected={expireTimeType === "Days"}
+                      handleSelect={() => setExpireTimeType("Days")}
+                    >
+                      Days
+                    </SelectOption>
+                    <SelectOption
+                      selected={expireTimeType === "Hours"}
+                      handleSelect={() => setExpireTimeType("Hours")}
+                    >
+                      Hours
+                    </SelectOption>
+                  </div>
+                }
+              >
+                <button className='flex items-center gap-8'>
+                  <span>{expireTimeType}</span>
+                  <IconArrowDown
+                    className={clsx(
+                      "text-size-16 rotate-180 transition-transform duration-300 ease-in-out",
+                      {
+                        "!rotate-0": expireTimeDropdownOpen,
+                      }
+                    )}
+                  />
+                </button>
+              </Dropdown>
+            }
+            onChange={(event) => {
+              const value = validNumberInput(event.target.value, true);
+              setForm({
+                ...form,
+                expireTime: { ...form.expireTime, value: event.target.value },
+              });
+            }}
+          />
         </FormItem>
         <div className='w-full flex justify-end items-center gap-16'>
           <CancelButton
@@ -306,7 +324,19 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
                       form.direction.value
                     } $${form.target.value}${
                       form.expireTime.value
-                        ? `, expire at ${form.expireTime.value}`
+                        ? `, expire at ${new Date(
+                            new Date().getTime() +
+                              (expireTimeType === "Days"
+                                ? parseFloat(form.expireTime.value) *
+                                  24 *
+                                  60 *
+                                  60 *
+                                  1000
+                                : parseFloat(form.expireTime.value) *
+                                  60 *
+                                  60 *
+                                  1000)
+                          ).toISOString()}`
                         : ""
                     }`
               );

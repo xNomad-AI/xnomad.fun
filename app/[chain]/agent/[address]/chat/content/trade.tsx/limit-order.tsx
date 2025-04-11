@@ -275,6 +275,9 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
             }
             onChange={(event) => {
               const value = validNumberInput(event.target.value);
+              if (value === "0") {
+                return;
+              }
               setForm({
                 ...form,
                 expireTime: { ...form.expireTime, value: value },

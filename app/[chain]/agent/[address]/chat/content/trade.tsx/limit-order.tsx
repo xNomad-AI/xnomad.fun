@@ -2,6 +2,7 @@ import {
   Button,
   FormItem,
   FormValue,
+  IconClose,
   Radio,
   RadioButton,
   RadioButtonGroup,
@@ -28,6 +29,7 @@ type LimitOrderForm = {
   amount: FormValue<string>;
   target: FormValue<string>;
   direction: FormValue<"above" | "below">;
+  expireTime: FormValue<string>;
 };
 const initForm = {
   token: {
@@ -55,6 +57,12 @@ const initForm = {
   target: {
     value: "",
     required: true,
+    isInValid: false,
+    errorMsg: "",
+  },
+  expireTime: {
+    value: "",
+    required: false,
     isInValid: false,
     errorMsg: "",
   },
@@ -209,7 +217,50 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
             }}
           />
         </FormItem>
-
+        <FormItem label={"Expire Time"} {...form.expireTime}>
+          <label>
+            <div className='flex items-center w-full h-40 gap-8 bg-surface border-1 border-white-20 rounded-4'>
+              <input
+                type='datetime-local'
+                value={form.expireTime.value}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setForm({
+                    ...form,
+                    expireTime: {
+                      value: e.target.value,
+                      isInValid: false,
+                      errorMsg: "",
+                    },
+                  });
+                }}
+                min={new Date().toISOString().slice(0, 16)}
+                max={
+                  form.expireTime.value
+                    ? new Date(form.expireTime.value).toISOString().slice(0, 16)
+                    : undefined
+                }
+                className='bg-transparent focus-visible:outline-none *:focus-visible:!bg-white-10 flex-1 ml-12'
+                aria-label='Time'
+              />
+              {form.expireTime.value && (
+                <IconClose
+                  onClick={() => {
+                    setForm({
+                      ...form,
+                      expireTime: {
+                        value: "",
+                        isInValid: false,
+                        errorMsg: "",
+                      },
+                    });
+                  }}
+                  className='text-text2 shrink-0 mr-12'
+                />
+              )}
+            </div>
+          </label>
+        </FormItem>
         <div className='w-full flex justify-end items-center gap-16'>
           <CancelButton
             onClick={() => {
@@ -258,7 +309,11 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
                       chain
                     )} when $${form.token.value.ticker} price is ${
                       form.direction.value
-                    } $${form.target.value}`
+                    } $${form.target.value}${
+                      form.expireTime.value
+                        ? `, expire at ${form.expireTime.value}`
+                        : ""
+                    }`
               );
               deleteMessageById(message.id);
             }}

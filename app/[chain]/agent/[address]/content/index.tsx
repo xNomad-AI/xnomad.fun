@@ -182,7 +182,13 @@ export function Content() {
               ? height - 80 - 64 - 72
               : undefined,
         }}
-        className='w-full h-[calc(100vh-32px-64px-72px+40px)] -mt-40 mobile:mt-0 mobile:h-[calc(100vh-64px-64px-80px)] overflow-y-scroll'
+        className={clsx(
+          "w-full h-[calc(100vh-32px-64px-72px)] mobile:h-[calc(100vh-64px-64px-80px)] overflow-y-scroll",
+          {
+            "!h-[calc(100vh-32px-64px-72px+40px)] -mt-40 mobile:mt-0":
+              tab === "chat",
+          }
+        )}
       >
         {nft.agentId && (
           <ChatProvider agentId={nft.agentId}>

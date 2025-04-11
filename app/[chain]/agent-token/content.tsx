@@ -138,7 +138,8 @@ export function Content() {
         ) : (tokens?.length ?? 0) > 0 ? (
           <InfiniteScrollList
             items={tokens}
-            itemSize={60}
+            itemSize={64}
+            gutterSize={0}
             height={height ? height - 275 : 0}
             renderItem={(item: TokenInfo, index) => {
               return (

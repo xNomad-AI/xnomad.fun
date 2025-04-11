@@ -217,7 +217,7 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
             }}
           />
         </FormItem>
-        <FormItem label={"Expire Time"} {...form.expireTime}>
+        <FormItem label={"Expire Time(Optional)"} {...form.expireTime}>
           <label>
             <div className='flex items-center w-full h-40 gap-8 bg-surface border-1 border-white-20 rounded-4'>
               <input
@@ -235,11 +235,6 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
                   });
                 }}
                 min={new Date().toISOString().slice(0, 16)}
-                max={
-                  form.expireTime.value
-                    ? new Date(form.expireTime.value).toISOString().slice(0, 16)
-                    : undefined
-                }
                 className='bg-transparent focus-visible:outline-none *:focus-visible:!bg-white-10 flex-1 ml-12'
                 aria-label='Time'
               />

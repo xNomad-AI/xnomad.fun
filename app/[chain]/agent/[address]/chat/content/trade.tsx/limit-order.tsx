@@ -320,11 +320,19 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
               const expireTypeString =
                 expireTimeType === "Days" ? "day" : "hour";
               const expireString = form.expireTime.value
-                ? `, expire in ${form.expireTime.value} ${
-                    parseFloat(form.expireTime.value) > 1
-                      ? expireTypeString + "s"
-                      : expireTypeString
-                  }`
+                ? process.env.DEPLOY_ENV === "dev"
+                  ? `, expire in ${form.expireTime.value} ${
+                      parseFloat(form.expireTime.value) > 1
+                        ? expireTypeString + "s"
+                        : expireTypeString
+                    }`
+                  : `, expire in ${new Date(
+                      new Date().getTime() +
+                        parseFloat(form.expireTime.value) *
+                          (expireTimeType === "Days"
+                            ? 24 * 60 * 60 * 1000
+                            : 60 * 60 * 1000)
+                    ).toISOString()}`
                 : "";
               addAndSendMessage(
                 type === "buy"

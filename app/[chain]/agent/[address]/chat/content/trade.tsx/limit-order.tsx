@@ -314,17 +314,14 @@ export function LimitOrder({ message }: { message: ContentWithUser }) {
                 setForm(newForm);
                 return;
               }
+              const expireTypeString =
+                expireTimeType === "Days" ? "day" : "hour";
               const expireString = form.expireTime.value
-                ? `, expire at ${new Date(
-                    Math.ceil(new Date().getTime() / 1000) * 1000 +
-                      (expireTimeType === "Days"
-                        ? parseFloat(form.expireTime.value) *
-                          24 *
-                          60 *
-                          60 *
-                          1000
-                        : parseFloat(form.expireTime.value) * 60 * 60 * 1000)
-                  ).toISOString()}`
+                ? `, expire in ${form.expireTime.value} ${
+                    parseFloat(form.expireTime.value) > 1
+                      ? expireTypeString + "s"
+                      : expireTypeString
+                  }`
                 : "";
               addAndSendMessage(
                 type === "buy"

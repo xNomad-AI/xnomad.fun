@@ -20,9 +20,22 @@ import { getAgentConfig } from "../../content/features/network";
 import { onError } from "@/lib/utils/error";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
+import { parseEther, parseGwei } from "viem";
 
 export function TradeSetting() {
   const { chain } = useChainStore();
+  const defaultPriorityFee = useMemo(() => {
+    if (chain === "solana") {
+      return "0.018";
+    }
+    return "1";
+  }, [chain]);
+  const defaultTip = useMemo(() => {
+    if (chain === "solana") {
+      return "0.001";
+    }
+    return "0.0001";
+  }, [chain]);
   const { agentConfig, setAgentConfig, nft } = useAgentStore();
   const [isSetting, setIsSetting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,7 +48,9 @@ export function TradeSetting() {
   const [innerTradeMode, setInnerTradeMode] = useState<Config["trade"]["mode"]>(
     agentConfig?.trade?.mode ?? "FAST"
   );
-  const [innerTip, setInnerTip] = useState(agentConfig?.trade.tip ?? "0.001");
+  const [innerTip, setInnerTip] = useState(
+    agentConfig?.trade.tip ?? defaultTip
+  );
 
   useEffect(() => {
     setInnerPriorityFee(agentConfig?.trade?.priorityFee ?? "");
@@ -117,9 +132,9 @@ export function TradeSetting() {
             />
           </div>
           <div className='flex flex-col gap-8 w-full'>
-            <span>Priority Fee({getCurrencySymbol(chain)})</span>
+            <span>Priority Fee({chain === "solana" ? "SOL" : "Gwei"})</span>
             <TextField
-              placeholder={isFastMode ? "Custom" : ">0.018"}
+              placeholder={isFastMode ? "Custom" : `>${defaultPriorityFee}`}
               value={innerPriorityFee}
               onChange={(e) => {
                 const value = toDecimal(e.target.value);
@@ -127,6 +142,7 @@ export function TradeSetting() {
               }}
             />
           </div>
+
           <div className='flex flex-col gap-8 w-full'>
             <div className='flex items-center gap-8'>
               <span>Tip({getCurrencySymbol(chain)})</span>
@@ -135,7 +151,7 @@ export function TradeSetting() {
               </Tooltip>
             </div>
             <TextField
-              placeholder={"> 0.001"}
+              placeholder={`>${defaultTip}`}
               value={innerTip}
               onChange={(e) => {
                 const value = toDecimal(e.target.value);
@@ -143,6 +159,7 @@ export function TradeSetting() {
               }}
             />
           </div>
+
           <div className='flex w-full items-center justify-end gap-8'>
             <Button variant='secondary' onClick={onClose}>
               Cancel
@@ -154,9 +171,15 @@ export function TradeSetting() {
                 api.v1
                   .post(`/agent/trade/settings?agentId=${nft.agentId}`, {
                     slippage: +innerSlippage / 100,
-                    priorityFee: +innerPriorityFee,
+                    priorityFee:
+                      chain === "solana"
+                        ? +innerPriorityFee
+                        : parseEther(innerPriorityFee.toString(), "gwei"),
                     mode: innerTradeMode,
-                    tip: innerTip,
+                    tip:
+                      chain === "solana"
+                        ? innerTip
+                        : parseEther(innerTip.toString(), "wei"),
                   })
                   .then(() => {
                     message("Trade setting updated", { type: "success" });

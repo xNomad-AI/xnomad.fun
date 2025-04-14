@@ -155,6 +155,14 @@ export function Features({ nft }: { nft: NFT }) {
             ) : null}
           </div>
           <div className='flex items-center gap-16'>
+            {metaInfo?.twitterUsername ? (
+              <TextAnchor
+                withDecoration
+                href={`https://twitter.com/${metaInfo?.twitterUsername}`}
+              >
+                @{metaInfo?.twitterUsername}
+              </TextAnchor>
+            ) : null}
             {twitterEnabled && isNFTOwner && (
               <div className='flex items-center gap-8'>
                 Suspend Post
@@ -184,7 +192,7 @@ export function Features({ nft }: { nft: NFT }) {
                 />
               </div>
             )}
-            {isNFTOwner ? (
+            {isNFTOwner && (
               <Tooltip
                 disabled={twitterEnabled}
                 content={
@@ -202,14 +210,7 @@ export function Features({ nft }: { nft: NFT }) {
                   {hasTwitterConfig ? "Edit" : "Add"}
                 </Button>
               </Tooltip>
-            ) : metaInfo?.twitterUsername ? (
-              <TextAnchor
-                withDecoration
-                href={`https://twitter.com/${metaInfo?.twitterUsername}`}
-              >
-                @{metaInfo?.twitterUsername}
-              </TextAnchor>
-            ) : null}
+            )}
           </div>
         </Card>
         <Card className='flex items-center justify-between gap-16 p-16'>

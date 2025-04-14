@@ -169,18 +169,21 @@ export function TradeSetting() {
               onClick={() => {
                 setIsSetting(true);
                 api.v1
-                  .post(`/agent/trade/settings?agentId=${nft.agentId}`, {
-                    slippage: +innerSlippage / 100,
-                    priorityFee:
-                      chain === "solana"
-                        ? +innerPriorityFee
-                        : parseEther(innerPriorityFee.toString(), "gwei"),
-                    mode: innerTradeMode,
-                    tip:
-                      chain === "solana"
-                        ? innerTip
-                        : parseEther(innerTip.toString(), "wei"),
-                  })
+                  .post(
+                    `/agent/trade/settings?agentId=${nft.agentId}&chain=${chain}`,
+                    {
+                      slippage: +innerSlippage / 100,
+                      priorityFee:
+                        chain === "solana"
+                          ? +innerPriorityFee
+                          : parseEther(innerPriorityFee.toString(), "gwei"),
+                      mode: innerTradeMode,
+                      tip:
+                        chain === "solana"
+                          ? innerTip
+                          : parseEther(innerTip.toString(), "wei"),
+                    }
+                  )
                   .then(() => {
                     message("Trade setting updated", { type: "success" });
                     getAgentConfig(nft.id, chain).then((config) => {

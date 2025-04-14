@@ -18,11 +18,7 @@ const baseConfig = {
 };
 const bscConfig = {
   transports: {
-    [bsc.id]: fallback([
-      http(
-        "https://radial-late-seed.bsc.quiknode.pro/3064c664f114cf9061a993e9cb859cc54b779b05"
-      ),
-    ]),
+    [bsc.id]: fallback([http(process.env.BSC_RPC)]),
   },
 };
 export function EVMProvider({ children }: PropsWithChildren<object>) {

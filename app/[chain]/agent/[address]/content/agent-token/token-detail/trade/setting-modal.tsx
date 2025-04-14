@@ -98,20 +98,22 @@ export function TradeSettingModal() {
             suffixNode={"%"}
           />
         </div>
-        <div className='flex flex-col gap-8 w-full'>
-          <span>Tip({getCurrencySymbol(chain)})</span>
-          <TextField
-            placeholder='Custom'
-            value={innerTip}
-            onChange={(e) => {
-              const value = toDecimal(e.target.value);
-              setInnerTip(value);
-            }}
-          />
-          {showTipError ? (
-            <span className='text-size-12 text-red'>{`Please increase to >=${MIN_TIP} for better performance.`}</span>
-          ) : null}
-        </div>
+        {chain === "solana" && (
+          <div className='flex flex-col gap-8 w-full'>
+            <span>Tip({getCurrencySymbol(chain)})</span>
+            <TextField
+              placeholder='Custom'
+              value={innerTip}
+              onChange={(e) => {
+                const value = toDecimal(e.target.value);
+                setInnerTip(value);
+              }}
+            />
+            {showTipError ? (
+              <span className='text-size-12 text-red'>{`Please increase to >=${MIN_TIP} for better performance.`}</span>
+            ) : null}
+          </div>
+        )}
         <div className='flex items-center w-full gap-16'>
           <Button
             variant='secondary'

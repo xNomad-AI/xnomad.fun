@@ -105,11 +105,16 @@ function useStore() {
         if (!isConnected) {
           throw new Error("Please wait for the wallet to connect");
         }
-        if (walletChain?.id !== bsc.id) {
-          await switchChainAsync({
-            chainId: bsc.id,
-          });
-        }
+        await switchChainAsync({
+          chainId: bsc.id,
+          addEthereumChainParameter: {
+            rpcUrls: [
+              tradeMode === "ANTI-MEV"
+                ? process.env.BSC_SAFE_RPC ?? ""
+                : process.env.BSC_RPC ?? "",
+            ],
+          },
+        });
         const tokenInfo = await getTokenInfo({
           token: address,
           client: client!,
@@ -137,6 +142,7 @@ function useStore() {
             data: callData.data,
             to: callData.to,
             value: callData.value as any,
+            maxPriorityFeePerGas: parseEther(priorityFee.toString()),
           });
         } else {
           const tryBuy = await tryBuyWithExactBnB({

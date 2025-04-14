@@ -18,6 +18,8 @@ module.exports = {
     CHAT_STREAM_ENABLED: process.env.CHAT_STREAM_ENABLED,
     EVM_FEE_RECIPIENT: process.env.EVM_FEE_RECIPIENT,
     BSC_ENABLED: process.env.BSC_ENABLED,
+    BSC_RPC: process.env.BSC_RPC,
+    BSC_SAFE_RPC: process.env.BSC_SAFE_RPC,
   },
   compiler: {
     removeConsole: process.env.DEPLOY_ENV === "prod",

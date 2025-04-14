@@ -42,7 +42,7 @@ export function BaseTemplate({
   confirmNode,
   balanceType,
 }: Props) {
-  const { tradeSettingModalController, slippage, tradeMode } =
+  const { tradeSettingModalController, slippage, tradeMode, priorityFee } =
     useTradeConfigStore();
   const { chain } = useChainStore();
   return (
@@ -100,10 +100,10 @@ export function BaseTemplate({
         <div className='flex flex-col gap-8 flex-wrap text-size-12 text-text2'>
           <div className='flex items-center justify-between w-full'>
             <span>Slippage: {slippage * 100}%</span>
-            {/* <span>
+            <span>
               Priority:{" "}
               <TokenNumber className='inline-flex' number={priorityFee} />
-            </span> */}
+            </span>
           </div>
           <div className='flex items-center justify-between gap-16'>
             <div>
@@ -121,9 +121,7 @@ export function BaseTemplate({
               <button
                 title='Trade Setting'
                 onClick={() => {
-                  if (chain === "solana") {
-                    tradeSettingModalController.setTrue();
-                  }
+                  tradeSettingModalController.setTrue();
                 }}
               >
                 <IconSettings className='text-size-14 text-text1' />

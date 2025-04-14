@@ -21,6 +21,7 @@ import { onError } from "@/lib/utils/error";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { parseEther, parseGwei } from "viem";
+import BigNumber from "bignumber.js";
 
 export function TradeSetting() {
   const { chain } = useChainStore();
@@ -53,7 +54,20 @@ export function TradeSetting() {
   );
 
   useEffect(() => {
-    setInnerPriorityFee(agentConfig?.trade?.priorityFee ?? "");
+    setInnerPriorityFee(
+      chain === "solana"
+        ? agentConfig?.trade?.priorityFee ?? "0"
+        : BigNumber(agentConfig?.trade?.priorityFee ?? "")
+            .div(1e9)
+            .toString()
+    );
+    setInnerTip(
+      chain === "solana"
+        ? agentConfig?.trade?.tip ?? defaultTip
+        : BigNumber(agentConfig?.trade?.tip ?? "")
+            .div(1e18)
+            .toString()
+    );
     setInnerSlippage(((agentConfig?.trade?.slippage ?? 0) * 100).toString());
     setInnerTradeMode(agentConfig?.trade?.mode ?? "FAST");
   }, [agentConfig?.trade]);

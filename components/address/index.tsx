@@ -23,14 +23,16 @@ export function Address({
       contentClassName='break-all'
       className={clsx("flex items-center gap-8 min-w-0", className)}
     >
-      {wholeAddress ? (
+      {!address ? (
+        "--"
+      ) : wholeAddress ? (
         <TextWithEllipsis>{address}</TextWithEllipsis>
       ) : (
         <span>
           {address.slice(0, 4)}...{address.slice(-4)}
         </span>
       )}
-      {enableCopy && (
+      {enableCopy && Boolean(address) && (
         <IconFileCopy
           onClick={(e) => {
             e.stopPropagation();

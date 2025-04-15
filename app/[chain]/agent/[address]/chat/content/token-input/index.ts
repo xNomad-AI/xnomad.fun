@@ -4,7 +4,7 @@ export type TokenValue = {
   logo: string;
 };
 export interface SearchToken {
-  address: string;
+  address?: string;
   buy_24h: number;
   buy_24h_change_percent: number;
   decimals: number;

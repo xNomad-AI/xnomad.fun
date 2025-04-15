@@ -34,7 +34,7 @@ export function TokenInputBuy({
           setData(
             res.map((item) => {
               return {
-                ca: item.address,
+                ca: item.address ?? "",
                 ticker: item.symbol,
                 logo: item.logo_uri,
                 volume_24h_usd: item.volume_24h_usd,

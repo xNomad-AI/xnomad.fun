@@ -175,25 +175,27 @@ export function TradeSetting() {
                 }}
               />
               <div className='flex flex-col gap-8 w-full mt-4'>
-                <span>Gas Mode</span>
                 <div className='flex gap-8'>
                   <Button
+                    size='s'
                     variant={gasMode === "LOW" ? "primary" : "secondary"}
-                    className='flex-1 !font-mono text-size-12'
+                    className='flex-1 !font-mono text-size-12 whitespace-pre'
                     onClick={() => setGasMode("LOW")}
                   >
                     🚴 1.5 Gwei ~ $0.35|10s
                   </Button>
                   <Button
+                    size='s'
                     variant={gasMode === "MEDIUM" ? "primary" : "secondary"}
-                    className='flex-1 !font-mono text-size-12'
+                    className='flex-1 !font-mono text-size-12 whitespace-pre'
                     onClick={() => setGasMode("MEDIUM")}
                   >
                     🚗 3.2 Gwei ~ $0.75|5s
                   </Button>
                   <Button
+                    size='s'
                     variant={gasMode === "HIGH" ? "primary" : "secondary"}
-                    className='flex-1 !font-mono text-size-12'
+                    className='flex-1 !font-mono text-size-12 whitespace-pre'
                     onClick={() => setGasMode("HIGH")}
                   >
                     🚀 8 Gwei ~ $1.88|3s

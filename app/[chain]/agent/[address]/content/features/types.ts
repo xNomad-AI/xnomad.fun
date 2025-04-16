@@ -32,5 +32,7 @@ export interface Config {
     priorityFee: number;
     tip: number;
     mode: "FAST" | "ANTI_MEV";
+    gasMode: "HIGH" | "LOW" | "MEDIUM";
+    gasPrice: number;
   };
 }

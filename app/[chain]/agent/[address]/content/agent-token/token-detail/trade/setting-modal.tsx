@@ -1,4 +1,3 @@
-import { PriorityFeeItem } from "./priority-fee-item";
 import { useSettingModalService } from "./setting-modal-service";
 import {
   Button,
@@ -98,7 +97,7 @@ export function TradeSettingModal() {
             suffixNode={"%"}
           />
         </div>
-        {chain === "solana" && (
+        {chain === "solana" && !isFastMode && (
           <div className='flex flex-col gap-8 w-full'>
             <span>Tip({getCurrencySymbol(chain)})</span>
             <TextField

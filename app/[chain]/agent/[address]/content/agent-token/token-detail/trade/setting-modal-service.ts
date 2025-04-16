@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { PriorityFeeType, useTradeConfigStore } from "../store/trade-config";
+import {
+  GasMode,
+  PriorityFeeType,
+  useTradeConfigStore,
+} from "../store/trade-config";
 import { isNumber } from "@/lib/utils/number/is-number";
 
 const MIN_TIP = 0.001;
@@ -18,6 +22,10 @@ export function useSettingModalService() {
     setTradeMode,
     tip,
     setTip,
+    gasMode,
+    setGasMode,
+    gasFee,
+    setGasFee,
   } = useTradeConfigStore();
   const [innerPriorityFee, setInnerPriorityFee] = useState(customPriorityFee);
   const [innerSlippage, setInnerSlippage] = useState(
@@ -27,7 +35,8 @@ export function useSettingModalService() {
   const [innerTip, setInnerTip] = useState(tip);
   const [innerPriorityFeeType, setInnerPriorityFeeType] =
     useState<PriorityFeeType>(priorityFeeType);
-
+  const [innerGasMode, setInnerGasMode] = useState<GasMode>(gasMode);
+  const [innerGasFee, setInnerGasFee] = useState<string>("");
   const isFastMode = innerTradeMode === "FAST";
   const isCustomPriorityFee = innerPriorityFeeType === "custom";
 
@@ -51,6 +60,8 @@ export function useSettingModalService() {
     setCustomPriorityFee(innerPriorityFee);
     setTip(innerTip);
     setTradeMode(innerTradeMode);
+    setGasMode(innerGasMode);
+    setGasFee(innerGasFee);
     tradeSettingModalController.setFalse();
   };
 
@@ -61,6 +72,8 @@ export function useSettingModalService() {
       setInnerPriorityFeeType(priorityFeeType);
       setInnerTip(tip);
       setInnerTradeMode(tradeMode);
+      setInnerGasMode(gasMode);
+      setInnerGasFee(gasFee);
     }
   }, [
     customPriorityFee,
@@ -69,6 +82,8 @@ export function useSettingModalService() {
     tip,
     tradeMode,
     tradeSettingModalVisible,
+    gasMode,
+    gasFee,
   ]);
 
   return {
@@ -92,5 +107,9 @@ export function useSettingModalService() {
     estimatePriorityFee,
     isCustomPriorityFee,
     MIN_TIP,
+    innerGasMode,
+    innerGasFee,
+    setInnerGasMode,
+    setInnerGasFee,
   };
 }

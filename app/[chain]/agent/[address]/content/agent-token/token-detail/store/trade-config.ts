@@ -48,6 +48,7 @@ function initPriorityFee() {
   return "";
 }
 export type SwapMode = "FAST" | "ANTI-MEV";
+export type GasMode = "LOW" | "MEDIUM" | "HIGH";
 function initTradeMode(): SwapMode {
   const value = localStorage.getItem("token-page-trade-mode");
   if (value !== null && ["FAST", "ANTI-MEV"].includes(value)) {
@@ -65,7 +66,8 @@ function useService() {
   const [customPriorityFee, _setCustomPriorityFee] = useState(initPriorityFee);
   const [tradeMode, _setTradeMode] = useState(initTradeMode);
   const [tip, setTip] = useState("0.001");
-
+  const [gasMode, _setGasMode] = useState<GasMode>("MEDIUM");
+  const [gasFee, _setGasFee] = useState<string>("");
   const estimatePriorityFee = useMemo<EstimatePriorityFee>(() => {
     return {
       min: 0,
@@ -104,6 +106,16 @@ function useService() {
     localStorage.setItem("token-page-trade-mode", value.toString());
   });
 
+  const setGasMode = useMemoizedFn((value: GasMode) => {
+    _setGasMode(value);
+    localStorage.setItem("token-page-gas-mode", value.toString());
+  });
+
+  const setGasFee = useMemoizedFn((value: string) => {
+    _setGasFee(value);
+    localStorage.setItem("token-page-gas-fee", value.toString());
+  });
+
   return {
     slippage,
     setSlippage,
@@ -118,6 +130,10 @@ function useService() {
     setTradeMode,
     tip,
     setTip,
+    gasMode,
+    setGasMode,
+    gasFee,
+    setGasFee,
     tradeSettingModalVisible,
   };
 }

@@ -49,6 +49,10 @@ export function TradeSetting() {
   const [innerTradeMode, setInnerTradeMode] = useState<Config["trade"]["mode"]>(
     agentConfig?.trade?.mode ?? "FAST"
   );
+  const [gas, setGas] = useState<string>("");
+  const [gasMode, setGasMode] = useState<Config["trade"]["gasMode"]>(
+    agentConfig?.trade?.gasMode ?? "HIGH"
+  );
   const [innerTip, setInnerTip] = useState(
     agentConfig?.trade.tip ?? defaultTip
   );
@@ -126,6 +130,7 @@ export function TradeSetting() {
               </RadioGroup>
             </div>
           </div>
+
           <div className='flex flex-col gap-8 w-full'>
             <span>Slippage(0%-100%)</span>
             <TextField
@@ -145,34 +150,77 @@ export function TradeSetting() {
               suffixNode={"%"}
             />
           </div>
-          <div className='flex flex-col gap-8 w-full'>
-            <span>Priority Fee({chain === "solana" ? "SOL" : "Gwei"})</span>
-            <TextField
-              placeholder={isFastMode ? "Custom" : `>${defaultPriorityFee}`}
-              value={innerPriorityFee}
-              onChange={(e) => {
-                const value = toDecimal(e.target.value);
-                setInnerPriorityFee(value);
-              }}
-            />
-          </div>
-
-          <div className='flex flex-col gap-8 w-full'>
-            <div className='flex items-center gap-8'>
-              <span>Tip({getCurrencySymbol(chain)})</span>
-              <Tooltip content={"Tip to get the optimal performance."}>
-                <IconInfo className='text-size-16' />
-              </Tooltip>
+          {chain === "solana" && (
+            <div className='flex flex-col gap-8 w-full'>
+              <span>Priority Fee({chain === "solana" ? "SOL" : "Gwei"})</span>
+              <TextField
+                placeholder={isFastMode ? "Custom" : `>${defaultPriorityFee}`}
+                value={innerPriorityFee}
+                onChange={(e) => {
+                  const value = toDecimal(e.target.value);
+                  setInnerPriorityFee(value);
+                }}
+              />
             </div>
-            <TextField
-              placeholder={`>${defaultTip}`}
-              value={innerTip}
-              onChange={(e) => {
-                const value = toDecimal(e.target.value);
-                setInnerTip(value);
-              }}
-            />
-          </div>
+          )}
+          {chain !== "solana" && (
+            <div className='flex flex-col gap-8 w-full'>
+              <span>Gas Fee(Gwei)</span>
+              <TextField
+                placeholder='Custom'
+                value={gas}
+                onChange={(e) => {
+                  const value = toDecimal(e.target.value);
+                  setGas(value);
+                }}
+              />
+              <div className='flex flex-col gap-8 w-full mt-4'>
+                <span>Gas Mode</span>
+                <div className='flex gap-8'>
+                  <Button
+                    variant={gasMode === "LOW" ? "primary" : "secondary"}
+                    className='flex-1 !font-mono text-size-12'
+                    onClick={() => setGasMode("LOW")}
+                  >
+                    🚴 1.5 Gwei ~ $0.35|10s
+                  </Button>
+                  <Button
+                    variant={gasMode === "MEDIUM" ? "primary" : "secondary"}
+                    className='flex-1 !font-mono text-size-12'
+                    onClick={() => setGasMode("MEDIUM")}
+                  >
+                    🚗 3.2 Gwei ~ $0.75|5s
+                  </Button>
+                  <Button
+                    variant={gasMode === "HIGH" ? "primary" : "secondary"}
+                    className='flex-1 !font-mono text-size-12'
+                    onClick={() => setGasMode("HIGH")}
+                  >
+                    🚀 8 Gwei ~ $1.88|3s
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {chain === "solana" && !isFastMode && (
+            <div className='flex flex-col gap-8 w-full'>
+              <div className='flex items-center gap-8'>
+                <span>Tip({getCurrencySymbol(chain)})</span>
+                <Tooltip content={"Tip to get the optimal performance."}>
+                  <IconInfo className='text-size-16' />
+                </Tooltip>
+              </div>
+              <TextField
+                placeholder={`>${defaultTip}`}
+                value={innerTip}
+                onChange={(e) => {
+                  const value = toDecimal(e.target.value);
+                  setInnerTip(value);
+                }}
+              />
+            </div>
+          )}
 
           <div className='flex w-full items-center justify-end gap-8'>
             <Button variant='secondary' onClick={onClose}>
@@ -184,7 +232,9 @@ export function TradeSetting() {
                 setIsSetting(true);
                 api.v1
                   .post(
-                    `/agent/trade/settings?agentId=${nft.agentId}&chain=${chain}`,
+                    chain === "solana"
+                      ? `/agent/trade/settings?agentId=${nft.agentId}&chain=${chain}`
+                      : `/agent/trade/settings/evm?agentId=${nft.agentId}&chain=${chain}`,
                     {
                       slippage: +innerSlippage / 100,
                       priorityFee:
@@ -192,6 +242,8 @@ export function TradeSetting() {
                           ? +innerPriorityFee
                           : parseEther(innerPriorityFee.toString(), "gwei"),
                       mode: innerTradeMode,
+                      gasMode: gas ? "CUSTOM" : gasMode,
+                      maxFeePerGas: gas,
                       tip:
                         chain === "solana"
                           ? innerTip

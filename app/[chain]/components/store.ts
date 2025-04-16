@@ -12,7 +12,9 @@ interface NftSearchParams {
 export const useCollectionStore = create(
   immer<{
     collection?: Collection | null;
+    society?: Collection | null;
     setCollection: (collection: Collection | null) => void;
+    setSociety: (society: Collection | null) => void;
     nftSearchParams: NftSearchParams;
     setNftSearchParams: (params: Partial<NftSearchParams>) => void;
     traitsFilterOpen: boolean;
@@ -20,9 +22,14 @@ export const useCollectionStore = create(
     resetAll: () => void;
   }>((set) => ({
     collection: null,
+    society: null,
     setCollection: (collection) =>
       set((state) => {
         state.collection = collection;
+      }),
+    setSociety: (society) =>
+      set((state) => {
+        state.society = society;
       }),
     nftSearchParams: {
       keyword: undefined,

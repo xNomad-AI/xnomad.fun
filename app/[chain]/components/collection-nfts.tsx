@@ -21,11 +21,22 @@ export function CollectionNFTs({
   isSociety?: boolean;
 }) {
   const { chain } = useChainStore();
-  const { setCollection, nftSearchParams, resetAll, collection } =
-    useCollectionStore();
+  const {
+    setCollection,
+    nftSearchParams,
+    resetAll,
+    collection: _collection,
+    society,
+    setSociety,
+  } = useCollectionStore();
+  const collection = isSociety ? society : _collection;
   const elementRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    setCollection(initCollection);
+    if (isSociety) {
+      setSociety(initCollection);
+    } else {
+      setCollection(initCollection);
+    }
     // reset search params
     return () => {
       resetAll();

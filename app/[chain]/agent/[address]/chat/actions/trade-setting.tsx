@@ -182,7 +182,7 @@ export function TradeSetting() {
                     className='flex-1 !font-mono text-size-12 whitespace-pre'
                     onClick={() => setGasMode("LOW")}
                   >
-                    🚴 1.5 Gwei ~ $0.35|10s
+                    🚴 1.5 Gwei ~ $0.35 | 10s
                   </Button>
                   <Button
                     size='s'
@@ -190,7 +190,7 @@ export function TradeSetting() {
                     className='flex-1 !font-mono text-size-12 whitespace-pre'
                     onClick={() => setGasMode("MEDIUM")}
                   >
-                    🚗 3.2 Gwei ~ $0.75|5s
+                    🚗 3.2 Gwei ~ $0.75 | 5s
                   </Button>
                   <Button
                     size='s'
@@ -198,14 +198,14 @@ export function TradeSetting() {
                     className='flex-1 !font-mono text-size-12 whitespace-pre'
                     onClick={() => setGasMode("HIGH")}
                   >
-                    🚀 8 Gwei ~ $1.88|3s
+                    🚀 8 Gwei ~ $1.88 | 3s
                   </Button>
                 </div>
               </div>
             </div>
           )}
 
-          {chain === "solana" && !isFastMode && (
+          {!isFastMode && (
             <div className='flex flex-col gap-8 w-full'>
               <div className='flex items-center gap-8'>
                 <span>Tip({getCurrencySymbol(chain)})</span>
@@ -237,20 +237,22 @@ export function TradeSetting() {
                     chain === "solana"
                       ? `/agent/trade/settings?agentId=${nft.agentId}&chain=${chain}`
                       : `/agent/trade/settings/evm?agentId=${nft.agentId}&chain=${chain}`,
-                    {
-                      slippage: +innerSlippage / 100,
-                      priorityFee:
-                        chain === "solana"
-                          ? +innerPriorityFee
-                          : parseEther(innerPriorityFee.toString(), "gwei"),
-                      mode: innerTradeMode,
-                      gasMode: gas ? "CUSTOM" : gasMode,
-                      maxFeePerGas: gas,
-                      tip:
-                        chain === "solana"
-                          ? innerTip
-                          : parseEther(innerTip.toString(), "wei"),
-                    }
+                    chain === "solona"
+                      ? {
+                          slippage: +innerSlippage / 100,
+                          priorityFee: +innerPriorityFee,
+                          mode: innerTradeMode,
+                          tip: innerTip,
+                        }
+                      : {
+                          slippage: +innerSlippage / 100,
+                          mode: innerTradeMode,
+                          gasMode: gas ? "CUSTOM" : gasMode,
+                          maxFeePerGas: parseFloat(gas),
+                          tip: parseFloat(
+                            parseEther(innerTip.toString(), "wei").toString()
+                          ),
+                        }
                   )
                   .then(() => {
                     message("Trade setting updated", { type: "success" });

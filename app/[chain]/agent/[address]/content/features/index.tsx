@@ -15,6 +15,7 @@ import { useMemoizedFn, useMount } from "ahooks";
 import { TelegramModal } from "./telegram";
 import { VoiceModal } from "./voice";
 import { ConfirmModal } from "./confirm";
+import { ApiKeyFeature } from "./api-keys";
 import { editAgentConfig, getAgentConfig } from "./network";
 import { useAgentStore } from "../../store";
 import { SupportedChain } from "@/types/preference";
@@ -133,6 +134,11 @@ export function Features({ nft }: { nft: NFT }) {
     () => isOwner(nft.owner, userAddress),
     [nft.owner, userAddress]
   );
+  const hasApiKeyConfig = useMemo(() => {
+    return Boolean(
+      config?.characterConfig?.settings.secrets?.API_KEY_NAME
+    );
+  }, [config]);
   return (
     <>
       <div className='w-full flex flex-col gap-16 mt-32'>
@@ -303,6 +309,37 @@ export function Features({ nft }: { nft: NFT }) {
             </Button>
           ) : null}
         </Card>
+        <ApiKeyFeature 
+          config={config?.characterConfig}
+          onSave={async (configUpdate, apiKey) => {
+            try {
+              setIsConfigLoading(true);
+              const newConfig = await editAgentConfig(
+                nft.id,
+                {
+                  ...config?.characterConfig,
+                  settings: {
+                    ...config?.characterConfig.settings,
+                    secrets: {
+                      ...config?.characterConfig.settings.secrets,
+                      ...configUpdate.settings?.secrets,
+                    },
+                  },
+                },
+                chain
+              );
+              setConfig({
+                ...(config as Config),
+                characterConfig: newConfig.characterConfig,
+              });
+              return Promise.resolve();
+            } catch (error) {
+              return Promise.reject(error);
+            } finally {
+              setIsConfigLoading(false);
+            }
+          }}
+        />
       </div>
       <TwitterModal
         open={xOpen}

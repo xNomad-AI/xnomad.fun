@@ -21,6 +21,8 @@ export interface CharacterConfig {
       TWITTER_POLL_INTERVAL: number;
       MAX_LENGTH: number;
       TELEGRAM_LOGIN_SUSPEND: "true" | "false";
+      API_KEY_NAME: string;
+      API_KEY_EXPIRATION_DAYS: number;
     }>;
   };
 }

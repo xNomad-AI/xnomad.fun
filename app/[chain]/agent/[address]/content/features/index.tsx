@@ -322,16 +322,11 @@ export function Features({ nft }: { nft: NFT }) {
               className='!w-[7.5rem]'
               variant={hasApiKeyConfig ? "secondary" : "primary"}
               onClick={() => {
-                if (hasApiKeyConfig) {
-                  setApiKeyOpen(true);
-                  setShowApiKeysList(true);
-                } else {
-                  setApiKeyOpen(true);
-                  setShowApiKeysList(false);
-                }
+                setApiKeyOpen(true);
+                setShowApiKeysList(hasApiKeyConfig);
               }}
             >
-              {hasApiKeyConfig ? "Manage" : "Create API Key"}
+              {hasApiKeyConfig ? "Manage" : "Create"}
             </Button>
           )}
         </Card>

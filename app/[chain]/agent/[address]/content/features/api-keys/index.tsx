@@ -298,6 +298,15 @@ export function ApiKeyModal({
     }
   }, [generatedKey]);
   
+  // Add effect to automatically switch to creation view when no keys are found
+  useEffect(() => {
+    // If we're in list view and we have loaded keys (not loading) and there are no keys,
+    // automatically switch to creation view
+    if (showKeysList && !isLoading && apiKeys.length === 0) {
+      setShowKeysList(false);
+    }
+  }, [showKeysList, isLoading, apiKeys.length]);
+  
   // If we're showing the list of keys, render that view
   if (showKeysList) {
     return (
@@ -339,9 +348,10 @@ export function ApiKeyModal({
               ))}
             </div>
           ) : (
-            <div className="text-center p-4">
-              <p>No API keys found</p>
+            <div className="flex flex-col items-center justify-center p-16 h-[200px]">
+              <p className="mb-8 text-white-60">No API keys found</p>
               <Button
+                variant="primary"
                 onClick={() => setShowKeysList(false)}
                 className="mt-4"
               >
@@ -351,12 +361,14 @@ export function ApiKeyModal({
           )}
           
           <div className="flex justify-end mt-8 gap-6 pb-6">
-            <Button
-              variant="primary"
-              onClick={() => setShowKeysList(false)}
-            >
-              Create New Key
-            </Button>
+            {apiKeys.length > 0 && (
+              <Button
+                variant="primary"
+                onClick={() => setShowKeysList(false)}
+              >
+                Create New Key
+              </Button>
+            )}
             <Button
               variant="secondary"
               onClick={onClose}
@@ -377,39 +389,32 @@ export function ApiKeyModal({
       </ModalTitleWithBorder>
       <ModalContent className="gap-16 max-h-[600px] overflow-auto pb-0">
         {generatedKey ? (
-          <div className="flex flex-col gap-16">
-            <p className="text-size-16">Your API key has been created successfully:</p>
-            <div className="w-full p-16 border border-white-20 rounded-8 bg-white-5">
-              <div className="w-full break-all font-mono relative p-2">
-                <div className="overflow-x-auto">
-                  {generatedKey}
-                </div>
-                <Button 
-                  onClick={() => {
-                    navigator.clipboard.writeText(generatedKey);
-                    message("API key copied to clipboard", { type: "success" });
-                  }}
-                  className="absolute right-2 top-2"
-                  variant="secondary"
-                  size="s"
-                >
-                  Copy
-                </Button>
-              </div>
+          <div className="flex flex-col gap-24 px-4 pb-16">
+            <p className="text-size-16 mt-8">Your API key has been created successfully:</p>
+            
+            <div className="font-mono break-all py-16">
+              {generatedKey}
             </div>
+            
             <p className="text-red text-size-14 font-medium">
               Make sure to copy this key now. You won't be able to see it again!
             </p>
-            <div className="flex justify-end gap-16 pt-24">
-              <Button onClick={onClose}>
-                Close
-              </Button>
-            </div>
+            
+            <Button 
+              onClick={() => {
+                navigator.clipboard.writeText(generatedKey);
+                message("API key copied to clipboard", { type: "success" });
+              }}
+              className="w-full py-3 mb-8"
+              variant="primary"
+            >
+              Copy the Key
+            </Button>
           </div>
         ) : (
           <>
             <FormItem
-              label="API Key Name"
+              label={<>API Key Name <span className="text-red">*</span></>}
               {...form.name}
             >
               <TextField
@@ -427,7 +432,7 @@ export function ApiKeyModal({
             </FormItem>
             
             <FormItem 
-              label="Expiration (days)" 
+              label={<>Expiration <span className="text-red">*</span></>}
               {...form.expirationDays}
             >
               <TextField
@@ -466,16 +471,17 @@ export function ApiKeyModal({
               />
             </FormItem>
             
-            <div className="flex justify-end gap-16 pt-24">
+            <div className="w-full flex items-center gap-16 sticky bottom-0 py-24 -mt-24 bg-background">
               <Button
-                type="button"
+                variant="secondary"
+                stretch
                 onClick={onClose}
                 disabled={saving}
-                variant="secondary"
               >
                 Cancel
               </Button>
               <Button 
+                stretch
                 onClick={handleSubmit}
                 loading={saving}
               >

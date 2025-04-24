@@ -334,15 +334,17 @@ export function ApiKeyModal({
                         Created: {new Date(key.createdAt).toLocaleDateString()} Expires: {new Date(key.expiresAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <Button
-                      variant="secondary"
-                      size="s"
-                      className="!bg-[#222] !text-[#ff3b30] font-medium"
-                      onClick={() => handleDeleteKey(key.id)}
-                      disabled={isLoading}
-                    >
-                      Delete
-                    </Button>
+                    <div className="mt-12">
+                      <Button
+                        variant="secondary"
+                        size="s"
+                        className="!bg-[#222] !text-[#ff3b30] font-medium"
+                        onClick={() => handleDeleteKey(key.id)}
+                        disabled={isLoading}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                 </Card>
               ))}
@@ -369,14 +371,6 @@ export function ApiKeyModal({
               + Create New Key
             </Button>
           )}
-          
-          <Button
-            variant="secondary" 
-            className="w-full"
-            onClick={onClose}
-          >
-            Close
-          </Button>
         </ModalContent>
       </Modal>
     );

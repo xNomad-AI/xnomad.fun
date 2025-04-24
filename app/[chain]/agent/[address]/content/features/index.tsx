@@ -16,7 +16,7 @@ import { useMemoizedFn, useMount } from "ahooks";
 import { TelegramModal } from "./telegram";
 import { VoiceModal } from "./voice";
 import { ConfirmModal } from "./confirm";
-import { ApiKeyModal } from "./api-keys";
+import { ApiKeyModal, fetchApiKeys } from "./api-keys";
 import { editAgentConfig, getAgentConfig } from "./network";
 import { useAgentStore } from "../../store";
 import { SupportedChain } from "@/types/preference";
@@ -61,6 +61,12 @@ export function Features({ nft }: { nft: NFT }) {
   const [showApiKeysList, setShowApiKeysList] = useState(false);
   const [twitterBound, setTwitterBound] = useState(false);
   const [isConfigLoading, setIsConfigLoading] = useState(false);
+  const [apiKeys, setApiKeys] = useState<Array<{
+    id: string;
+    name: string;
+    createdAt: string;
+    expiresAt: string;
+  }>>([]);
   const [metaInfo, setMetaInfo] = useState<{
     twitterUsername: string;
     telegramBotId: string;
@@ -85,6 +91,12 @@ export function Features({ nft }: { nft: NFT }) {
       .then((res) => {
         setMetaInfo(res);
       });
+    // Load API keys
+    if (nft.owner) {
+      fetchApiKeys(nft.owner, chain).then(keys => {
+        setApiKeys(keys);
+      });
+    }
   });
   const onSave = useMemoizedFn(async (_config: Partial<CharacterConfig>) => {
     const newConfig = await editAgentConfig(
@@ -138,10 +150,8 @@ export function Features({ nft }: { nft: NFT }) {
     [nft.owner, userAddress]
   );
   const hasApiKeyConfig = useMemo(() => {
-    return Boolean(
-      config?.characterConfig?.settings.secrets?.API_KEY_NAME
-    );
-  }, [config]);
+    return apiKeys.length > 0;
+  }, [apiKeys]);
   return (
     <>
       <div className='w-full flex flex-col gap-16 mt-32'>
@@ -393,6 +403,11 @@ export function Features({ nft }: { nft: NFT }) {
         onClose={() => {
           setApiKeyOpen(false);
           setShowApiKeysList(false);
+          if (nft.owner) {
+            fetchApiKeys(nft.owner, chain).then(keys => {
+              setApiKeys(keys);
+            });
+          }
         }}
         config={config?.characterConfig}
         showKeysList={showApiKeysList}
@@ -417,6 +432,12 @@ export function Features({ nft }: { nft: NFT }) {
               ...(config as Config),
               characterConfig: newConfig.characterConfig,
             });
+
+            if (nft.owner) {
+              const updatedKeys = await fetchApiKeys(nft.owner, chain);
+              setApiKeys(updatedKeys);
+            }
+
             return Promise.resolve();
           } catch (error) {
             return Promise.reject(error);

@@ -317,33 +317,33 @@ export function ApiKeyModal({
         >
           Manage API Keys
         </ModalTitleWithBorder>
-        <ModalContent className="gap-16 max-h-[600px] overflow-auto">
+        <ModalContent className="gap-16">
           {isLoading ? (
             <div className="flex justify-center items-center h-40">
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
             </div>
           ) : apiKeys.length > 0 ? (
-            <div className="space-y-4">
+            <div className="flex flex-col gap-16 w-full max-h-[400px] overflow-auto">
               {apiKeys.map((key) => (
-                <Card key={key.id} className="p-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{key.name}</p>
-                    <p className="text-size-12 text-white-60">
-                      Created: {new Date(key.createdAt).toLocaleDateString()} | 
-                      Expires: {new Date(key.expiresAt).toLocaleDateString()}
-                    </p>
-                    <p className="text-size-10 text-white-40">ID: {key.id}</p>
-                  </div>
-                  <Tooltip content="Delete API Key">
+                <Card key={key.id} className="w-full p-16">
+                  <div className="flex justify-between items-start">
+                    <div className="flex flex-col">
+                      <span className="font-medium">{key.name}</span>
+                      <span className="text-size-12 text-white-60">ID: {key.id}</span>
+                      <span className="text-size-12 text-white-60">
+                        Created: {new Date(key.createdAt).toLocaleDateString()} Expires: {new Date(key.expiresAt).toLocaleDateString()}
+                      </span>
+                    </div>
                     <Button
                       variant="secondary"
                       size="s"
+                      className="!bg-[#222] !text-[#ff3b30] font-medium"
                       onClick={() => handleDeleteKey(key.id)}
                       disabled={isLoading}
                     >
-                      <IconDelete className="text-red" />
+                      Delete
                     </Button>
-                  </Tooltip>
+                  </div>
                 </Card>
               ))}
             </div>
@@ -360,22 +360,23 @@ export function ApiKeyModal({
             </div>
           )}
           
-          <div className="flex justify-end mt-8 gap-6 pb-6">
-            {apiKeys.length > 0 && (
-              <Button
-                variant="primary"
-                onClick={() => setShowKeysList(false)}
-              >
-                Create New Key
-              </Button>
-            )}
+          {apiKeys.length > 0 && (
             <Button
-              variant="secondary"
-              onClick={onClose}
+              variant="primary"
+              className="!bg-white !text-black w-full"
+              onClick={() => setShowKeysList(false)}
             >
-              Close
+              + Create New Key
             </Button>
-          </div>
+          )}
+          
+          <Button
+            variant="secondary" 
+            className="w-full"
+            onClick={onClose}
+          >
+            Close
+          </Button>
         </ModalContent>
       </Modal>
     );

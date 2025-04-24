@@ -4,18 +4,19 @@ import {
   IconDisconnect,
   Toggle,
   Tooltip,
+  message,
 } from "@/primitive/components";
 import { NFT } from "@/types";
 import Image from "next/image";
 import { TwitterModal } from "./twitter";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { api } from "@/primitive/api";
 import { CharacterConfig, Config } from "./types";
 import { useMemoizedFn, useMount } from "ahooks";
 import { TelegramModal } from "./telegram";
 import { VoiceModal } from "./voice";
 import { ConfirmModal } from "./confirm";
-import { ApiKeyFeature } from "./api-keys";
+import { ApiKeyModal } from "./api-keys";
 import { editAgentConfig, getAgentConfig } from "./network";
 import { useAgentStore } from "../../store";
 import { SupportedChain } from "@/types/preference";
@@ -56,6 +57,8 @@ export function Features({ nft }: { nft: NFT }) {
   const [xOpen, setXOpen] = useState(false);
   const [tgOpen, setTgOpen] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
+  const [apiKeyOpen, setApiKeyOpen] = useState(false);
+  const [showApiKeysList, setShowApiKeysList] = useState(false);
   const [twitterBound, setTwitterBound] = useState(false);
   const [isConfigLoading, setIsConfigLoading] = useState(false);
   const [metaInfo, setMetaInfo] = useState<{
@@ -309,37 +312,29 @@ export function Features({ nft }: { nft: NFT }) {
             </Button>
           ) : null}
         </Card>
-        <ApiKeyFeature 
-          config={config?.characterConfig}
-          onSave={async (configUpdate, apiKey) => {
-            try {
-              setIsConfigLoading(true);
-              const newConfig = await editAgentConfig(
-                nft.id,
-                {
-                  ...config?.characterConfig,
-                  settings: {
-                    ...config?.characterConfig.settings,
-                    secrets: {
-                      ...config?.characterConfig.settings.secrets,
-                      ...configUpdate.settings?.secrets,
-                    },
-                  },
-                },
-                chain
-              );
-              setConfig({
-                ...(config as Config),
-                characterConfig: newConfig.characterConfig,
-              });
-              return Promise.resolve();
-            } catch (error) {
-              return Promise.reject(error);
-            } finally {
-              setIsConfigLoading(false);
-            }
-          }}
-        />
+        <Card className='flex items-center justify-between gap-16 p-16'>
+          <div className='flex items-center gap-16'>
+            <Image src={"/api-key.png"} height={64} width={64} alt='' />
+            <span>API Key Generation</span>
+          </div>
+          {isNFTOwner && (
+            <Button
+              className='!w-[7.5rem]'
+              variant={hasApiKeyConfig ? "secondary" : "primary"}
+              onClick={() => {
+                if (hasApiKeyConfig) {
+                  setApiKeyOpen(true);
+                  setShowApiKeysList(true);
+                } else {
+                  setApiKeyOpen(true);
+                  setShowApiKeysList(false);
+                }
+              }}
+            >
+              {hasApiKeyConfig ? "Manage" : "Create API Key"}
+            </Button>
+          )}
+        </Card>
       </div>
       <TwitterModal
         open={xOpen}
@@ -396,6 +391,43 @@ export function Features({ nft }: { nft: NFT }) {
             .finally(() => {
               setIsConfigLoading(false);
             });
+        }}
+      />
+      <ApiKeyModal
+        open={apiKeyOpen}
+        onClose={() => {
+          setApiKeyOpen(false);
+          setShowApiKeysList(false);
+        }}
+        config={config?.characterConfig}
+        showKeysList={showApiKeysList}
+        onSave={async (configUpdate, apiKey) => {
+          try {
+            setIsConfigLoading(true);
+            const newConfig = await editAgentConfig(
+              nft.id,
+              {
+                ...config?.characterConfig,
+                settings: {
+                  ...config?.characterConfig.settings,
+                  secrets: {
+                    ...config?.characterConfig.settings.secrets,
+                    ...configUpdate.settings?.secrets,
+                  },
+                },
+              },
+              chain
+            );
+            setConfig({
+              ...(config as Config),
+              characterConfig: newConfig.characterConfig,
+            });
+            return Promise.resolve();
+          } catch (error) {
+            return Promise.reject(error);
+          } finally {
+            setIsConfigLoading(false);
+          }
         }}
       />
     </>

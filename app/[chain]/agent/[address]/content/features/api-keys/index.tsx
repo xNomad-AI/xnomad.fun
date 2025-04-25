@@ -26,13 +26,14 @@ import { useUserStore } from "@/app/layout/chain-provider/hook";
 import { api } from "@/primitive/api";
 
 // Add a function to fetch API keys
-const fetchApiKeys = async (userId: string, chain: string) => {
+export const fetchApiKeys = async (userId: string, chain: string) => {
   try {
     if (!userId || !chain) {
       message("Error loading API keys: Missing required parameters", { type: "error" });
       return [];
     }
     
+    // Authorization is now handled via JWT token in headers
     const response = await api.v1.get<{
       keys: Array<{
         _id?: string;
@@ -41,10 +42,7 @@ const fetchApiKeys = async (userId: string, chain: string) => {
         createdAt: string;
         expiresAt: string;
       }>;
-    }>(`/api-keys`, {
-      userId,
-      chain,
-    });
+    }>(`/api-keys`);
     
     // Validate response
     if (!response || !response.keys) {
@@ -84,7 +82,7 @@ const fetchApiKeys = async (userId: string, chain: string) => {
 };
 
 // Add a function to delete API key
-const deleteApiKey = async (keyId: string, userId: string) => {
+export const deleteApiKey = async (keyId: string) => {
   try {
     if (!keyId) {
       console.error(' [deleteApiKey] Missing key ID');
@@ -92,16 +90,8 @@ const deleteApiKey = async (keyId: string, userId: string) => {
       return false;
     }
     
-    if (!userId) {
-      console.error(' [deleteApiKey] Missing user ID');
-      message("Error: User ID required for deletion", { type: "error" });
-      return false;
-    }
-    
-    // The API expects userId as a query parameter
-    const response = await api.v1.delete(`/api-keys/${keyId}`, {
-      userId
-    });
+    // Authorization is now handled via JWT token in headers
+    const response = await api.v1.delete(`/api-keys/${keyId}`);
     
     // Check for a successful response
     if (!response) {
@@ -123,6 +113,7 @@ export function ApiKeyModal({
   onClose,
   config,
   onSave,
+  showKeysList: initialShowKeysList = false,
 }: {
   open: boolean;
   onClose: () => void;
@@ -131,6 +122,7 @@ export function ApiKeyModal({
     config: Partial<CharacterConfig>,
     apiKey?: string
   ) => Promise<void>;
+  showKeysList?: boolean;
 }) {
   const { form, updateForm, resetForm } = useApiKeyStore();
   const [saving, setSaving] = useState(false);
@@ -138,9 +130,54 @@ export function ApiKeyModal({
   const { chain } = useChainStore();
   const { userAddress } = useUserStore();
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
+  const [apiKeys, setApiKeys] = useState<Array<{
+    id: string;
+    name: string;
+    createdAt: string;
+    expiresAt: string;
+  }>>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showKeysList, setShowKeysList] = useState(initialShowKeysList);
 
+  // Update showKeysList when prop changes
   useEffect(() => {
-  }, [open, nft, chain]);
+    setShowKeysList(initialShowKeysList);
+  }, [initialShowKeysList]);
+
+  // Load api keys on modal open if key list should be shown
+  useEffect(() => {
+    if (open && nft.owner) {
+      loadApiKeys();
+    }
+  }, [open, nft.owner]);
+
+  // Fetch API keys
+  const loadApiKeys = useMemoizedFn(async () => {
+    if (!nft.owner) return;
+    setIsLoading(true);
+    const keys = await fetchApiKeys(nft.owner, chain);
+    setApiKeys(keys);
+    setIsLoading(false);
+  });
+
+  // Handle deleting a key
+  const handleDeleteKey = useMemoizedFn(async (keyId: string) => {
+    if (!keyId || !nft.owner) return;
+    
+    setIsLoading(true);
+    try {
+      const success = await deleteApiKey(keyId);
+      if (success) {
+        message("API key deleted successfully", { type: "success" });
+        // Refresh the keys list
+        loadApiKeys();
+      }
+    } catch (error) {
+      console.error(' [handleDeleteKey] Error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  });
 
   const handleSubmit = async () => {
     if (form.name.value.trim() === "") {
@@ -170,13 +207,11 @@ export function ApiKeyModal({
     setSaving(true);
 
     try {
+      const nftId = nft.nftId;      
       const requestPayload = {
         name: form.name.value,
         expirationDays: form.expirationDays.value,
-        agentId: nft.agentId || nft.id,
-        userId: nft.owner,
-        chain: chain,
-        address: userAddress,
+        nftId
       };
 
       // Make the actual API call to create the API key
@@ -250,7 +285,86 @@ export function ApiKeyModal({
       }
     }
   }, [generatedKey]);
+  
+  // Add effect to automatically switch to creation view when no keys are found
+  useEffect(() => {
+    // If we're in list view and we have loaded keys (not loading) and there are no keys,
+    // automatically switch to creation view
+    if (showKeysList && !isLoading && apiKeys.length === 0) {
+      setShowKeysList(false);
+    }
+  }, [showKeysList, isLoading, apiKeys.length]);
+  
+  // If we're showing the list of keys, render that view
+  if (showKeysList) {
+    return (
+      <Modal open={open} size="m" onMaskClick={onClose}>
+        <ModalTitleWithBorder
+          closable
+          onClose={onClose}
+        >
+          Manage API Keys
+        </ModalTitleWithBorder>
+        <ModalContent className="gap-16">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+            </div>
+          ) : apiKeys.length > 0 ? (
+            <div className="flex flex-col gap-16 w-full max-h-[400px] overflow-auto">
+              {apiKeys.map((key) => (
+                <Card key={key.id} className="w-full p-16">
+                  <div className="flex justify-between items-start">
+                    <div className="flex flex-col">
+                      <span className="font-medium">{key.name}</span>
+                      <span className="text-size-12 text-white-60">ID: {key.id}</span>
+                      <span className="text-size-12 text-white-60">
+                        Created: {new Date(key.createdAt).toLocaleDateString()} Expires: {new Date(key.expiresAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="mt-12">
+                      <Button
+                        variant="secondary"
+                        size="s"
+                        className="!bg-[#222] !text-[#ff3b30] font-medium"
+                        onClick={() => handleDeleteKey(key.id)}
+                        disabled={isLoading}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-16 h-[200px]">
+              <p className="mb-8 text-white-60">No API keys found</p>
+              <Button
+                variant="primary"
+                onClick={() => setShowKeysList(false)}
+                className="mt-4"
+              >
+                Create New Key
+              </Button>
+            </div>
+          )}
+          
+          {apiKeys.length > 0 && (
+            <Button
+              variant="primary"
+              className="!bg-white !text-black w-full"
+              onClick={() => setShowKeysList(false)}
+            >
+              + Create New Key
+            </Button>
+          )}
+        </ModalContent>
+      </Modal>
+    );
+  }
 
+  // Otherwise show the creation modal
   return (
     <Modal open={open} size="m" onMaskClick={onClose}>
       <ModalTitleWithBorder closable onClose={onClose}>
@@ -258,39 +372,32 @@ export function ApiKeyModal({
       </ModalTitleWithBorder>
       <ModalContent className="gap-16 max-h-[600px] overflow-auto pb-0">
         {generatedKey ? (
-          <div className="flex flex-col gap-16">
-            <p className="text-size-16">Your API key has been created successfully:</p>
-            <div className="w-full p-16 border border-white-20 rounded-8 bg-white-5">
-              <div className="w-full break-all font-mono relative p-2">
-                <div className="overflow-x-auto">
-                  {generatedKey}
-                </div>
-                <Button 
-                  onClick={() => {
-                    navigator.clipboard.writeText(generatedKey);
-                    message("API key copied to clipboard", { type: "success" });
-                  }}
-                  className="absolute right-2 top-2"
-                  variant="secondary"
-                  size="s"
-                >
-                  Copy
-                </Button>
-              </div>
+          <div className="flex flex-col gap-24 px-4 pb-16">
+            <p className="text-size-16 mt-8">Your API key has been created successfully:</p>
+            
+            <div className="font-mono break-all py-16">
+              {generatedKey}
             </div>
+            
             <p className="text-red text-size-14 font-medium">
               Make sure to copy this key now. You won't be able to see it again!
             </p>
-            <div className="flex justify-end gap-16 pt-24">
-              <Button onClick={onClose}>
-                Close
-              </Button>
-            </div>
+            
+            <Button 
+              onClick={() => {
+                navigator.clipboard.writeText(generatedKey);
+                message("API key copied to clipboard", { type: "success" });
+              }}
+              className="w-full py-3 mb-8"
+              variant="primary"
+            >
+              Copy the Key
+            </Button>
           </div>
         ) : (
           <>
             <FormItem
-              label="API Key Name"
+              label={<>API Key Name <span className="text-red">*</span></>}
               {...form.name}
             >
               <TextField
@@ -308,7 +415,7 @@ export function ApiKeyModal({
             </FormItem>
             
             <FormItem 
-              label="Expiration (days)" 
+              label={<>Expiration <span className="text-red">*</span></>}
               {...form.expirationDays}
             >
               <TextField
@@ -347,16 +454,17 @@ export function ApiKeyModal({
               />
             </FormItem>
             
-            <div className="flex justify-end gap-16 pt-24">
+            <div className="w-full flex items-center gap-16 sticky bottom-0 py-24 -mt-24 bg-background">
               <Button
-                type="button"
+                variant="secondary"
+                stretch
                 onClick={onClose}
                 disabled={saving}
-                variant="secondary"
               >
                 Cancel
               </Button>
               <Button 
+                stretch
                 onClick={handleSubmit}
                 loading={saving}
               >
@@ -367,237 +475,5 @@ export function ApiKeyModal({
         )}
       </ModalContent>
     </Modal>
-  );
-}
-
-export function ApiKeyFeature({
-  config,
-  onSave,
-}: {
-  config?: CharacterConfig;
-  onSave: (config: Partial<CharacterConfig>, apiKey?: string) => Promise<void>;
-}) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const hasConfig = !!config?.settings.secrets?.API_KEY_NAME;
-  const { nft } = useAgentStore();
-  const { chain } = useChainStore();
-  const [apiKeys, setApiKeys] = useState<Array<{
-    id: string;
-    name: string;
-    createdAt: string;
-    expiresAt: string;
-  }>>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showKeysList, setShowKeysList] = useState(false);
-
-  // Fetch API keys
-  const loadApiKeys = useMemoizedFn(async () => {
-    setIsLoading(true);
-    const keys = await fetchApiKeys(nft.owner || '', chain);
-    setApiKeys(keys);
-    setIsLoading(false);
-  });
-
-  // Add a function to handle deleting a key
-  const handleDeleteKey = async (keyId: string) => {
-    
-    if (!keyId) {
-      message("Error: No API key specified for deletion", { type: "error" });
-      return;
-    }
-    
-    if (!nft.owner) {
-      message("Error: Owner ID required for deletion", { type: "error" });
-      return;
-    }
-    
-    setIsLoading(true);
-    try {
-      const success = await deleteApiKey(keyId, nft.owner);
-      if (success) {
-        message("API key deleted successfully", { type: "success" });
-        // Refetch API keys after successful deletion to update the UI
-        loadApiKeys();
-      }
-    } catch (error) {
-      console.error(' [handleDeleteKey] Error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Load keys on mount
-  useEffect(() => {
-    if (hasConfig) {
-      loadApiKeys();
-    }
-  }, [hasConfig]);
-
-  useEffect(() => {
-  }, [nft, chain]);
-
-  // Determine if we have API keys configured
-  const hasApiKeys = hasConfig || apiKeys.length > 0;
-
-  return (
-    <>
-      <Card className="flex items-center justify-between gap-16 p-16">
-        <div className="flex items-center gap-16">
-          <div className="w-16 h-16 flex items-center justify-center bg-white-10 rounded-full p-8">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M11.9999 22C10.3255 22 8.68323 21.5895 7.2221 20.8203C5.76097 20.0511 4.52536 18.9578 3.64439 17.6288C2.76342 16.2998 2.26267 14.7856 2.19093 13.2252C2.11919 11.6649 2.47991 10.1157 3.24219 8.7292C4.00447 7.34269 5.14124 6.16511 6.53638 5.31959C7.93153 4.47406 9.53589 3.99121 11.1865 3.92218C12.8371 3.85314 14.4774 4.20017 15.9402 4.9298C17.403 5.65944 18.6376 6.74866 19.5309 8.08C19.7265 8.37329 19.6625 8.76439 19.3799 8.9718C19.0973 9.17921 18.7208 9.11325 18.5252 8.81997C17.7685 7.68973 16.7263 6.76565 15.5061 6.13294C14.286 5.50022 12.9267 5.18083 11.55 5.20123C10.1734 5.22163 8.82562 5.58112 7.62755 6.24809C6.42948 6.91506 5.41851 7.86778 4.6972 9.01873C3.97588 10.1697 3.56719 11.4854 3.51237 12.8363C3.45754 14.1872 3.75847 15.5297 4.38427 16.7328C5.01007 17.9359 5.94238 18.96 7.09428 19.7023C8.24619 20.4447 9.57773 20.8768 10.9474 20.956C12.317 21.0351 13.6865 20.7584 14.9188 20.1542C16.1511 19.55 17.204 18.64 17.9755 17.5129C18.1673 17.2172 18.5431 17.1471 18.8285 17.347C19.1138 17.5469 19.1818 17.9376 18.99 18.2333C18.1112 19.5758 16.8645 20.677 15.3897 21.4424C13.9149 22.2078 12.2659 22.6114 10.5883 22.6132C11.0571 22.2132 11.9999 22 11.9999 22Z" fill="white"/>
-              <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" fill="white"/>
-              <path d="M19 12C19 12.5523 18.5523 13 18 13C17.4477 13 17 12.5523 17 12C17 11.4477 17.4477 11 18 11C18.5523 11 19 11.4477 19 12Z" fill="white"/>
-              <path d="M7 12C7 12.5523 6.55228 13 6 13C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11C6.55228 11 7 11.4477 7 12Z" fill="white"/>
-              <path d="M12 19C12.5523 19 13 18.5523 13 18C13 17.4477 12.5523 17 12 17C11.4477 17 11 17.4477 11 18C11 18.5523 11.4477 19 12 19Z" fill="white"/>
-              <path d="M12 7C12.5523 7 13 6.55228 13 6C13 5.44772 12.5523 5 12 5C11.4477 5 11 5.44772 11 6C11 6.55228 11.4477 7 12 7Z" fill="white"/>
-              <path d="M16.9498 16.9503C17.3403 16.5598 17.3403 15.9266 16.9498 15.5361C16.5593 15.1456 15.926 15.1456 15.5355 15.5361C15.145 15.9266 15.145 16.5598 15.5355 16.9503C15.926 17.3408 16.5593 17.3408 16.9498 16.9503Z" fill="white"/>
-              <path d="M8.46481 8.46481C8.85534 8.07428 8.85534 7.44112 8.46481 7.05059C8.07429 6.66007 7.44112 6.66007 7.0506 7.05059C6.66008 7.44112 6.66008 8.07428 7.0506 8.46481C7.44112 8.85533 8.07429 8.85533 8.46481 8.46481Z" fill="white"/>
-              <path d="M16.9498 7.05059C16.5593 6.66007 15.926 6.66007 15.5355 7.05059C15.145 7.44112 15.145 8.07428 15.5355 8.46481C15.926 8.85533 16.5593 8.85533 16.9498 8.46481C17.3403 8.07428 17.3403 7.44112 16.9498 7.05059Z" fill="white"/>
-              <path d="M8.46481 15.5361C8.07429 15.1456 7.44112 15.1456 7.0506 15.5361C6.66008 15.9266 6.66008 16.5598 7.0506 16.9503C7.44112 17.3408 8.07429 17.3408 8.46481 16.9503C8.85534 16.5598 8.85534 15.9266 8.46481 15.5361Z" fill="white"/>
-            </svg>
-          </div>
-          <span>API Key Generation</span>
-        </div>
-        <div className="flex items-center gap-16">
-          <Button 
-            onClick={() => {
-              if (apiKeys.length > 0) {
-                // If we already have keys, show the list when clicking Manage
-                setModalOpen(true);
-                setShowKeysList(true);
-                loadApiKeys(); // Refresh the keys list
-              } else {
-                // If we don't have keys, just open the creation modal
-                setModalOpen(true);
-              }
-            }}
-            variant={apiKeys.length > 0 ? "secondary" : "primary"}
-            className={apiKeys.length > 0 ? "!w-[7.5rem]" : ""}
-          >
-            {apiKeys.length > 0 ? "Manage" : "Create API Key"}
-          </Button>
-        </div>
-      </Card>
-
-      <ApiKeyModal
-        open={modalOpen}
-        onClose={() => {
-          setModalOpen(false);
-          setShowKeysList(false);
-          // Only trigger API key refresh if config exists - don't try to load keys if we failed to create them
-          if (hasConfig) loadApiKeys();
-        }}
-        config={config}
-        onSave={async (configUpdate, apiKey) => {
-          try {
-            // Make sure we have an API key before proceeding
-            if (!apiKey) {
-              console.error(' [ApiKeyFeature] No API key provided to onSave');
-              throw new Error('No API key was generated');
-            }
-            
-            await onSave(configUpdate, apiKey);
-            // Only reload keys if save was successful
-            loadApiKeys();
-          } catch (error) {
-            console.error(' [ApiKeyFeature] Error saving API key config:', error);
-            message("Failed to save API key configuration", { type: "error" });
-          }
-        }}
-      />
-
-      {/* Key Management View Modal */}
-      <Modal
-        open={showKeysList && modalOpen}
-        size="m"
-        onMaskClick={() => {
-          setShowKeysList(false);
-          setModalOpen(false);
-        }}
-      >
-        <ModalTitleWithBorder
-          closable
-          onClose={() => {
-            setShowKeysList(false);
-            setModalOpen(false);
-          }}
-        >
-          Manage API Keys
-        </ModalTitleWithBorder>
-        <ModalContent className="gap-16 max-h-[600px] overflow-auto">
-          {isLoading ? (
-            <div className="flex justify-center items-center h-40">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
-            </div>
-          ) : apiKeys.length > 0 ? (
-            <div className="space-y-4">
-              {apiKeys.map((key) => (
-                <Card key={key.id} className="p-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{key.name}</p>
-                    <p className="text-size-12 text-white-60">
-                      Created: {new Date(key.createdAt).toLocaleDateString()} | 
-                      Expires: {new Date(key.expiresAt).toLocaleDateString()}
-                    </p>
-                    <p className="text-size-10 text-white-40">ID: {key.id}</p>
-                  </div>
-                  <Tooltip content="Delete API Key">
-                    <Button
-                      variant="secondary"
-                      size="s"
-                      onClick={() => {
-                        // Make sure we have a valid key ID before trying to delete
-                        if (key && key.id) {
-                          handleDeleteKey(key.id);
-                        } else {
-                          console.error(' [Delete Button] Cannot delete - Missing key ID for:', key);
-                          message("Cannot delete: Missing key ID", { type: "error" });
-                        }
-                      }}
-                      disabled={isLoading}
-                    >
-                      <IconDelete className="text-red" />
-                    </Button>
-                  </Tooltip>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center p-4">
-              <p>No API keys found</p>
-              <Button
-                onClick={() => {
-                  setShowKeysList(false);
-                }}
-                className="mt-4"
-              >
-                Create New Key
-              </Button>
-            </div>
-          )}
-          
-          <div className="flex justify-end mt-8 gap-6 pb-6">
-            <Button
-              variant="primary"
-              onClick={() => {
-                setShowKeysList(false);
-              }}
-            >
-              Create New Key
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setShowKeysList(false);
-                setModalOpen(false);
-              }}
-            >
-              Close
-            </Button>
-          </div>
-        </ModalContent>
-      </Modal>
-    </>
   );
 } 

@@ -4,18 +4,19 @@ import {
   IconDisconnect,
   Toggle,
   Tooltip,
+  message,
 } from "@/primitive/components";
 import { NFT } from "@/types";
 import Image from "next/image";
 import { TwitterModal } from "./twitter";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { api } from "@/primitive/api";
 import { CharacterConfig, Config } from "./types";
 import { useMemoizedFn, useMount } from "ahooks";
 import { TelegramModal } from "./telegram";
 import { VoiceModal } from "./voice";
 import { ConfirmModal } from "./confirm";
-import { ApiKeyFeature } from "./api-keys";
+import { ApiKeyModal, fetchApiKeys } from "./api-keys";
 import { editAgentConfig, getAgentConfig } from "./network";
 import { useAgentStore } from "../../store";
 import { SupportedChain } from "@/types/preference";
@@ -56,8 +57,16 @@ export function Features({ nft }: { nft: NFT }) {
   const [xOpen, setXOpen] = useState(false);
   const [tgOpen, setTgOpen] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
+  const [apiKeyOpen, setApiKeyOpen] = useState(false);
+  const [showApiKeysList, setShowApiKeysList] = useState(false);
   const [twitterBound, setTwitterBound] = useState(false);
   const [isConfigLoading, setIsConfigLoading] = useState(false);
+  const [apiKeys, setApiKeys] = useState<Array<{
+    id: string;
+    name: string;
+    createdAt: string;
+    expiresAt: string;
+  }>>([]);
   const [metaInfo, setMetaInfo] = useState<{
     twitterUsername: string;
     telegramBotId: string;
@@ -82,6 +91,12 @@ export function Features({ nft }: { nft: NFT }) {
       .then((res) => {
         setMetaInfo(res);
       });
+    // Load API keys
+    if (nft.owner) {
+      fetchApiKeys(nft.owner, chain).then(keys => {
+        setApiKeys(keys);
+      });
+    }
   });
   const onSave = useMemoizedFn(async (_config: Partial<CharacterConfig>) => {
     const newConfig = await editAgentConfig(
@@ -135,10 +150,8 @@ export function Features({ nft }: { nft: NFT }) {
     [nft.owner, userAddress]
   );
   const hasApiKeyConfig = useMemo(() => {
-    return Boolean(
-      config?.characterConfig?.settings.secrets?.API_KEY_NAME
-    );
-  }, [config]);
+    return apiKeys.length > 0;
+  }, [apiKeys]);
   return (
     <>
       <div className='w-full flex flex-col gap-16 mt-32'>
@@ -309,37 +322,24 @@ export function Features({ nft }: { nft: NFT }) {
             </Button>
           ) : null}
         </Card>
-        <ApiKeyFeature 
-          config={config?.characterConfig}
-          onSave={async (configUpdate, apiKey) => {
-            try {
-              setIsConfigLoading(true);
-              const newConfig = await editAgentConfig(
-                nft.id,
-                {
-                  ...config?.characterConfig,
-                  settings: {
-                    ...config?.characterConfig.settings,
-                    secrets: {
-                      ...config?.characterConfig.settings.secrets,
-                      ...configUpdate.settings?.secrets,
-                    },
-                  },
-                },
-                chain
-              );
-              setConfig({
-                ...(config as Config),
-                characterConfig: newConfig.characterConfig,
-              });
-              return Promise.resolve();
-            } catch (error) {
-              return Promise.reject(error);
-            } finally {
-              setIsConfigLoading(false);
-            }
-          }}
-        />
+        <Card className='flex items-center justify-between gap-16 p-16'>
+          <div className='flex items-center gap-16'>
+            <Image src={"/api-key.png"} height={64} width={64} alt='' />
+            <span>API Key Generation</span>
+          </div>
+          {isNFTOwner && (
+            <Button
+              className='!w-[7.5rem]'
+              variant={hasApiKeyConfig ? "secondary" : "primary"}
+              onClick={() => {
+                setApiKeyOpen(true);
+                setShowApiKeysList(hasApiKeyConfig);
+              }}
+            >
+              {hasApiKeyConfig ? "Manage" : "Create"}
+            </Button>
+          )}
+        </Card>
       </div>
       <TwitterModal
         open={xOpen}
@@ -396,6 +396,54 @@ export function Features({ nft }: { nft: NFT }) {
             .finally(() => {
               setIsConfigLoading(false);
             });
+        }}
+      />
+      <ApiKeyModal
+        open={apiKeyOpen}
+        onClose={() => {
+          setApiKeyOpen(false);
+          setShowApiKeysList(false);
+          if (nft.owner) {
+            fetchApiKeys(nft.owner, chain).then(keys => {
+              setApiKeys(keys);
+            });
+          }
+        }}
+        config={config?.characterConfig}
+        showKeysList={showApiKeysList}
+        onSave={async (configUpdate, apiKey) => {
+          try {
+            setIsConfigLoading(true);
+            const newConfig = await editAgentConfig(
+              nft.id,
+              {
+                ...config?.characterConfig,
+                settings: {
+                  ...config?.characterConfig.settings,
+                  secrets: {
+                    ...config?.characterConfig.settings.secrets,
+                    ...configUpdate.settings?.secrets,
+                  },
+                },
+              },
+              chain
+            );
+            setConfig({
+              ...(config as Config),
+              characterConfig: newConfig.characterConfig,
+            });
+
+            if (nft.owner) {
+              const updatedKeys = await fetchApiKeys(nft.owner, chain);
+              setApiKeys(updatedKeys);
+            }
+
+            return Promise.resolve();
+          } catch (error) {
+            return Promise.reject(error);
+          } finally {
+            setIsConfigLoading(false);
+          }
         }}
       />
     </>

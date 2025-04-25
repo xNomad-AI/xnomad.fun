@@ -33,6 +33,7 @@ export const fetchApiKeys = async (userId: string, chain: string) => {
       return [];
     }
     
+    // Authorization is now handled via JWT token in headers
     const response = await api.v1.get<{
       keys: Array<{
         _id?: string;
@@ -41,10 +42,7 @@ export const fetchApiKeys = async (userId: string, chain: string) => {
         createdAt: string;
         expiresAt: string;
       }>;
-    }>(`/api-keys`, {
-      userId,
-      chain,
-    });
+    }>(`/api-keys`);
     
     // Validate response
     if (!response || !response.keys) {
@@ -84,7 +82,7 @@ export const fetchApiKeys = async (userId: string, chain: string) => {
 };
 
 // Add a function to delete API key
-export const deleteApiKey = async (keyId: string, userId: string) => {
+export const deleteApiKey = async (keyId: string) => {
   try {
     if (!keyId) {
       console.error(' [deleteApiKey] Missing key ID');
@@ -92,16 +90,8 @@ export const deleteApiKey = async (keyId: string, userId: string) => {
       return false;
     }
     
-    if (!userId) {
-      console.error(' [deleteApiKey] Missing user ID');
-      message("Error: User ID required for deletion", { type: "error" });
-      return false;
-    }
-    
-    // The API expects userId as a query parameter
-    const response = await api.v1.delete(`/api-keys/${keyId}`, {
-      userId
-    });
+    // Authorization is now handled via JWT token in headers
+    const response = await api.v1.delete(`/api-keys/${keyId}`);
     
     // Check for a successful response
     if (!response) {
@@ -176,7 +166,7 @@ export function ApiKeyModal({
     
     setIsLoading(true);
     try {
-      const success = await deleteApiKey(keyId, nft.owner);
+      const success = await deleteApiKey(keyId);
       if (success) {
         message("API key deleted successfully", { type: "success" });
         // Refresh the keys list
@@ -217,13 +207,11 @@ export function ApiKeyModal({
     setSaving(true);
 
     try {
+      const nftId = nft.nftId;      
       const requestPayload = {
         name: form.name.value,
         expirationDays: form.expirationDays.value,
-        agentId: nft.agentId || nft.id,
-        userId: nft.owner,
-        chain: chain,
-        address: userAddress,
+        nftId
       };
 
       // Make the actual API call to create the API key

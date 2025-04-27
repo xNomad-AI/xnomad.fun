@@ -24,6 +24,7 @@ import { useChainStore } from "@/app/layout/chain-provider";
 import "./token-info.css";
 import { TokenInfoDisplay } from "./TokenInfoDisplay";
 import { News, TokenInfo, Twitter } from "./types";
+import { XProfileDisplay } from "./XProfileDisplay";
 
 export function AnalyzeResponse({
   message,
@@ -209,53 +210,7 @@ export function AnalyzeResponse({
           hidden: infoType !== "twitter",
         })}
       >
-        🪙Token: ${tokenInfo?.symbol}
-        <br />
-        🗺️CA: {tokenInfo?.address}
-        <br />
-        🔗X Profile:{" "}
-        <TextAnchor
-          className='inline-flex'
-          withDecoration
-          href={`https://x.com/${twitter?.screen_name}`}
-        >
-          https://x.com/{twitter?.screen_name}
-        </TextAnchor>
-        <br />
-        Name: @{twitter?.screen_name}
-        <br />
-        Registered in:{" "}
-        {twitter?.register_date
-          ? format(twitter?.register_date ?? "", "MMM dd , yyyy")
-          : "N/A"}
-        <br />
-        Followers: {toThousandNum(twitter?.followers_count ?? 0)}
-        <br />
-        Influencers: {toThousandNum(twitter?.influencers_count ?? 0)}
-        <br />
-        Projects: {toThousandNum(twitter?.projects_count)} (includes project
-        founders, employees, etc.)
-        <br />
-        VC: {toThousandNum(twitter?.venture_capitals_count)} (includes VC
-        founders, employees, etc.)
-        <br />
-        Tweets: {toThousandNum(twitter?.tweets_count)}
-        <br />
-        Search on X:{" "}
-        <TextAnchor
-          withDecoration
-          className='inline-flex'
-          href={`https://x.com/search?q=${tokenInfo?.symbol}`}
-        >
-          {tokenInfo?.symbol}
-        </TextAnchor>{" "}
-        <TextAnchor
-          className='inline-flex'
-          withDecoration
-          href={`https://x.com/search?q=${tokenInfo?.address}`}
-        >
-          {tokenInfo?.address}
-        </TextAnchor>
+        <XProfileDisplay twitter={twitter} tokenInfo={tokenInfo} />
       </div>
     </ChatContentContainer>
   );

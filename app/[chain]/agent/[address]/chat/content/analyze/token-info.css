@@ -1,13 +1,15 @@
 .token-info-table {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
   background: rgba(18, 18, 18, 0.6);
+  border-left: none;
+  border-right: none;
 }
 
 .token-info-row {
   display: flex;
-  padding: 12px 20px;
+  padding: 8px 12px 8px 4px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
@@ -18,8 +20,8 @@
 .token-info-label {
   color: var(--color-text2);
   flex-shrink: 0;
-  padding-right: 12px;
-  width: 130px;
+  padding-right: 16px;
+  width: 140px;
   font-size: 14px;
   text-align: left;
   font-weight: bold;

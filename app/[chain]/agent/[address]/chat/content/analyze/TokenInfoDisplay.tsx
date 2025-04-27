@@ -20,7 +20,7 @@ export function TokenInfoDisplay({
 
   return (
     <>
-      <Card className="w-full p-0 bg-background text-size-14 overflow-hidden rounded-lg">
+      <Card className="w-full p-0 bg-background text-size-14 overflow-hidden border-l-0 border-r-0 rounded-none">
         <div className="token-info-table">
           <div className="token-info-row">
             <div className="token-info-label">Token</div>

@@ -21,7 +21,7 @@ export function XProfileDisplay({
   }
 
   return (
-    <Card className="w-full p-0 bg-background text-size-14 overflow-hidden rounded-lg">
+    <Card className="w-full p-0 bg-background text-size-14 overflow-hidden border-l-0 border-r-0 rounded-none">
       <div className="token-info-table">    
         <div className="token-info-row">
           <div className="token-info-label">X Profile</div>
@@ -78,7 +78,7 @@ export function XProfileDisplay({
           <div className="token-info-label">Projects</div>
           <div className="token-info-value">
             {twitter?.projects_count 
-              ? `${toThousandNum(twitter?.projects_count)} (includes project founders, employees, etc.)`
+              ? `${toThousandNum(twitter?.projects_count)}(includes project founders, employees, etc.)`
               : "N/A (includes project founders, employees, etc.)"}
           </div>
         </div>
@@ -118,7 +118,7 @@ export function XProfileDisplay({
                 href={`https://x.com/search?q=${tokenInfo?.symbol}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mr-3"
+                className="mr-10"
               >
                 Search Name
               </a>

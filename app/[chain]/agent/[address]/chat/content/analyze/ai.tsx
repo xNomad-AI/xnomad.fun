@@ -132,6 +132,8 @@ export function AnalyzeResponse({
           hidden: infoType !== "news",
         })}
       >
+        Recommend Tweets({news.length})
+        <br />
         <br />
         <div className='w-full flex flex-col gap-16 max-h-[400px] overflow-auto flex-shrink-0'>
           {news.length > 0 ? (

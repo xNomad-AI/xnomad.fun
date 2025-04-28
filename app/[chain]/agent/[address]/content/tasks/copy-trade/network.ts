@@ -60,6 +60,8 @@ export interface TwitterKOL {
   followers: number;
   solanaAddress: string;
   description?: string;
+  pnl30d: number;
+  pnl30dAmount: number;
 }
 
 export interface TwitterKOLsResponse {

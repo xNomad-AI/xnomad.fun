@@ -310,8 +310,12 @@ export function CopyTradeForm({
                             <div className="text-size-14 text-text1 truncate max-w-[200px]" title={kol.solanaAddress}>
                               {kol.solanaAddress.substring(0, 10)}...{kol.solanaAddress.substring(kol.solanaAddress.length - 4)}
                             </div>
-                            <div className="text-success text-size-12 mt-1">
-                              {/* PnL: +$341.3K */}
+                            <div className="text-size-12 mt-1">
+                              <span className="text-text2">PnL 30D: </span>
+                              <span className={kol.pnl30d >= 0 ? "text-[#00C087]" : "text-[#FF5B5B]"}>
+                                {kol.pnl30d >= 0 ? "+" : ""}{kol.pnl30d.toFixed(2)}% (
+                                {kol.pnl30dAmount >= 0 ? "+" : "-"}${Math.abs(kol.pnl30dAmount).toFixed(1)}K)
+                              </span>
                             </div>
                           </div>
                         </div>

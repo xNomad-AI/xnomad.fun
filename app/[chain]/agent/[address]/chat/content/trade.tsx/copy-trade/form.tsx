@@ -15,6 +15,25 @@ import { PublicKey } from "@solana/web3.js";
 import { isValidAddress } from "@/lib/utils/address";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
+import { useEffect, useState } from "react";
+import { TwitterKOL, searchTwitterKOLs } from "../../../../content/tasks/copy-trade/network";
+
+// Inline implementation of useDebounce to avoid import issues
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 export function CopyTradeForm({
   form,
@@ -29,6 +48,137 @@ export function CopyTradeForm({
 }) {
   const { chain } = useChainStore();
   const { balance } = useBalanceOnChain(address);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const [twitterKOLs, setTwitterKOLs] = useState<TwitterKOL[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [targetType, setTargetType] = useState<"address" | "name">("address");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const PAGE_SIZE = 50;
+  
+  // Load all Twitter KOLs when target type changes to "name"
+  useEffect(() => {
+    if (targetType === "name") {
+      setIsSearching(true);
+      setShowDropdown(true);
+      setCurrentPage(1);
+      setTwitterKOLs([]);
+      
+      searchTwitterKOLs("", 1, PAGE_SIZE)
+        .then((res) => {
+          setTwitterKOLs(res.items);
+          setHasMore(res.items.length === PAGE_SIZE);
+        })
+        .catch((err) => {
+          console.error("Error loading Twitter KOLs:", err);
+        })
+        .finally(() => {
+          setIsSearching(false);
+        });
+    } else {
+      setShowDropdown(false);
+    }
+  }, [targetType]);
+
+  // Handle search filtering
+  useEffect(() => {
+    if (targetType === "name" && debouncedSearchQuery && debouncedSearchQuery.length > 0) {
+      setIsSearching(true);
+      setCurrentPage(1);
+      setTwitterKOLs([]);
+      
+      const searchTerm = debouncedSearchQuery.startsWith('@') 
+        ? debouncedSearchQuery 
+        : '@' + debouncedSearchQuery;
+      
+      searchTwitterKOLs(searchTerm, 1, PAGE_SIZE)
+        .then((res) => {
+          setTwitterKOLs(res.items);
+          setHasMore(res.items.length === PAGE_SIZE);
+        })
+        .catch((err) => {
+          console.error("Error searching Twitter KOLs:", err);
+        })
+        .finally(() => {
+          setIsSearching(false);
+        });
+    }
+  }, [debouncedSearchQuery, targetType]);
+
+  // Handle scroll to load more
+  const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
+    if (scrollHeight - scrollTop <= clientHeight * 1.5 && !isSearching && hasMore) {
+      setIsSearching(true);
+      const nextPage = currentPage + 1;
+      
+      try {
+        const searchTerm = debouncedSearchQuery.startsWith('@') 
+          ? debouncedSearchQuery 
+          : '@' + debouncedSearchQuery;
+        
+        const res = await searchTwitterKOLs(searchTerm, nextPage, PAGE_SIZE);
+        setTwitterKOLs(prev => [...prev, ...res.items]);
+        setHasMore(res.items.length === PAGE_SIZE);
+        setCurrentPage(nextPage);
+      } catch (err) {
+        console.error("Error loading more Twitter KOLs:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Add CSS to ensure proper scrolling
+    const style = document.createElement('style');
+    style.textContent = `
+      .dropdown-scroll::-webkit-scrollbar {
+        width: 8px;
+      }
+      .dropdown-scroll::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        border-radius: 4px;
+      }
+      .dropdown-scroll::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 4px;
+      }
+      .dropdown-scroll::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  const handleSelectTwitterKOL = (twitterKOL: TwitterKOL) => {
+    setForm({
+      ...form,
+      target: {
+        ...form.target,
+        value: twitterKOL.solanaAddress,
+        isInValid: false,
+        errorMsg: "",
+      },
+      twitterKOL: {
+        id: twitterKOL._id,
+        handle: twitterKOL.twitterHandle,
+        name: twitterKOL.name,
+        profilePicture: twitterKOL.profilePicture,
+      },
+    });
+    setSearchQuery("");
+    setShowDropdown(false);
+    // Switch back to address mode after selection to show the selected address
+    setTargetType("address");
+  };
+
   return (
     <>
       <FormItem
@@ -53,27 +203,131 @@ export function CopyTradeForm({
           }}
         />
       </FormItem>
-      <FormItem label={"Target Wallet Address"} {...form.target}>
-        <TextField
-          disabled={type === "edit"}
-          value={form.target.value}
-          placeholder='Target Wallet Address'
-          onChange={(event) => {
-            const isValid = isValidAddress(event.target.value, chain);
-            setForm({
-              ...form,
-              target: {
-                ...form.target,
-                isInValid: !isValid,
-                errorMsg: isValid ? "" : "Invalid address",
-                value: event.target.value,
-              },
-            });
-          }}
-        />
-      </FormItem>
+      
+      <div className="mb-12">
+        <div className="text-size-14 mb-4 flex items-center">
+          Target Wallet Address
+          {form.target.isInValid && (
+            <span className="ml-8 text-error text-size-12">{form.target.errorMsg}</span>
+          )}
+        </div>
+        
+        <div className="flex items-center gap-16 mb-4">
+          <div className="flex items-center gap-4">
+            <Radio 
+              value="address" 
+              checked={targetType === "address"}
+              onClick={() => setTargetType("address")}
+            />
+            <span>Address</span>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <Radio 
+              value="name" 
+              checked={targetType === "name"}
+              onClick={() => {
+                setTargetType("name");
+                setShowDropdown(true);
+              }}
+            />
+            <span>X Handle</span>
+          </div>
+        </div>
+        
+        <div className="relative w-full">
+          {targetType === "address" ? (
+            <TextField
+              disabled={type === "edit"}
+              value={form.target.value}
+              placeholder='Target Wallet Address'
+              onChange={(event) => {
+                const isValid = isValidAddress(event.target.value, chain);
+                setForm({
+                  ...form,
+                  target: {
+                    ...form.target,
+                    isInValid: !isValid,
+                    errorMsg: isValid ? "" : "Invalid address",
+                    value: event.target.value,
+                  },
+                });
+              }}
+            />
+          ) : (
+            <div className="relative">
+              <TextField
+                value={searchQuery}
+                placeholder='Search X Handle'
+                prefixNode={<span className="text-text2">@</span>}
+                onChange={(event) => {
+                  setSearchQuery(event.target.value);
+                }}
+                onFocus={() => setShowDropdown(true)}
+              />
+              
+              {showDropdown && targetType === "name" && (
+                <div 
+                  className="absolute z-[100] w-full bg-[#202124] rounded-6 border border-white-10 shadow-lg"
+                  style={{
+                    maxHeight: "156px",
+                    overflowY: "auto",
+                    left: 0,
+                    top: "100%",
+                    marginTop: "4px",
+                    position: "absolute"
+                  }}
+                >
+                  {isSearching && twitterKOLs.length === 0 ? (
+                    <div className="p-12 text-center">Searching...</div>
+                  ) : twitterKOLs.length > 0 ? (
+                    <div 
+                      className="dropdown-scroll" 
+                      style={{ overflowY: "auto" }}
+                      onScroll={handleScroll}
+                    >
+                      {twitterKOLs.map((kol) => (
+                        <div
+                          key={kol._id}
+                          className="px-12 py-8 cursor-pointer hover:bg-white-10 flex items-center justify-between border-b border-white-10 last:border-b-0"
+                          onClick={() => handleSelectTwitterKOL(kol)}
+                          style={{ height: "64px" }} // Increased height to accommodate the new layout
+                        >
+                          <div className="flex flex-col">
+                            <div className="flex items-center">
+                              <div className="font-bold text-size-15">
+                                {kol.twitterHandle}
+                              </div>
+                              <div className="text-text2 text-size-14 ml-4">
+                                {kol.name || kol.userName}
+                              </div>
+                            </div>
+                            <div className="text-text2 text-size-12 mt-1">
+                              Followers: {kol.followers ? kol.followers.toLocaleString() : '0'}
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <div className="text-size-14 text-text1 truncate max-w-[200px]" title={kol.solanaAddress}>
+                              {kol.solanaAddress.substring(0, 10)}...{kol.solanaAddress.substring(kol.solanaAddress.length - 4)}
+                            </div>
+                            <div className="text-success text-size-12 mt-1">
+                              {/* PnL: +$341.3K */}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center">No results found</div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
 
-      <FormItem label={"Copy Mode"} {...form.mode}>
+      <FormItem label={"Copy Mode"} {...form.mode} className="mt-0 mb-2">
         <RadioGroup
           className='gap-16'
           value={form.mode.value}
@@ -105,7 +359,7 @@ export function CopyTradeForm({
           </Radio>
         </RadioGroup>
       </FormItem>
-      <div className='w-full flex flex-col gap-8'>
+      <div className='w-full flex flex-col gap-8 mb-2'>
         <FormItem
           label={
             form.mode.value === "amount"
@@ -113,6 +367,7 @@ export function CopyTradeForm({
               : "Buy percentage of each trade"
           }
           {...form.amount}
+          className="mb-0"
         >
           <TextField
             placeholder={
@@ -146,7 +401,7 @@ export function CopyTradeForm({
           </div>
         ) : null}
       </div>
-      <div className='flex items-center gap-8'>
+      <div className='flex items-center gap-8 mt-2'>
         <Checkbox
           value={form.isCopySell.value}
           onClick={() => {

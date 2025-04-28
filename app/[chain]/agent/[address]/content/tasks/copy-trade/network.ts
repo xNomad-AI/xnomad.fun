@@ -47,8 +47,35 @@ export function setCopyTradeStatus(
 export function editCopyTrade(agentId: string, id: number, task: CopyTrade) {
   return api.v1.post<CopyTrade>(
     `/agent/copy-trade?agentId=${agentId}&id=${id}`,
-    {
-      ...task,
-    }
+    task
   );
+}
+
+export interface TwitterKOL {
+  _id: string;
+  twitterHandle: string;
+  name: string;
+  userName: string;
+  profilePicture: string;
+  followers: number;
+  solanaAddress: string;
+  description?: string;
+}
+
+export interface TwitterKOLsResponse {
+  items: TwitterKOL[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export function searchTwitterKOLs(search?: string, page = 1, limit = 5) {
+  return api.v1.get<TwitterKOLsResponse>("/alpha/twitter-kols", {
+    page,
+    limit,
+    search,
+  });
 }

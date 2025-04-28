@@ -9,13 +9,21 @@ import { CopyTradeForm } from "./form";
 import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { PublicKey } from "@solana/web3.js";
+
 export type CopyTradeFormType = {
   name: FormValue<string>;
   amount: FormValue<string>;
   target: FormValue<string>;
   mode: FormValue<"amount" | "percentage">;
   isCopySell: FormValue<boolean>;
+  twitterKOL?: {
+    id: string;
+    handle: string;
+    name: string;
+    profilePicture: string;
+  };
 };
+
 export const initCopyTradeForm = {
   name: {
     value: "",
@@ -48,11 +56,13 @@ export const initCopyTradeForm = {
     errorMsg: "",
   },
 } satisfies CopyTradeFormType;
+
 export function CopyTrade({ message }: { message: ContentWithUser }) {
   const { nft } = useAgentStore();
   const { deleteMessageById, addAndSendMessage } = useChatContext();
   const [form, setForm] = useState<CopyTradeFormType>(initCopyTradeForm);
   const { chain } = useChainStore();
+  
   return (
     <ChatContentContainer message={message}>
       <div className='flex flex-col gap-16 w-full'>
@@ -84,28 +94,53 @@ export function CopyTrade({ message }: { message: ContentWithUser }) {
           <Button
             size='s'
             onClick={() => {
-              if (Object.values(form).some((item) => item.isInValid)) {
+              if (Object.values(form)
+                .filter((item): item is FormValue<any> => 
+                  typeof item === 'object' && 'isInValid' in item)
+                .some((item) => item.isInValid)) {
                 return;
               }
+              
               let allValid = true;
               const newForm = { ...form };
-              Object.keys(newForm).forEach((_key) => {
-                const key = _key as keyof typeof newForm;
-                if (newForm[key].required) {
-                  if (!newForm[key].value) {
-                    allValid = false;
-                    newForm[key].isInValid = true;
-                    newForm[key].errorMsg = "Required";
-                  }
+              
+              // Only validate FormValue fields, not TwitterKOL
+              const fieldsToValidate = ['name', 'amount', 'target', 'mode', 'isCopySell'] as const;
+              
+              fieldsToValidate.forEach((key) => {
+                const field = newForm[key];
+                if (field.required && !field.value) {
+                  allValid = false;
+                  field.isInValid = true;
+                  field.errorMsg = "Required";
                 }
               });
+              
               if (!allValid) {
                 setForm(newForm);
                 return;
               }
 
-              addAndSendMessage(
-                form.mode.value === "amount"
+              let prompt = '';
+              
+              if (form.twitterKOL) {
+                prompt = form.mode.value === "amount"
+                  ? `Copy trade the ${form.target.value} wallet (Twitter: ${form.twitterKOL.handle}), named ${
+                      form.name.value
+                    }, invest a fixed amount of ${
+                      form.amount.value
+                    } ${getCurrencySymbol(chain)} per trade, and ${
+                      form.isCopySell.value ? "enable" : "disable"
+                    } copy selling.`
+                  : `Copy trade the ${form.target.value} wallet (Twitter: ${form.twitterKOL.handle}), named ${
+                      form.name.value
+                    }, invest a fixed percentage of ${
+                      form.amount.value
+                    }% of the target per trade, and ${
+                      form.isCopySell.value ? "enable" : "disable"
+                    } copy selling.`;
+              } else {
+                prompt = form.mode.value === "amount"
                   ? `Copy trade the ${form.target.value} wallet, named ${
                       form.name.value
                     }, invest a fixed amount of ${
@@ -119,8 +154,10 @@ export function CopyTrade({ message }: { message: ContentWithUser }) {
                       form.amount.value
                     }% of the target per trade, and ${
                       form.isCopySell.value ? "enable" : "disable"
-                    } copy selling.`
-              );
+                    } copy selling.`;
+              }
+
+              addAndSendMessage(prompt);
               deleteMessageById(message.id);
             }}
           >

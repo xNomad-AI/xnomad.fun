@@ -73,7 +73,7 @@ export function CopyTrade({ message }: { message: ContentWithUser }) {
               "Copy Trade allows you to copy the buys and sells of any target wallet."
             }
           >
-            <IconInfo />
+            <IconInfo className='text-size-16 text-text1' />
           </Tooltip>
         </div>
         <CopyTradeForm

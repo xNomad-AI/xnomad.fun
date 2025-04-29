@@ -33,7 +33,7 @@ export function FormItem<T>(
           </div>
           {props.desc && (
             <Tooltip content={props.desc}>
-              <IconInfo />
+              <IconInfo className='text-size-16 text-text1' />
             </Tooltip>
           )}
         </div>

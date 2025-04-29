@@ -192,6 +192,7 @@ export function CopyTradeForm({
         <TextField
           value={form.name.value}
           placeholder='Name'
+          className='!bg-background'
           onChange={(event) => {
             setForm({
               ...form,
@@ -234,6 +235,7 @@ export function CopyTradeForm({
                 disabled={type === "edit"}
                 value={form.target.value}
                 placeholder='Target Wallet Address'
+                className='!bg-background'
                 onChange={(event) => {
                   const isValid = isValidAddress(event.target.value, chain);
                   setForm({
@@ -256,6 +258,7 @@ export function CopyTradeForm({
               <TextField
                 value={searchQuery}
                 placeholder='Search X Handle'
+                className='!bg-background'
                 prefixNode={<span className="text-text2">@</span>}
                 onChange={(event) => {
                   setSearchQuery(event.target.value);
@@ -389,6 +392,7 @@ export function CopyTradeForm({
                 : "Percentage"
             }
             value={form.amount.value}
+            className='!bg-background'
             suffixNode={
               form.mode.value === "percentage" ? "%" : getCurrencySymbol(chain)
             }

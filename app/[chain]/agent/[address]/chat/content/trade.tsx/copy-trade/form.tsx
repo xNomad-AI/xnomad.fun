@@ -17,6 +17,7 @@ import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { useEffect, useState } from "react";
 import { TwitterKOL, searchTwitterKOLs } from "../../../../content/tasks/copy-trade/network";
+import ClickAwayListener from "react-click-away-listener";
 
 // Inline implementation of useDebounce to avoid import issues
 function useDebounce<T>(value: T, delay: number): T {
@@ -264,67 +265,79 @@ export function CopyTradeForm({
                   setSearchQuery(event.target.value);
                 }}
                 onFocus={() => setShowDropdown(true)}
+                onClick={(e) => e.stopPropagation()}
               />
               
               {showDropdown && targetType === "name" && (
-                <div 
-                  className="absolute z-[100] w-full bg-[#202124] rounded-6 border border-white-10 shadow-lg"
-                  style={{
-                    maxHeight: "196px",
-                    overflowY: "auto",
-                    left: 0,
-                    top: "100%",
-                    marginTop: "4px",
-                    position: "absolute"
+                <ClickAwayListener 
+                  onClickAway={(e) => {
+                    // Don't close if clicking the search field
+                    const target = e.target as HTMLElement;
+                    if (target.tagName === 'INPUT' || target.closest('input')) {
+                      return;
+                    }
+                    setShowDropdown(false);
                   }}
                 >
-                  {isSearching && twitterKOLs.length === 0 ? (
-                    <div className="p-12 text-center">Searching...</div>
-                  ) : twitterKOLs.length > 0 ? (
-                    <div 
-                      className="dropdown-scroll" 
-                      style={{ overflowY: "auto" }}
-                      onScroll={handleScroll}
-                    >
-                      {twitterKOLs.map((kol) => (
-                        <div
-                          key={kol._id}
-                          className="px-12 py-6 cursor-pointer hover:bg-white-10 flex items-center justify-between border-b border-white-10 last:border-b-0"
-                          onClick={() => handleSelectTwitterKOL(kol)}
-                          style={{ height: "56px" }}
-                        >
-                          <div className="flex flex-col">
-                            <div className="flex items-center">
-                              <div className="font-bold text-size-15">
-                                {kol.twitterHandle}
+                  <div 
+                    className="absolute z-[100] w-full bg-[#202124] rounded-6 border border-white-10 shadow-lg"
+                    style={{
+                      maxHeight: "196px",
+                      overflowY: "auto",
+                      left: 0,
+                      top: "100%",
+                      marginTop: "4px",
+                      position: "absolute"
+                    }}
+                  >
+                    {isSearching && twitterKOLs.length === 0 ? (
+                      <div className="p-12 text-center">Searching...</div>
+                    ) : twitterKOLs.length > 0 ? (
+                      <div 
+                        className="dropdown-scroll" 
+                        style={{ overflowY: "auto" }}
+                        onScroll={handleScroll}
+                      >
+                        {twitterKOLs.map((kol) => (
+                          <div
+                            key={kol._id}
+                            className="px-12 py-6 cursor-pointer hover:bg-white-10 flex items-center justify-between border-b border-white-10 last:border-b-0"
+                            onClick={() => handleSelectTwitterKOL(kol)}
+                            style={{ height: "56px" }}
+                          >
+                            <div className="flex flex-col">
+                              <div className="flex items-center">
+                                <div className="font-bold text-size-15">
+                                  {kol.twitterHandle}
+                                </div>
+                                <div className="text-text2 text-size-14 ml-4">
+                                  {kol.name || kol.userName}
+                                </div>
                               </div>
-                              <div className="text-text2 text-size-14 ml-4">
-                                {kol.name || kol.userName}
+                              <div className="text-text2 text-size-12 mt-1">
+                                Followers: {kol.followers ? kol.followers.toLocaleString() : '0'}
                               </div>
                             </div>
-                            <div className="text-text2 text-size-12 mt-1">
-                              Followers: {kol.followers ? kol.followers.toLocaleString() : '0'}
+                            <div className="flex flex-col items-end">
+                              <div className="text-size-14 text-text1 truncate max-w-[200px]" title={kol.solanaAddress}>
+                                {kol.solanaAddress.substring(0, 10)}...{kol.solanaAddress.substring(kol.solanaAddress.length - 4)}
+                              </div>
+                              <div className="text-size-12 mt-1">
+                                <span className="text-text2">PnL 30D: </span>
+                                <span className={kol.pnl30d >= 0 ? "text-[#00C087]" : "text-[#FF5B5B]"}>
+                                  {kol.pnl30d >= 0 ? "+" : ""}{kol.pnl30d.toFixed(2)}% (
+                                  {kol.pnl30dAmount >= 0 ? "+" : "-"}${Math.abs(kol.pnl30dAmount).toFixed(1)}K)
+                                </span>
+                              </div>
                             </div>
                           </div>
-                          <div className="flex flex-col items-end">
-                            <div className="text-size-14 text-text1 truncate max-w-[200px]" title={kol.solanaAddress}>
-                              {kol.solanaAddress.substring(0, 10)}...{kol.solanaAddress.substring(kol.solanaAddress.length - 4)}
-                            </div>
-                            <div className="text-size-12 mt-1">
-                              <span className="text-text2">PnL 30D: </span>
-                              <span className={kol.pnl30d >= 0 ? "text-[#00C087]" : "text-[#FF5B5B]"}>
-                                {kol.pnl30d >= 0 ? "+" : ""}{kol.pnl30d.toFixed(2)}% (
-                                {kol.pnl30dAmount >= 0 ? "+" : "-"}${Math.abs(kol.pnl30dAmount).toFixed(1)}K)
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="p-12 text-center">No results found</div>
-                  )}
-                </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-12 text-center">No results found</div>
+                    )}
+                  </div>
+                </ClickAwayListener>
               )}
             </div>
           )}

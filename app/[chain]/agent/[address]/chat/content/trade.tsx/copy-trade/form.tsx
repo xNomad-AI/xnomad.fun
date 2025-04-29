@@ -211,26 +211,20 @@ export function CopyTradeForm({
         </div>
         
         <div className="flex items-center gap-16 mb-4">
-          <div className="flex items-center gap-4">
-            <Radio 
-              value="address" 
-              checked={targetType === "address"}
-              onClick={() => setTargetType("address")}
-            />
-            <span>Address</span>
-          </div>
+          <Radio value="address" checked={targetType === "address"}>
+            <div className='flex items-center gap-4' onClick={() => setTargetType("address")}>
+              Address
+            </div>
+          </Radio>
           
-          <div className="flex items-center gap-4">
-            <Radio 
-              value="name" 
-              checked={targetType === "name"}
-              onClick={() => {
-                setTargetType("name");
-                setShowDropdown(true);
-              }}
-            />
-            <span>X Handle</span>
-          </div>
+          <Radio value="name" checked={targetType === "name"}>
+            <div className='flex items-center gap-4' onClick={() => {
+              setTargetType("name");
+              setShowDropdown(true);
+            }}>
+              X Handle
+            </div>
+          </Radio>
         </div>
         
         <div className="relative w-full">

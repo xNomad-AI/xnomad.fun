@@ -309,17 +309,18 @@ export function ApiKeyModal({
         <ModalTitleWithBorder
           closable
           onClose={onClose}
+          className="px-24"
         >
           Manage API Keys
         </ModalTitleWithBorder>
-        <ModalContent className="flex flex-col gap-16 h-[calc(100vh-200px)] min-h-[300px]">
+        <ModalContent className="flex flex-col gap-16 h-[calc(100vh-200px)] min-h-[300px] px-24">
           {isLoading ? (
             <div className="flex justify-center items-center flex-1">
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
             </div>
           ) : apiKeys.length > 0 ? (
             <>
-              <div className="flex-1 overflow-auto pr-2">
+              <div className="flex-1 overflow-auto">
                 <div className="flex flex-col gap-16">
                   {apiKeys.map((key) => (
                     <Card key={key.id} className="w-full p-16">
@@ -375,10 +376,10 @@ export function ApiKeyModal({
   // Otherwise show the creation modal
   return (
     <Modal open={open} size="m" onMaskClick={onClose}>
-      <ModalTitleWithBorder closable onClose={onClose}>
+      <ModalTitleWithBorder closable onClose={onClose} className="px-24">
         {generatedKey ? 'API Key Created' : 'API Key Generation'}
       </ModalTitleWithBorder>
-      <ModalContent className="gap-16 max-h-[600px] overflow-auto pb-0">
+      <ModalContent className="gap-16 max-h-[600px] overflow-auto pb-0 px-24">
         {generatedKey ? (
           <div className="flex flex-col gap-24 px-4 pb-16">
             <p className="text-size-16 mt-8">Your API key has been created successfully:</p>

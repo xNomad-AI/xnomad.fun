@@ -254,7 +254,7 @@ export function CopyTradeForm({
                 }}
               />
               {form.target.isInValid && (
-                <div className="text-error text-size-12 mt-2">{form.target.errorMsg}</div>
+                <div className="text-[#FF5B5B] text-size-12 mt-4">{form.target.errorMsg}</div>
               )}
             </>
           ) : (

@@ -349,7 +349,7 @@ export function ApiKeyModal({
               </div>
               <Button
                 variant="primary"
-                className="!bg-white !text-black w-full sticky bottom-0"
+                className="!bg-white !text-black w-full sticky bottom-24"
                 onClick={() => setShowKeysList(false)}
               >
                 + Create New Key

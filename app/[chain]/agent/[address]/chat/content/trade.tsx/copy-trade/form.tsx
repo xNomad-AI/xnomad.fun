@@ -207,10 +207,7 @@ export function CopyTradeForm({
       
       <div className="mb-12">
         <div className="text-size-14 mb-4 flex items-center">
-          Target Wallet Address
-          {form.target.isInValid && (
-            <span className="ml-8 text-error text-size-12">{form.target.errorMsg}</span>
-          )}
+          Target Wallet Address <span className="text-red ml-1">*</span>
         </div>
         
         <div className="flex items-center gap-16 mb-4">
@@ -238,23 +235,28 @@ export function CopyTradeForm({
         
         <div className="relative w-full">
           {targetType === "address" ? (
-            <TextField
-              disabled={type === "edit"}
-              value={form.target.value}
-              placeholder='Target Wallet Address'
-              onChange={(event) => {
-                const isValid = isValidAddress(event.target.value, chain);
-                setForm({
-                  ...form,
-                  target: {
-                    ...form.target,
-                    isInValid: !isValid,
-                    errorMsg: isValid ? "" : "Invalid address",
-                    value: event.target.value,
-                  },
-                });
-              }}
-            />
+            <>
+              <TextField
+                disabled={type === "edit"}
+                value={form.target.value}
+                placeholder='Target Wallet Address'
+                onChange={(event) => {
+                  const isValid = isValidAddress(event.target.value, chain);
+                  setForm({
+                    ...form,
+                    target: {
+                      ...form.target,
+                      isInValid: !isValid,
+                      errorMsg: isValid ? "" : "Invalid address",
+                      value: event.target.value,
+                    },
+                  });
+                }}
+              />
+              {form.target.isInValid && (
+                <div className="text-error text-size-12 mt-2">{form.target.errorMsg}</div>
+              )}
+            </>
           ) : (
             <div className="relative">
               <TextField

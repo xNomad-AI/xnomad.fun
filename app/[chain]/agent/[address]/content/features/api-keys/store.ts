@@ -13,7 +13,7 @@ interface ApiKeyForm {
 }
 
 export const API_KEY_MIN_EXPIRATION = 1;
-export const API_KEY_MAX_EXPIRATION = 365;
+export const API_KEY_MAX_EXPIRATION = 30;
 
 export const useApiKeyStore = create(
   immer<{

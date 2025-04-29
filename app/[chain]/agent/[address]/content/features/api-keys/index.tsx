@@ -305,38 +305,49 @@ export function ApiKeyModal({
         >
           Manage API Keys
         </ModalTitleWithBorder>
-        <ModalContent className="gap-16">
+        <ModalContent className="flex flex-col gap-16 h-[calc(100vh-200px)] min-h-[300px]">
           {isLoading ? (
-            <div className="flex justify-center items-center h-40">
+            <div className="flex justify-center items-center flex-1">
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
             </div>
           ) : apiKeys.length > 0 ? (
-            <div className="flex flex-col gap-16 w-full max-h-[400px] overflow-auto">
-              {apiKeys.map((key) => (
-                <Card key={key.id} className="w-full p-16">
-                  <div className="flex justify-between items-start">
-                    <div className="flex flex-col">
-                      <span className="font-medium">{key.name}</span>
-                      <span className="text-size-12 text-white-60">ID: {key.id}</span>
-                      <span className="text-size-12 text-white-60">
-                        Created: {new Date(key.createdAt).toLocaleDateString()} Expires: {new Date(key.expiresAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="mt-12">
-                      <Button
-                        variant="secondary"
-                        size="s"
-                        className="!bg-[#222] !text-[#ff3b30] font-medium"
-                        onClick={() => handleDeleteKey(key.id)}
-                        disabled={isLoading}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+            <>
+              <div className="flex-1 overflow-auto pr-2">
+                <div className="flex flex-col gap-16">
+                  {apiKeys.map((key) => (
+                    <Card key={key.id} className="w-full p-16">
+                      <div className="flex justify-between items-start">
+                        <div className="flex flex-col">
+                          <span className="font-medium">{key.name}</span>
+                          <span className="text-size-12 text-white-60">ID: {key.id}</span>
+                          <span className="text-size-12 text-white-60">
+                            Created: {new Date(key.createdAt).toLocaleDateString()} Expires: {new Date(key.expiresAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="mt-12">
+                          <Button
+                            variant="secondary"
+                            size="s"
+                            className="!bg-[#222] !text-[#ff3b30] font-medium"
+                            onClick={() => handleDeleteKey(key.id)}
+                            disabled={isLoading}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+              <Button
+                variant="primary"
+                className="!bg-white !text-black w-full sticky bottom-0"
+                onClick={() => setShowKeysList(false)}
+              >
+                + Create New Key
+              </Button>
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center p-16 h-[200px]">
               <p className="mb-8 text-white-60">No API keys found</p>
@@ -348,16 +359,6 @@ export function ApiKeyModal({
                 Create New Key
               </Button>
             </div>
-          )}
-          
-          {apiKeys.length > 0 && (
-            <Button
-              variant="primary"
-              className="!bg-white !text-black w-full"
-              onClick={() => setShowKeysList(false)}
-            >
-              + Create New Key
-            </Button>
           )}
         </ModalContent>
       </Modal>

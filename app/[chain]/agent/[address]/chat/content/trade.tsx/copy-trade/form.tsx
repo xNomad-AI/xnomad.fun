@@ -17,6 +17,7 @@ import { getCurrencySymbol } from "@/app/layout/chain-provider/utils";
 import { useChainStore } from "@/app/layout/chain-provider";
 import { useEffect, useState } from "react";
 import { TwitterKOL, searchTwitterKOLs } from "../../../../content/tasks/copy-trade/network";
+import ClickAwayListener from "react-click-away-listener";
 
 // Inline implementation of useDebounce to avoid import issues
 function useDebounce<T>(value: T, delay: number): T {
@@ -191,6 +192,7 @@ export function CopyTradeForm({
         <TextField
           value={form.name.value}
           placeholder='Name'
+          className='!bg-background'
           onChange={(event) => {
             setForm({
               ...form,
@@ -206,125 +208,138 @@ export function CopyTradeForm({
       
       <div className="mb-12">
         <div className="text-size-14 mb-4 flex items-center">
-          Target Wallet Address
-          {form.target.isInValid && (
-            <span className="ml-8 text-error text-size-12">{form.target.errorMsg}</span>
-          )}
+          Target Wallet Address <span className="text-red ml-1">*</span>
         </div>
         
         <div className="flex items-center gap-16 mb-4">
-          <div className="flex items-center gap-4">
-            <Radio 
-              value="address" 
-              checked={targetType === "address"}
-              onClick={() => setTargetType("address")}
-            />
-            <span>Address</span>
-          </div>
+          <Radio value="address" checked={targetType === "address"} onClick={() => setTargetType("address")}>
+            <div className='flex items-center gap-4' onClick={() => setTargetType("address")}>
+              Address
+            </div>
+          </Radio>
           
-          <div className="flex items-center gap-4">
-            <Radio 
-              value="name" 
-              checked={targetType === "name"}
-              onClick={() => {
-                setTargetType("name");
-                setShowDropdown(true);
-              }}
-            />
-            <span>X Handle</span>
-          </div>
+          <Radio value="name" checked={targetType === "name"} onClick={() => {
+            setTargetType("name");
+            setShowDropdown(true);
+          }}>
+            <div className='flex items-center gap-4' onClick={() => {
+              setTargetType("name");
+              setShowDropdown(true);
+            }}>
+              X Handle
+            </div>
+          </Radio>
         </div>
         
         <div className="relative w-full">
           {targetType === "address" ? (
-            <TextField
-              disabled={type === "edit"}
-              value={form.target.value}
-              placeholder='Target Wallet Address'
-              onChange={(event) => {
-                const isValid = isValidAddress(event.target.value, chain);
-                setForm({
-                  ...form,
-                  target: {
-                    ...form.target,
-                    isInValid: !isValid,
-                    errorMsg: isValid ? "" : "Invalid address",
-                    value: event.target.value,
-                  },
-                });
-              }}
-            />
+            <>
+              <TextField
+                disabled={type === "edit"}
+                value={form.target.value}
+                placeholder='Target Wallet Address'
+                className='!bg-background'
+                onChange={(event) => {
+                  const isValid = isValidAddress(event.target.value, chain);
+                  setForm({
+                    ...form,
+                    target: {
+                      ...form.target,
+                      isInValid: !isValid,
+                      errorMsg: isValid ? "" : "Invalid address",
+                      value: event.target.value,
+                    },
+                  });
+                }}
+              />
+              {form.target.isInValid && (
+                <div className="text-[#FF5B5B] text-size-12 mt-4">{form.target.errorMsg}</div>
+              )}
+            </>
           ) : (
             <div className="relative">
               <TextField
                 value={searchQuery}
                 placeholder='Search X Handle'
+                className='!bg-background'
                 prefixNode={<span className="text-text2">@</span>}
                 onChange={(event) => {
                   setSearchQuery(event.target.value);
                 }}
                 onFocus={() => setShowDropdown(true)}
+                onClick={(e) => e.stopPropagation()}
               />
               
               {showDropdown && targetType === "name" && (
-                <div 
-                  className="absolute z-[100] w-full bg-[#202124] rounded-6 border border-white-10 shadow-lg"
-                  style={{
-                    maxHeight: "196px",
-                    overflowY: "auto",
-                    left: 0,
-                    top: "100%",
-                    marginTop: "4px",
-                    position: "absolute"
+                <ClickAwayListener 
+                  onClickAway={(e) => {
+                    // Don't close if clicking the search field
+                    const target = e.target as HTMLElement;
+                    if (target.tagName === 'INPUT' || target.closest('input')) {
+                      return;
+                    }
+                    setShowDropdown(false);
                   }}
                 >
-                  {isSearching && twitterKOLs.length === 0 ? (
-                    <div className="p-12 text-center">Searching...</div>
-                  ) : twitterKOLs.length > 0 ? (
-                    <div 
-                      className="dropdown-scroll" 
-                      style={{ overflowY: "auto" }}
-                      onScroll={handleScroll}
-                    >
-                      {twitterKOLs.map((kol) => (
-                        <div
-                          key={kol._id}
-                          className="px-12 py-6 cursor-pointer hover:bg-white-10 flex items-center justify-between border-b border-white-10 last:border-b-0"
-                          onClick={() => handleSelectTwitterKOL(kol)}
-                          style={{ height: "56px" }}
-                        >
-                          <div className="flex flex-col">
-                            <div className="flex items-center">
-                              <div className="font-bold text-size-15">
-                                {kol.twitterHandle}
+                  <div 
+                    className="absolute z-[100] w-full bg-[#202124] rounded-6 border border-white-10 shadow-lg"
+                    style={{
+                      maxHeight: "196px",
+                      overflowY: "auto",
+                      left: 0,
+                      top: "100%",
+                      marginTop: "4px",
+                      position: "absolute"
+                    }}
+                  >
+                    {isSearching && twitterKOLs.length === 0 ? (
+                      <div className="p-12 text-center">Searching...</div>
+                    ) : twitterKOLs.length > 0 ? (
+                      <div 
+                        className="dropdown-scroll" 
+                        style={{ overflowY: "auto" }}
+                        onScroll={handleScroll}
+                      >
+                        {twitterKOLs.map((kol) => (
+                          <div
+                            key={kol._id}
+                            className="px-12 py-6 cursor-pointer hover:bg-white-10 flex items-center justify-between border-b border-white-10 last:border-b-0"
+                            onClick={() => handleSelectTwitterKOL(kol)}
+                            style={{ height: "56px" }}
+                          >
+                            <div className="flex flex-col">
+                              <div className="flex items-center">
+                                <div className="font-bold text-size-15">
+                                  {kol.twitterHandle}
+                                </div>
+                                <div className="text-text2 text-size-14 ml-4">
+                                  {kol.name || kol.userName}
+                                </div>
                               </div>
-                              <div className="text-text2 text-size-14 ml-4">
-                                {kol.name || kol.userName}
+                              <div className="text-text2 text-size-12 mt-1">
+                                Followers: {kol.followers ? kol.followers.toLocaleString() : '0'}
                               </div>
                             </div>
-                            <div className="text-text2 text-size-12 mt-1">
-                              Followers: {kol.followers ? kol.followers.toLocaleString() : '0'}
+                            <div className="flex flex-col items-end">
+                              <div className="text-size-14 text-text1 truncate max-w-[200px]" title={kol.solanaAddress}>
+                                {kol.solanaAddress.substring(0, 10)}...{kol.solanaAddress.substring(kol.solanaAddress.length - 4)}
+                              </div>
+                              <div className="text-size-12 mt-1">
+                                <span className="text-text2">PnL 30D: </span>
+                                <span className={kol.pnl30d >= 0 ? "text-[#00C087]" : "text-[#FF5B5B]"}>
+                                  {kol.pnl30d >= 0 ? "+" : ""}{kol.pnl30d.toFixed(2)}% (
+                                  {kol.pnl30dAmount >= 0 ? "+" : "-"}${Math.abs(kol.pnl30dAmount).toFixed(1)}K)
+                                </span>
+                              </div>
                             </div>
                           </div>
-                          <div className="flex flex-col items-end">
-                            <div className="text-size-14 text-text1 truncate max-w-[200px]" title={kol.solanaAddress}>
-                              {kol.solanaAddress.substring(0, 10)}...{kol.solanaAddress.substring(kol.solanaAddress.length - 4)}
-                            </div>
-                            <div className="text-size-12 mt-1">
-                              <span className="text-text2">PnL 30D: </span>
-                              <span className={kol.pnl30d >= 0 ? "text-[#00C087]" : "text-[#FF5B5B]"}>
-                                {kol.pnl30d >= 0 ? "+" : ""}{kol.pnl30d.toFixed(2)}% (
-                                {kol.pnl30dAmount >= 0 ? "+" : "-"}${Math.abs(kol.pnl30dAmount).toFixed(1)}K)
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="p-12 text-center">No results found</div>
-                  )}
-                </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-12 text-center">No results found</div>
+                    )}
+                  </div>
+                </ClickAwayListener>
               )}
             </div>
           )}
@@ -380,6 +395,7 @@ export function CopyTradeForm({
                 : "Percentage"
             }
             value={form.amount.value}
+            className='!bg-background'
             suffixNode={
               form.mode.value === "percentage" ? "%" : getCurrencySymbol(chain)
             }

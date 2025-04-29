@@ -7,6 +7,7 @@ import {
   Modal,
   ModalContent,
   ModalTitleWithBorder,
+  FormValue,
 } from "@/primitive/components";
 import {
   deleteCopyTradeTask,
@@ -245,21 +246,28 @@ function EditButton({
             loading={isEditing}
             stretch
             onClick={() => {
-              if (Object.values(form).some((item) => item.isInValid)) {
+              if (Object.values(form)
+                .filter((item): item is FormValue<any> => 
+                  typeof item === 'object' && 'isInValid' in item)
+                .some((item) => item.isInValid)) {
                 return;
               }
+              
               let allValid = true;
               const newForm = { ...form };
-              Object.keys(newForm).forEach((_key) => {
-                const key = _key as keyof typeof newForm;
-                if (newForm[key].required) {
-                  if (!newForm[key].value) {
-                    allValid = false;
-                    newForm[key].isInValid = true;
-                    newForm[key].errorMsg = "Required";
-                  }
+              
+              // Only validate FormValue fields, not TwitterKOL
+              const fieldsToValidate = ['name', 'amount', 'target', 'mode', 'isCopySell'] as const;
+              
+              fieldsToValidate.forEach((key) => {
+                const field = newForm[key];
+                if (field.required && !field.value) {
+                  allValid = false;
+                  field.isInValid = true;
+                  field.errorMsg = "Required";
                 }
               });
+              
               if (!allValid) {
                 setForm(newForm);
                 return;

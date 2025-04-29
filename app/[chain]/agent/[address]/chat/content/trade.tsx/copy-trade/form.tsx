@@ -270,7 +270,7 @@ export function CopyTradeForm({
                 <div 
                   className="absolute z-[100] w-full bg-[#202124] rounded-6 border border-white-10 shadow-lg"
                   style={{
-                    maxHeight: "156px",
+                    maxHeight: "196px",
                     overflowY: "auto",
                     left: 0,
                     top: "100%",
@@ -289,9 +289,9 @@ export function CopyTradeForm({
                       {twitterKOLs.map((kol) => (
                         <div
                           key={kol._id}
-                          className="px-12 py-8 cursor-pointer hover:bg-white-10 flex items-center justify-between border-b border-white-10 last:border-b-0"
+                          className="px-12 py-6 cursor-pointer hover:bg-white-10 flex items-center justify-between border-b border-white-10 last:border-b-0"
                           onClick={() => handleSelectTwitterKOL(kol)}
-                          style={{ height: "64px" }} // Increased height to accommodate the new layout
+                          style={{ height: "56px" }}
                         >
                           <div className="flex flex-col">
                             <div className="flex items-center">

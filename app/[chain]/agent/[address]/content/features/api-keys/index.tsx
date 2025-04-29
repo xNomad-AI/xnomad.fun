@@ -25,6 +25,8 @@ import { useChainStore } from "@/app/layout/chain-provider";
 import { useUserStore } from "@/app/layout/chain-provider/hook";
 import { api } from "@/primitive/api";
 
+export const API_KEY_MAX_COUNT = 5;
+
 // Add a function to fetch API keys
 export const fetchApiKeys = async (userId: string, chain: string) => {
   try {
@@ -201,6 +203,11 @@ export function ApiKeyModal({
         isInValid: true,
         errorMsg: `Maximum expiration is ${API_KEY_MAX_EXPIRATION} days`,
       });
+      return;
+    }
+
+    if (apiKeys.length >= API_KEY_MAX_COUNT) {
+      message(`Maximum ${API_KEY_MAX_COUNT} API keys allowed. Please delete existing keys first.`, { type: "error" });
       return;
     }
 

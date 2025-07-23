@@ -1,0 +1,192 @@
+"use client";
+import { InfiniteScrollList } from "@/components/infinit-scroll";
+import { IconDownFilled, Spin, Tooltip } from "@/primitive/components";
+import { useTokenStore } from "../../store";
+import { useMemo, useState } from "react";
+import { TokenNumber } from "@/components/token-number";
+import { Portfolio, Token } from "./type";
+import { TokenCell } from "@/app/[chain]/agent/[address]/content/agent-token/token-list/token-cell";
+import clsx from "clsx";
+import BigNumber from "bignumber.js";
+import { RateNum } from "@/components/rate-number";
+import { NFT } from "@/types";
+import { NFTCell } from "@/app/[chain]/agent/[address]/content/agent-token/token-list/nft-cell";
+import Link from "next/link";
+import { isOwner } from "@/lib/user/ownership";
+import { Address } from "@/components/address";
+import { useUserStore } from "@/app/layout/chain-provider/hook";
+import { useRouter } from "next/navigation";
+import { use100vh } from "react-div-100vh";
+export function TokenList({
+  data,
+  loading,
+}: {
+  data: Portfolio[];
+  loading: boolean;
+}) {
+  const router = useRouter();
+  const { userAddress } = useUserStore();
+  const { selectedPortfolio, onlyAgentToken } = useTokenStore();
+  const tokens = useMemo(() => {
+    return data
+      .filter(
+        (port) =>
+          !selectedPortfolio.length ||
+          selectedPortfolio.some((item) => item.wallet === port.wallet)
+      )
+      .flatMap((portfolio) =>
+        portfolio.items
+          .map((item) => ({
+            ...item,
+            nft: portfolio.nft,
+            wallet: portfolio.wallet,
+          }))
+          .filter((item) => (onlyAgentToken ? Boolean(item.agentCoin) : true))
+      );
+  }, [data, selectedPortfolio, onlyAgentToken]);
+  const [sortBy, setSortBy] = useState<keyof Token>("valueUsd");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const sortedTokens = useMemo(() => {
+    return tokens.sort((a, b) => {
+      let aValue =
+        typeof a[sortBy] === "number"
+          ? a[sortBy]
+          : parseFloat(a[sortBy] as any);
+      let bValue =
+        typeof b[sortBy] === "number"
+          ? b[sortBy]
+          : parseFloat(b[sortBy] as any);
+      return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+    });
+  }, [tokens, sortBy, sortDirection]);
+  const vh = use100vh();
+  return (
+    <div className='flex flex-col w-full'>
+      <div className='flex items-center justify-between w-full border-b border-white-20 gap-8 h-40 text-text2 text-size-12'>
+        <div className='w-[200px]'>Token</div>
+        <div className='w-[120px] text-right'>Price</div>
+        <div className='w-[120px] text-right'>Balance</div>
+        <button
+          onClick={() => {
+            if (sortBy === "valueUsd") {
+              setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+            } else {
+              setSortBy("valueUsd");
+              setSortDirection("desc");
+            }
+          }}
+          className={clsx("w-[120px] text-right flex justify-end gap-4", {
+            "text-white": sortBy === "valueUsd",
+          })}
+        >
+          Holding Value
+          <IconDownFilled
+            className={clsx(
+              "text-size-16 transition-transform duration-300 ease-in-out",
+              {
+                "rotate-180": sortDirection === "asc",
+              }
+            )}
+          />
+        </button>
+        <div className='w-[120px] text-right'>Owner</div>
+      </div>
+
+      {sortedTokens.length > 0 ? (
+        <InfiniteScrollList
+          items={sortedTokens}
+          gutterSize={0}
+          key={`${sortBy}-${sortDirection}`}
+          itemSize={58}
+          height={vh ? vh - 443 : 400}
+          renderItem={(item: Token & { nft: NFT; wallet: string }) => {
+            const isTokenOwner = isOwner(item.wallet, userAddress);
+            const coinNFT = item.agentCoin;
+            const showLink = Boolean(coinNFT?.nftId) && coinNFT?.bound;
+            return (
+              <Link
+                onClick={(e) => {
+                  if (!showLink) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+                }}
+                href={`/${coinNFT?.chain}/agent/${coinNFT?.nftId}?tab=agent-token`}
+                key={item.symbol}
+                className={clsx(
+                  "h-64 flex items-center justify-between w-full border-b border-white-20 gap-8",
+                  {
+                    "hover:bg-[#242424]": showLink,
+                    "cursor-default": !showLink,
+                  }
+                )}
+              >
+                <div className='flex w-[200px] gap-4 items-center'>
+                  <TokenCell
+                    item={{
+                      logo: item.logoURI,
+                      symbol: item.symbol,
+                      name: item.name,
+                      address: item.address,
+                      telegram: coinNFT?.telegram,
+                      twitter: coinNFT?.twitter,
+                      website: coinNFT?.website,
+                    }}
+                  />
+                </div>
+                <div className='flex w-[120px] flex-col items-end'>
+                  <TokenNumber prefix={"$"} number={item.priceUsd} />
+                  <RateNum
+                    num={item.usdPrice24hrPercenChange / 100}
+                    className='text-size-12'
+                  />
+                </div>
+                <div className='flex w-[120px] justify-end'>
+                  <TokenNumber
+                    number={BigNumber(item.balance)
+                      .div(10 ** 18)
+                      .toString()}
+                  />
+                </div>
+                <div className='flex w-[120px] justify-end'>
+                  <TokenNumber prefix={"$"} number={item.valueUsd} />
+                </div>
+                <div
+                  onClick={(e) => {
+                    if (Boolean(item.nft?.id) && !isTokenOwner) {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      router.push(`/${item.nft?.chain}/agent/${item.nft?.id}`);
+                    }
+                  }}
+                  className={clsx("flex w-[120px] justify-end gap-8", {
+                    "cursor-pointer": Boolean(item.nft?.id),
+                  })}
+                >
+                  {isTokenOwner ? (
+                    <span>My Wallet</span>
+                  ) : Boolean(item.nft?.id) ? (
+                    <NFTCell item={{ nft: item.nft }} />
+                  ) : (
+                    <Address address={item.wallet} />
+                  )}
+                </div>
+              </Link>
+            );
+          }}
+          hasNextPage={false}
+          isNextPageLoading={false}
+          loadNextPage={() => {}}
+        />
+      ) : loading ? (
+        <div className='w-full flex h-[200px] items-center justify-center gap-16'>
+          <Spin />
+        </div>
+      ) : (
+        <div className='flex justify-center w-full p-16 h-[200px] items-center text-text2'>
+          No tokens found
+        </div>
+      )}
+    </div>
+  );
+}

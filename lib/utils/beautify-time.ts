@@ -48,7 +48,8 @@ export function beautifyTimeV2(
   timestamp?: unknown,
   simpleTime = false,
   withSuffix = true,
-  split = " "
+  split = " ",
+  simpleMinute = false
 ) {
   if (!isValidNumber(timestamp) || timestamp === 0) {
     return "--";
@@ -64,7 +65,7 @@ export function beautifyTimeV2(
     ? [
         ["d", "d"],
         ["h", "h"],
-        ["min", "min"],
+        simpleMinute ? ["m", "m"] : ["min", "min"],
         ["s", "s"],
       ]
     : [

@@ -1,0 +1,42 @@
+import { Collection, CollectionMetrics } from "@/types/collection";
+
+import { CollectionInfo } from "../components/collection-info";
+import { Description } from "../components/description";
+
+import { CollectionFilter } from "../components/collection-filter";
+import { CollectionNFTs } from "../components/collection-nfts";
+import { api } from "@/primitive/api";
+import { SideBar } from "../components/side-bar";
+import { Background } from "../components/bg";
+import { XNOMAD_ID } from "./constants";
+import { ensureChain } from "@/lib/chain";
+import { redirect } from "next/navigation";
+export default async function Page({
+  params,
+}: {
+  params: {
+    chain: string;
+  };
+}) {
+  const chain = ensureChain(params.chain);
+  if (chain !== "solana") {
+    redirect("/404");
+  }
+  const { collection } = await api.v1.get<{
+    collection: Collection;
+    metrics: CollectionMetrics;
+  }>(`/nft/solana/collections/${XNOMAD_ID}`);
+
+  return (
+    <main className='relative flex flex-col px-64 py-32 mobile:px-16 gap-32 w-full'>
+      <Background src='/xnomad-bg.webp' />
+      <CollectionInfo chain={chain} />
+      <Description __html={collection.description} />
+      <CollectionFilter />
+      <div className='w-full flex gap-24'>
+        <SideBar />
+        <CollectionNFTs collection={collection} />
+      </div>
+    </main>
+  );
+}

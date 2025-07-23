@@ -32,6 +32,14 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  if (body.chain) {
+    c.set(preferenceNameMap.chain, body.chain, {
+      httpOnly: false,
+      secure: true,
+      name: preferenceNameMap.chain,
+    });
+  }
+
   const data = { data: null, status: 200 };
 
   return NextResponse.json(data);

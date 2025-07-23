@@ -1,4 +1,4 @@
-import { TokenInfo } from "@/app/sol/agent/[address]/content/agent-token/token-list/network";
+import { TokenInfo } from "@/app/[chain]/agent/[address]/content/agent-token/token-list/network";
 import { Character, UUID } from "@elizaos/core";
 
 export interface NFT {

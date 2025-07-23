@@ -6,6 +6,9 @@ import { useMemo } from "react";
 import { Address } from "@/components/address";
 import clsx from "clsx";
 import { useConnectModalStore } from "@/components/connect-modal/store";
+import { useAccount } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useChainStore } from "../layout/chain-provider";
 
 export function ConnectButton({
   className,
@@ -16,16 +19,33 @@ export function ConnectButton({
 }) {
   const { setVisible } = useConnectModalStore();
   const { publicKey, connecting } = useWallet();
+  const { chain } = useChainStore();
+  const { openConnectModal } = useConnectModal();
   const handleClick = useMemoizedFn(async () => {
-    setVisible(true);
-  });
-  const buttonText = useMemo(() => {
-    if (publicKey) {
-      return <Address address={publicKey.toBase58()} enableCopy />;
-    } else if (connecting) {
-      return "Connecting";
+    if (chain === "solana") {
+      setVisible(true);
     } else {
-      return "Connect Wallet";
+      openConnectModal?.();
+    }
+  });
+  const { address, isConnecting } = useAccount();
+  const buttonText = useMemo(() => {
+    if (chain === "solana") {
+      if (publicKey) {
+        return <Address address={publicKey.toBase58()} enableCopy />;
+      } else if (connecting) {
+        return "Connecting";
+      } else {
+        return "Connect Wallet";
+      }
+    } else {
+      if (address) {
+        return <Address address={address} enableCopy />;
+      } else if (isConnecting) {
+        return "Connecting";
+      } else {
+        return "Connect Wallet";
+      }
     }
   }, [connecting, publicKey]);
   return (

@@ -4,9 +4,13 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect } from "react";
 import { useUserInfoStore } from "@/lib/user/user-store";
 import { useLogin } from "@/lib/user/use-login";
+import { useChainStore } from "./chain-provider";
+import { useAccount } from "wagmi";
 
 export function InitStore() {
+  const { chain } = useChainStore();
   const { publicKey } = useWallet();
+  const { address } = useAccount();
   const { initUserInfo } = useUserInfoStore();
   const { startTick } = useTimeStore();
   const login = useLogin();
@@ -14,12 +18,21 @@ export function InitStore() {
     startTick();
   }, [startTick]);
   useEffect(() => {
-    if (publicKey) {
-      const hasToken = initUserInfo(publicKey.toBase58());
-      if (!hasToken) {
-        login();
+    if (chain === "solana") {
+      if (publicKey) {
+        const hasToken = initUserInfo(publicKey.toBase58());
+        if (!hasToken) {
+          login();
+        }
+      }
+    } else {
+      if (address) {
+        const hasToken = initUserInfo(address);
+        if (!hasToken) {
+          login();
+        }
       }
     }
-  }, [publicKey]);
+  }, [publicKey, address, chain]);
   return <></>;
 }

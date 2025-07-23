@@ -1,0 +1,451 @@
+import {
+  Button,
+  Card,
+  IconDisconnect,
+  Toggle,
+  Tooltip,
+  message,
+} from "@/primitive/components";
+import { NFT } from "@/types";
+import Image from "next/image";
+import { TwitterModal } from "./twitter";
+import { useMemo, useState, useEffect } from "react";
+import { api } from "@/primitive/api";
+import { CharacterConfig, Config } from "./types";
+import { useMemoizedFn, useMount } from "ahooks";
+import { TelegramModal } from "./telegram";
+import { VoiceModal } from "./voice";
+import { ConfirmModal } from "./confirm";
+import { ApiKeyModal, fetchApiKeys } from "./api-keys";
+import { editAgentConfig, getAgentConfig } from "./network";
+import { useAgentStore } from "../../store";
+import { SupportedChain } from "@/types/preference";
+import { useChainStore } from "@/app/layout/chain-provider";
+import { isOwner } from "@/lib/user/ownership";
+import { useUserStore } from "@/app/layout/chain-provider/hook";
+import { TextAnchor } from "@/components/text-button";
+import { TextWithEllipsis } from "@/components/text-with-ellipsis";
+function configTwitter({
+  nftId,
+  config,
+  testContent,
+  chain,
+}: {
+  nftId: string;
+  config: Partial<CharacterConfig>;
+  chain: SupportedChain;
+  testContent?: string;
+}) {
+  return api.v1.post<{
+    isLogin: boolean;
+    message: string;
+  }>(`/nft/${chain}/${nftId}/config/twitter`, {
+    characterConfig: config,
+    testContent,
+  });
+}
+function deleteTwitter(nftId: string, chain: SupportedChain) {
+  return api.v1.delete<{
+    isLogin: boolean;
+    message: string;
+  }>(`/nft/${chain}/${nftId}/config/twitter`);
+}
+export function Features({ nft }: { nft: NFT }) {
+  const { chain } = useChainStore();
+  const { userAddress } = useUserStore();
+  const { agentConfig: config, setAgentConfig: setConfig } = useAgentStore();
+  const [xOpen, setXOpen] = useState(false);
+  const [tgOpen, setTgOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [apiKeyOpen, setApiKeyOpen] = useState(false);
+  const [showApiKeysList, setShowApiKeysList] = useState(false);
+  const [twitterBound, setTwitterBound] = useState(false);
+  const [isConfigLoading, setIsConfigLoading] = useState(false);
+  const [apiKeys, setApiKeys] = useState<Array<{
+    id: string;
+    name: string;
+    createdAt: string;
+    expiresAt: string;
+  }>>([]);
+  const [metaInfo, setMetaInfo] = useState<{
+    twitterUsername: string;
+    telegramBotId: string;
+  }>();
+  useMount(() => {
+    if (config) {
+      // get twitter bound status
+      configTwitter({
+        nftId: nft.id,
+        config: config.characterConfig,
+        chain,
+        testContent: "",
+      }).then((res) => {
+        setTwitterBound(res.isLogin);
+      });
+    }
+    api.v1
+      .get<{
+        twitterUsername: string;
+        telegramBotId: string;
+      }>(`/nft/${chain}/${nft.nftId}/public/config`)
+      .then((res) => {
+        setMetaInfo(res);
+      });
+    // Load API keys
+    if (nft.owner) {
+      fetchApiKeys(nft.owner, chain).then(keys => {
+        setApiKeys(keys);
+      });
+    }
+  });
+  const onSave = useMemoizedFn(async (_config: Partial<CharacterConfig>) => {
+    const newConfig = await editAgentConfig(
+      nft.id,
+      {
+        ...config?.characterConfig,
+        settings: {
+          ..._config.settings,
+          secrets: {
+            ..._config.settings?.secrets,
+            POST_IMMEDIATELY: _config.settings?.secrets?.POST_IMMEDIATELY,
+            TWITTER_LOGIN_SUSPEND:
+              _config.settings?.secrets?.TWITTER_LOGIN_SUSPEND,
+            TELEGRAM_LOGIN_SUSPEND:
+              _config.settings?.secrets?.TELEGRAM_LOGIN_SUSPEND,
+          },
+        },
+      },
+      chain
+    );
+    setConfig({
+      ...(config as Config),
+      characterConfig: newConfig.characterConfig,
+    });
+  });
+  const refreshConfig = useMemoizedFn(() => {
+    getAgentConfig(nft.id, chain).then((config) => {
+      setConfig(config);
+    });
+  });
+  const hasTwitterConfig = useMemo(() => {
+    return Boolean(
+      config?.characterConfig?.settings.secrets?.TWITTER_USERNAME ||
+        config?.characterConfig?.settings.secrets?.TWITTER_PASSWORD ||
+        config?.characterConfig?.settings.secrets?.TWITTER_EMAIL ||
+        config?.characterConfig?.settings.secrets?.TWITTER_2FA_SECRET ||
+        config?.characterConfig?.templates?.twitterPostTemplate ||
+        ((config?.characterConfig?.postExamples?.length ?? 0) > 0 &&
+          Boolean(config?.characterConfig?.postExamples?.[0]))
+    );
+  }, [config]);
+  const hasTgConfig = useMemo(() => {
+    return Boolean(
+      config?.characterConfig?.settings.secrets?.TELEGRAM_BOT_TOKEN
+    );
+  }, [config]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const twitterEnabled = process.env.TWITTER_ENABLED === "true";
+  const isNFTOwner = useMemo(
+    () => isOwner(nft.owner, userAddress),
+    [nft.owner, userAddress]
+  );
+  const hasApiKeyConfig = useMemo(() => {
+    return apiKeys.length > 0;
+  }, [apiKeys]);
+  return (
+    <>
+      <div className='w-full flex flex-col gap-16 mt-32'>
+        <Card className='flex items-center justify-between gap-16 p-16'>
+          <div className='flex items-center gap-16'>
+            <Image src={"/twitter.svg"} height={64} width={64} alt='' />
+            <span>X(Twitter) Integration</span>
+            {hasTwitterConfig &&
+            twitterEnabled &&
+            isNFTOwner &&
+            twitterBound ? (
+              <button
+                title='Disconnect'
+                onClick={() => {
+                  setConfirmOpen(true);
+                }}
+              >
+                <IconDisconnect className='text-size-24 text-red' />
+              </button>
+            ) : null}
+          </div>
+          <div className='flex items-center gap-16'>
+            {metaInfo?.twitterUsername ? (
+              <TextAnchor
+                withDecoration
+                href={`https://twitter.com/${metaInfo?.twitterUsername}`}
+              >
+                @{metaInfo?.twitterUsername}
+              </TextAnchor>
+            ) : null}
+            {twitterEnabled && isNFTOwner && (
+              <div className='flex items-center gap-8'>
+                Suspend Post
+                <Toggle
+                  value={
+                    config?.characterConfig?.settings.secrets
+                      ?.TWITTER_LOGIN_SUSPEND === "true"
+                  }
+                  disable={isConfigLoading}
+                  onChange={() => {
+                    setIsConfigLoading(true);
+
+                    onSave({
+                      settings: {
+                        secrets: {
+                          TWITTER_LOGIN_SUSPEND:
+                            config?.characterConfig?.settings.secrets
+                              ?.TWITTER_LOGIN_SUSPEND === "true"
+                              ? "false"
+                              : "true",
+                        },
+                      },
+                    }).finally(() => {
+                      setIsConfigLoading(false);
+                    });
+                  }}
+                />
+              </div>
+            )}
+            {isNFTOwner && (
+              <Tooltip
+                disabled={twitterEnabled}
+                content={
+                  "Due to technical limitations of X, this feature is temporarily unavailable."
+                }
+              >
+                <Button
+                  className='!w-[7.5rem]'
+                  variant={hasTwitterConfig ? "secondary" : "primary"}
+                  disabled={!twitterEnabled}
+                  onClick={() => {
+                    setXOpen(true);
+                  }}
+                >
+                  {hasTwitterConfig ? "Edit" : "Add"}
+                </Button>
+              </Tooltip>
+            )}
+          </div>
+        </Card>
+        <Card className='flex items-center justify-between gap-16 p-16'>
+          <div className='flex items-center gap-16'>
+            <Image src={"/telegram.svg"} height={64} width={64} alt='' />
+            <span>Telegram Integration</span>
+          </div>
+          <span>Coming Soon</span>
+        </Card>
+
+        {/* <Card className='flex items-center justify-between gap-16 p-16'>
+          <div className='flex items-center gap-16'>
+            <Image src={"/telegram.svg"} height={64} width={64} alt='' />
+            <span>Telegram Integration</span>
+          </div>
+          <div className='flex items-center gap-16'>
+            {isNFTOwner && (
+              <div className='flex items-center gap-8'>
+                Suspend
+                <Toggle
+                  value={
+                    config?.characterConfig?.settings.secrets
+                      ?.TELEGRAM_LOGIN_SUSPEND === "true"
+                  }
+                  disable={isConfigLoading}
+                  onChange={() => {
+                    setIsConfigLoading(true);
+
+                    onSave({
+                      settings: {
+                        secrets: {
+                          TELEGRAM_LOGIN_SUSPEND:
+                            config?.characterConfig?.settings.secrets
+                              ?.TELEGRAM_LOGIN_SUSPEND === "true"
+                              ? "false"
+                              : "true",
+                        },
+                      },
+                    }).finally(() => {
+                      setIsConfigLoading(false);
+                    });
+                  }}
+                />
+              </div>
+            )}
+
+            {isNFTOwner ? (
+              <Button
+                className='!w-[7.5rem]'
+                variant={hasTgConfig ? "secondary" : "primary"}
+                onClick={() => {
+                  setTgOpen(true);
+                }}
+              >
+                {hasTgConfig ? "Edit" : "Add"}
+              </Button>
+            ) : metaInfo?.telegramBotId ? (
+              <TextAnchor
+                withDecoration
+                href={`https://t.me/${metaInfo?.telegramBotId}`}
+              >
+                <TextWithEllipsis width={200}>
+                  #{metaInfo?.telegramBotId}
+                </TextWithEllipsis>
+              </TextAnchor>
+            ) : null}
+          </div>
+        </Card> */}
+        <Card className='flex items-center justify-between gap-16 p-16'>
+          <div className='flex items-center gap-16'>
+            <Image src={"/discord.svg"} height={64} width={64} alt='' />
+            <span>Discord Integration</span>
+          </div>
+          <span>Coming Soon</span>
+        </Card>
+        <Card className='flex items-center justify-between gap-16 p-16'>
+          <div className='flex items-center gap-16'>
+            <Image src={"/voice.png"} height={64} width={64} alt='' />
+            <span>Voice Generation</span>
+          </div>
+          {isNFTOwner ? (
+            <Button
+              variant='secondary'
+              className='!w-[7.5rem]'
+              onClick={() => {
+                setVoiceOpen(true);
+              }}
+            >
+              Edit
+            </Button>
+          ) : null}
+        </Card>
+        <Card className='flex items-center justify-between gap-16 p-16'>
+          <div className='flex items-center gap-16'>
+            <Image src={"/api-key.png"} height={64} width={64} alt='' />
+            <span>API Key Generation</span>
+          </div>
+          {isNFTOwner && (
+            <Button
+              className='!w-[7.5rem]'
+              variant={hasApiKeyConfig ? "secondary" : "primary"}
+              onClick={() => {
+                setApiKeyOpen(true);
+                setShowApiKeysList(hasApiKeyConfig);
+              }}
+            >
+              {hasApiKeyConfig ? "Manage" : "Create"}
+            </Button>
+          )}
+        </Card>
+      </div>
+      <TwitterModal
+        open={xOpen}
+        onSave={async (config, testContent) => {
+          const res = await configTwitter({
+            nftId: nft.id,
+            config,
+            chain,
+            testContent,
+          });
+          refreshConfig();
+          if (!res.isLogin) {
+            throw res.message;
+          }
+          setTwitterBound(true);
+        }}
+        config={config?.characterConfig}
+        onClose={() => {
+          setXOpen(false);
+        }}
+      />
+      <TelegramModal
+        open={tgOpen}
+        onSave={onSave}
+        config={config?.characterConfig}
+        onClose={() => {
+          setTgOpen(false);
+        }}
+      />
+      <VoiceModal
+        open={voiceOpen}
+        onSave={onSave}
+        config={config?.characterConfig}
+        onClose={() => {
+          setVoiceOpen(false);
+        }}
+      />
+      <ConfirmModal
+        title='Delete Twitter Integration'
+        content='Are you sure you want to delete the Twitter Integration?'
+        open={confirmOpen}
+        onClose={() => {
+          setConfirmOpen(false);
+        }}
+        isConfirming={isConfigLoading}
+        onConfirm={() => {
+          setIsConfigLoading(true);
+          deleteTwitter(nft.id, chain)
+            .then(() => {
+              setTwitterBound(false);
+              refreshConfig();
+              setConfirmOpen(false);
+            })
+            .finally(() => {
+              setIsConfigLoading(false);
+            });
+        }}
+      />
+      <ApiKeyModal
+        open={apiKeyOpen}
+        onClose={() => {
+          setApiKeyOpen(false);
+          setShowApiKeysList(false);
+          if (nft.owner) {
+            fetchApiKeys(nft.owner, chain).then(keys => {
+              setApiKeys(keys);
+            });
+          }
+        }}
+        config={config?.characterConfig}
+        showKeysList={showApiKeysList}
+        onSave={async (configUpdate, apiKey) => {
+          try {
+            setIsConfigLoading(true);
+            const newConfig = await editAgentConfig(
+              nft.id,
+              {
+                ...config?.characterConfig,
+                settings: {
+                  ...config?.characterConfig.settings,
+                  secrets: {
+                    ...config?.characterConfig.settings.secrets,
+                    ...configUpdate.settings?.secrets,
+                  },
+                },
+              },
+              chain
+            );
+            setConfig({
+              ...(config as Config),
+              characterConfig: newConfig.characterConfig,
+            });
+
+            if (nft.owner) {
+              const updatedKeys = await fetchApiKeys(nft.owner, chain);
+              setApiKeys(updatedKeys);
+            }
+
+            return Promise.resolve();
+          } catch (error) {
+            return Promise.reject(error);
+          } finally {
+            setIsConfigLoading(false);
+          }
+        }}
+      />
+    </>
+  );
+}

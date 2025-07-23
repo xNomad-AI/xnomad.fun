@@ -1,0 +1,130 @@
+"use client";
+import { useTransition, animated } from "@react-spring/web";
+import { Spin } from "@/primitive/components";
+import clsx from "clsx";
+import { NFT } from "@/types";
+import { useUnmount } from "ahooks";
+import { ChatMessageList } from "./components/chat/chat-message-list";
+import { ChatContent } from "./content";
+import { useChatContext } from "./store";
+import { InputForm } from "./components/input-form";
+import { Actions } from "./actions";
+import { useAgentSetup } from "./hooks/use-agent-setup";
+import { useChatMemory } from "./hooks/use-chat-memory";
+import { useChatGreeting } from "./hooks/use-chat-greeting";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { Action } from "./content/types";
+
+export function ChatPage({ nft }: { nft: NFT }) {
+  const agentId = nft.agentId;
+  const { messages, setMessages, addMessage, generateMessageId } =
+    useChatContext();
+  // check if agent is setup
+  const { isAgentSetup } = useAgentSetup({
+    nft,
+    agentId,
+  });
+  // after agent is setup, fetch memory
+  const { initializingMemory } = useChatMemory(isAgentSetup);
+
+  // if memory is empty, show greeting
+  const { isGreeting } = useChatGreeting({
+    nft,
+    initializingMemory,
+  });
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (!initializingMemory && isAgentSetup && !isGreeting) {
+      const action = searchParams.get("action") as Action;
+      if (action === "issue-token") {
+        addMessage([
+          {
+            text: "issue token",
+            webAction: "issue-token",
+            step: "input",
+            user: "user",
+            createdAt: Date.now(),
+            id: generateMessageId("issue-token"),
+          },
+        ]);
+      }
+    }
+  }, [initializingMemory, isAgentSetup, isGreeting, searchParams]);
+  useUnmount(() => {
+    setMessages((messages) => {
+      return (
+        messages?.filter(
+          (msg) =>
+            msg.isLoading !== true && // remove loading messages
+            !msg.webAction // remove web actions
+        ) ?? []
+      );
+    });
+  });
+
+  const transitions = useTransition(messages, {
+    keys: (message) => `${message?.createdAt}-${message?.user}-${message?.id}`,
+    from: { opacity: 0, transform: "translateY(32px)" },
+    enter: { opacity: 1, transform: "translateY(0px)" },
+    leave: { opacity: 0, transform: "translateY(8px)" },
+    config: {
+      duration: 200,
+    },
+  });
+
+  return (
+    <div className={clsx("relative flex flex-col w-full max-w-[720px] h-full")}>
+      {!isAgentSetup ? (
+        <div className='w-full h-full flex items-center justify-center flex-col gap-32'>
+          <Spin className='!text-size-32' />
+          <span className='text-size-16 font-bold'>
+            Waiting for AI-Agent to Connect
+          </span>
+        </div>
+      ) : (
+        <>
+          <div className='w-full flex-1 overflow-y-auto'>
+            <ChatMessageList>
+              {transitions((styles, message) => {
+                // FIXME: Fix this any
+                const Comp = animated.div as any;
+                return (
+                  <Comp
+                    style={styles}
+                    key={`chat-container-${message?.id}`}
+                    className={clsx("flex gap-16")}
+                  >
+                    {message?.user !== "user" ? (
+                      <img
+                        className='h-32 w-32 flex-shrink-0 p-1 object-contain border rounded-full select-none'
+                        height={32}
+                        width={32}
+                        alt=''
+                        src={nft.image}
+                      />
+                    ) : null}
+
+                    {message ? (
+                      <ChatContent
+                        key={`chat-content-${message.id}`}
+                        message={message}
+                        nft={nft}
+                      />
+                    ) : null}
+                  </Comp>
+                );
+              })}
+            </ChatMessageList>
+          </div>
+
+          <div className='w-full flex flex-col gap-8'>
+            <Actions nft={nft} />
+
+            <InputForm />
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

@@ -22,7 +22,6 @@ export default async function Page({
     chainInUrl = "solana";
   }
   const chain = chainInUrl ?? cookieStore.get("chain");
-  console.log("chain", chain);
   const nft = await api.v1.get<NFT>(
     `/nft/${chain}/nfts/${address}`,
     undefined,
@@ -30,7 +29,7 @@ export default async function Page({
       cache: "no-store",
     }
   );
-  console.log("nft", nft);
+
   const agentSideWalletVisible = (cookieStore.get(
     preferenceNameMap.agentSideWalletVisible
   )?.value ?? "table") as "true" | "false";

@@ -317,7 +317,6 @@ function useSmallTradingView({
   useEffect(() => {
     if (!(window as any).TradingView || !tradingViewRef.current) {
       if (!interval.current) {
-        console.log("trading view script not loaded");
         interval.current = setInterval(() => {
           setForceRender((prev) => prev + 1);
         }, 1000);

@@ -1,8 +1,11 @@
-import { MessageConfig } from './config';
+import { MessageConfig } from "./config";
 
-export type MessageEmitType = 'close' | 'show' | 'update';
+export type MessageEmitType = "close" | "show" | "update";
 
-export type MessageContainerCallback = (type: MessageEmitType, config: MessageConfig) => void;
+export type MessageContainerCallback = (
+  type: MessageEmitType,
+  config: MessageConfig
+) => void;
 
 type MessageContainerRegistry = Record<string, MessageContainerCallback>;
 
@@ -11,7 +14,7 @@ export class MessageManager {
 
   subscribe(name: string, callback: MessageContainerCallback) {
     if (this.registry[name]) {
-      console.log(`container ${name} has already registered`);
+      // console.log(`container ${name} has already registered`);
     } else {
       this.registry[name] = callback;
     }
@@ -27,7 +30,11 @@ export class MessageManager {
     this.registry[config.container]?.(type, config);
   }
 
-  broadcast(type: MessageEmitType, config: MessageConfig, except: string[] = []) {
+  broadcast(
+    type: MessageEmitType,
+    config: MessageConfig,
+    except: string[] = []
+  ) {
     for (const container in this.registry) {
       if (!except.includes(container)) {
         this.registry[container](type, config);

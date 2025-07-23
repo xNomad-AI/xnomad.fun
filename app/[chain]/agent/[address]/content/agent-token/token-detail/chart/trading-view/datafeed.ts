@@ -223,7 +223,6 @@ export class Datafeed {
         noData: true,
       });
       onErrorCallback(error);
-      console.log("getBars error", error);
     }
   };
 
@@ -247,7 +246,6 @@ export class Datafeed {
   public markLists: any[] = [];
 
   onDataCallback = (data: any) => {
-    console.log("onDataCallback", data);
     this.markLists = data;
   };
 

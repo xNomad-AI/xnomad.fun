@@ -184,7 +184,6 @@ export function StageForm({
               type='datetime-local'
               value={stage.startTime.value}
               onChange={(e) => {
-                console.log(e.target.value);
                 updateStage({
                   startTime: {
                     value: e.target.value,

@@ -94,7 +94,7 @@ export const base64 = {
       binary += String.fromCharCode(byte);
     });
     const base64Data = btoa(binary);
-    console.log(base64Data);
+
     return base64Data;
   },
 };

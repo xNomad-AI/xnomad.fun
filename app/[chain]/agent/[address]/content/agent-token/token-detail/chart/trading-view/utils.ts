@@ -59,6 +59,6 @@ export function drawAveragePriceLine(tvWidget: any, averagePrice: number) {
         .setQuantityBorderColor("rgba(255, 181, 45, 1)")
     );
   } catch (error) {
-    console.log("error", error);
+    // console.log("error", error);
   }
 }

@@ -83,7 +83,6 @@ export const AudioRecorder = ({
       message(e.message, {
         type: "error",
       });
-      console.log(e);
     },
   });
 
